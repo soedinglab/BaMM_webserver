@@ -1,0 +1,47 @@
+{% extends "home/header.html" %}
+
+{% block content %}
+{% load static %}
+
+
+<div class="jumbotron" style="background-color:white"><font color="black">
+ <h2> BaMMmotif Database Results for : {{protein_name}} </h2>
+  <hr style="border: 1px solid #1f2e2e">
+ <h4> {{db_entries.count}} entries found: </h4>
+     <div>
+        <table class="table table-hover">
+        <tr >
+            <th>  Entry #       </th>
+            <th> Protein Name  </th>
+            <th> Data Type     </th>
+            <th> Cell Type     </th>
+            <th> Experiment    </th>
+            <th> Lab / Grant    </th>
+            <th> Data Source   </th>
+            <th> Species       </th>
+            <th> Details       </th>
+        </tr>
+        {% for entry in db_entries %}
+        <tr>
+            <td> {{ forloop.counter           }} </td>
+            <td> {{ entry.protein_name        }} </td>
+            <td> {{ entry.cell_line_1         }} </td>
+            <td> {{ entry.cell_line_2         }} </td>
+            <td> {{ entry.parent.experiment   }} </td>
+            <td> {{ entry.laboratory          }} </td>            
+            <td> {{ entry.parent.data_source  }} </td>
+            <td> {{ entry.parent.species      }} </td>
+            <td> <a href="{% url 'db_detail' entry.db_public_id %}" role="button"> more...</a> </td>
+        </tr>
+       {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+
+
+

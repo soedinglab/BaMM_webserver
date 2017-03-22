@@ -1,0 +1,190 @@
+{% extends "home/header.html" %}
+
+{% block content %}
+{% load static %}
+
+
+<div class="jumbotron" style="background-color:white"><font color="black">
+ <h2> BaMMmotif Database details for " {{entry.protein_name}} "</h2>
+    <hr style="border: 1px solid #1f2e2e">
+      <div class="well" style="background-color:white" id="{{entry.protein_name}}">
+        <h2>Database Entry Information:</h2>
+        <hr style="border: 1px solid #1f2e2e">
+        <table>
+           <tr>
+                <td> &emsp; Protein / Target Name: </td>
+                <td> &emsp; {{entry.protein_name}} </td>
+            </tr>
+            <tr>
+                <td> &emsp; Data Type: </td>
+                <td> &emsp; {{entry.cell_line_1 }} </td>
+            </tr>
+            <tr>
+                <td> &emsp; Cell Type: </td>
+                <td> &emsp; {{entry.cell_line_2}} </td>
+            </tr>
+            <tr>
+                <td> &emsp; Experiment: </td>
+                <td> &emsp; {{entry.parent.experiment}} </td>
+            </tr>
+            <tr>
+                <td> &emsp; Lab / Grant: </td>
+                <td> &emsp; {{entry.laboratory}} </td>
+            </tr>
+            <tr>
+                <td> &emsp; Data Source: </td>
+                <td> &emsp; {{entry.parent.data_source}} </td>
+            </tr>
+            <tr>
+                <td> &emsp; Species: </td>
+                <td> &emsp; {{entry.parent.species}} </td>
+            </tr>
+            
+        </table>
+        </font>
+        <br>
+        <td>  &emsp; <a href="{% url 'data_discover_from_db' pk=entry.db_public_id %}" role="button"> USE THIS MODEL FOR MOTIF PREDICTION <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> </span></a> </td>
+    </div>
+    </font>
+</div>
+
+
+  <div class="jumbotron" style="background-color:white"><font color="black">
+
+  <div class="well" style="background-color:white">
+
+
+
+    <form action="{% get_static_prefix %}DB_Public/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1.zip" method="get" target="_blank">
+        <h2> Predicted Higher Order Model &emsp;
+          <button type="submit" class="btn btn-default" aria-label="Download" >
+             <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD MODEL</span> 
+           </button>
+
+         </h2>
+       </form>
+
+       
+    <hr style="border: 1px solid #1f2e2e">
+    {% for i in "012" %}
+        <img src="{% get_static_prefix %}DB_Public/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-{{i}}-icColumnScale-icLetterScale.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
+    {% endfor %}
+            <br>
+            <br>
+    <form action="{% get_static_prefix %}DB_Public/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1_logos.zip" method="get" target="_blank">
+        <p align="right">           
+        <button type="submit" class="btn btn-default" aria-label="Download">
+        <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD LOGO PLOTS </span> 
+        </button>
+        </p>
+    </form>
+
+    <h2> Performance and Positional Distribution on Input Sequences </h2>
+        <hr style="border: 1px solid #1f2e2e">
+        <img src="{% get_static_prefix %}DB_Public/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1_FDR.jpeg" class="responsive-img" style='max-height:400px;' alt="ROC Curve Plot">&emsp;
+        <img src="{% get_static_prefix %}DB_Public/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1_LogOdds_allPos.jpeg" class="responsive-img" style='max-height:400px;' alt="LogOdds">
+        <br>
+        <br>
+       <form action="{% get_static_prefix %}DB_Public/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1_performance.zip" method="get" target="_blank">
+         <p align="right">           
+           <button type="submit" class="btn btn-default" aria-label="Download">
+             <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD PERFORMANCE PLOTS</span> 
+           </button>
+         </p>
+       </form>
+ </div>
+</font>
+</div>
+
+
+<div class="well" style="background-color:white">
+    <h2>BaMMmotif Settings </h2>
+    <hr style="border: 1px solid #1f2e2e">
+        <h3>Model Settings</h3>
+        <table>
+            <tr>
+                <td>  &emsp; Model Order: </td>
+                <td>  &emsp; {{entry.parent.model_order}}</td>
+            </tr>
+            <tr>
+                <td>  &emsp; Extend Motif to the Left By: </td>
+                <td>  &emsp; {{entry.parent.extend_1}}</td>
+            </tr>
+            <tr>
+                <td>  &emsp; Extend Motif to the Right By: </td>
+                <td>  &emsp; {{entry.parent.extend_2}}</td>
+            </tr>
+            <tr>
+                <td>  &emsp; Reverse Complement: </td>
+                <td>  &emsp; {{entry.parent.reverse_comp}}</td>
+            </tr>
+        </table>
+
+        <h3>Background Model</h3>
+        <table>
+            <tr>
+                <td>  &emsp; Background Order: </td>
+                <td>  &emsp; {{entry.parent.bg_model_order}}</td>
+            </tr>
+        </table>
+        
+        {% if entry.parent.EM == 1 %}
+        <h3>Expectation Maximization Optimization:</h3>
+        <table>
+            <tr>
+                <td>  &emsp; q value: </td>
+                <td>  &emsp; {{enrty.parent.q_value}}</td>
+            </tr>
+            <tr>
+                <td>  &emsp; epsilon: </td>
+                <td>  &emsp; {{entry.parent.epsilon}}</td>
+            </tr>
+            <tr>
+                <td>  &emsp; max Iterations: </td>
+                <td>  &emsp; {{entry.parent.max_em_iterations}}</td>
+            </tr>
+        </table>
+        {% endif %}
+
+        {% if entry.parent.CGS == 1%}
+        <h3>Collapsed Gibbs Sampling:</h3>
+        <table>
+            <tr>
+                <td>  &emsp; sampling Alphas: </td>
+                <td>  &emsp; {{entry.parent.no_alpha_sampling|yesno:"False,True"}}</td>
+            </tr>
+            <tr>
+                <td>  &emsp; max Iterations: </td>
+                <td>  &emsp; {{enrty.parent.max_cgs_iterations}}</td>
+            </tr>
+        </table>
+        {% endif %}
+        
+        {% if entry.parent.FDR == 1%}
+        <h3>False Discovery Rate Estimation:</h3>
+        <table>
+            <tr>
+                <td>  &emsp; mFold: </td>
+                <td>  &emsp; {{entry.parent.m_fold}}</td>
+            </tr>
+            <tr>
+                <td>  &emsp; cvFold: </td>
+                <td>  &emsp; {{entry.parent.cv_fold}}</td>
+            </tr> 
+            <tr>
+                <td>  &emsp; sampling Order: </td>
+                <td>  &emsp; {{entry.parent.sampling_order}}</td>
+            </tr>   
+        </table>
+        {% endif %}
+</div>
+
+
+
+{% endblock %}
+
+
+
+
+
+

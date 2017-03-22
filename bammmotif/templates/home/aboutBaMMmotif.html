@@ -1,0 +1,25 @@
+{% extends "home/header.html" %}
+
+{% block content %}
+{% load staticfiles %}
+
+<div class="jumbotron" style="background-color:white"><font color="black">
+  <h2> Bayesian Markov models consistently outperform PWMs at predicting motifs in nucleotide sequences </h2>
+  <h3> Siebert M. and Soeding J.</h3>
+  <h3> Nucleic Acids Res. 2016 Jul 27;44(13):6055-69. doi: 10.1093/nar/gkw521. Epub 2016 Jun 9. </h3>
+  <hr style="border: 1px solid #1f2e2e">
+
+  <p><b>Abstract</b><br></p>
+<p align="justify"><font size=3>Position weight matrices (PWMs) are the standard model for DNA and RNA regulatory motifs. In PWMs nucleotide probabilities are independent of nucleotides at other positions. Models that account for dependencies need many parameters and are prone to overfitting. We have developed a Bayesian approach for motif discovery using Markov models in which conditional probabilities of order k - 1 act as priors for those of order k This Bayesian Markov model (BaMM) training automatically adapts model complexity to the amount of available data. We also derive an EM algorithm for de-novo discovery of enriched motifs. For transcription factor binding, BaMMs achieve significantly (P =  1/16) higher cross-validated partial AUC than PWMs in 97% of 446 ChIP-seq ENCODE datasets and improve performance by 36% on average. BaMMs also learn complex multipartite motifs, improving predictions of transcription start sites, polyadenylation sites, bacterial pause sites, and RNA binding sites by 26-101%. BaMMs never performed worse than PWMs. These robust improvements argue in favour of generally replacing PWMs by BaMMs. </p>
+  <p><b>The Bayesian Scheme</b><br>
+  <img src="{% static 'img/bayesianScheme.png' %}" class="responsive-img" style='max-height:300px;' alt="BayesianScheme"><br>
+  </p>
+ <p align="justify"><font size=3> We show how BaMMs can improve by 29% the prediction of transcription factor binding sites learned from ChIP-seq- enriched sequences by modelling the correlations between nucleotides in their binding sites.
+We evaluated our approach on 446 human ChIP-seq datasets for 94 sequence-specifc transcription factors associated with RNA polymerase (RNAP) II from The ENCODE Project Consortium (1). Positive sequences were compiled from up to 5000 peak regions with highest confidence by extracting ±102 bp around peak summits. We initialized our BaMM learning with the motif instances that XXmotif uses to build its top PWM model but added two positions to both 5′- and 3′-ends of the models. We sampled synthetic background sequences with the same length as the positive sequences but 100 times as many, using the trimer frequencies from the positive sequences. To compare PWMs with higher-order BaMMs without any influence from other source except model order, we treated PWMs as zeroth-order BaMMs.
+The performance in discriminating binding from background sequences was assessed using four-fold cross-validation, by sorting in descending order the sequences by their maximum log-odds score over all possible motif positions and recording the cumulated number of correct predictions (TP) and false predictions (FP) above a score threshold. Lowering the score threshold from maximum to minimum we trace out a curve of TP versus FP. The normalized version in which one plots the true positive rate (TPR), the fraction of TP out of all positive sequences, versus the false positive rate (FPR), the fraction of FP out of all background sequences, is called receiver operating charac- teristic (ROC) curve. The partial area under the ROC curve (pAUC) up to the fith percentile of FPR (insets in Figure 2A and B) is a good measure of performance, because at FPR > 0.05 and TPR = 1 the precision, i.e. the fraction of predictions that are correct (i.e. truly bound), has already fallen to below 1/(1 + 0.05 × 100) = 0.167. The pAUC therefore summarises the part of the ROC curve most relevant in practice for predicting factor binding sites and is preferable over the AUC.
+Figure 2A shows the ratios of pAUC for  first-order BaMMs to the pAUC for PWMs (order 0) on each of the 446 datasets. On almost all sets the pAUC increases and the average relative increase is 16%. Strikingly, fifth- order BaMMs perform considerably better than  first-order BaMMs, yielding an average fold pAUC increase over PWMs of 29% (Figure 2B). Also, on none of the 446 dataset they are clearly worse than PWMs, showing that overtraining is effectively prevented. Higher-orders are particularly beneficial for the more challenging datasets with low pAUC values.</p>
+
+ <p align="justify"><font size=3>  <a href="http://nar.oxfordjournals.org/content/44/13/6055.long"> Read the full Paper </a></p>
+</font></div>
+{% endblock %}
+

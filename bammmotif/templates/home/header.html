@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <title>BaMMmotif</title>
+        <meta charset="utf-8" />
+        {% load staticfiles %}
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}" type = "text/css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script type="text/javascript" src="{% static 'js/nhpup_1.1.js' %}"> </script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        
+
+
+    <link rel="shortcut icon" href="{%  static 'img/BAMM_Glyphicon_32.png' %}">
+		
+        <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+        
+        <style type="text/css">
+                html,
+                body {
+                  height:100%
+                }
+        </style>
+</head>
+
+<body class="body" style="background-color:white">
+  <div class="container-fluid" style="min-height:95%; ">
+    <div class="row">
+      <div class="col-sm-12">
+      <center>
+      <ul class="nav nav-tabs navbar-fixed-top" role="tablist" style="background-color:white">
+        <li role="navigation"><a href="/home/"><font color="#1f2e2e">Home</font></a></li>
+        <li role="nativation">  
+          {% if user.is_authenticated %}
+            <a  href='/results/result_overview' ><font color="#1f2e2e">Find My Job</font></a>
+          {% else %}
+            <a href="/results/" ><font color="#1f2e2e">Find My Job</font></a></p>
+          {% endif %}
+        </li>
+        <li role="navigation"><a href="/aboutBaMMmotif/"><font color="#1f2e2e">About BaMMmotif</font></a></li>
+        <li role="navigation"><a href="/documentation/"><font color="#1f2e2e">Documentation</font></a></li>
+        <li role="navigation"><a href="{% url 'download' %}"><font color="#1f2e2e">Download</font></a></li>
+        <li role="navigation"><a rel="external noopener" target="_blank" href="http://www.mpibpc.mpg.de/soeding"><font color="#1f2e2e">Söding Lab</font></a></li>
+       <li role="navigation" style="float: right;">
+          {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}"><font color="#1f2e2e">Log out</font></a>
+          {% else %}
+            <a href="{% url 'login' %}"><font color="#1f2e2e">Log in</font></a>
+          {% endif %}
+        </li>
+         <li role="naviation" style="float: right;">
+          {% if user.is_authenticated %}
+            <a><font color="#1f2e2e">Hi {{ user.username }}!</font></a>
+          {% endif %}
+        </li>
+      </ul>  
+      </center>
+      </div>
+    </div>
+    <div class="row">
+        <p><font color="white"><br></font></p>
+    </div>
+    <div class="row">
+      <div class="col-sm-12">
+        <br>
+         <center>
+          <a href="/home/"><span><img src="{% static 'img/BaMMmotif.png' %}" class="responsive-img" style='max-height:250px;' alt="logo"></span></a>
+         </center>
+         <br>
+      </div> 
+
+      <!--<div class="col-sm-1">
+        <p align="right">
+          {% if user.is_authenticated %}
+            <font color="#1f2e2e">Hi {{ user.username }}!</font>
+            <a href="{% url 'logout' %}"><font color="#1f2e2e">logout</font></a>
+          {% else %}
+            <a href="{% url 'login' %}"><font color="#1f2e2e">login</font></a>
+          {% endif %}
+        </p>
+      </div>-->
+					
+              
+      </div>
+
+                <div class="row">
+                  <!--<div class="col-sm-2">
+                  <br>
+
+                  <br>
+                        <div class="well bs-sidebar" id="sidebar" style="background-color:#fff">
+                          <ul class="nav nav-pills nav-stacked">
+                                <li><a href='/'><font color="#1f2e2e">Home</font></a></li>
+                                <li>  
+                                {% if user.is_authenticated %}
+                                    <a  href='/results/result_overview' ><font color="#1f2e2e">View Your Jobs</font></a>
+                                  {% else %}
+                                   <a href="/results/" ><font color="#1f2e2e">View Your Jobs</font></a></p>
+                                 {% endif %}
+                                 </li>
+                                <li><a href='/aboutBaMMmotif/'><font color="#1f2e2e">About BaMMmotif</font></a></li>
+				                <li><a href='/documentation/'><font color="#1f2e2e">Documentation</font></a></li>
+                                <li><a href='/download/'><font color="#1f2e2e">Download</font></a></li>
+                          </font></ul>
+                        </div> 
+                  </div>-->
+                  <div class="col-sm-12">
+                            <div class="container">
+                           {% block content %}
+                           {% endblock %}
+                           </div>
+                </div>
+        </div>
+        <footer>
+                <div class="container-fluid" style='margin-left:15px'>
+                        <p><a href='/contact/'><font color="#1f2e2e">Contact</font></a>
+                          <a href='/imprint/'><font color="#1f2e2e">Imprint</font></a></p>
+                </div>
+        </footer>
+
+</body>
+
+</html>
+

@@ -1,0 +1,14 @@
+.tooltip{
+	background-color: #B8B8B8; /*rgba(68,136,187,0.5);*/
+	margin: 10px;
+/* 	height: 50px;
+	width: 150px; */
+	width: 50%;
+	float: left;
+ 	padding-left: 10px; 
+	padding-top: 10px;
+	padding-bottom: 10px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}

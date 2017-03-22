@@ -1,0 +1,187 @@
+{% extends "home/header.html" %}
+
+{% block content %}
+
+
+<div class="jumbotron" style="background-color:white"><font color="black">
+  <h2>Documentation</h2>
+  <hr style="border: 1px solid #1f2e2e">
+  <a href="#1. How to use the web tool">1.How to use the web tool</a><br>
+  &nbsp;&nbsp; <a href="#1.1 De-novo Motif Prediction">1.1 De-novo Motif Prediction</a><br>
+  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.1 Data Upload">1.1.1 Data Upload</a><br>
+  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.2 Options">1.1.2 Options</a><br>
+  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.3 Submition">1.1.3 Submition</a><br>
+  &nbsp;&nbsp; <a href="#1.2 Motif Instance Discovery">1.2 Motif Instance Discovery</a><br>
+  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.2.1 Data Upload">1.2.1 Data Upload</a><br>
+  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.2.2 Submition">1.2.2 Submition</a><br>
+<br>
+<a href="#2. Interpreting BaMM Results">2. Interpreting BaMM Results</a><br>
+  &nbsp;&nbsp; <a href="#2.1 How do I obtain my job results?">2.1 How do I obtain my job results?</a><br>
+  &nbsp;&nbsp; <a href="#2.2 What does the Result Page show?">2.2 What does the Result Page show?</a><br>
+  &nbsp;&nbsp; <a href="#2.3 How to interprete BaMMmotif logo plots?">2.3 How to interprete BaMMmotif logo plots?</a><br>
+<br>
+<a href="#3. The BaMM database">3. The BaMM database</a><br>
+  &nbsp;&nbsp; <a href="#3.1 What can I find in the database?">3.1 What can I find in the database?</a><br>
+  &nbsp;&nbsp; <a href="#3.2 How can I search for a specific entry?">3.2 How can I search for a specific entry?</a><br>
+  &nbsp;&nbsp; <a href="#3.3 How can I use a Motif from the database?">3.3 How can I use a Motif from the database?</a><br>
+<br>
+<a href="#4. The BaMMmotif Command Line Tool">4. The BaMMmotif Command Line Tool</a><br>
+  &nbsp;&nbsp; <a href="#4.1 Where can I download the command line tool?">4.1 Where can I download the command line tool?</a><br>
+  &nbsp;&nbsp; <a href="#4.2 How do I use the command line tool?">4.2 How do I use the command line tool?</a><br>
+<br>
+<a href="#5.FAQs">5.FAQs</a><br>
+
+</div>
+
+<div class="jumbotron" style="background-color:white"><font color="black">
+<h2 id="1.How to use the web tool"> 1. How to use the web tool </h2>
+<p align="justify"> The BaMMmotif webserver enables the user to (a) predict de-novo motifs, (b) search for motif instances in custom sequences and (c) browse our database of more than 400 higher order motif models (constantly growing).</p>
+<br>
+
+<h3 id="1.1 De-novo Motif Prediction">1.1 De-novo Motif Prediction </h3>
+<p align="justify"> Most motif discovery algorithms train PWMs (position weight matrices). We derive here an expectation maximization (EM) algorithm to train BaMMs ( Bayesian Markov Models) which take positional interdependencies into account. </p>
+<p align="justify"> Performing de-novo motif prediction using BaMMmotif is a simple 3-step process:</p>
+<br>
+
+<h4 id="1.1.1 Data Upload"> 1.1.1 Data Upload </h4>
+    <p> Positive Input Sequences: </p>
+    <p align="justify">Please enter a FASTA formated file containing DNA sequences that are enriched for a motif which you want to predict (i.e. peak sequences from ChIP-seq measurements). The sequences need to be of the same length. The maximum file upload size is limited to 250 Mb for registered Users and 2.5Mb for anonymous Users.</p>
+    <br>	
+    
+    <p> Background Sequences (optional):</p>
+    <p align="justify">A FASTA formated file with negative/background sequences can be provided in order to learn the (homogeneous) background BaMM. These sequences should reflect the genomic background of the positive input sequences without being enriched for a motif. If no background sequence file is provided, the background BaMM is learned from the k-mer frequences of the positive sequences.</p>
+	<br>
+	
+	<p> Motif Initialization: </p>
+	<p align="justify">BaMMmotif needs either a PWM, a BaMM or a list of known binding sites in order to initialize. You can either provide a custom file for initialization or use our brand new tool "PeNGmotif" in order to find seeding patterns in your provided positive input sequences.</p>
+    <br>
+	
+	<p> Motif InitFile and Format </p>
+	<p align="justify"> When you decide to use a custom file for motif initialization you can upload 3 different file formats here.<br>
+	PWM-> The file needs to look like this:<br>
+	BaMM -> The file needs to look like this:</br>
+	BindingSites -> The file needs to look like this:</p>
+	<br>
+
+<h4 id="1.1.2 Options">1.1.2 Options </h4>
+	<p> Model Order </p>
+	<p align="justify">The model order defines up to which order the BaMM will be optimized. A 0th order BaMM model is equivalent to a PWM model. A 1rst order BaMM model takes dinucleotide probabilities into account. Registered users can learn models up to 8th order while anonymous users are limited to 3rd order models (due to computation time and resource) only.</p>
+	<br>
+	
+	<p> Reverse Complement </p>
+	<p align="justify"> Select this option when motifs can occus on both strands, i.e. as reverse complements of each other. Transcription factors and micro RNAs can usually bind on both strands ( in reverse orientation ). Deselect if you are searching for directional motifs. </p> 
+    <br>
+	
+	<p> Extend Left + Right </p>
+	<p align="justify">The extend options allow the user to add uniformly initialized positions to the left and/or right of the motif initialization. The number of positions which will be added to either side are by default 0.</p>
+    <br>
+	
+	<p> FDR </p>
+	<p align="justify">Select this option if you want to perform a false discovery rate (FDR) estimation for the predicted motif model(s). This will trigger a "cvFold"- cross validation with "mFold"-times negative sampled sequences.</p>
+    <br>
+	
+	<p> m Fold </p>
+	<p align="justify">If FDR is selected you can adjust the amount of sampled negative sequences with this option. The default 10 indicates that the negative sequence set will be 10 times larger than the positive seuqences. </p>
+    <br>
+	
+	<p> cv Fold </p>
+	<p align="justify">If FDR is selected you can adjust the fold for cross validation. By default a 5-fold cross validation is performed.</p>
+    <br>
+	
+	<p> Background Order </p>
+	<p align="justify">The background order describes the (homogeneous) model order of the background BaMM. The default is 2, i.e. the background model will be derived from the 3-mer frequencies of the background sequences ( if no background sequences are given the provided positive input sequences are used for sampling).</p>
+    <br>
+	
+	<p> Advanced Options </p>
+	<p align="justify">The following options are in general not necessary to be adjusted but can alter the EM sensitivity and running time if needed. </p>
+    <br>
+	
+	<p> FDR sampling Order </p>
+	<p align="justify">The FDR sampling order defines the order of k-mers which will be used for sampling negative sequences during FDR estimation. The default is 2, i.e. sampling trimer frequencies.</p>
+    <br>
+	
+	<p> EM epsilon </p>
+	<p align="justify">The EM algorithm is deemed to be converged when the sum over the absolute differences in BaMM probabilities from successive EM rounds is smaller than epsilon. The default is 0.001.</p>
+    <br>
+	
+	<p> EM max Iter </p> 
+	<p align="justify">The maxium iterations of the EM algorithm can be reduced with this option. BaMMs stop criteria is given by the convergence of BaMM probabilities (see EM epsilon) first, and by the maximum Iterations second.</p>
+	<br>
+
+<h4 id="1.1.3 Submition"> 1.1.3 Submition </h4> 
+	<p align="justify"> Names of uploaded files and all selected options are listed in this overview. By pressing the "BaMM!" button, your job will be submitted to the server.</p>
+    <br>
+
+<h3 id="1.2 Motif Instance Discovery"> 1.2 Motif Instance Discovery </h3>
+<p align="justify"> If you have a motif model already predicted (or load from the database) you can use it to find motif instances in sequences that are hundreds or thousands of nucleotides long. BaMMmotif will give you a logOdds Score ( measure of how good the motif matches a sequence ) for each position in your query sequence and/or indicate which positions contain the most probable binding sites of your model. </p>
+<p align="justify"> Finding motif sites in a query-sequence is a simple 2 Step process: </p>
+<br>
+
+<h4 id="1.2.1 Data Upload">1.2.1 Data Upload </h4>
+	<p>    Input Sequences: </p>
+	<p align="justify"> Please enter a FASTA formated file which you want to scan for motif occurences. The maximum file upload size is limited to 250 Mb for registered Users and 2.5Mb for anonymous Users.</p>
+    <br>
+	
+	<p>    Model File and Format: </p>
+	<p align="justify"> You can either upload a custom Motif in PWM or BaMM format, or select a BaMM model from our BaMM-DB.
+	PWM file format looks like this: 
+	BaMM file format looks like this: </p>
+    <br>	
+	
+<h4 id="1.2.2 Submition">1.2.2 Submition</h4>
+	<p align="justify"> Your uploaded files will be summarized here. By pressing the "BaMM!" button, your job will be submitted to the server.</p>
+    <br>
+    
+<h2 id="2. Interpreting BaMM Results"> 2. Interpreting BaMM Results </h2>
+<br>
+
+<h3 id="2.1 How do I obtain my job results?"> 2.1 How do I obtain my job results? </h3>
+	<p align="justify"> You can find your results under "Find My Job". If you are registered you will find a summary list of all your jobs and their status. When a job has finished you can click on "Finished" in order to view your results. If you have run your job anonymously, you can enter your job ID under "Find My Job".</p>
+    <br>	
+    
+<h3 id="2.2 What does the Result Page show?">2.2 What does the Results Page show? </h3>	
+	<p align="justify"> The results page summarizes your job settings in the first panel. Here you can recapitualte your selected options and uploaded files. For each motif you will obtain Motif Logos up to 3rd order contributions. If you have selected the option "FDR" you will obtain a "Motif Performance" panel, which show a ROC curve and the LogOdds Score distributions of positive and negative sequence sets. in comparison. 
+	The performance in discriminating binding from background sequences is assessed using cross-validation, by sorting in descending order the sequences by their maximum log-odds score over all possible motif positions and recording the cumulated number of correct predictions (TP) and false predictions (FP) above a score threshold. Lowering the score threshold from maximum to minimum we trace out a curve of TP versus FP. The normalized version in which one plots the true positive rate (TPR), the fraction of TP out of all positive sequences, versus the false positive rate (FPR), the fraction of FP out of all background sequences, is called receiver operating charac- teristic (ROC) curve. The partial area under the ROC curve (pAUC) up to the fith percentile of FPR (insets in Figure 2A and B) is a good measure of performance, because at FPR > 0.05 and TPR = 1 the precision, i.e. the fraction of predictions that are correct (i.e. truly bound), has already fallen to below 1/(1 + 0.05 × 100) = 0.167. The pAUC therefore summarises the part of the ROC curve most relevant in practice for predicting factor binding sites and is preferable over the AUC.
+	The Panel "Motif Positions" describes where in your query sequences motif instances with a high logOdds score are positioned. Each panel content can be downloaded in .zip format.</p>
+<br>
+
+<h3 id="2.3 How to interprete BaMMmotif logo plots?">2.3  How to interprete BaMMmotif logo plots? </h3>
+	<p align="justify"> We developed sequence logos for higher orders to visualize the Bamms. We split the relative entropy of the model into a sum of terms, one for each order. The logos show the amount of information contributed by each order over and above what is provided by lower orders, for each oligonucleotide and position. </p>
+<br>
+
+<h2 id="3. The BaMM database"> 3. The BaMM database </h2>
+<p align="justify">The BaMM database offers a wide range of higher order binding site models predicted using BaMMmotif. <p>
+<br>
+
+<h3 id="3.1 What can I find in the database?">3.1  What can I find in the database? </h3>
+<p align="justify"> Currently our database contains 445 higher order BaMM models derived from ENCODE ChIP-Seq data of 94 human transcription factor measurements from various laboratories. We will continuously enlarge this database with higher order BaMM models predicted on further publicly avaiable data sets such as PBM data and HT-SELEX. </p>
+<br>
+
+<h3 id="3.2 How can I search for a specific entry?">3.2  How can I search for a specific entry in the database? </h3>
+<p align="justify"> Follow the link "search database" from the Home website and enter the name of your protein target of interest. You will obtain a list of all database entries which contain your protein name. Details for each entry can be viewed by clicking the "more" button.</p>
+<br>
+
+<h3 id="3.3 How can I use a Motif from the database?">3.3  How can I use a Motif from the database to scan over my custom sequences? </h3>
+<p align="justify"> When you want to use a higher order model from the database to scan over your squery sequence, simply click on "Use this model" on the database details entry page. You will be redierected to upload your query sequence for scanning with BaMM!.</p>
+<br>
+
+<h2 id="4. The BaMMmotif Command Line Tool"> 4. The BaMMmotif Command Line Tool </h2>
+<p align="justify">BaMMmotif is also available as command line tool. Using the command line tool enables experienced users to i.e. work without limited file upload sizes and/or using the tool in offline mode.</p>
+<br>
+
+<h3 id="4.1 Where can I download the command line tool?">4.1  Where can I download the tool? </h3>
+<p align="justify"> The command line version of BaMMmotif can be downloaded from our <a href="https://github.com/soedinglab/BaMMmotif" > GitHub Repository</a>. </p>
+<br>
+
+<h3 id="4.2 How do I use the command line tool?">4.2  How do I use the command line tool? </h3>
+<p align="justify"> A detailed description of how to use the command line tool can be found in the Readme section of the respective GitHub repository.</p>
+<br>
+
+<h2 id="5.FAQs"> 5. FAQs </h2>
+<br>
+
+
+</div>
+
+{% endblock %}
+

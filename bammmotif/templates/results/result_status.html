@@ -1,0 +1,31 @@
+{% extends "home/header.html" %}
+
+{% block content %}
+{% load static %}
+
+<meta http-equiv="refresh" content="5" >
+<div class="jumbotron"  style="background-color:white"><font color="black">
+     <h2> BaMMmotif Results for Job  {{result.job_name}} </h2>
+     <hr style="border: 1px solid #1f2e2e">
+     <div id="{{result.job_ID}}">
+        <p> Your job is currently running....</p>
+        <p> Your Job status: {{result.status}} </p>
+        <p> You can view the current calculations in the window below. </p>
+        <p> If you have submitted this job while being logged in, you will receive an email when it is finished. </p> 
+        
+        <div style="background-color:black"><font color="white">
+            <pre> {{output}} </pre>     
+        </front>
+        </div>
+
+    </div>
+  </font>
+</div>
+
+{% endblock %}
+
+
+
+
+
+

@@ -1,0 +1,174 @@
+body {
+  background-color: #F8F8F8;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+* {
+  font-family: 'Oxygen', sans-serif;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+/*    bottom: 0;*/
+/*    width: 100%;*/
+}
+
+li {
+    float: left;
+/*    border-right: 1px solid #bbb;*/
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #111;
+}
+
+li:last-child {
+    border-right: none;
+}
+
+.active {
+    background-color: #4CAF50;
+}
+
+.background {
+  fill: #F8F8F8;
+  color: #F8F8F8;
+}
+
+.pdom {
+	fill: #4daf4a;
+	color: #4daf4a;
+}
+.SCOP {
+	fill: #e41a1c;
+	color: #e41a1c;
+}
+.pfam {
+	fill: #377eb8;
+	color: #377eb8;
+}
+.adda {
+	fill: #984ea3;
+	color: #984ea3;
+}
+
+.ali_start {
+  stroke: #ff7f00;
+  fill: none;
+  stroke-width: 2;
+}
+
+.ali_end {
+  stroke: #a65628;
+  fill: none;
+  stroke-width: 2;
+}
+
+.ali_start_legend {
+  fill: #ff7f00;
+  color: #ff7f00;
+}
+
+.ali_end_legend {
+  fill: #a65628;
+  color: #a65628;
+}
+
+.pdom_border {
+  stroke: #4daf4a;
+  fill: none;
+  stroke-width: 1;
+  stroke-dasharray: 5, 5;
+}
+
+.SCOP_border {
+  stroke: #e41a1c;
+  fill: none;
+  stroke-width: 2;
+  stroke-dasharray: 0, 5, 5, 5;
+}
+
+.domain  {
+	height: 10px;
+}
+
+.active_domain {
+	opacity: 0.2;
+}
+
+.header {
+  position: fixed;
+	line-height:125px;
+	vertical-align:middle;
+	color: white;
+	background-color: rgb(17, 102, 86);
+	width: 100%;
+	height: 145px;
+	padding: 0px;
+}
+
+.content {
+  margin-top: 200px;
+	width: 96%;
+	float: left;
+  margin-left: 10px;
+}
+
+.protein_table table { 
+  width: 525px;
+}
+
+.protein_table thead tr {
+  display: block;
+}
+
+.protein_table tbody { 
+  display: block; /* makes it sizeable */
+  height: 800px; /* height of scrollable area */
+  overflow: auto; /* scroll rather than overflow */
+  width: 100%; /* fill the box */
+}
+
+.protein_table thead {
+  width: 525px;
+}
+
+.protein_table tr:nth-child(even){background-color: #C8C8C8 }
+
+.protein_table thead th { 
+  background-color: #4CAF50;
+  color: white;
+  width: 240px;
+}
+
+.protein_table tbody td {
+  width: 242px; 
+  text-align: center;
+  padding: 2px;
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}
+			
+.axis text {
+	font-family: sans-serif;
+	font-size: 11px;
+}
+

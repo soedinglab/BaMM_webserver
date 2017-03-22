@@ -1,0 +1,62 @@
+version: '2'
+
+services:
+  db:
+    image: mysql:latest
+    command: mysqld --user=root
+    volumes:
+      - /root/docker/composetest_db_1/conf.d:/etc/mysql/conf.d
+    ports:
+      - "13306:3306"
+    environment:
+      MYSQL_DATABASE: webserver
+      MYSQL_USER: bammmotif_admin
+      MYSQL_PASSWORD: 3aMM!mot1f
+      MYSQL_ROOT_PASSWORD: 3aMM!mot1f
+    networks:
+      bamm_net:
+        ipv4_address: 172.12.12.2
+
+  redis_celery:
+    image: redis:latest
+    networks:
+      bamm_net:
+        ipv4_address: 172.12.12.3
+
+  celery:
+    build: .
+    command: celery --app=webserver.celery:app worker --loglevel=DEBUG
+    user: user
+    volumes:
+      - .:/code
+    links:
+      - redis_celery
+      - db
+    networks:
+      bamm_net:
+        ipv4_address: 172.12.12.4      
+
+  web:
+    build: .
+    command: ./run_web.sh
+    user: user
+    volumes:
+      - .:/code
+    ports:
+      - "10080:10080"
+    links:
+      - db
+      - redis_celery
+      - celery
+    networks:
+      bamm_net:
+        ipv4_address: 172.12.12.5
+
+networks:
+  bamm_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.12.12.0/24
+        gateway: 172.12.12.1

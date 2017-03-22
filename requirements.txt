@@ -1,0 +1,9 @@
+Django
+django-secure
+django-registration
+django-ipware
+mysqlclient
+psycopg2
+Celery
+numpy
+redis

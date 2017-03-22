@@ -1,0 +1,149 @@
+{% extends "home/header.html" %}
+{% load staticfiles %}
+{% block content %}
+<div class="container-fluid" >
+  <div class="row">
+    <div class="col-md-4">
+      <div class='container-fluid'>
+        <center>
+              <img src="{% static 'img/Prediction.png' %}" class="responsive-img" style='max-height:120px;' alt="logo">
+        </center>
+        <div class="jumbotron" style="background-color:white"><font color="black">
+  
+  
+  {% if user.is_authenticated %}
+  <center>
+   <a class="btn btn-primary btn-lg" href='/job/data_predict/' style="background-color:#1f2e2e">Motif Discovery
+</a></center>
+  {% else %}
+
+<!-- Button trigger modal -->
+<center>
+<a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal_1" style="background-color:#1f2e2e">
+Motif Discovery
+</a>
+</center>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal_1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_1">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel_1"><font color="#0B0719">Profit from Logged in Mode </font></h4>
+      </div>
+      <div class="modal-body"><font color="#0B0719">
+               Dear User,
+               <br>
+               you are currently not logged in. As anonymous user you can test BaMMmotif, and view your results. On behalf of security and stability of our system we only allow limited functionality for unregistered users.
+               Registering at BaMMmotif onyl requires a username and an email address. 
+               As registered User you will be able to profit from:
+                <ul>
+                <li> higher computing capacity for your job </li>
+                <li> higher model order calculations ( 8th order models instead of max. 3rd order models)</li>
+                <li> longer storage and availability of your results ( 2 years instead of 4 weeks )</li>
+                <li> compfortable account page with all your jobs in overview </li>
+                <li> email notification when your jobs have finished and your results can be viewed </li>
+                <li> higher security of your own data </li>     
+                </ul>
+        </font>
+      </div>
+      <div class="modal-footer">
+        <p>
+         <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={{'/job/data_predict/'}}" role="button" style="background-color:#1f2e2e">
+         Login for more Comfort</a>
+         <a class="btn btn-primary btn-lg" href='/job/data_predict/' role="button" style="background-color:#1f2e2e">
+         Continue Anonymous</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  {% endif %}
+    <hr style="border: 1px solid #1f2e2e">
+  <p align="justify"><font size=3>De-novo motif discovery enables you to predict new binding site models based on your personal data set... </font></p> <!--You can either start from a pwm file, known binding sites, or let PengMotif do the work for you...</p>-->
+
+  </font>
+</div>
+</div>
+</div>
+
+<div class="col-md-4">
+  <div class='container-fluid'>
+    <center>
+              <img src="{% static 'img/Discovery.png' %}" class="responsive-img" style='max-height:120px;' alt="logo">
+            </center>
+<div class="jumbotron" style="background-color:white"><font color="black">
+
+  {% if user.is_authenticated %}
+  <center>
+     <a type="button" class="btn btn-primary btn-lg" href='/job/data_discover/' style="background-color:#1f2e2e">TFBS Prediction</a>
+   </center>
+  {% else %}
+<!-- Button trigger modal -->
+<center>
+<a type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal_2" style="background-color:#1f2e2e">TFBS Prediction</a>
+</center>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal_2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_2">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel_2"> <font color="#0B0719">Profit from Logged in Mode </font></h4>
+      </div>
+      <div class="modal-body"><font color="#0B0719">
+               Dear User,
+               <br>
+               you are currently not logged in. As anonymous user you can test BaMMmotif, and view your results. On behalf of security and stability of our system we only allow limited functionality for unregistered users.
+               Registering at BaMMmotif onyl requires a username and an email address. 
+               As registered User you will be able to profit from:
+                <ul>
+                <li> higher computing capacity for your job </li>
+                <li> higher model order calculations ( 8th order models instead of max. 3rd order models)</li>
+                <li> longer storage and availability of your results ( 2 years instead of 4 weeks )</li>
+                <li> compfortable account page with all your jobs in overview </li>
+                <li> email notification when your jobs have finished and your results can be viewed </li>
+                <li> higher security of your own data </li>     
+                </ul>
+              </font>
+      </div>
+      <div class="modal-footer">
+        <p>
+           <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={{'/job/data_discover/'}}" role="button" style="background-color:#1f2e2e">
+           Login for more Comfort</a>
+           <a class="btn btn-primary btn-lg" href='/job/data_discover/' role="button" style="background-color:#1f2e2e">
+           Continue Anonymous</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+   {% endif %}
+<hr style="border: 1px solid #1f2e2e">
+<p align="justify"><font size=3>Use a higher order model or select one from the database and find its positions within your custom sequence file...</font> </p>
+
+</font>
+</div>
+</div>
+</div>
+<div class="col-md-4">
+  <div class='container-fluid'>
+   <center>
+              <img src="{% static 'img/database.png' %}" class="responsive-img" style='max-height:120px;' alt="logo">
+   </center>
+<div class="jumbotron" style="background-color:white"><font color="black">
+<center><a class="btn btn-primary btn-lg" href='/database/' role="button" style="background-color:#1f2e2e">Motif Database</a></center>
+  <hr style="border: 1px solid #1f2e2e">
+  <p align="justify"><font size=3>For over 450 data sets from human, we provide higher order models. Browse, download or directly use entries for your analysis...</font></p>
+</font>
+</div>
+</div>
+</div>
+  </div>
+</div>
+
+{% endblock %}
+
