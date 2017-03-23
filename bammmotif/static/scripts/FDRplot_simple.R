@@ -4,10 +4,10 @@ suppressMessages(library(gdata))
 ################################################
 #             read in parameters               #
 ################################################
-dir = "/home/kiesel/Desktop/NEXT_Try/media/b7f7cac2-d6ee-4ab0-b331-e2270e409db2/"
-FileName = "wgEncodeOpenChromChipMcf7CtcfAlnRep0_summit_glfWILR_motif_1"
+dir = "/home/kiesel/Desktop/BaMM_webserver/media/d55c520a-a9ff-4d2d-830e-4f811fc62fb8/"
+FileName = "positiveSequences_motif_1"
 revComp= TRUE
-FastaFileName="wgEncodeOpenChromChipMcf7CtcfAlnRep0_summit_glfWILR"
+FastaFileName="positiveSequences"
   
 args <- commandArgs(trailingOnly = TRUE)
 splits <- strsplit(args,split='=')
@@ -74,7 +74,7 @@ for(split in splits) {
 
     all_positions = c()
     for( i in c(2:dim(positions)[2])){
-        all_positions = c(all_positions + na.omit(positions[,i])
+        all_positions = c(all_positions , na.omit(positions[,i]))
     }
 
   if(revComp == "True"){
