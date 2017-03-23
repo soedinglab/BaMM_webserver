@@ -26,32 +26,6 @@ ALPHABET_CHOICES = (
     ('EXTENDED', 'EXTENDED'),
 )
 
-STATUS_CHOICES = (
-    ('data uploaded', 'data uploaded'),
-    ('submitted', 'submitted'),
-)
-
-
-
-# class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-#
-#     def __unicode__(self):
-#        return self.user.id
-#    
-#
-# # automatically create profile model when new user instance is created
-# @receiver(post_save, sender=User)
-# def create_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         Profile.objects.create(user=instance)
-#
-# # automatically update profile model when user instance is updated
-# @receiver(post_save, sender=User)
-# def save_user_profile(sender, instance, **kwargs):
-#     instance.profile.save()
-    
-
 def job_directory_path(instance, filename):
    	return '{0}/Input/{1}'.format(instance.job_ID, filename)
 
@@ -60,7 +34,7 @@ class Job(models.Model):
     job_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     job_name=models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField( default=datetime.datetime.now) 
-    status = models.CharField(max_length=255, choices=STATUS_CHOICES, default="not initialized", null=True, blank=True)
+    status = models.CharField(max_length=255, default="not initialized", null=True, blank=True)
     num_motifs = models.IntegerField(default=1)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
         
@@ -124,14 +98,6 @@ class Job(models.Model):
     def MotifInit_filename(self):
         return os.path.basename(self.Motif_InitFile.name)
 
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.       
- 
 
 class DbParameter(models.Model):
     param_id = models.SmallIntegerField(db_column='param_ID', primary_key=True)  # Field name made lowercase.
@@ -158,29 +124,9 @@ class DbParameter(models.Model):
     maxcgsiterations = models.BigIntegerField(db_column='maxCGSIterations')  # Field name made lowercase.
     noalphasampling = models.IntegerField(db_column='noAlphaSampling')  # Field name made lowercase.
 
-    class Meta:
-        managed = False
-        db_table = 'db_parameter'
-
-
-class DbTable(models.Model):
-    db_public_id = models.SmallIntegerField(db_column='db_public_ID', primary_key=True)  # Field name made lowercase.
-    laboratory = models.CharField(max_length=12)
-    cell_line = models.CharField(max_length=24)
-    cell_line_1 = models.CharField(max_length=12)
-    cell_line_2 = models.CharField(max_length=12)
-    protein_name = models.CharField(max_length=20)
-    pos_seq_file = models.CharField(max_length=120)
-    neg_seq_file = models.CharField(max_length=80, blank=True, null=True)
-    intensity_file = models.CharField(max_length=80, blank=True, null=True)
-    motif_init_file = models.CharField(max_length=120)
-    result_location = models.CharField(max_length=80)
-    parent = models.ForeignKey(DbParameter, blank=True, null=True, on_delete=models.CASCADE)
-
-    class Meta:
-        managed = False
-        db_table = 'db_table'
-
+    
+    def __str__(self):
+        return self.param_id
 
 class ChIPseq(models.Model):
     db_public_id = models.SmallIntegerField(db_column='db_public_ID', primary_key=True)  # Field name made lowercase.
@@ -196,10 +142,10 @@ class ChIPseq(models.Model):
     motif_init_file = models.CharField(max_length=120)
     result_location = models.CharField(max_length=80)
     parent = models.ForeignKey(DbParameter, blank=True, null=True, on_delete=models.CASCADE)
-     
-    class Meta:
-        managed = False
-        db_table = 'db_table'
+
+    
+    def __str__(self):
+        return self.db_public_id
 
 class Motifs(models.Model):
     motif_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -209,5 +155,8 @@ class Motifs(models.Model):
     length = models.PositiveSmallIntegerField(null=True, blank=True)
     auc = models.FloatField(blank=True, null=True)
     occurrence = models.FloatField(blank=True, null=True)
-    db_matches = models.ManyToManyField(ChIPseq)
+    db_match = models.ManyToManyField('ChIPseq', blank=True)
+
     
+    def __str__(self):
+        return self.motif_ID
