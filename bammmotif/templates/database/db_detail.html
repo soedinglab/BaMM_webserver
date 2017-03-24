@@ -5,23 +5,23 @@
 
 
 <div class="jumbotron" style="background-color:white"><font color="black">
- <h2> BaMMmotif Database details for " {{entry.protein_name}} "</h2>
+ <h2> BaMMmotif Database details for " {{entry.target_name}} "</h2>
     <hr style="border: 1px solid #1f2e2e">
-      <div class="well" style="background-color:white" id="{{entry.protein_name}}">
+      <div class="well" style="background-color:white" id="{{entry.target_name}}">
         <h2>Database Entry Information:</h2>
         <hr style="border: 1px solid #1f2e2e">
         <table>
            <tr>
                 <td> &emsp; Protein / Target Name: </td>
-                <td> &emsp; {{entry.protein_name}} </td>
+                <td> &emsp; {{entry.target_name}} </td>
             </tr>
             <tr>
                 <td> &emsp; Data Type: </td>
-                <td> &emsp; {{entry.cell_line_1 }} </td>
+                <td> &emsp; {{entry.grant }} </td>
             </tr>
             <tr>
                 <td> &emsp; Cell Type: </td>
-                <td> &emsp; {{entry.cell_line_2}} </td>
+                <td> &emsp; {{entry.cell_type}} </td>
             </tr>
             <tr>
                 <td> &emsp; Experiment: </td>
@@ -29,7 +29,7 @@
             </tr>
             <tr>
                 <td> &emsp; Lab / Grant: </td>
-                <td> &emsp; {{entry.laboratory}} </td>
+                <td> &emsp; {{entry.lab}} </td>
             </tr>
             <tr>
                 <td> &emsp; Data Source: </td>
@@ -104,7 +104,7 @@
         <table>
             <tr>
                 <td>  &emsp; Model Order: </td>
-                <td>  &emsp; {{entry.parent.model_order}}</td>
+                <td>  &emsp; {{entry.parent.modelorder}}</td>
             </tr>
             <tr>
                 <td>  &emsp; Extend Motif to the Left By: </td>
@@ -116,7 +116,7 @@
             </tr>
             <tr>
                 <td>  &emsp; Reverse Complement: </td>
-                <td>  &emsp; {{entry.parent.reverse_comp}}</td>
+                <td>  &emsp; {{entry.parent.reversecomp}}</td>
             </tr>
         </table>
 
@@ -124,7 +124,7 @@
         <table>
             <tr>
                 <td>  &emsp; Background Order: </td>
-                <td>  &emsp; {{entry.parent.bg_model_order}}</td>
+                <td>  &emsp; {{entry.parent.bgmodelorder}}</td>
             </tr>
         </table>
         
@@ -133,7 +133,7 @@
         <table>
             <tr>
                 <td>  &emsp; q value: </td>
-                <td>  &emsp; {{enrty.parent.q_value}}</td>
+                <td>  &emsp; {{entry.parent.q_value}}</td>
             </tr>
             <tr>
                 <td>  &emsp; epsilon: </td>
@@ -141,7 +141,7 @@
             </tr>
             <tr>
                 <td>  &emsp; max Iterations: </td>
-                <td>  &emsp; {{entry.parent.max_em_iterations}}</td>
+                <td>  &emsp; {{entry.parent.maxemiterations}}</td>
             </tr>
         </table>
         {% endif %}
@@ -151,29 +151,29 @@
         <table>
             <tr>
                 <td>  &emsp; sampling Alphas: </td>
-                <td>  &emsp; {{entry.parent.no_alpha_sampling|yesno:"False,True"}}</td>
+                <td>  &emsp; {{entry.parent.noalphasampling|yesno:"False,True"}}</td>
             </tr>
             <tr>
                 <td>  &emsp; max Iterations: </td>
-                <td>  &emsp; {{enrty.parent.max_cgs_iterations}}</td>
+                <td>  &emsp; {{entry.parent.maxcgsiterations}}</td>
             </tr>
         </table>
         {% endif %}
         
-        {% if entry.parent.FDR == 1%}
+        {% if entry.parent.fdr == 1%}
         <h3>False Discovery Rate Estimation:</h3>
         <table>
             <tr>
                 <td>  &emsp; mFold: </td>
-                <td>  &emsp; {{entry.parent.m_fold}}</td>
+                <td>  &emsp; {{entry.parent.mfold}}</td>
             </tr>
             <tr>
                 <td>  &emsp; cvFold: </td>
-                <td>  &emsp; {{entry.parent.cv_fold}}</td>
+                <td>  &emsp; {{entry.parent.cvfold}}</td>
             </tr> 
             <tr>
                 <td>  &emsp; sampling Order: </td>
-                <td>  &emsp; {{entry.parent.sampling_order}}</td>
+                <td>  &emsp; {{entry.parent.samplingorder}}</td>
             </tr>   
         </table>
         {% endif %}

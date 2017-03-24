@@ -26,6 +26,7 @@ USER ${APP_USER}
 
 ADD bammmotif/ /code/ 
 ADD webserver/ /code/ 
+ADD DB/ /code/
 ADD *.sh /code/
 ADD *.py /code/
 

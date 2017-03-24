@@ -290,7 +290,7 @@ def data_discover(request):
     return render(request, 'job/data_discover.html', { 'form':form })
 
 def data_discover_from_db(request, pk):
-    db_entry = get_object_or_404(DbTable, pk=pk)
+    db_entry = get_object_or_404(ChIPseq, pk=pk)
     if request.method == "POST":
         form=DiscoveryDBForm(request.POST, request.FILES)
         if form.is_valid():
@@ -424,7 +424,10 @@ def maindb(request):
         form = DBForm(request.POST)
         if form.is_valid():
             protein_name = form.cleaned_data['db_ID']
-            db_entries = DbTable.objects.filter( protein_name__icontains=protein_name )
+            print('PROTEIN NAME= ' + protein_name)
+            db_entries = ChIPseq.objects.filter( target_name__icontains=protein_name )
+            print('LENGTH OF QUERRY= ' + str(len(db_entries)))
+            db_entries = ChIPseq.objects.all()
             return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries })
     else:
         form = DBForm()
@@ -436,7 +439,7 @@ def db_overview(request, protein_name, db_entries):
     return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries })
 
 def db_detail(request, pk):
-   entry = get_object_or_404(DbTable, db_public_id=pk)
+   entry = get_object_or_404(ChIPseq, db_public_id=pk)
    return render(request,'database/db_detail.html', {'entry':entry})
 
 

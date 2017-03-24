@@ -129,7 +129,7 @@ class DbParameter(models.Model):
         return self.param_id
 
 class ChIPseq(models.Model):
-    db_public_id = models.SmallIntegerField(db_column='db_public_ID', primary_key=True)  # Field name made lowercase.
+    db_public_id = models.UUIDField(db_column='db_public_ID', primary_key=True, default=uuid.uuid4, editable=False)  # Field name made lowercase.
     filename = models.CharField(max_length=255)
     lab = models.CharField(max_length=12)
     grant = models.CharField(max_length=12)
