@@ -155,8 +155,22 @@ class Motifs(models.Model):
     length = models.PositiveSmallIntegerField(null=True, blank=True)
     auc = models.FloatField(blank=True, null=True)
     occurrence = models.FloatField(blank=True, null=True)
-    db_match = models.ManyToManyField('ChIPseq', blank=True)
+    db_match = models.ManyToManyField('ChIPseq', through='DbMatch', blank=True)
 
     
     def __str__(self):
         return self.motif_ID
+
+class DbMatch(models.Model):
+    match_ID     = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    motif        = models.ForeignKey('Motifs')
+    db_entry     = models.ForeignKey('ChIPseq')
+    p_value      = models.FloatField(default=0.0)
+    e_value      = models.FloatField(default=0.0)
+    score        = models.FloatField(default=0.0)
+    offset_motif = models.IntegerField(default=0)
+    offset_db    = models.IntegerField(default=0)
+    overlap_len  = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.match_ID

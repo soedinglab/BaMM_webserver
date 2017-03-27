@@ -166,8 +166,6 @@ def run_bamm(self, job_pk):
                     sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
                     sys.stdout.flush()
                 process.wait()    
-                #output = process.communicate()[0]
-                #exitCode = process.returncode
 
                 # count how many motifs have been processed
                 job.num_motifs  = len(os.listdir(opath))/file_counter
@@ -212,23 +210,42 @@ def run_bamm(self, job_pk):
                     job.save() 
                     print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
-                    #command = 'python3 /code/bammmotif/static/scripts/tomtomtool.py' 
-                    #process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                    # get DBParams
+                    db_param = get_object_or_404(DbParameter, param_id=100)
+
+                    command = 'python3 /code/bammmotif/static/scripts/tomtomtool.py ' +  opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp ' + opath + '/' +  basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp ' + '/code/DB/ENCODE_ChIPseq/Results ' + str(job.model_Order) + ' --db_order ' + str(db_param.modelorder) + ' --read_order ' + str(1) + ' --shuffle_times ' + str(10) + ' --quantile ' + str(0.1) +  ' --p_val_limit ' + str(job.db_match_bit_factor)
+                    print(command)
+                    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
                     # Poll process for new output until finished
-                    #while True:
-                    #    nextline = process.stdout.readline()
-                    #    if nextline == b'' and process.poll() is not None:
-                    #        break
-                    #    sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
-                    #    match_name = str(nextline.strip().decode('ascii'))
-                    #    db_match = get_object_or_404(DbTable, result_location=match_name)
-                    #    motif_obj.db_matches.add(db_match)
-                    #    motif_obj.save()
-                    #    sys.stdout.flush()
-                    
-                    #process.wait()
-
+                    while True:
+                        nextline = process.stdout.readline()
+                        if nextline == b'' and process.poll() is not None:
+                            break
+                        sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
+                        sys.stdout.flush()
+                        if str(nextline.strip().decode('ascii')) == 'no matches!':
+                            print('Comparison with database did not provide any matches!')
+                            break
+                        else:
+                            match_name = str(nextline.strip().decode('ascii').split()[0])
+                            print('MATCHNAME =' + match_name)
+                            db_match = get_object_or_404(ChIPseq, filename=match_name)
+                            # create relationship
+                            rel_obj = DbMatch(
+                                motif=motif_obj,
+                                db_entry=db_match,
+                                p_value=float(nextline.strip().decode('ascii').split()[1]),
+                                e_value=float(nextline.strip().decode('ascii').split()[2]),
+                                score=float(nextline.strip().decode('ascii').split()[3]),
+                                offset_motif=int(float(nextline.strip().decode('ascii').split()[4])),
+                                offset_db=int(float(nextline.strip().decode('ascii').split()[5])),
+                                overlap_len=int(float(nextline.strip().decode('ascii').split()[6]))
+                                )
+                            rel_obj.save()
+                            motif_obj.save()
+                        
+                    process.wait()
 
                     # print fdr and position plots plus zipping
 

@@ -424,10 +424,7 @@ def maindb(request):
         form = DBForm(request.POST)
         if form.is_valid():
             protein_name = form.cleaned_data['db_ID']
-            print('PROTEIN NAME= ' + protein_name)
             db_entries = ChIPseq.objects.filter( target_name__icontains=protein_name )
-            print('LENGTH OF QUERRY= ' + str(len(db_entries)))
-            db_entries = ChIPseq.objects.all()
             return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries })
     else:
         form = DBForm()
