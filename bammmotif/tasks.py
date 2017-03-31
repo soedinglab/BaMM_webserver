@@ -132,7 +132,7 @@ def run_bamm(self, job_pk):
                 if job.FDR == True:
                     params = params + " --FDR "
                     params = params + " --savePRs "
-                    file_counter = file_counter + 3
+                    file_counter = file_counter + 1
                     params = params + " --mFold " + str(job.m_Fold)
                     params = params + " --cvFold " + str(job.cv_Fold)
                     params = params + " --samplingOrder " + str(job.sampling_Order)
@@ -148,6 +148,7 @@ def run_bamm(self, job_pk):
                     params = params + " --verbose "
                 if job.save_LogOdds == True:
                     params = params + " --saveLogOdds "
+                    file_counter = file_counter + 2
                 if job.save_BaMMs == True:
                     params = params + " --saveBaMMs "
                 if job.save_BgModel == True:
@@ -324,7 +325,7 @@ def run_bamm(self, job_pk):
                     process.wait()
 
                     
-                    # ziping complete model
+                # ziping complete model
                     command = 'zip '+ basic_name + '.zip ' + basic_name + '.*' 
                     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     # Poll process for new output until finished
