@@ -30,8 +30,8 @@ for(split in splits) {
   else if(split[1] == '--order') {order_in<- split[2]}
 }
 
-source( "/code/bammmotif/static/scripts/Utils.plotHOLogo.R" )
-#source( "/home/kiesel/Desktop/NEXT_Try/bammmotif/static/scripts/Utils.plotHOLogo.R" )
+#source( "/code/bammmotif/static/scripts/Utils.plotHOLogo.R" )
+source( "/home/kiesel/Desktop/BaMM_webserver/bammmotif/static/scripts/Utils.plotHOLogo.R" )
 
 #...............................................................................
 #

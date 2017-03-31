@@ -134,7 +134,7 @@
         <br>
         <h3> Database Model Comparison: </h3>
 
-        <p class="indent" style="padding-left: 1.8em"><label for="id_db_match_bit_factor"><a class "testpup" onmouseover="nhpup.popup($('#db_match_bit_factor_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Bit Factor:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_db_match_bit_factor" name="db_match_bit_factor" type="number" min="0.01" max="3.00" value="0.75" step="0.01"/></font></p>
+        <p class="indent" style="padding-left: 1.8em"><label for="id_p_value_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#db_match_p_value_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value cutoff:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_p_value_cutoff" name="p_value_cutoff" type="number" min="0.01" max="3.00" value="0.75" step="0.01"/></font></p>
     
 
 
@@ -389,13 +389,12 @@
   </div>
 </div>
 
-<div class="modal fade" id="db_match_bit_factor_Info" tabindex="-1" role="dialog" aria-labelledby="db_match_bit_factor_Info">
+<div class="modal fade" id="p_value_cutoff_Info" tabindex="-1" role="dialog" aria-labelledby="p_value_cutoff_Info">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
         <font color="#0B0719">
-            <p  align="justify">The bit factor will be used to define a threshold for motif matches between the predicted model and the database. 
-            The threshold will be calculated as th = model-length * bit-factor.</p>
+            <p  align="justify">The p-value cutoff will be used to define a threshold for motif matches between the predicted model and the database. </p>
         </font>
       </div>
     </div>

@@ -15,10 +15,21 @@
                 <td>  &emsp; Input Sequence: </td>
                 <td>  &emsp; {{result.Inputseq_filename}}</td>
             </tr>
+            {% if result.mode == "Prediction" %}
+            <tr>
+                <td>  &emsp; Moftil File: </td>
+                <td>  &emsp; {{result.Motif_InitFile}}</td>
+            </tr>
+            </table>
+            </div>
+            </div>
+            {% endif %}
+            {% if result.mode == "Prediction" %}
             <tr>
                 <td>  &emsp; Reverse Complement: </td>
                 <td>  &emsp; {{result.reverse_Complement}}</td>
             </tr>
+
         </table>
         
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white; border:0px">
@@ -134,7 +145,7 @@
         <table>
             <tr>
                 <td>  &emsp; P-value cutoff: </td>
-                <td>  &emsp; {{result.db_match_bit_factor}}</td>
+                <td>  &emsp; {{result.p_value_cutoff}}</td>
             </tr>
         </table>
 
@@ -143,6 +154,8 @@
 </div>
 </div>
 </div>
+
+{%endif%}
 
 <div class="jumbotron" style="background-color:white"><font color="black">
   <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_complete.zip" method="get" target="_blank">

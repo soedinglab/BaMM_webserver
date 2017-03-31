@@ -16,10 +16,6 @@
                 <td> &emsp; {{entry.target_name}} </td>
             </tr>
             <tr>
-                <td> &emsp; Data Type: </td>
-                <td> &emsp; {{entry.grant }} </td>
-            </tr>
-            <tr>
                 <td> &emsp; Cell Type: </td>
                 <td> &emsp; {{entry.cell_type}} </td>
             </tr>
@@ -28,8 +24,12 @@
                 <td> &emsp; {{entry.parent.experiment}} </td>
             </tr>
             <tr>
-                <td> &emsp; Lab / Grant: </td>
+                <td> &emsp; Lab : </td>
                 <td> &emsp; {{entry.lab}} </td>
+            </tr>
+            <tr>
+                <td> &emsp; Grant: </td>
+                <td> &emsp; {{entry.grant }} </td>
             </tr>
             <tr>
                 <td> &emsp; Data Source: </td>
@@ -82,7 +82,7 @@
     <h2> Performance and Positional Distribution on Input Sequences </h2>
         <hr style="border: 1px solid #1f2e2e">
         <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1_FDR.jpeg" class="responsive-img" style='max-height:400px;' alt="ROC Curve Plot">&emsp;
-        <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1_LogOdds_allPos.jpeg" class="responsive-img" style='max-height:400px;' alt="LogOdds">
+        <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1_Positions.jpeg" class="responsive-img" style='max-height:400px;' alt="LogOdds">
         <br>
         <br>
        <form action="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1_performance.zip" method="get" target="_blank">

@@ -26,6 +26,11 @@ ALPHABET_CHOICES = (
     ('EXTENDED', 'EXTENDED'),
 )
 
+MODE_CHOICES = (
+    ('Prediction','Prediction'),
+    ('Occurrence','Occurrence')
+)
+
 def job_directory_path(instance, filename):
    	return '{0}/Input/{1}'.format(instance.job_ID, filename)
 
@@ -33,7 +38,8 @@ class Job(models.Model):
     # general info
     job_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     job_name=models.CharField(max_length=50, null=True, blank=True)
-    created_at = models.DateTimeField( default=datetime.datetime.now) 
+    created_at = models.DateTimeField( default=datetime.datetime.now)
+    mode = models.CharField(max_length=50, default="Predicition", choices=MODE_CHOICES) 
     status = models.CharField(max_length=255, default="not initialized", null=True, blank=True)
     num_motifs = models.IntegerField(default=1)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -51,12 +57,13 @@ class Job(models.Model):
     reverse_Complement = models.BooleanField(default=True)
     extend_1 = models.PositiveSmallIntegerField(default=10)
     extend_2 = models.PositiveSmallIntegerField(default=10)
+
     # fdr options
     FDR = models.BooleanField(default=True)
     m_Fold = models.IntegerField(default=5)
     cv_Fold = models.IntegerField(default=5)
     sampling_Order = models.PositiveSmallIntegerField(default=2)
-    save_LogOdds = models.BooleanField(default=True)
+    save_LogOdds = models.BooleanField(default=False)
 
     # CGS options
     CGS = models.BooleanField(default=False)
@@ -70,12 +77,17 @@ class Job(models.Model):
     max_EM_Iterations = models.BigIntegerField(default=10e5)
     no_Alpha_Optimization = models.BooleanField(default=True)
 
+    # scoring options
+    score_Seqset = models.BooleanField(default=False)
+    score_Cutoff = models.FloatField(default=0.0)
+
     # advanced options
     alphabet = models.CharField(max_length=255, choices=ALPHABET_CHOICES, default="STANDARD")
     background_Order = models.PositiveSmallIntegerField(default=2)
     verbose = models.BooleanField(default=True)
     save_BaMMs = models.BooleanField(default=True)
-    db_match_bit_factor = models.DecimalField(default=0.75, max_digits=3,decimal_places=2)
+    save_BgModel = models.BooleanField(default=True)
+    p_value_cutoff = models.DecimalField(default=0.75, max_digits=3,decimal_places=2)
     
     class Meta:
         ordering = ['-created_at']

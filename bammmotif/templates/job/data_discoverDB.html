@@ -2,80 +2,91 @@
 
 {% block content %}
 
-<div class="jumbotron"  style="background-color:white"><font color="black">
-   <h3> 1.Data Upload  <font color="grey"> > 2.BaMM!</font></h3>
-   <hr style="border: 1px solid #1f2e2e">
+<div class="container-fluid" >
+
+<div class="jumbotron container-fluid" style="background-color:white"><font color="black">
+  <h2> Motif Occurrences </h2>
+  <hr style="border: 1px solid #1f2e2e">
+  <div class='container-fluid'>
+
 
    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <p><label for="id_Input_Sequences"><a href="#" data-toggle="modal"  data-target="#myModal_1" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Input Sequences:
-   </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Input_Sequences" name="Input_Sequences" type="file" required /></p>
+    <p><label for="id_job_name"><a class "testpup" onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name" style="color:black"></span></a> Job Name:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_job_name" maxlength="50" name="job_name" type="text" placeholder="i.e: My Job #1" /></p>
 
-	<p><label for="id_Motif_InitFile"><a href="#" data-toggle="modal"  data-target="#myModal_2" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Model File:
-    </label>  <p class="indent" style="padding-left: 1.8em"> {{db_entry.result_location}}</p>
+    {% if type == "FileSize" %}
+      {% if user.is_authenticated %}
+        <p><font color="red"> Please keep file size under 250Mb.</font> </p>  
+      {% else %}
+        <p><font color="red">  Please keep file size under 2.5Mb or login for larger upload size.</font> </p>  
+      {% endif %}
+    {% endif %}
+
+    <p><label for="id_Input_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Input Sequences:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_Input_Sequences" name="Input_Sequences" type="file" required /></p>
+   
+    {% if type == "Fasta" %}
+    <p><font color="red">The provided Input Sequence File does not match the expected format.</font> </p>  
+    {% endif %}
+
+    <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile: </label>  <p class="indent" style="padding-left: 1.8em">{{db_entry.result_location}}</p>
     
-    <p><label for="id_Motif_Init_File_Format"><a href="#" data-toggle="modal"  data-target="#myModal_3" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Model File Format:
-    </label><font color="#1f2e2e">  <p class="indent" style="padding-left: 1.8em">BaMM </font> </p>
-
+    <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> BaMM</font></p>
         
-    <hr style="border: 1px solid #1f2e2e">
-       
-    <p><a class="btn btn-primary btn-lg" href="{% url 'data_discover_from_db' pk=entry.db_public_id %}" role="button" style="border:0px; background-color:#1f2e2e"><font color="white">RESET</font></a>
-     <button class="btn btn-primary btn-lg" type="submit"style="border:0px; background-color:#1f2e2e"><font color="white">NEXT</font></button></p>
+  </div>
+  <hr style="border: 1px solid #1f2e2e">
+  <p>
+    <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font color="white">BaMM!</font></button></p>
+  </p>
   </form>
-  </font>
 </div>
 
-
-
-<div class="modal fade" id="myModal_1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_1">
+<div class="modal fade" id="job_name_info" tabindex="-1" role="dialog" aria-labelledby="job_name">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel_1"><font color="#0B0719"> Sequence File </font></h4>
-      </div>
       <div class="modal-body">
         <font color="#0B0719">
-        The Sequence File needs to be of Fasta Format. These are the Sequences in which Model Positions will be predicted.
+            <p  align="justify">You can give your job a name to better distinguish between several runs.</p>
         </font>
       </div>
     </div>
   </div>
 </div>
 
-<div class="modal fade" id="myModal_2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_2">
+<div class="modal fade" id="InputSequence_Info" tabindex="-1" role="dialog" aria-labelledby="InputSequence_Info">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel_2"><font color="#0B0719"> Model File </font></h4>
-      </div>
       <div class="modal-body">
         <font color="#0B0719">
-            If you already have a PWM or BaMM model which you want to search for, please enter it here. Alternatively you can select a BaMM model from our Database.
+            <p  align="justify">The Input Sequence File needs to be of Fasta Format.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="MotifInitFile_Info" tabindex="-1" role="dialog" aria-labelledby="MotifInitFile_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">If you already have a PWM or BaMM model which you want to refine insert this file here. Alternatively you can leave this empty and PEnG!motif will seed your input sequence set.</p>
         </font>
       </div>
     </div>
   </div>
 </div>
 
-
-<div class="modal fade" id="myModal_3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel_3">
+<div class="modal fade" id="MotifInitFileFormat_Info" tabindex="-1" role="dialog" aria-labelledby="MotifInitFileFormat_Info">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel_3"><font color="#0B0719"> Model File Format </font></h4>
-      </div>
       <div class="modal-body">
         <font color="#0B0719">
-           Please select the file format of your provided Model File. The available options are PWM or BaMM format.
+           <p  align="justify">Please select the file format of your provided motif Initialization. This option is only necessary when providing a custom MotifInitialization.</p>
         </font>
       </div>
     </div>
   </div>
 </div>
+
 {% endblock %}
 

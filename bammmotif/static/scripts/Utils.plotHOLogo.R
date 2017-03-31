@@ -17,8 +17,8 @@ library( grid )
 # Sources
 #...................................................................................................
 
-source( "/code/bammmotif/static/scripts/Utils.readIMMs.R" )
-#source( "/home/kiesel/Desktop/NEXT_Try/bammmotif/static/scripts/Utils.readIMMs.R" )
+#source( "/code/bammmotif/static/scripts/Utils.readIMMs.R" )
+source( "/home/kiesel/Desktop/BaMM_webserver/bammmotif/static/scripts/Utils.readIMMs.R" )
 
 #...................................................................................................
 #

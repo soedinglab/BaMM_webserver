@@ -88,8 +88,10 @@ def calculate_pwm_dist(pwm_1, pwm_2, offset1, offset2, overlap_len):
     dist = 0
     for i in range ( 0, overlap_len ):
         for a in range ( 0, 16 ):
-            dist = dist + (pwm_1[offset1 + i][a] - pwm_2[offset2 + i][a]) * (
-                math.log ( pwm_1[offset1 + i][a], 2 ) - math.log ( pwm_2[offset2 + i][a], 2 ))
+            #dist = dist + (pwm_1[offset1 + i][a] - pwm_2[offset2 + i][a]) * (
+            #    math.log ( pwm_1[offset1 + i][a], 2 ) - math.log ( pwm_2[offset2 + i][a], 2 ))
+            pwm_avg = (pwm_1[offset1+i][a] + pwm_2[offset2+i][a])/2
+            dist = dist + (pwm_1[offset1 + i][a] * math.log(pwm_1[offset1 +i][a]) + pwm_2[offset2 + i][a] * math.log(pwm_2[offset2 +i][a]) - 2*pwm_avg * math.log(pwm_avg))
     return dist
 
 
@@ -135,7 +137,7 @@ def get_scores(pwm, pwm_bg, db_folder, db_order, read_order):
         (dist_q_bg, W_q_bg, offset_q_bg, offset_bg_q) = get_min_dist ( pwmDB, pwm_bg )
         (dist_p_q, W, offset_p, offset_q) = get_min_dist ( pwm, pwmDB )
         # calculate matching score
-        s_p_q = dist_p_bg + dist_q_bg - dist_p_q
+        s_p_q = 0.5*(dist_p_bg + dist_q_bg) - dist_p_q
         # print(str.split(ntpath.basename(entry), "_")[0])
         dat = pd.Series ( {'Name': str.split ( ntpath.basename ( entry ), "_" )[0],
                            'score': s_p_q,

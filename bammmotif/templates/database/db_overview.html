@@ -5,18 +5,18 @@
 
 
 <div class="jumbotron" style="background-color:white"><font color="black">
- <h2> BaMMmotif Database Results for : {{target_name}} </h2>
+ <h2> BaMMmotif Database Results for : {{protein_name}} </h2>
   <hr style="border: 1px solid #1f2e2e">
  <h4> {{db_entries.count}} entries found: </h4>
      <div>
         <table class="table table-hover">
         <tr >
-            <th>  Entry #       </th>
-            <th> Target_name  </th>
-            <th> Data Type     </th>
+            <th>  Entry #      </th>
+            <th> Target name   </th>
             <th> Cell Type     </th>
             <th> Experiment    </th>
-            <th> Lab / Grant    </th>
+            <th> Lab           </th>
+            <th> Grant         </th>
             <th> Data Source   </th>
             <th> Species       </th>
             <th> Details       </th>
@@ -25,10 +25,10 @@
         <tr>
             <td> {{ forloop.counter           }} </td>
             <td> {{ entry.target_name         }} </td>
-            <td> {{ entry.grant               }} </td>
             <td> {{ entry.cell_type           }} </td>
             <td> {{ entry.parent.experiment   }} </td>
             <td> {{ entry.lab                 }} </td>            
+            <td> {{ entry.grant               }} </td>
             <td> {{ entry.parent.data_source  }} </td>
             <td> {{ entry.parent.species      }} </td>
             <td> <a href="{% url 'db_detail' entry.db_public_id %}" role="button"> more...</a> </td>

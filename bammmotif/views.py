@@ -85,7 +85,6 @@ def data_predict(request):
                         u = User(username=username, first_name='Anonymous', last_name='User')
                         u.set_unusable_password()
                         u.save()
-                        #login(request, u)
                         job.user = u
                 else:
                     print("we don't have an IP address for user")
@@ -188,51 +187,7 @@ def data_predict(request):
 
     print("default action applies")
     return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "OK", 'message' : "OK"})
-'''
-def run_job(request,pk):
-    job = get_object_or_404(Job, pk=pk)    
-    opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
-    #subprocess.Popen(['/code/bammmotif/static/scripts/runBaMMmotif.sh', 
-    # str(opath),
-    # str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)), 
-    # str(os.path.join(settings.MEDIA_ROOT, job.Background_Sequences.name)),
-    # str(job.alphabet),
-    # str(job.reverse_Complement),
-    # str(os.path.join(settings.MEDIA_ROOT, job.Intensity_File.name)), 
-    # str(job.Motif_Initialization),
-    # str(os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)), 
-    # str(job.Motif_Init_File_Format),
-    # str(job.model_Order),
-    # str(job.extend_1),
-    # str(job.extend_2),
-    # str(job.background_Order),
-    # str(job.EM),
-    # str(job.max_EM_Iterations),
-    # str(job.epsilon),
-    # str(job.q_value),
-    # str(job.no_Alpha_Optimization),
-    # str(job.FDR),
-    # str(job.m_Fold),
-    # str(job.cv_Fold),
-    # str(job.sampling_Order),
-    # str(job.save_LogOdds),
-    # str(job.CGS),
-    # str(job.max_CGS_Iterations),
-    # str(job.no_Alpha_Sampling),
-    # str(job.verbose),
-    # str(job.save_BaMMs),
-	# str(job.job_ID),
-	# str(settings.DB_HOST),
-	# str(settings.DB_NAME),
-	# str(settings.DB_USER),
-	# str(settings.DB_PW),
-	# str("bammmotif_job"),
-    # str(job.db_match_bit_factor),
-    # ])
-    job.status = "Submitted"
-    job.save() 
-    return render(request, 'job/submitted.html', {'pk': pk} ) 
-'''
+
 def data_discover(request):
     if request.method == "POST":
         form = DiscoveryForm(request.POST, request.FILES)
@@ -254,13 +209,12 @@ def data_discover(request):
                         print("user already exists")
                         job.user = get_object_or_404(User, username=ip)
                     else:
-                        parint("create new anonymous user")
+                        print("create new anonymous user")
                         # create an anonymous user and log them in
                         username = ip
                         u = User(username=username, first_name='Anonymous', last_name='User')
                         u.set_unusable_password()
                         u.save()
-                        login(request, u)
                         job.user = u
                 else:
                     print("we don't have an IP address for user")
@@ -278,7 +232,20 @@ def data_discover(request):
             out = out.decode('ascii')
 
             if out == "OK":
-                return redirect('overview_discover', pk=job.pk)  
+                job.status = "job ready to submit" 
+                # turn off optimization to just scan input sequence for model positions.
+                job.EM = False
+                job.CGS = False
+                job.FDR = False
+                job.extend_1 = 0
+                job.extend_2 = 0
+                job.Motif_Initialization = "Custom File"
+                job.score_Seqset = True
+                job.mode = "Occurrence"
+                job.save()
+                print("OUT IS OK -> run the JOB")
+                run_bamm.delay(job.pk)
+                return render(request, 'job/submitted.html', {'pk': job.pk} )    
             else:
                 job.delete()
                 form = DiscoveryForm()
@@ -311,19 +278,18 @@ def data_discover_from_db(request, pk):
                         print("user already exists")
                         job.user = get_object_or_404(User, username=ip)
                     else:
-                        parint("create new anonymous user")
+                        print("create new anonymous user")
                         # create an anonymous user and log them in
                         username = ip
                         u = User(username=username, first_name='Anonymous', last_name='User')
                         u.set_unusable_password()
                         u.save()
-                        login(request, u)
                         job.user = u
                 else:
                     print("we don't have an IP address for user")
             job.save() 
             
-            filename= str(db_entry.parent.base_dir) + '/Results/' + str(db_entry.result_location) + '/' + str(db_entry.result_location) + '_motif_1.ihbcp'
+            filename= 'DB/' + str(db_entry.parent.base_dir) + '/Results/' + str(db_entry.result_location) + '/' + str(db_entry.result_location) + '_motif_1.ihbcp'
             f = open(str(filename))
             out_filename = str(db_entry.result_location) + ".ihbcp"
             job.Motif_InitFile.save(out_filename , File(f))
@@ -342,7 +308,22 @@ def data_discover_from_db(request, pk):
             out = out.decode('ascii')
 
             if out == "OK":
-                return redirect('overview_discover', pk=job.pk)  
+                job.status = "job ready to submit" 
+                # turn off optimization to just scan input sequence for model positions.
+                job.EM = False
+                job.CGS = False
+                job.FDR = False
+                job.extend_1 = 0
+                job.extend_2 = 0
+                job.Motif_Initialization = "Custom File"
+                job.score_Seqset = True
+                job.mode = "Occurrence"
+                if job.Motif_Init_File_Format == "PWM":
+                    job.model_Order = 0
+                job.save()
+                print("OUT IS OK -> run the JOB")
+                run_bamm.delay(job.pk)
+                return render(request, 'job/submitted.html', {'pk': job.pk} )    
             else:
                 job.delete()
                 form = DiscoveryDBForm()
@@ -353,17 +334,6 @@ def data_discover_from_db(request, pk):
     else:
         form = DiscoveryDBForm()
     return render(request, 'job/data_discoverDB.html',{'form': form, 'pk':pk, 'db_entry':db_entry})
-
-
-
-def overview_discover(request, pk):
-    job = get_object_or_404(Job, pk=pk)
-    job.status = "job ready to submit" 
-    # turn off optimization to just scan input sequence for model positions.
-    job.EM = False
-    job.CGS = False
-    job.save()   
-    return render(request, 'job/overview_discover.html', {'job':job, 'pk':pk})
 
 def submitted(request,pk):
     return render(request, 'job/submitted.html', {'pk':pk})
@@ -387,6 +357,14 @@ def find_results(request):
     return render(request, 'results/results_main.html', {'form':form})
     
 
+def result_overview(request):
+    if request.user.is_authenticated():
+        user_jobs = Job.objects.filter(user = request.user.id)
+        return render(request,'results/result_overview.html', { 'user_jobs' : user_jobs })
+    else:
+        return redirect(request,'find_results')
+
+
 def delete(request, pk ):
     Job.objects.filter(job_ID=pk).delete()
     if request.user.is_authenticated():
@@ -405,14 +383,6 @@ def result_detail(request, pk):
         command ="tail -20 /code/media/logs/" + pk + ".log"
         output = os.popen(command).read()
         return render(request,'results/result_status.html', {'result':result, 'opath':opath , 'output':output })
-
-def result_overview(request):
-    if request.user.is_authenticated():
-        user_jobs = Job.objects.filter(user = request.user.id)
-        return render(request,'results/result_overview.html', { 'user_jobs' : user_jobs })
-    else:
-        return redirect(request,'find_results')
-
 
 ##########################
 ### DATABASE RELATED VIEWS

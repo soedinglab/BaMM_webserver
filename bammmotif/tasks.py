@@ -133,15 +133,15 @@ def run_bamm(self, job_pk):
                     params = params + " --FDR "
                     params = params + " --savePRs "
                     file_counter = file_counter + 3
-                params = params + " --mFold " + str(job.m_Fold)
-                params = params + " --cvFold " + str(job.cv_Fold)
-                params = params + " --samplingOrder " + str(job.sampling_Order)
+                    params = params + " --mFold " + str(job.m_Fold)
+                    params = params + " --cvFold " + str(job.cv_Fold)
+                    params = params + " --samplingOrder " + str(job.sampling_Order)
 
                 # EM related options:
                 if job.EM == True:
                     params = params + " --EM "
-                params = params + " --epsilon " + str(job.epsilon)
-                params = params + " --maxEMIterations " + str(job.max_EM_Iterations)
+                    params = params + " --epsilon " + str(job.epsilon)
+                    params = params + " --maxEMIterations " + str(job.max_EM_Iterations)
 
                 # Output related options:
                 if job.verbose == True:
@@ -150,12 +150,17 @@ def run_bamm(self, job_pk):
                     params = params + " --saveLogOdds "
                 if job.save_BaMMs == True:
                     params = params + " --saveBaMMs "
+                if job.save_BgModel == True:
+                    params = params + " --saveBgModel "
+                if job.score_Seqset == True:
+                    params = params + " --scoreSeqset "
+                    params = params + " --scoreCutoff " + str(job.score_Cutoff)
 
                 job.status = 'Running BaMM'
                 job.save() 
                 print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
-                command = '/code/bammmotif/static/scripts/BaMMmotif ' + params + " --saveBgModel"
+                command = '/code/bammmotif/static/scripts/BaMMmotif ' + params
                 process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
                 # Poll process for new output until finished
@@ -213,7 +218,7 @@ def run_bamm(self, job_pk):
                     # get DBParams
                     db_param = get_object_or_404(DbParameter, param_id=100)
 
-                    command = 'python3 /code/bammmotif/static/scripts/tomtomtool.py ' +  opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp ' + opath + '/' +  basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp ' + '/code/DB/ENCODE_ChIPseq/Results ' + str(job.model_Order) + ' --db_order ' + str(db_param.modelorder) + ' --read_order ' + str(1) + ' --shuffle_times ' + str(10) + ' --quantile ' + str(0.1) +  ' --p_val_limit ' + str(job.db_match_bit_factor)
+                    command = 'python3 /code/bammmotif/static/scripts/tomtomtool.py ' +  opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp ' + opath + '/' +  basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp ' + '/code/DB/ENCODE_ChIPseq/Results ' + str(job.model_Order) + ' --db_order ' + str(db_param.modelorder) + ' --read_order ' + str(1) + ' --shuffle_times ' + str(10) + ' --quantile ' + str(0.1) +  ' --p_val_limit ' + str(job.p_value_cutoff)
                     print(command)
                     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -248,31 +253,29 @@ def run_bamm(self, job_pk):
                     process.wait()
 
                     # print fdr and position plots plus zipping
+                    if job.FDR == True:
+                        job.status = 'FDR Position Plots for motif #%s ... ' % motif
+                        job.save() 
+                        print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
-                    job.status = 'FDR Position Plots for motif #%s ... ' % motif
-                    job.save() 
-                    print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
-
-                    if job.reverse_Complement == True:
-                        command = 'R --slave --no-save < /code/bammmotif/static/scripts/FDRplot_simple.R --args --output_dir=' + os.path.join(settings.MEDIA_ROOT, str(job_pk)) + ' --file_name_in=' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + ' --revComp=True' + ' --fasta_file_name=' + basename(os.path.splitext(job.Input_Sequences.name)[0])
-                    else:
-                        command = 'R --slave --no-save < /code/bammmotif/static/scripts/FDRplot_simple.R --args --output_dir=' + os.path.join(settings.MEDIA_ROOT, str(job_pk)) + ' --file_name_in=' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + ' --revComp=False' + ' --fasta_file_name=' + basename(os.path.splitext(job.Input_Sequences.name)[0])
-                    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                    # Poll process for new output until finished
-                    nextline = process.stdout.readline()
-                    sys.stdout.write("AUC = " + str(nextline.strip()) + "\n")
-                    motif_obj.auc = float(nextline.strip())
-                    sys.stdout.flush()
-                    nextline = process.stdout.readline()
-                    sys.stdout.write("OCC = " + str(nextline.strip()) + "\n")
-                    motif_obj.occurrence = float(nextline.strip())
-                    motif_obj.save()
-                    sys.stdout.flush()
+                        command = 'R --slave --no-save < /code/bammmotif/static/scripts/FDRplot_simple.R --args --output_dir=' + os.path.join(settings.MEDIA_ROOT, str(job_pk)) + ' --file_name_in=' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + ' --revComp='+ str(job.reverse_Complement) + ' --fasta_file_name=' + basename(os.path.splitext(job.Input_Sequences.name)[0])
+                        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                        # Poll process for new output until finished
+                        nextline = process.stdout.readline()
+                        sys.stdout.write("AUC = " + str(nextline.strip()) + "\n")
+                        motif_obj.auc = float(nextline.strip())
+                        sys.stdout.flush()
+                        nextline = process.stdout.readline()
+                        sys.stdout.write("OCC = " + str(nextline.strip()) + "\n")
+                        motif_obj.occurrence = float(nextline.strip())
+                        motif_obj.save()
+                        sys.stdout.flush()
                     
                     # print logo plots plus zipping
                     job.status = 'Logo Plots for motif #%s ... ' % motif
                     job.save() 
                     print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
+                    sys.stdout.flush()
 
                     basic_name = opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif)
                     logo_files = ""
@@ -286,25 +289,28 @@ def run_bamm(self, job_pk):
                             nextline = process.stdout.readline()
                             if nextline == b'' and process.poll() is not None:
                                 break
+
                     
                     # create summary file
                     job.status = 'Summarizing motif #%s ...' % motif
                     job.save() 
                     print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
-                    # zipping performance plots
-                    command = 'zip '+ basic_name + '_performance.zip ' + basic_name +'_FDR.jpeg ' + basic_name + '_Positions.jpeg'
-                    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                    # Poll process for new output until finished
-                    while True:
-                        nextline = process.stdout.readline()
-                        if nextline == b'' and process.poll() is not None:
-                            break
-                        sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
-                        sys.stdout.flush()
+                    if job.FDR == True:
+                        # zipping performance plots
+                        command = 'zip '+ basic_name + '_performance.zip ' + basic_name +'_FDR.jpeg ' + basic_name + '_Positions.jpeg'
+                        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                        # Poll process for new output until finished
+                        while True:
+                            nextline = process.stdout.readline()
+                            if nextline == b'' and process.poll() is not None:
+                                break
+                            sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
+                            sys.stdout.flush()
 
-                    process.wait()
+                        process.wait()
                     
+
                     # zipping motif logos
                     command = 'zip '+ basic_name + '_logos.zip ' + logo_files
                     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
