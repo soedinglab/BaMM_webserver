@@ -2,7 +2,15 @@
 {% load i18n %}
 
 {% block content %}
-<p>You are now registered. You will receive an activation email shortly.</p>
-<p>Not email received? -> please also check your spam folder.</p>
-<p>If you did not receive any confirmation email, you may have entered a wrong email address. In this case please repeat registration with your correct email address.</p>
+
+
+<div class="jumbotron" style="background-color:white"><font color="black">
+	<h2> {% trans "Account activation successfull" %} </h2>
+    <hr style="border: 1px solid #1f2e2e">
+	<p align="justify">You are now registered. You will receive an activation email shortly. </p>
+    <p align="justify">Didn't receive an email? -> please also check your spam folder. </p>
+    <p align="justify"> If you did not receive any confirmation email, you may have entered a wrong email address. In this case please repeat registration with your correct email address.</p>
+	</font>
+</div>
+
 {% endblock %}

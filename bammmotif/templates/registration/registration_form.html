@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-<div class="conatiner">
+<div class="jumbotron" style="background-color:white"><font color="black">
 <form method="post" action=".">
   {% csrf_token %}
   {{ form.as_p }}

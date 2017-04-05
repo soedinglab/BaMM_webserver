@@ -2,16 +2,12 @@
 
 {% block content %}
 
-
-<div class="container">
-<div class="jumbotron"  style="background-color:white"><font color="black">
-   <h3> Logged out </h3>
-   <hr style="border: 1px solid #1f2e2e">
-
-   <p>You have been successfully logged out.</p>
-   <p><a href="{% url 'login' %}">Log in</a> again.</p>
-
-</div>
+<div class="jumbotron" style="background-color:white"><font color="black">
+	<h2> {% trans "Logged out" %} </h2>
+    <hr style="border: 1px solid #1f2e2e">
+	<p align="justify">You have been successfully logged out.</p>
+    <p align="justify"> <a href="{% url 'login' %}">Log in</a> again.</p>
+	</font>
 </div>
 
 {% endblock %}

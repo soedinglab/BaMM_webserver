@@ -2,8 +2,17 @@
 {% load i18n %}
 
 {% block content %}
-<p>Thank you for registering on BaMMmotif, your account has been successfully activated. </p>
-<p> You are now able to login, run individual BaMMmotif jobs and view your job results. </p>
-<p> Your BaMMmotif - Team </p>
+
+
+<div class="jumbotron" style="background-color:white"><font color="black">
+	<h2> {% trans "Account activation successfull" %} </h2>
+    <hr style="border: 1px solid #1f2e2e">
+	<p align="justify">Thank you for registering on BaMMmotif, your account has been successfully activated. </p>
+    <p align="justify"> You are now able to login, run individual BaMMmotif jobs and view your job results. </p>
+    <p align="justify"> Your BaMMmotif - Team  </p>
+	</font>
+</div>
+
+
 
 {% endblock %}

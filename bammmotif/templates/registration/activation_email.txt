@@ -9,7 +9,9 @@ This link is valid for {{ expiration_days }} days.
 
 After confirmation you will be able to login with your username and your password to run BaMMmotif jobs and view your job results.
 
-If you have not tried to register your can ignore this e-mail. The registration will not be confirmed and your email address will be automatically deleted from our system.
+If you have not tried to register you can ignore this e-mail. The registration will not be confirmed and your email address will be automatically deleted from our system.
  You will not receive any further emails from us.
-
+ 
+ 
+Best Regards,
 Your BaMMmotif-Team
