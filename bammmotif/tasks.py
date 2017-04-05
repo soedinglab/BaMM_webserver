@@ -76,7 +76,6 @@ def run_bamm(self, job_pk):
     with open(logfile, 'w') as f:
         with redirect_stdout(f):
             try:
-
                 # run PEnGmotif in case it is selected
                 if job.Motif_Initialization == "PEnGmotif":
                     job.status = 'Running PEnGmotif'
@@ -119,6 +118,21 @@ def run_bamm(self, job_pk):
                     params = params + " --PWMFile " + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
                 if str(job.Motif_Init_File_Format) == "BaMM":
                     params = params + " --BaMMFile " + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
+
+                    if str(job.mode) == "Occurrence":
+                        # find out model Order of init file if not given
+                        command = 'python3 /code/bammmotif/static/scripts/getModelOrder.py ' + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
+                        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                        # Poll process for new output until finished
+                        while True:
+                            nextline = process.stdout.readline()
+                            if nextline == b'' and process.poll() is not None:
+                                break
+                            sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
+                            job.model_Order = int(nextline.strip().decode('ascii'))
+                            job.save()
+                            sys.stdout.flush()
+                        process.wait()
 
                 # general options
                 params = params +  " --order " + str(job.model_Order)
@@ -218,8 +232,9 @@ def run_bamm(self, job_pk):
 
                     # get DBParams
                     db_param = get_object_or_404(DbParameter, param_id=100)
-
-                    command = 'python3 /code/bammmotif/static/scripts/tomtomtool.py ' +  opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp ' + opath + '/' +  basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp ' + '/code/DB/ENCODE_ChIPseq/Results ' + str(job.model_Order) + ' --db_order ' + str(db_param.modelorder) + ' --read_order ' + str(1) + ' --shuffle_times ' + str(10) + ' --quantile ' + str(0.1) +  ' --p_val_limit ' + str(job.p_value_cutoff)
+                    read_order = min(1,job.model_Order,db_param.modelorder)
+                    print("READ_ORDER=" + str(read_order))
+                    command = 'python3 /code/bammmotif/static/scripts/tomtomtool.py ' +  opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp ' + opath + '/' +  basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp ' + '/code/DB/ENCODE_ChIPseq/Results ' + str(job.model_Order) + ' --db_order ' + str(db_param.modelorder) + ' --read_order ' + str(read_order) + ' --shuffle_times ' + str(10) + ' --quantile ' + str(0.1) +  ' --p_val_limit ' + str(job.p_value_cutoff)
                     print(command)
                     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -284,12 +299,16 @@ def run_bamm(self, job_pk):
                         # big_logo          
                         logo_files = logo_files + basic_name + '-logo-order-' + str(order) + '-icColumnScale-icLetterScale.png '
                         command = 'R --slave --no-save < /code/bammmotif/static/scripts/Utils.plotHOBindingSitesLogo.R --args --output_dir=' + opath + ' --file_name=' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + ' --order=' + str(order) 
+                        print( 'PLOTTER= ' + command)
                         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                         # Poll process for new output until finished
                         while True:
                             nextline = process.stdout.readline()
                             if nextline == b'' and process.poll() is not None:
                                 break
+                            sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
+                            sys.stdout.flush()
+                        process.wait()
 
                     
                     # create summary file
@@ -349,13 +368,15 @@ def run_bamm(self, job_pk):
                     sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
                     sys.stdout.flush()
 
-                process.wait()
+                #process.wait()
 
-
+                '''
                 # email user when job has finished
                 if job.user.get_short_name() != 'Anonymous':
-                    job.user.email_user(settings.EMAIL_SUBJECT_SUCCESS, settings.EMAIL_MESSAGE_SUCCESS)
-
+                    email_header = "BaMM! - your job has finished! ( " + job.name + " )"
+                    email_message = "Dear " + job.user.get_short_name() + ", \n" + " your BaMM! job has successfully finished.\n" + "You can view your results following the link below:\n" + "https://bammmotif.mpibpc.mpg.de/results/" + str(job.job_ID) + "/\n\n" + " Greetings from the BaMM! -Team" 
+                    job.user.email_user(email_header, email_message)
+'''
                 job.status = 'Successfully finished'
                 job.save()
                 print(datetime.datetime.now(), "\t | END: \t %s " % job.status )

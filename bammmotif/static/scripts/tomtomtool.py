@@ -84,10 +84,10 @@ def read_bg(bg_file, pwm_order, width):
 
 
 # calculate min distance between two pwms of different length
-def calculate_pwm_dist(pwm_1, pwm_2, offset1, offset2, overlap_len):
+def calculate_pwm_dist(pwm_1, pwm_2, offset1, offset2, overlap_len, order):
     dist = 0
     for i in range ( 0, overlap_len ):
-        for a in range ( 0, 16 ):
+        for a in range ( 0, pow(4,order+1)-1 ):
             #dist = dist + (pwm_1[offset1 + i][a] - pwm_2[offset2 + i][a]) * (
             #    math.log ( pwm_1[offset1 + i][a], 2 ) - math.log ( pwm_2[offset2 + i][a], 2 ))
             pwm_avg = (pwm_1[offset1+i][a] + pwm_2[offset2+i][a])/2
@@ -95,7 +95,7 @@ def calculate_pwm_dist(pwm_1, pwm_2, offset1, offset2, overlap_len):
     return dist
 
 
-def get_min_dist(p_pwm, q_pwm):
+def get_min_dist(p_pwm, q_pwm, order):
     len_p = len ( p_pwm )
     len_q = len ( q_pwm )
     max_overlap = min ( len_p, len_q )
@@ -105,14 +105,14 @@ def get_min_dist(p_pwm, q_pwm):
     min_offset_q = 0
     for offset_p in range ( 0, (len_p - 2) ):
         W = min ( max_overlap, len_p - offset_p )
-        dist = calculate_pwm_dist ( p_pwm, q_pwm, offset_p, 0, W )
+        dist = calculate_pwm_dist ( p_pwm, q_pwm, offset_p, 0, W,order )
         if dist < min_dist:
             min_dist = dist
             min_W = W
             min_offset_p = offset_p
     for offset_q in range ( 0, (len_q - 2) ):
         W = min ( max_overlap, len_q - offset_q )
-        dist = calculate_pwm_dist ( p_pwm, q_pwm, 0, offset_q, W )
+        dist = calculate_pwm_dist ( p_pwm, q_pwm, 0, offset_q, W,order )
         if dist < min_dist:
             min_dist = dist
             min_W = W
@@ -133,9 +133,9 @@ def get_scores(pwm, pwm_bg, db_folder, db_order, read_order):
             # truncate pwm_bg
             pwm_bg = pwm_bg[:][0:len ( pwmDB )]
         # calculate min distances
-        (dist_p_bg, W_p_bg, offset_p_bg, offset_bg_p) = get_min_dist ( pwm, pwm_bg )
-        (dist_q_bg, W_q_bg, offset_q_bg, offset_bg_q) = get_min_dist ( pwmDB, pwm_bg )
-        (dist_p_q, W, offset_p, offset_q) = get_min_dist ( pwm, pwmDB )
+        (dist_p_bg, W_p_bg, offset_p_bg, offset_bg_p) = get_min_dist ( pwm, pwm_bg, read_order )
+        (dist_q_bg, W_q_bg, offset_q_bg, offset_bg_q) = get_min_dist ( pwmDB, pwm_bg, read_order )
+        (dist_p_q, W, offset_p, offset_q) = get_min_dist ( pwm, pwmDB, read_order )
         # calculate matching score
         s_p_q = 0.5*(dist_p_bg + dist_q_bg) - dist_p_q
         # print(str.split(ntpath.basename(entry), "_")[0])
