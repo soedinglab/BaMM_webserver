@@ -7,14 +7,78 @@ from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from django.core.files import File
 from django.http import HttpResponse
+from django.views.generic import TemplateView
 from .models import *
 from .forms import *
 from .tasks import *
 from ipware.ip import get_ip
+import plotly.offline as opy
+import plotly.graph_objs as go
 import datetime
 import subprocess
 import os
 import sys
+
+class Plot(TemplateView):
+    template_name = 'results/result_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super( Plot, self).get_context_data(**kwargs)
+        
+        # get Job object
+        result = get_object_or_404(Job, pk=self.kwargs.get('pk',None))
+        opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
+        Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
+        num_logos = range(min(2,result.model_Order) + 1)
+
+        context['result'] = result
+        context['opath'] = opath
+        context['Output_filename'] = Output_filename
+        context['num_logos'] = num_logos
+
+        all_plots = {}
+
+        for m in range(result.num_motifs):
+            # read in logOdds Scores:
+            score_file = opath + '/' + Output_filename + '_motif_' + str(m+1) + '.logOdds'
+            data = {'start': [], 'end': [], 'score': [], 'strand': [], 'pattern': []}
+            
+            with open ( score_file ) as fh:
+                for line in fh:
+                    head = list(line)
+                    if head[0] == ">":
+                        #header line
+                        print(line)
+                    else:
+                        tok = line.split ( ':' )
+                        # start - end - score - strand - pattern :
+                        data['start'].append(tok[0])
+                        data['end'].append ( tok[1] )
+                        data['score'].append ( tok[2] )
+                        data['strand'].append ( tok[3] )
+                        data['pattern'].append ( tok[4].strip() )
+
+
+            #trace1 = go.Scatter(x=data['start'] , y= data['score'],marker={'color': 'red', 'symbol': 104, 'size': "10"},
+            #                    mode="lines",  name='1st Trace')
+            trace1 = go.Histogram(x=data['start'] )
+
+            #x = [-2+m,0+m,4+m,6+m,7+m]
+            #y = [q**2-q+3 for q in x]
+            #trace1 = go.Scatter(x=x, y=y, marker={'color': 'red', 'symbol': 104, 'size': "10"},
+            #                    mode="lines",  name='1st Trace')
+
+            data=go.Data([trace1])
+            layout=go.Layout(title="Motif Occurrence", xaxis={'title':'Position on Sequence'}, yaxis={'title':'Counts'})
+            figure=go.Figure(data=data,layout=layout)
+            div = opy.plot(figure, auto_open=False, output_type='div')
+
+            all_plots[m+1]=div
+  
+        context['plot'] = all_plots
+
+
+        return context
 
 
 ##########################
@@ -240,6 +304,8 @@ def data_discover(request):
                 job.extend_1 = 0
                 job.extend_2 = 0
                 job.Motif_Initialization = "Custom File"
+                if job.Motif_Init_File_Format == "PWM":
+                    job.model_Order = 0
                 job.score_Seqset = True
                 job.mode = "Occurrence"
                 job.save()
@@ -378,7 +444,8 @@ def result_detail(request, pk):
     opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
     Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
     if result.status == 'Successfully finished':
-        return render(request,'results/result_detail.html', {'result':result, 'opath':opath, 'Output_filename':Output_filename})
+        num_logos = range(min(2,result.model_Order) + 1)
+        return render(request,'results/result_detail.html', {'result':result, 'opath':opath, 'Output_filename':Output_filename, 'num_logos':num_logos})
     else:
         command ="tail -20 /code/media/logs/" + pk + ".log"
         output = os.popen(command).read()

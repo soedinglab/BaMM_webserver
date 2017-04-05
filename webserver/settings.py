@@ -40,6 +40,7 @@ ALLOWED_HOSTS = ['0.0.0.0','bammmotif.mpibpc.mpg.de']
 # Application definition
 
 INSTALLED_APPS = (
+    'bammmotif',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,7 +48,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'bammmotif',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -8,3 +8,4 @@ Celery
 numpy
 redis
 pandas
+plotly

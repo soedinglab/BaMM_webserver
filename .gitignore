@@ -2,6 +2,9 @@
 /bammmotif/migrations/
 /DB/
 /bammmotif/static/DB
+/bammmotif/static/scripts/Occurrence_plots.R
+/bammmotif/static/scripts/plotly.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
