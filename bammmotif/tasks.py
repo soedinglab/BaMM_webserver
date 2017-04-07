@@ -116,6 +116,8 @@ def run_bamm(self, job_pk):
                     params = params + " --bindingSiteFile " + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
                 if str(job.Motif_Init_File_Format) == "PWM":
                     params = params + " --PWMFile " + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
+                    #params = params + " --num " + str(job.num_init_motifs)
+                    params = params + " --num 1"
                 if str(job.Motif_Init_File_Format) == "BaMM":
                     params = params + " --BaMMFile " + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
 
@@ -136,8 +138,8 @@ def run_bamm(self, job_pk):
 
                 # general options
                 params = params +  " --order " + str(job.model_Order)
-                if job.reverse_Complement == True:
-                    params = params +  " --reverseComp "
+                if job.reverse_Complement == False:
+                    params = params +  " --ss "
                 params = params + " --extend " + str(job.extend_1) +  " " +  str(job.extend_2)
                 params = params + " --alphabet " + str(job.alphabet)
                 params = params + " --Order " +  str(job.background_Order)
@@ -232,7 +234,7 @@ def run_bamm(self, job_pk):
 
                     # get DBParams
                     db_param = get_object_or_404(DbParameter, param_id=100)
-                    read_order = min(1,job.model_Order,db_param.modelorder)
+                    read_order = 0 # we only compare 0-th order models since this makes reverseComplement calculation easy and fast
                     print("READ_ORDER=" + str(read_order))
                     command = 'python3 /code/bammmotif/static/scripts/tomtomtool.py ' +  opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp ' + opath + '/' +  basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp ' + '/code/DB/ENCODE_ChIPseq/Results ' + str(job.model_Order) + ' --db_order ' + str(db_param.modelorder) + ' --read_order ' + str(read_order) + ' --shuffle_times ' + str(10) + ' --quantile ' + str(0.1) +  ' --p_val_limit ' + str(job.p_value_cutoff)
                     print(command)

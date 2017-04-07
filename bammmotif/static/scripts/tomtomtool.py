@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import matplotlib.pyplot as plt
 import argparse
 import glob
 import math
@@ -42,6 +42,13 @@ def read_pwm(filename, model_order, read_order):
                 skipper = skipper - 1
     return pwm
 
+def reverseComp( pwm ):
+    pwm_rev = []
+    for i in range ( len(pwm) ):
+        profile = pwm[i][::-1]
+        pwm_rev.append(profile)
+    pwm_rev = pwm_rev[::-1]
+    return pwm_rev
 
 def read_bg(bg_file, pwm_order, width):
     pwm = []
@@ -103,14 +110,15 @@ def get_min_dist(p_pwm, q_pwm, order):
     min_W = 0
     min_offset_p = 0
     min_offset_q = 0
-    for offset_p in range ( 0, (len_p - 2) ):
+    min_overlap = round(max_overlap/2)-1
+    for offset_p in range ( 0, (len_p - min_overlap) ):
         W = min ( max_overlap, len_p - offset_p )
         dist = calculate_pwm_dist ( p_pwm, q_pwm, offset_p, 0, W,order )
         if dist < min_dist:
             min_dist = dist
             min_W = W
             min_offset_p = offset_p
-    for offset_q in range ( 0, (len_q - 2) ):
+    for offset_q in range ( 0, (len_q - min_overlap) ):
         W = min ( max_overlap, len_q - offset_q )
         dist = calculate_pwm_dist ( p_pwm, q_pwm, 0, offset_q, W,order )
         if dist < min_dist:
@@ -203,6 +211,15 @@ def main():
     pwm = read_pwm ( args.pwm_file, args.pwm_order, args.read_order )
     pwm_bg = read_bg(args.bg_file, args.pwm_order, len(pwm))
     info_real = get_scores ( pwm, pwm_bg, args.db_folder, args.db_order, args.read_order )
+
+    # get reverseComplement of pwm if read_order == 0 and score_matches
+    if args.read_order == 0 :
+        pwm_rev = reverseComp(pwm)
+        bg_rev = reverseComp(pwm_bg)
+        info_rev = get_scores ( pwm_rev, bg_rev, args.db_folder, args.db_order, args.read_order )
+        info_real.append(info_rev)
+        info_real = info_real.reset_index ( )
+
     # 2. get x-times shuffled info and concatenate to calculate p_and_e_value
     frames = [info_real]
     for x in range ( args.shuffle_times ):
@@ -210,10 +227,16 @@ def main():
         info_fake = get_scores ( pwm_shuff, pwm_bg, args.db_folder, args.db_order, args.read_order )
         frames.append ( info_fake )
 
+        if args.read_order == 0:
+            pwm_shuff_rev = shuffle_pwm ( pwm_rev )
+            info_fake = get_scores ( pwm_shuff_rev, bg_rev, args.db_folder, args.db_order, args.read_order )
+            frames.append ( info_fake )
+
     # 3. concatenate all and calculate pvalues and evalues for the entries
     info_all = pd.concat ( frames )
 
     best_reals = calclate_p_and_e_value ( info_real, info_all, args.quantile_of_interest, args.p_val_limit )
+    best_reals = best_reals.sort_values ( by='p_value', ascending=[1, ] )
     best_reals = best_reals.reset_index ( )
 
     if len( best_reals ) == 0:
@@ -223,45 +246,56 @@ def main():
         for i in range(len(best_reals)):
             print( str(best_reals['Name'][i]) + ' ' + str(best_reals['p_value'][i]) + ' ' + str(best_reals['e_value'][i]) + ' ' + str(best_reals['score'][i]) + ' ' + str(best_reals['offset_p'][i]) + ' ' + str(best_reals['offset_q'][i]) + ' ' + str(best_reals['W'][i]) )
 
-
-
-
-# best_reals_by_W = best_reals.sort_values(by='W', ascending=[0, ])
-# best_reals_by_score = best_reals.sort_values(by='score', ascending=[0, ])
-# best_reals_by_dist = best_reals.sort_values(by='dist', ascending=[1, ])
-# best_reals_by_pval = best_reals.sort_values(by='p_value', ascending=[1, ])
-
 # if called as a script; calls the main method
 if __name__ == '__main__':
     main ( )
 '''
+pwm_file='/home/kiesel/Desktop/BaMM_webserver/DB/ENCODE_ChIPseq/Results/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125_motif_1.ihbcp'
+bg_file='/home/kiesel/Desktop/BaMM_webserver/DB/ENCODE_ChIPseq/Results/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125.hbcp'
+db_folder='/home/kiesel/Desktop/TomTomTool/DB'
+
+db_folder='/home/kiesel/Desktop/MARVIN_BACKUP/Results'
 
 pwm_file='/home/kiesel/Desktop/BaMM_webserver/media/caf6b03b-ff5c-44b7-83e8-ceb70e4afc8c/Output/positiveSequences_motif_1.ihbcp'
 bg_file='/home/kiesel/Desktop/BaMM_webserver/media/caf6b03b-ff5c-44b7-83e8-ceb70e4afc8c/Output/positiveSequences.hbcp'
 db_folder='/home/kiesel/Desktop/BaMM_webserver/DB/ENCODE_ChIPseq/Results'
 pwm_order=4
 db_order=4
-read_order=1
+read_order=0
 shuffle_times=10
-p_val_limit=0.1
+p_val_limit=0.01
 quantile_of_interest=0.1
 
 # 1. get real infos
 # read pwm
-pwm = read_pwm ( pwm_file, pwm_order, read_order )
+pwm = read_pwm ( pwm_file,pwm_order, read_order )
 pwm_bg = read_bg(bg_file, pwm_order, len(pwm))
 info_real = get_scores ( pwm, pwm_bg, db_folder, db_order, read_order )
+
+pwm_rev = reverseComp(pwm)
+bg_rev = reverseComp(pwm_bg)
+info_rev = get_scores ( pwm_rev, bg_rev, db_folder, db_order, read_order )
+info_real = info_real.append(info_rev)
+info_real = info_real.reset_index ( )
+
+
 # 2. get x-times shuffled info and concatenate to calculate p_and_e_value
 frames = [info_real]
 for x in range ( shuffle_times ):
     pwm_shuff = shuffle_pwm ( pwm )
     info_fake = get_scores ( pwm_shuff, pwm_bg, db_folder, db_order, read_order )
     frames.append ( info_fake )
-
+    pwm_shuff_rev = shuffle_pwm ( pwm_rev )
+    info_fake = get_scores ( pwm_shuff_rev, bg_rev, db_folder, db_order, read_order )
+    frames.append ( info_fake )
 # 3. concatenate all and calculate pvalues and evalues for the entries
 info_all = pd.concat ( frames )
+plt.hist(info_all['score'], bins=200)
+plt.hist(info_real['score'], bins=200)
+
 
 best_reals = calclate_p_and_e_value ( info_real, info_all, quantile_of_interest, p_val_limit )
+best_reals = best_reals.sort_values ( by='p_value', ascending=[1, ] )
 best_reals = best_reals.reset_index ( )
 
 if len(best_reals) == 0:

@@ -51,6 +51,7 @@ class Job(models.Model):
     Motif_Initialization = models.CharField(max_length=255, choices=INIT_CHOICES, default="PEnGmotif")
     Motif_InitFile = models.FileField(upload_to=job_directory_path, null=True, blank=True)
     Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="PWM")
+    num_init_motifs = models.IntegerField(default = 100)
 
     # options
     model_Order =models.PositiveSmallIntegerField(default=4)
