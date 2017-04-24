@@ -189,25 +189,6 @@ def data_predict(request):
           
                 if out == "OK":  
                 
-                    # optional: run PEnGmotif to maintain Motif Init File
-                    #if str(job.Motif_Initialization) == "PEnGmotif":
-                    #    print("RUNNING PENG!MOTIF USING CELERY TASK")
-                        #task = run_bamm.delay(job.pk)
-                        #task = test_R.delay(job.pk)
-                    #    task = run_peng.delay(job.pk)
-                    #    print("FINISHED PENG MOTIF USING CELERY")
-                        #check = subprocess.Popen(['/code/bammmotif/static/scripts/peng_motif',    
-                        #str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)),
-                        #'-o', str(os.path.join(settings.MEDIA_ROOT, str(job.pk),"Input/", "MotifInitFile.peng"))],             
-                        #stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                        #out, err = check.communicate()  
-                        #out = out.decode('ascii')
-
-                        #f = open(str(os.path.join(settings.MEDIA_ROOT, str(job.pk),'Input/', 'MotifInitFile.peng')))
-                        #job.Motif_InitFile.save("MotifInitFile.peng", File(f))
-                        #job.Motif_Init_File_Format = "PWM"
-                        #job.save()
-                    #else:
                     # 3. Motif Init File 
                     #    check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_Init',
                     #    str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)),
@@ -220,9 +201,7 @@ def data_predict(request):
                     if out == "OK":
                         print("OUT IS OK -> run the JOB")
                         run_bamm.delay(job.pk)
-                        #run_bamm_direct.delay(job.pk)
                         return render(request, 'job/submitted.html', {'pk': job.pk} ) 
-                        #return redirect('run_job', pk=job.pk)  
                     else:
                         print("OUT IS NOT OK -> delete job and give error message 1")
                         Job.objects.filter(job_ID=job.pk).delete()
@@ -444,12 +423,17 @@ def result_detail(request, pk):
     opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
     Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
     if result.status == 'Successfully finished':
-        num_logos = range(min(2,result.model_Order) + 1)
-        return render(request,'results/result_detail.html', {'result':result, 'opath':opath, 'Output_filename':Output_filename, 'num_logos':num_logos})
+        if result.mode == 'Prediction':
+            num_logos = range(min(2,result.model_Order) + 1)
+            return render(request,'results/result_detail.html', {'result':result, 'opath':opath, 'Output_filename':Output_filename, 'num_logos':num_logos})
+        if result.mode == 'Occurrence':
+            return redirect(request,'search_result')
     else:
         command ="tail -20 /code/media/logs/" + pk + ".log"
         output = os.popen(command).read()
         return render(request,'results/result_status.html', {'result':result, 'opath':opath , 'output':output })
+        
+        
 
 ##########################
 ### DATABASE RELATED VIEWS
