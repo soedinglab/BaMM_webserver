@@ -8,7 +8,7 @@ from .views import Plot
 
 urlpatterns = [
     url(r'^test/(?P<pk>.*)/$', Plot.as_view()),
-	url(r'^$', views.home, name='home'),
+    url(r'^$', views.home, name='home'),
     url(r'^home/',views.home, name='home'),
     url(r'^aboutBaMMmotif/', views.info, name='info'),
     url(r'^documentation/', views.documentation, name='documentation'),
@@ -23,7 +23,7 @@ urlpatterns = [
     url(r'^results/$', views.find_results, name='find_results'),
     url(r'^results/result_overview/$', views.result_overview, name='result_overview'),
     url(r'^results/(?P<pk>.*)/$', views.result_detail, name='result_detail'), 
-    url(r'^results/search/(?P<pk>.*)/$', Plot.as_view(), name='search_result')
+    url(r'^results/search/(?P<pk>.*)/$', Plot.as_view(), name='search_result'),
     url(r'^delete/(?P<pk>.*)/$', views.delete, name='delete'),
     url(r'^database/$', views.maindb, name='maindb'),
     url(r'^database/db_overview/$', views.db_overview, name='db_overview'),

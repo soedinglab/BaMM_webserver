@@ -9,3 +9,4 @@ numpy
 redis
 pandas
 plotly
+matplotlib
