@@ -55,7 +55,7 @@
 
 
 
-    <form action="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1.zip" method="get" target="_blank">
+    <form action="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motifs.zip" method="get" target="_blank">
         <h2> Predicted Higher Order Model &emsp;
           <button type="submit" class="btn btn-default" aria-label="Download" >
              <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD MODEL</span> 
@@ -66,12 +66,13 @@
 
        
     <hr style="border: 1px solid #1f2e2e">
+    <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo; reverse Complement">
     {% for i in "012" %}
         <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-{{i}}-icColumnScale-icLetterScale.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
     {% endfor %}
             <br>
             <br>
-    <form action="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_1_logos.zip" method="get" target="_blank">
+    <form action="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{entry.result_location}}/{{entry.result_location}}_motif_logos.zip" method="get" target="_blank">
         <p align="right">           
         <button type="submit" class="btn btn-default" aria-label="Download">
         <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD LOGO PLOTS </span> 
@@ -94,8 +95,6 @@
        </form>
  </div>
 </font>
-</div>
-
 
 <div class="well" style="background-color:white">
     <h2>BaMMmotif Settings </h2>
@@ -129,7 +128,7 @@
         </table>
         
         {% if entry.parent.EM == 1 %}
-        <h3>Expectation Maximization Optimization:</h3>
+        <h3>Expectation Maximization Optimization</h3>
         <table>
             <tr>
                 <td>  &emsp; q value: </td>
@@ -178,7 +177,7 @@
         </table>
         {% endif %}
 </div>
-
+</div>
 
 
 {% endblock %}
