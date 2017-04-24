@@ -118,7 +118,7 @@ class DbParameter(models.Model):
     species = models.CharField(max_length=12)
     experiment = models.CharField(max_length=20)
     base_dir = models.CharField(max_length=50)
-    motif_init_file_format = models.CharField(max_length=12)
+    motif_init_file_format = models.CharField(max_length=120)
     alphabet = models.CharField(max_length=12)
     reversecomp = models.IntegerField(db_column='reverseComp')  # Field name made lowercase.
     modelorder = models.IntegerField(db_column='modelOrder')  # Field name made lowercase.
