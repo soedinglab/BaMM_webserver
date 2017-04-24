@@ -24,8 +24,8 @@ def read_pwm(filename, model_order, read_order):
                 profile = np.zeros ( elements )
                 tokens = line.split ( )
                 if len(tokens) != elements:
-                    print("ERROR: line does not seem to be part of a valid pwm:due to length!!!", file=sys.stderr)
-                    print("\t{}".format(line), file=sys.stderr)
+                    print("ERROR: line does not seem to be part of a valid pwm:due to length!!!")
+                    print("\t{}".format(line))
                     exit(1)
                 for i, token in enumerate ( tokens ):
                     profile[i] = float ( token )
