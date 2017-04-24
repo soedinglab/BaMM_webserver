@@ -423,7 +423,7 @@ def result_detail(request, pk):
     opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
     Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
     if result.status == 'Successfully finished':
-        if result.mode == 'Prediction':
+        if result.mode == 'Predicition':
             num_logos = range(min(2,result.model_Order) + 1)
             return render(request,'results/result_detail.html', {'result':result, 'opath':opath, 'Output_filename':Output_filename, 'num_logos':num_logos})
         if result.mode == 'Occurrence':
