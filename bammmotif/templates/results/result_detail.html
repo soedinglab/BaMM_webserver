@@ -40,7 +40,7 @@
         <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white">
         <div class="panel-body">
 
-        {% if result.mode == "Prediction" %}
+        {% if result.mode == "Predicition" %}
         <h3>Model Settings</h3>
         <table>
             <tr>
@@ -58,7 +58,7 @@
         </table>
         {% endif %}
 
-        {% if result.mode == "Prediction" %}
+        {% if result.mode == "Predicition" %}
         <h3>Motif Initialization</h3>
         <table>
             <tr>
@@ -78,7 +78,7 @@
         </table>
         {% endif %}
 
-        {% if result.mode == "Prediction" %}
+        {% if result.mode == "Predicition" %}
         <h3>Background Model</h3>
         <table>
             <tr>
@@ -144,7 +144,7 @@
         </table>
         {% endif %}
         
-        {% if result.mode == "Prediction" %}
+        {% if result.mode == "Predicition" %}
         <h3>Database Model Comparison:</h3>
         <table>
             <tr>
@@ -232,7 +232,7 @@
         </p>
     </form>
 
-    {% if result.mode == "Prediction" %}
+    {% if result.mode == "Predicition" %}
     <h2> Performance and Positional Distribution on Input Sequences </h2>
         <hr style="border: 1px solid #1f2e2e">
         <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_FDR.jpeg" class="responsive-img" style='max-height:400px;' alt="ROC Curve Plot"> &emsp;
