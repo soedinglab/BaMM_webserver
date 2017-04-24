@@ -23,10 +23,10 @@ def read_pwm(filename, model_order, read_order):
             if skipper == model_order + 1:
                 profile = np.zeros ( elements )
                 tokens = line.split ( )
-                # if len(tokens) != elements:
-                # print("ERROR: line does not seem to be part of a valid pwm:due to length!!!", file=sys.stderr)
-                # print("\t{}".format(line), file=sys.stderr)
-                # exit(1)
+                if len(tokens) != elements:
+                    print("ERROR: line does not seem to be part of a valid pwm:due to length!!!", file=sys.stderr)
+                    print("\t{}".format(line), file=sys.stderr)
+                    exit(1)
                 for i, token in enumerate ( tokens ):
                     profile[i] = float ( token )
                 # EPSILON = 0.1 * (read_order + 1)
