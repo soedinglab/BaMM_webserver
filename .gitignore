@@ -2,6 +2,7 @@
 /bammmotif/migrations/
 /DB/
 /bammmotif/static/DB
+/bammmotif/templates/home/test.html
 /bammmotif/static/scripts/Occurrence_plots.R
 /bammmotif/static/scripts/plotly.py
 

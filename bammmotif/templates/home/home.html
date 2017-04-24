@@ -13,14 +13,14 @@
   
   {% if user.is_authenticated %}
   <center>
-   <a class="btn btn-primary btn-lg" href='/job/data_predict/' style="background-color:#1f2e2e">Motif Discovery
+   <a class="btn btn-primary btn-lg" href='/job/data_predict/' style="background-color:#1f2e2e">De-Novo Motif Discovery
 </a></center>
   {% else %}
 
 <!-- Button trigger modal -->
 <center>
 <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal_1" style="background-color:#1f2e2e">
-Motif Discovery
+De-Novo Motif Discovery
 </a>
 </center>
 
@@ -78,12 +78,12 @@ Motif Discovery
 
   {% if user.is_authenticated %}
   <center>
-     <a type="button" class="btn btn-primary btn-lg" href='/job/data_discover/' style="background-color:#1f2e2e">TFBS Prediction</a>
+     <a type="button" class="btn btn-primary btn-lg" href='/job/data_discover/' style="background-color:#1f2e2e">Motif Search</a>
    </center>
   {% else %}
 <!-- Button trigger modal -->
 <center>
-<a type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal_2" style="background-color:#1f2e2e">TFBS Prediction</a>
+<a type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal_2" style="background-color:#1f2e2e">Motif Search</a>
 </center>
 
 <!-- Modal -->
