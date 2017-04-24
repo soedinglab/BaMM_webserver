@@ -118,7 +118,7 @@ class DbParameter(models.Model):
     species = models.CharField(max_length=12)
     experiment = models.CharField(max_length=20)
     base_dir = models.CharField(max_length=50)
-    motif_init_file_format = models.CharField(max_length=120)
+    motif_init_file_format = models.CharField(max_length=255)
     alphabet = models.CharField(max_length=12)
     reversecomp = models.IntegerField(db_column='reverseComp')  # Field name made lowercase.
     modelorder = models.IntegerField(db_column='modelOrder')  # Field name made lowercase.
@@ -146,13 +146,13 @@ class ChIPseq(models.Model):
     filename = models.CharField(max_length=255)
     lab = models.CharField(max_length=12)
     grant = models.CharField(max_length=12)
-    cell_type = models.CharField(max_length=12)
+    cell_type = models.CharField(max_length=20)
     target_name = models.CharField(max_length=12)
     ensembl_target_id = models.CharField(max_length=15)
     treatment = models.CharField(max_length=25)
     protocol = models.CharField(max_length=15)
     pos_seq_file = models.CharField(max_length=120)
-    motif_init_file = models.CharField(max_length=120)
+    motif_init_file = models.CharField(max_length=255)
     result_location = models.CharField(max_length=80)
     parent = models.ForeignKey(DbParameter, blank=True, null=True, on_delete=models.CASCADE)
 
