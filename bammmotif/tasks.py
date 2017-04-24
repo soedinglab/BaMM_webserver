@@ -148,6 +148,8 @@ def run_bamm(self, job_pk):
                 if job.FDR == True:
                     params = params + " --FDR "
                     params = params + " --savePRs "
+                    params = params + " --zoops "
+                    
                     file_counter = file_counter + 1
                     params = params + " --mFold " + str(job.m_Fold)
                     params = params + " --cvFold " + str(job.cv_Fold)
