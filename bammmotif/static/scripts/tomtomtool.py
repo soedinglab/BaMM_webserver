@@ -44,7 +44,7 @@ def read_pwm(filename, model_order, read_order):
 
 def reverseComp( pwm ):
     pwm_rev = []
-    for i in range ( len(pwm) ):
+    for i in range (0, len(pwm) ):
         profile = pwm[i][::-1]
         pwm_rev.append(profile)
     pwm_rev = pwm_rev[::-1]
@@ -82,7 +82,7 @@ def read_bg(bg_file, pwm_order, width):
                     # print("\t{}".format(line), file=sys.stderr)
                     # print(np.sum(profile))
                     # exit(1)
-                    for n in range ( width ):
+                    for n in range ( 0, width ):
                         pwm.append ( profile )
                     break
                 else:
@@ -91,18 +91,19 @@ def read_bg(bg_file, pwm_order, width):
 
 
 # calculate min distance between two pwms of different length
-def calculate_pwm_dist(pwm_1, pwm_2, offset1, offset2, overlap_len, order):
+def calculate_pwm_dist(pwm_1, pwm_2, pwm_1_log, pwm_2_log, offset1, offset2, overlap_len, order):
     dist = 0
     for i in range ( 0, overlap_len ):
         for a in range ( 0, pow(4,order+1)-1 ):
-            #dist = dist + (pwm_1[offset1 + i][a] - pwm_2[offset2 + i][a]) * (
-            #    math.log ( pwm_1[offset1 + i][a], 2 ) - math.log ( pwm_2[offset2 + i][a], 2 ))
             pwm_avg = (pwm_1[offset1+i][a] + pwm_2[offset2+i][a])/2
-            dist = dist + (pwm_1[offset1 + i][a] * math.log(pwm_1[offset1 +i][a]) + pwm_2[offset2 + i][a] * math.log(pwm_2[offset2 +i][a]) - 2*pwm_avg * math.log(pwm_avg))
+            if pwm_avg != 0 & ~np.isnan(pwm_1_log[offset1+i][a]) & ~np.isnan(pwm_2_log[offset2 +i][a]):
+                dist = dist + (pwm_1[offset1 + i][a] * pwm_1_log[offset1 +i][a] + pwm_2[offset2 + i][a] * pwm_2_log[offset2 +i][a] - 2 * pwm_avg * math.log(pwm_avg))
+            else:
+                print( "--->  LOG IS NAN! <----\n")
     return dist
 
 
-def get_min_dist(p_pwm, q_pwm, order):
+def get_min_dist(p_pwm, q_pwm,p_pwm_log, q_pwm_log, order, min_overlap):
     len_p = len ( p_pwm )
     len_q = len ( q_pwm )
     max_overlap = min ( len_p, len_q )
@@ -113,14 +114,14 @@ def get_min_dist(p_pwm, q_pwm, order):
     min_overlap = round(max_overlap/2)-1
     for offset_p in range ( 0, (len_p - min_overlap) ):
         W = min ( max_overlap, len_p - offset_p )
-        dist = calculate_pwm_dist ( p_pwm, q_pwm, offset_p, 0, W,order )
+        dist = calculate_pwm_dist ( p_pwm, q_pwm,  p_pwm_log, q_pwm_log, offset_p, 0, W,order )
         if dist < min_dist:
             min_dist = dist
             min_W = W
             min_offset_p = offset_p
     for offset_q in range ( 0, (len_q - min_overlap) ):
         W = min ( max_overlap, len_q - offset_q )
-        dist = calculate_pwm_dist ( p_pwm, q_pwm, 0, offset_q, W,order )
+        dist = calculate_pwm_dist ( p_pwm, q_pwm, p_pwm_log, q_pwm_log, 0, offset_q, W,order )
         if dist < min_dist:
             min_dist = dist
             min_W = W
@@ -129,23 +130,24 @@ def get_min_dist(p_pwm, q_pwm, order):
     return (min_dist, min_W, min_offset_p, min_offset_q)
 
 
-def get_scores(pwm, pwm_bg, db_folder, db_order, read_order):
+def get_scores(pwm, pwm_bg, pwm_log, pwm_bg_log, db_folder, db_order, read_order, weight, min_overlap):
     # Loop over database
     info = pd.DataFrame ( )
-#    for entry in glob.iglob ( os.path.join ( db_folder + '/**/*.ihbcp' ), recursive=True ):
     for entry in glob.iglob ( os.path.join ( db_folder + '/**/*.ihbcp' )):
         # read pwm
         pwmDB = read_pwm ( entry, db_order, read_order )
-        # check if gb_model needs to be shortened
+        pwmDB_log = log_pwm(pwmDB)
+        # check if bg_model needs to be shortened
         if len ( pwmDB ) < len ( pwm ):
             # truncate pwm_bg
             pwm_bg = pwm_bg[:][0:len ( pwmDB )]
+            pwm_bg_log = log_pwm(pwm_bg)
         # calculate min distances
-        (dist_p_bg, W_p_bg, offset_p_bg, offset_bg_p) = get_min_dist ( pwm, pwm_bg, read_order )
-        (dist_q_bg, W_q_bg, offset_q_bg, offset_bg_q) = get_min_dist ( pwmDB, pwm_bg, read_order )
-        (dist_p_q, W, offset_p, offset_q) = get_min_dist ( pwm, pwmDB, read_order )
+        (dist_p_bg, W_p_bg, offset_p_bg, offset_bg_p) = get_min_dist ( pwm, pwm_bg, pwm_log, pwm_bg_log, read_order, min_overlap )
+        (dist_q_bg, W_q_bg, offset_q_bg, offset_bg_q) = get_min_dist ( pwmDB, pwm_bg,pwmDB_log, pwm_bg_log, read_order, min_overlap )
+        (dist_p_q, W, offset_p, offset_q) = get_min_dist ( pwm, pwmDB, pwm_log, pwmDB_log, read_order, min_overlap )
         # calculate matching score
-        s_p_q = 0.5*(dist_p_bg + dist_q_bg) - dist_p_q
+        s_p_q = weight*(dist_p_bg + dist_q_bg) - dist_p_q
         # print(str.split(ntpath.basename(entry), "_")[0])
         dat = pd.Series ( {'Name': str.split ( ntpath.basename ( entry ), "_" )[0],
                            'score': s_p_q,
@@ -174,13 +176,26 @@ def calclate_p_and_e_value(info_real, info_all, q, p_val_limit):
     # find sq
     sq = info['score'][N]
     a = 1 / (sum ( info['score'][0:N] - sq ) / N)
-    for i in range(len(info_real)):
+    for i in range(0,len(info_real)):
         p_val_s = q * math.exp ( - (info_real['score'][i] - sq) * a )
         info_real.loc[i,'p_value'] = p_val_s
         e_val_s = N * p_val_s
         info_real.loc[i,'e_value'] = e_val_s
     return info_real[:][info_real['p_value'] < p_val_limit]
 
+
+def log_pwm(pwm):
+    pwm_log = []
+    for l in range(0, len(pwm)):
+        profile = np.zeros(len(pwm[l]))
+        for a in range(0, len(pwm[l])):
+            if pwm[l][a] != 0:
+                profile[a] = math.log(pwm[l][a])
+            else:
+                print("PROBABILITIES ARE 0! log leads to NAN -> \n")
+                profile[a] = np.nan
+        pwm_log.append(profile)
+    return pwm_log
 
 # THE main ;)
 def main():
@@ -206,30 +221,39 @@ def main():
 
     args = parser.parse_args ( )
 
+    weight = 0.5
+    min_overlap = 5
+
     # 1. get real infos
-    # read pwm
+    # read pwm and log them
     pwm = read_pwm ( args.pwm_file, args.pwm_order, args.read_order )
+    pwm_log = log_pwm(pwm)
     pwm_bg = read_bg(args.bg_file, args.pwm_order, len(pwm))
-    info_real = get_scores ( pwm, pwm_bg, args.db_folder, args.db_order, args.read_order )
+    pwm_bg_log = log_pwm(pwm_bg)
+    info_real = get_scores ( pwm, pwm_bg, pwm_log, pwm_bg_log, args.db_folder, args.db_order, args.read_order , weight, min_overlap)
 
     # get reverseComplement of pwm if read_order == 0 and score_matches
     if args.read_order == 0 :
         pwm_rev = reverseComp(pwm)
+        pwm_rev_log = reverseComp(pwm_rev)
         bg_rev = reverseComp(pwm_bg)
-        info_rev = get_scores ( pwm_rev, bg_rev, args.db_folder, args.db_order, args.read_order )
+        bg_rev_log = reverseComp(bg_rev)
+        info_rev = get_scores ( pwm_rev, bg_rev,pwm_rev_log, bg_rev_log, args.db_folder, args.db_order, args.read_order , weight, min_overlap)
         info_real.append(info_rev)
         info_real = info_real.reset_index ( )
 
     # 2. get x-times shuffled info and concatenate to calculate p_and_e_value
     frames = [info_real]
-    for x in range ( args.shuffle_times ):
+    for x in range (0, args.shuffle_times ):
         pwm_shuff = shuffle_pwm ( pwm )
-        info_fake = get_scores ( pwm_shuff, pwm_bg, args.db_folder, args.db_order, args.read_order )
+        pwm_shuff_log = log_pwm(pwm_shuff)
+        info_fake = get_scores ( pwm_shuff, pwm_bg, pwm_shuff_log, pwm_bg_log, args.db_folder, args.db_order, args.read_order , weight, min_overlap)
         frames.append ( info_fake )
 
         if args.read_order == 0:
             pwm_shuff_rev = shuffle_pwm ( pwm_rev )
-            info_fake = get_scores ( pwm_shuff_rev, bg_rev, args.db_folder, args.db_order, args.read_order )
+            pwm_shuff_rev_log = log_pwm( pwm_shuff_rev )
+            info_fake = get_scores ( pwm_shuff_rev, bg_rev, pwm_shuff_rev_log, bg_rev_log, args.db_folder, args.db_order, args.read_order, weight , min_overlap)
             frames.append ( info_fake )
 
     # 3. concatenate all and calculate pvalues and evalues for the entries
@@ -243,69 +267,110 @@ def main():
         print ( 'no matches!' )
     else:
         #print ( '%s' % '\n '.join ( map ( str, best_reals[i] ) ) )
-        for i in range(len(best_reals)):
+        for i in range(0,len(best_reals)):
             print( str(best_reals['Name'][i]) + ' ' + str(best_reals['p_value'][i]) + ' ' + str(best_reals['e_value'][i]) + ' ' + str(best_reals['score'][i]) + ' ' + str(best_reals['offset_p'][i]) + ' ' + str(best_reals['offset_q'][i]) + ' ' + str(best_reals['W'][i]) )
 
 # if called as a script; calls the main method
 if __name__ == '__main__':
     main ( )
 '''
+weight = 0.5
+min_overlap = 0
 pwm_file='/home/kiesel/Desktop/BaMM_webserver/DB/ENCODE_ChIPseq/Results/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125_motif_1.ihbcp'
 bg_file='/home/kiesel/Desktop/BaMM_webserver/DB/ENCODE_ChIPseq/Results/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125.hbcp'
-db_folder='/home/kiesel/Desktop/TomTomTool/DB'
-
-db_folder='/home/kiesel/Desktop/MARVIN_BACKUP/Results'
-
-pwm_file='/home/kiesel/Desktop/BaMM_webserver/media/caf6b03b-ff5c-44b7-83e8-ceb70e4afc8c/Output/positiveSequences_motif_1.ihbcp'
-bg_file='/home/kiesel/Desktop/BaMM_webserver/media/caf6b03b-ff5c-44b7-83e8-ceb70e4afc8c/Output/positiveSequences.hbcp'
-db_folder='/home/kiesel/Desktop/BaMM_webserver/DB/ENCODE_ChIPseq/Results'
+#db_folder='/home/kiesel/Desktop/TomTomTool/DB'
+#db_folder='/home/kiesel/Desktop/MARVIN_BACKUP/Results'
+#pwm_file='/home/kiesel/Desktop/BaMM_webserver/media/d601ecd1-697e-4e17-b13b-5a53c496c5d2/Output/positiveSequences_motif_1.ihbcp'
+#bg_file='/home/kiesel/Desktop/BaMM_webserver/media/d601ecd1-697e-4e17-b13b-5a53c496c5d2/Output/positiveSequences.hbcp'
+#pwm_file='/home/kiesel/Desktop/TomTomTool/984e38ac-778f-4b23-b026-eb0d2fba3a6c/Output/positiveSequences_motif_1.ihbcp'
+#bg_file='/home/kiesel/Desktop/TomTomTool/984e38ac-778f-4b23-b026-eb0d2fba3a6c/Output/positiveSequences.hbcp'
+db_folder='/home/kiesel/Desktop/TomTomTool/Results'
 pwm_order=4
 db_order=4
 read_order=0
 shuffle_times=10
-p_val_limit=0.01
+p_val_limit=0.1
 quantile_of_interest=0.1
-
 # 1. get real infos
-# read pwm
-pwm = read_pwm ( pwm_file,pwm_order, read_order )
+# read pwm and log them
+pwm = read_pwm ( pwm_file, pwm_order, read_order )
+pwm_log = log_pwm(pwm)
 pwm_bg = read_bg(bg_file, pwm_order, len(pwm))
-info_real = get_scores ( pwm, pwm_bg, db_folder, db_order, read_order )
-
-pwm_rev = reverseComp(pwm)
-bg_rev = reverseComp(pwm_bg)
-info_rev = get_scores ( pwm_rev, bg_rev, db_folder, db_order, read_order )
-info_real = info_real.append(info_rev)
-info_real = info_real.reset_index ( )
-
+pwm_bg_log = log_pwm(pwm_bg)
+info_real = get_scores ( pwm, pwm_bg, pwm_log, pwm_bg_log, db_folder, db_order, read_order, weight , min_overlap)
+# get reverseComplement of pwm if read_order == 0 and score_matches
+if read_order == 0 :
+    pwm_rev = reverseComp(pwm)
+    pwm_rev_log = reverseComp(pwm_rev)
+    bg_rev = reverseComp(pwm_bg)
+    bg_rev_log = reverseComp(bg_rev)
+    info_rev = get_scores ( pwm_rev, bg_rev,pwm_rev_log, bg_rev_log, db_folder, db_order, read_order, weight , min_overlap)
+    info_real = info_real.append(info_rev, ignore_index=True)
+    info_real = info_real.reset_index ( )
 
 # 2. get x-times shuffled info and concatenate to calculate p_and_e_value
-frames = [info_real]
-for x in range ( shuffle_times ):
+frames = []
+for x in range (0, shuffle_times ):
     pwm_shuff = shuffle_pwm ( pwm )
-    info_fake = get_scores ( pwm_shuff, pwm_bg, db_folder, db_order, read_order )
+    pwm_shuff_log = log_pwm(pwm_shuff)
+    info_fake = get_scores ( pwm_shuff, pwm_bg, pwm_shuff_log, pwm_bg_log, db_folder, db_order, read_order, weight, min_overlap )
     frames.append ( info_fake )
-    pwm_shuff_rev = shuffle_pwm ( pwm_rev )
-    info_fake = get_scores ( pwm_shuff_rev, bg_rev, db_folder, db_order, read_order )
-    frames.append ( info_fake )
-# 3. concatenate all and calculate pvalues and evalues for the entries
-info_all = pd.concat ( frames )
-plt.hist(info_all['score'], bins=200)
-plt.hist(info_real['score'], bins=200)
+    if read_order == 0:
+        pwm_shuff_rev = shuffle_pwm ( pwm_rev )
+        pwm_shuff_rev_log = log_pwm( pwm_shuff_rev )
+        info_fake = get_scores ( pwm_shuff_rev, bg_rev, pwm_shuff_rev_log, bg_rev_log, db_folder, db_order, read_order, weight, min_overlap )
+        frames.append ( info_fake )
 
+# 3. concatenate all and calculate pvalues and evalues for the entries
+info_background = pd.concat ( frames )
+frames.append(info_real)
+info_all = pd.concat ( frames)
 
 best_reals = calclate_p_and_e_value ( info_real, info_all, quantile_of_interest, p_val_limit )
 best_reals = best_reals.sort_values ( by='p_value', ascending=[1, ] )
 best_reals = best_reals.reset_index ( )
-
-if len(best_reals) == 0:
-    print('no matches!')
+if len( best_reals ) == 0:
+    print ( 'no matches!' )
 else:
-    # print ( '%s' % '\n '.join ( map ( str, best_reals[i] ) ) )
+    #print ( '%s' % '\n '.join ( map ( str, best_reals[i] ) ) )
+    for i in range(0,len(best_reals)):
+        print( str(best_reals['Name'][i]) + ' ' + str(best_reals['p_value'][i]) + ' ' + str(best_reals['e_value'][i]) + ' ' + str(best_reals['score'][i]) + ' ' + str(best_reals['offset_p'][i]) + ' ' + str(best_reals['offset_q'][i]) + ' ' + str(best_reals['W'][i]) )
 
-    for i in range ( len ( best_reals ) ):
-        print ( str ( best_reals['Name'][i] ) + ' ' + str ( best_reals['p_value'][i] ) + ' ' + str (
-            best_reals['e_value'][i] ) + ' ' + str ( best_reals['score'][i] ) + ' ' + str (
-            best_reals['offset_p'][i] ) + ' ' + str ( best_reals['offset_q'][i] ) + ' ' + str ( best_reals['W'][i] ) )
+from plotly.offline import plot as plotly_plot
+import plotly.graph_objs as go
+x = info_real["score"]
+y = info_background["score"]
+trace1 = go.Histogram(
+    x=x,
+    opacity=0.70,
+    name='Reals',
+    autobinx=False,
+    xbins=dict(
+        start=min(x.append(y)),
+        end=max(x.append(y)),
+        size=0.1
+    ),
+    marker=dict(
+        color='green',
+    )
+)
+trace2 = go.Histogram(
+    x=y,
+    opacity=0.70,
+    name='Background',
+    autobinx=False,
+    xbins=dict(
+        start=min(x.append(y)),
+        end=max(x.append(y)),
+        size=0.1
+    ),
+    marker=dict(
+        color='red'
+    )
+)
+data = [trace2, trace1]
+layout = go.Layout(barmode='overlay')
+fig = go.Figure(data=data, layout=layout)
+plotly_plot(fig, filename="OL50perc_noExt_(%f)_RealMotif.html" % weight)
 
 '''
