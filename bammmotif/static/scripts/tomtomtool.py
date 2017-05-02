@@ -111,7 +111,7 @@ def get_min_dist(p_pwm, q_pwm,p_pwm_log, q_pwm_log, order, min_overlap):
     min_W = 0
     min_offset_p = 0
     min_offset_q = 0
-    min_overlap = round(max_overlap/2)-1
+    #min_overlap = round(max_overlap/2)-1
     for offset_p in range ( 0, (len_p - min_overlap) ):
         W = min ( max_overlap, len_p - offset_p )
         dist = calculate_pwm_dist ( p_pwm, q_pwm,  p_pwm_log, q_pwm_log, offset_p, 0, W,order )
@@ -221,8 +221,8 @@ def main():
 
     args = parser.parse_args ( )
 
-    weight = 0.5
-    min_overlap = 5
+    weight = 0.25
+    min_overlap = 4
 
     # 1. get real infos
     # read pwm and log them
@@ -239,7 +239,7 @@ def main():
         bg_rev = reverseComp(pwm_bg)
         bg_rev_log = reverseComp(bg_rev)
         info_rev = get_scores ( pwm_rev, bg_rev,pwm_rev_log, bg_rev_log, args.db_folder, args.db_order, args.read_order , weight, min_overlap)
-        info_real.append(info_rev)
+        info_real = info_real.append ( info_rev, ignore_index=True )
         info_real = info_real.reset_index ( )
 
     # 2. get x-times shuffled info and concatenate to calculate p_and_e_value
@@ -274,8 +274,8 @@ def main():
 if __name__ == '__main__':
     main ( )
 '''
-weight = 0.5
-min_overlap = 0
+weight = 0.25
+min_overlap = 4
 pwm_file='/home/kiesel/Desktop/BaMM_webserver/DB/ENCODE_ChIPseq/Results/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125_motif_1.ihbcp'
 bg_file='/home/kiesel/Desktop/BaMM_webserver/DB/ENCODE_ChIPseq/Results/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125/wgEncodeUwTfbsHcpeCtcfStdAlnRep0_summits125.hbcp'
 #db_folder='/home/kiesel/Desktop/TomTomTool/DB'
