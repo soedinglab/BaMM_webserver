@@ -179,19 +179,19 @@ STATICFILES_DIRS = (
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST = 'email.gwdg.de'
-#EMAIL_HOST_PASSWORD = 'gwdg_ASK_88'
-#EMAIL_HOST_USER = 'akiesel1@mpibpc.mpg.de'
+EMAIL_HOST = 'email.gwdg.de'
+EMAIL_HOST_PASSWORD = 'gwdg_ASK_88'
+EMAIL_HOST_USER = 'akiesel1@mpibpc.mpg.de'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-#SERVER_EMAIL = 'akiesel1@mpibpc.mpg.de'
-#DEFAULT_FROM_EMAIL = 'akiesel1@mpibpc.mpg.de'
+SERVER_EMAIL = 'akiesel1@mpibpc.mpg.de'
+DEFAULT_FROM_EMAIL = 'BaMMmotif'
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_PASSWORD = 'superserver'
-EMAIL_HOST_USER = 'BaMMmotif.info@gmail.com'
-ERVER_EMAIL = 'BaMMmotif.info@gmail.com'
-DEFAULT_FROM_EMAIL = "BaMMmotif"
+#EMAIL_HOST = 'smtp.gmail.com'
+#EMAIL_HOST_PASSWORD = 'superserver'
+#EMAIL_HOST_USER = 'BaMMmotif.info@gmail.com'
+#SERVER_EMAIL = 'BaMMmotif.info@gmail.com'
+#DEFAULT_FROM_EMAIL = "BaMMmotif"
 
 EMAIL_SUBJECT_SUCCESS = str("BaMM!motif: Your Job has finished!")
 EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You can view its results following this link: xcxdxx\n\n Greetings from the BaMM!team\n")
