@@ -193,11 +193,5 @@ EMAIL_HOST_USER = 'BaMMmotif.info@gmail.com'
 ERVER_EMAIL = 'BaMMmotif.info@gmail.com'
 DEFAULT_FROM_EMAIL = "BaMMmotif"
 
-DOMAIN_PREDICTION_EXPIRY = {"days": 3}
-
-HHBLITS_ALIGN_ARGS = ['hhblits', '-cpu', str(1), '-v', str(2), '-n', str(1), '-d', '/data/databases/uniprot20_2015_06/uniprot20_2015_06', '-o', '/dev/null']
-HHBLITS_MATRICES_ARGS = ['hhblits', '-cpu', str(1), '-v', str(2), '-n', str(1), '-shift', str(-0.15), '-sc', str(5), '-gapf', str(0.7), '-gapg', str(0.7), '-o', '/dev/null']
-PDOM_ARGS = ['pdom', '-t', '/home/mmeier/data/pdomain/domain_statistics_astral-scopdom-seqres-1.75.dat', '-q', '/home/mmeier/data/pdomain/uniprot_to_scop/smearing_iteration_1.dat']
-
 EMAIL_SUBJECT_SUCCESS = str("BaMM!motif: Your Job has finished!")
 EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You can view its results following this link: xcxdxx\n\n Greetings from the BaMM!team\n")
