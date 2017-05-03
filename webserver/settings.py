@@ -185,7 +185,7 @@ EMAIL_HOST_USER = 'akiesel1@mpibpc.mpg.de'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 SERVER_EMAIL = 'akiesel1@mpibpc.mpg.de'
-DEFAULT_FROM_EMAIL = 'BaMMmotif'
+DEFAULT_FROM_EMAIL = 'akiesel1@mpibpc.mpg.de'
 
 #EMAIL_HOST = 'smtp.gmail.com'
 #EMAIL_HOST_PASSWORD = 'superserver'
