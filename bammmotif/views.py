@@ -334,11 +334,19 @@ def data_discover_from_db(request, pk):
                     print("we don't have an IP address for user")
             job.save() 
             
+            # upload motifInitFile
             filename= 'DB/' + str(db_entry.parent.base_dir) + '/Results/' + str(db_entry.result_location) + '/' + str(db_entry.result_location) + '_motif_1.ihbcp'
             f = open(str(filename))
             out_filename = str(db_entry.result_location) + ".ihbcp"
             job.Motif_InitFile.save(out_filename , File(f))
             job.Motif_Init_File_Format = "BaMM"
+            job.save()
+            
+            # upload bgModelFile
+            filename= 'DB/' + str(db_entry.parent.base_dir) + '/Results/' + str(db_entry.result_location) + '/' + str(db_entry.result_location) + '.hbcp'
+            f = open(str(filename))
+            out_filename = str(db_entry.result_location) + ".hbcp"
+            job.bgModel_File.save(out_filename , File(f))
             job.save()
             
             #check if file formats are correct

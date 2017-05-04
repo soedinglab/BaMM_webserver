@@ -93,7 +93,7 @@ def run_bamm(self, job_pk):
                     job.save()
                     print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
-                file_counter = 3
+                file_counter = 4
                 # prepare arguments for bamm call
                 job.status = "Preparing for BaMM!motif"
                 job.save()
@@ -117,7 +117,7 @@ def run_bamm(self, job_pk):
                 if str(job.Motif_Init_File_Format) == "PWM":
                     params = params + " --PWMFile " + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
                     #params = params + " --num " + str(job.num_init_motifs)
-                    params = params + " --num 1"
+                    #params = params + " --num 1"
                 if str(job.Motif_Init_File_Format) == "BaMM":
                     params = params + " --BaMMFile " + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
 
@@ -135,6 +135,9 @@ def run_bamm(self, job_pk):
                             job.save()
                             sys.stdout.flush()
                         process.wait()
+
+                        # add bgModelFile as parameter
+                        params = params + " --bgFile " + os.path.join(settings.MEDIA_ROOT, str(job.Motif_InitFile.name.split("_")[0] + ".hbcp"))
 
                 # general options
                 params = params +  " --order " + str(job.model_Order)
@@ -166,13 +169,13 @@ def run_bamm(self, job_pk):
                     params = params + " --verbose "
                 if job.save_LogOdds == True:
                     params = params + " --saveLogOdds "
-                    file_counter = file_counter + 2
+                    file_counter = file_counter + 1
                 if job.save_BaMMs == True:
                     params = params + " --saveBaMMs "
                 if job.save_BgModel == True:
                     params = params + " --saveBgModel "
                 if job.score_Seqset == True:
-                    params = params + " --scoreSeqset "
+                    params = params + " --bammSearch "
                     params = params + " --scoreCutoff " + str(job.score_Cutoff)
 
                 job.status = 'Running BaMM'
@@ -180,6 +183,7 @@ def run_bamm(self, job_pk):
                 print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
                 command = '/code/bammmotif/static/scripts/BaMMmotif ' + params
+                print( "\n %s \n" % command )
                 process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
                 # Poll process for new output until finished
@@ -191,8 +195,8 @@ def run_bamm(self, job_pk):
                     sys.stdout.flush()
                 process.wait()    
 
-                # count how many motifs have been processed
-                job.num_motifs  = len(os.listdir(opath))/file_counter
+                # count how many motifs have been processed ( 2 files come from backgroundModel )
+                job.num_motifs  = (len(os.listdir(opath))-2)/file_counter
                 
                 for motif in range(1, (int(job.num_motifs)+1)):
                 
@@ -278,7 +282,7 @@ def run_bamm(self, job_pk):
                         job.save() 
                         print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
-                        command = 'R --slave --no-save < /code/bammmotif/static/scripts/FDRplot_simple.R --args --output_dir=' + os.path.join(settings.MEDIA_ROOT, str(job_pk)) + ' --file_name_in=' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + ' --revComp='+ str(job.reverse_Complement) + ' --fasta_file_name=' + basename(os.path.splitext(job.Input_Sequences.name)[0])
+                        command = 'R --slave --no-save < /code/bammmotif/static/scripts/FDRplot_simple.R --args --output_dir=' + os.path.join(settings.MEDIA_ROOT, str(job_pk)) + ' --file_name_in=' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + ' --revComp='+ str(job.reverse_Complement) + ' --fasta_file_name=' + basename(job.Input_Sequences.name)
                         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                         # Poll process for new output until finished
                         nextline = process.stdout.readline()
