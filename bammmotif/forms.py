@@ -20,14 +20,14 @@ class JobForm(forms.ModelForm):
 class DiscoveryForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('Input_Sequences', 'Motif_InitFile' , 'Motif_Init_File_Format',)
+        fields = ('job_name','Input_Sequences', 'Motif_InitFile' , 'Motif_Init_File_Format','bgModel_File')
 
 
 ### upload input files for position discovery
 class DiscoveryDBForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('Input_Sequences',)
+        fields = ('job_name','Input_Sequences',)
 
 
  

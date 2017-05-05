@@ -263,6 +263,14 @@ def data_discover(request):
                     print("we don't have an IP address for user")
             job.save() 
 
+            # check if job has a name, if not use first 6 digits of job_id as job_name
+            if job.job_name == None:
+                # truncate job_id
+                job_id_short = str(job.job_ID).split("-",1)
+                job.job_name = job_id_short[0]
+                job.save() 
+
+
             #check if file formats are correct
             opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
             
@@ -348,6 +356,14 @@ def data_discover_from_db(request, pk):
             out_filename = str(db_entry.result_location) + ".hbcp"
             job.bgModel_File.save(out_filename , File(f))
             job.save()
+            
+             # check if job has a name, if not use first 6 digits of job_id as job_name
+            if job.job_name == None:
+                # truncate job_id
+                job_id_short = str(job.job_ID).split("-",1)
+                job.job_name = job_id_short[0]
+                job.save() 
+
             
             #check if file formats are correct
             opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
