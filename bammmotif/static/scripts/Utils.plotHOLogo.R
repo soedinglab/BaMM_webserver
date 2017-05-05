@@ -26,25 +26,25 @@ source( "/code/bammmotif/static/scripts/Utils.readIMMs.R" )
 #...................................................................................................
 
 letterA <- function( x.pos, y.pos, ht, wt, id=NULL ){
-	
+
     x <- c( 0,  4,  6, 10, 8, 5.0, 2, 0, 3.2, 3.6, 6.4, 6.8, 3.2 )
     y <- c( 0, 10, 10,  0, 0, 7.5, 0, 0, 3.0, 4.0, 4.0, 3.0, 3.0 )
-    
+
     x <- 0.1 * x
     y <- 0.1 * y
-    
+
     x <- x.pos + wt*x
     y <- y.pos + ht*y
-    
+
     if( is.null( id ) ){
 	id <- c( rep( 1, 9 ), rep( 2, 4 ) )
     } else{
 	id <- c( rep( id, 9 ), rep( id+1, 4 ) )
     }
-    
+
     fill <- c( "#008000", "#008000" )
     col <- c( "#008000", "#008000" )
-    
+
     list( x=x, y=y, id=id, fill=fill, col=col )
 }
 
@@ -52,7 +52,7 @@ letterC <- function( x.pos, y.pos, ht, wt, id=NULL ){
 
     angle1 <- seq( 0.3+pi/2, pi, length=100 )
     angle2 <- seq( pi, pi*1.5, length=100 )
-    
+
     x.l1 <- 0.5 + 0.5*sin( angle1 )
     y.l1 <- 0.5 + 0.5*cos( angle1 )
     x.l2 <- 0.5 + 0.5*sin( angle2 )
@@ -60,10 +60,10 @@ letterC <- function( x.pos, y.pos, ht, wt, id=NULL ){
 
     x.l <- c( x.l1, x.l2 )
     y.l <- c( y.l1, y.l2 )
-    
+
     x <- c( x.l, rev( x.l ) )
     y <- c( y.l, 1-rev( y.l ) )
-    
+
     x.i1 <- 0.5 + 0.35*sin( angle1 )
     y.i1 <- 0.5 + 0.35*cos( angle1 )
 
@@ -71,31 +71,31 @@ letterC <- function( x.pos, y.pos, ht, wt, id=NULL ){
     y.i1 <- y.i1[ y.i1 <= max( y.l1 ) ]
 
     y.i1[1] <- max( y.l1 )
-    
+
     x.i2 <- 0.5 + 0.35*sin( angle2 )
     y.i2 <- 0.5 + 0.35*cos( angle2 )
-    
+
     x.i <- c( x.i1, x.i2 )
     y.i <- c( y.i1, y.i2 )
-    
+
     x1 <- c( x.i, rev( x.i ) )
     y1 <- c( y.i, 1-rev( y.i ) )
-    
+
     x <- c( x, rev( x1 ) )
     y <- c( y, rev( y1 ) )
-    
+
     x <- x.pos + wt*x
     y <- y.pos + ht*y
-    
+
     if( is.null( id ) ){
 	id <- rep( 1, length( x ) )
     } else{
 	id <- rep( id, length( x ) )
     }
-    
+
     fill <- "#0000FF"
     col <- "#0000FF"
-    
+
     list( x=x, y=y, id=id, fill=fill, col=col )
 }
 
@@ -108,13 +108,13 @@ letterG <- function( x.pos, y.pos, ht, wt, id=NULL ){
     y.l1 <- 0.5 + 0.5*cos( angle1 )
     x.l2 <- 0.5 + 0.5*sin( angle2 )
     y.l2 <- 0.5 + 0.5*cos( angle2 )
-    
+
     x.l <- c( x.l1, x.l2 )
     y.l <- c( y.l1, y.l2 )
-    
+
     x <- c( x.l, rev( x.l ) )
     y <- c( y.l, 1-rev( y.l ) )
-    
+
     x.i1 <- 0.5 + 0.35*sin( angle1 )
     y.i1 <- 0.5 + 0.35*cos( angle1 )
 
@@ -122,65 +122,65 @@ letterG <- function( x.pos, y.pos, ht, wt, id=NULL ){
     y.i1 <- y.i1[ y.i1 <= max( y.l1 ) ]
 
     y.i1[1] <- max( y.l1 )
-    
+
     x.i2 <- 0.5 + 0.35*sin( angle2 )
     y.i2 <- 0.5 + 0.35*cos( angle2 )
-    
+
     x.i <- c( x.i1, x.i2 )
     y.i <- c( y.i1, y.i2 )
-    
+
     x1 <- c( x.i, rev( x.i ) )
     y1 <- c( y.i, 1-rev( y.i ) )
-    
+
     x <- c( x, rev( x1 ) )
     y <- c( y, rev( y1 ) )
-    
+
     h1 <- max( y.l1 )
     r1 <- max( x.l1 )
-    
+
     h1 <- 0.4
     x.add <- c( r1, 0.5, 0.5, r1-0.2, r1-0.2, r1, r1 )
     y.add <- c( h1, h1, h1-0.1, h1-0.1, 0, 0, h1 )
-    
+
     if( is.null( id ) ){
 	id <- c( rep( 1, length( x ) ), rep( 2, length( x.add ) ) )
     } else{
 	id <- c( rep( id, length( x ) ), rep( id+1, length( x.add ) ) )
     }
-    
+
     x <- c( rev( x ), x.add )
     y <- c( rev( y ), y.add )
-    
+
     x <- x.pos + wt*x
     y <- y.pos + ht*y
-    
-    
+
+
     fill <- c( "#FFA500", "#FFA500" )
     col  <- c( "#FFA500", "#FFA500" )
-    
+
     list( x=x, y=y, id=id, fill=fill, col=col )
 }
 
 letterT <- function( x.pos, y.pos, ht, wt, id=NULL ){
-	
+
     x <- c( 0, 10, 10, 6, 6, 4, 4, 0 )
     y <- c( 10, 10, 9, 9, 0, 0, 9, 9 )
 
     x <- 0.1*x
     y <- 0.1*y
-    
+
     x <- x.pos + wt*x
     y <- y.pos + ht*y
-    
+
     if( is.null( id ) ){
 	id <- rep( 1, 8 )
     } else{
 	id <- rep( id, 8 )
     }
-    
+
     fill <- "#FF0000"
     col <- "#FF0000"
-    
+
     list( x=x, y=y, id=id, fill=fill, col=col )
 }
 
@@ -200,7 +200,7 @@ addLetter <- function( letters, which, x.pos, y.pos, ht, wt ){
 
     letters$x <- c( letters$x, letter$x )
     letters$y <- c( letters$y, letter$y )
-    
+
     lastID <- ifelse( is.null( letters$id ), 0, max( letters$id ) )
     letters$id <- c( letters$id, lastID + letter$id )
     letters$fill <- c( letters$fill, letter$fill )
@@ -264,7 +264,7 @@ informationContent.kmerContributions <- function( kmerContributions, unsigned=T
 	    }
 	}
     }
-    
+
     return( ic )
 }
 
@@ -284,7 +284,7 @@ kmerContributionsToInformationContent <- function( probs, conds, order,
     if( length( L ) > 1 || length( maxorder ) > 1 ){
 	stop( "<probs> and <conds> formats differ." )
     }
-    
+
     # max. model order
     if( any( order > maxorder ) ){
 	missing.order <- order[order > maxorder]
@@ -312,7 +312,7 @@ kmerContributionsToInformationContent <- function( probs, conds, order,
     nucleotides <- c( "A", "C", "G", "T" )
 
     if( maxorder >= 0 && 0 %in% order ){
-    
+
 	kmerContributions <- list()
 
 	for( a in 1:4 ){
@@ -323,7 +323,7 @@ kmerContributionsToInformationContent <- function( probs, conds, order,
 	}
 
 	A <- rep( nucleotides , 1 )
-	
+
 	kmerContributions <- cbind( "i"=A,
 				     data.frame( matrix( unlist(
 				     kmerContributions ), nrow=4, byrow=TRUE )
@@ -336,7 +336,7 @@ kmerContributionsToInformationContent <- function( probs, conds, order,
     }
 
     if( maxorder >= 1 && 1 %in% order ){
-    
+
 	kmerContributions <- list()
 
 	for( b in 1:4 ){
@@ -347,7 +347,7 @@ kmerContributionsToInformationContent <- function( probs, conds, order,
 		                        conds[[1]][2:L,b], base ) ) )
 	    }
 	}
-	
+
 	A <- rep( nucleotides, 4 )
 	B <- rep( as.character( matrix( nucleotides, nrow=4, ncol=4, byrow=T )
 		  ), 1 )
@@ -362,12 +362,12 @@ kmerContributionsToInformationContent <- function( probs, conds, order,
 
 	colnames( kmerContributions )[ -( 1:2 ) ] <- 2:L
 	rownames( kmerContributions ) <- 1:16
-	
+
 	kmerContributions.list[[2]] <- kmerContributions
     }
 
     if( maxorder >= 2 && 2 %in% order ){
-    
+
 	kmerContributions <- list()
 
 	for( c in 1:4 ){
@@ -403,7 +403,7 @@ kmerContributionsToInformationContent <- function( probs, conds, order,
     }
 
     if( maxorder >= 3 && 3 %in% order ){
-    
+
 	kmerContributions <- list()
 
 	for( d in 1:4 ){
@@ -443,7 +443,7 @@ kmerContributionsToInformationContent <- function( probs, conds, order,
 
 	kmerContributions.list[[4]] <- kmerContributions
     }
-    
+
     if( maxorder >= 4 && 4 %in% order ){
 
 	kmerContributions <- list()
@@ -589,7 +589,7 @@ hoSeqLogo <- function( file.name, order, useFreqs=F, base=2, icColumnScale=TRUE,
 	stop( paste( file.probs, " and ", file.conds, " formats differ.", sep=""
 	      ) )
     }
-    
+
     # max. model order
     if( any( order > maxorder ) ){
 	missing.order <- order[order > maxorder]
@@ -625,21 +625,21 @@ hoSeqLogo <- function( file.name, order, useFreqs=F, base=2, icColumnScale=TRUE,
     wt.gps <- c( 0, rep( .4, MAXORDER ) )
     ht.gps <- c( .01, .005, rep( .001, MAXORDER-1 ) )
 
-    chars <- c( "A", "C", "G", "T" )    
+    chars <- c( "A", "C", "G", "T" )
     letters.list <- list()
 
     if( icLetterScale ){
 
 	if( is.null( ylim ) ){
 #	  if( maxorder == 1 ){
-#	    ylim <- c( -0.3, 0.8 )		# for order 1	    
+#	    ylim <- c( -0.3, 0.8 )		# for order 1
 #	  }else{
 #	    if( maxorder >= 2 ){
 #	      ylim <- c( -0.1, 0.15 )		# for order 2
 #	    }
 #      else{
-        ylim <- c( -0.5, 2 )  	# for order 0    
-#      }	   	  
+        ylim <- c( -0.5, 2 )  	# for order 0
+#      }
 #	  }
 	}
 	ylab <- "Information content"
@@ -651,12 +651,12 @@ hoSeqLogo <- function( file.name, order, useFreqs=F, base=2, icColumnScale=TRUE,
 
 	k <- 0
 	while( maxorder >= k ){
-	
+
 	    if( !( k %in% order ) ){
 		k <- k + 1
 		next # skip this order's sequence logo
 	    }
-	    
+
 	    k1 <- k+1
 	    columns <- kmerContributions[[k1]][,-(1:k1),drop=F]
 
@@ -688,7 +688,7 @@ hoSeqLogo <- function( file.name, order, useFreqs=F, base=2, icColumnScale=TRUE,
 	    letters <- list( x=NULL, y=NULL, id=NULL, fill=NULL, col=NULL )
 
 	    for( j in 1:(L-k) ){
-	    
+
 		ht.gp <- ht.gps[k1] # reset letter gaps
 
 		scale.factor <- 1-( length( which( cols.psv[,j] > 0 ) ) * ht.gp
@@ -768,15 +768,15 @@ hoSeqLogo <- function( file.name, order, useFreqs=F, base=2, icColumnScale=TRUE,
 
 	k <- 0
 	while( maxorder >= k ){
-	
+
 	    if( !( k %in% order ) ){
 		k <- k + 1
 		next # skip this order's sequence logo
 	    }
-	    
+
 	    k1 <- k+1
 	    columns <- probs[[k1]]
-	    
+
 	    if( icColumnScale ){
 		if( any( is.nan( facs[k1,k1:L] ) ) ||
 		    any( is.infinite( facs[k1,k1:L] ) ) ){
@@ -809,7 +809,7 @@ hoSeqLogo <- function( file.name, order, useFreqs=F, base=2, icColumnScale=TRUE,
 	    for( j in k1:L ){
 
 		ht.gp <- ht.gps[k1] # reset letter gaps
-		
+
 		column <- switch( k1, columns[j,], columns[j,,], columns[j,,,],
 		                  columns[j,,,,], columns[j,,,,,],
 		                  columns[j,,,,,,] )
@@ -856,7 +856,7 @@ hoSeqLogo <- function( file.name, order, useFreqs=F, base=2, icColumnScale=TRUE,
 
 	unit <- i * wts[i] # width of one i-mer
 	units <- ( L-(i-1) ) * unit # width of all i-mers
-	
+
 	gap <- wt.gps[i] # width of one gap
 	gaps <- ( L-i ) * gap # width of all gaps
 
@@ -880,7 +880,7 @@ hoSeqLogo <- function( file.name, order, useFreqs=F, base=2, icColumnScale=TRUE,
  	topMargin = ifelse( plot_title, 12,1)
 
 	pushViewport( plotViewport( c( bottomMargin, leftMargin, topMargin, 2 ) ) )
-	
+
 	pushViewport( dataViewport( 0:(units+gaps), c( ylim[1], ylim[2] ),
 	              name="vp1" ) )
 
@@ -905,10 +905,14 @@ hoSeqLogo <- function( file.name, order, useFreqs=F, base=2, icColumnScale=TRUE,
 	                  "native" ), gp=gpar( fill="#FFFFFF", col="#FFFFFF",
 	                  alpha=1-alpha ) )
 	}
-	
+
 	if(plot_title){
-	    title = paste0( order, ifelse( order %in% 1:3, switch( k, "th","st", "nd", "rd"
-		             ), "th" ), "-order sequence logo" )
+	  title = paste0( order, ifelse( order %in% 1:3, switch( k, "th","st", "nd", "rd"
+	  ), "th" ), "-order sequence logo" )
+	  if ( revComp ){
+	    title = "reverse Complement sequence logo"
+	  }
+
 		grid.text( title, y=unit(9, "lines" ), gp=gpar(cex=cex) )
 	}
 
@@ -1046,7 +1050,7 @@ totalContributionsToInformationContent <- function( file.name, order,
         stop( paste( file.probs, " and ", file.conds, " formats differ.", sep=""
               ) )
     }
-    
+
     # max. model order
     if( any( order > maxorder ) ){
         missing.order <- order[order > maxorder]
@@ -1075,7 +1079,7 @@ totalContributionsToInformationContent <- function( file.name, order,
                                                         freqs, base )
     # positional contributions
     posContr <- informationContent.kmerContributions( kmerContr, unsigned=TRUE )
-    
+
     # order contributions
     orderContr <- apply( posContr, 1, sum, na.rm=TRUE )
 
@@ -1124,7 +1128,7 @@ informationContent.bgKmerContributions <- function( bgKmerContributions,
 	    }
 	}
     }
-    
+
     return( ic )
 }
 
@@ -1147,7 +1151,7 @@ bgKmerContributionsToInformationContent <- function( probs, conds, order,
     if( L != 1 ){
 	stop( "Background model format error." )
     }
-    
+
     # max. model order
     if( any( order > maxorder ) ){
 	missing.order <- order[order > maxorder]
@@ -1175,7 +1179,7 @@ bgKmerContributionsToInformationContent <- function( probs, conds, order,
     nucleotides <- c( "A", "C", "G", "T" )
 
     if( maxorder >= 0 && 0 %in% order ){
-    
+
 	kmerContributions <- double( 4 )
 
 	k <- 0
@@ -1187,7 +1191,7 @@ bgKmerContributionsToInformationContent <- function( probs, conds, order,
 	}
 
 	A <- rep( nucleotides , 1 )
-	
+
 	kmerContributions <- data.frame( "i"=A, kmerContributions,
 	                                 stringsAsFactors=FALSE )
 
@@ -1198,7 +1202,7 @@ bgKmerContributionsToInformationContent <- function( probs, conds, order,
     }
 
     if( maxorder >= 1 && 1 %in% order ){
-    
+
 	kmerContributions <- double( 16 )
 
 	k <- 0
@@ -1210,7 +1214,7 @@ bgKmerContributionsToInformationContent <- function( probs, conds, order,
 		                        conds[[1]][,b], base )
 	    }
 	}
-	
+
 	A <- rep( nucleotides, 4 )
 	B <- rep( as.character( matrix( nucleotides, nrow=4, ncol=4, byrow=T )
 		  ), 1 )
@@ -1228,7 +1232,7 @@ bgKmerContributionsToInformationContent <- function( probs, conds, order,
     }
 
     if( maxorder >= 2 && 2 %in% order ){
-    
+
 	kmerContributions <- double( 64 )
 
 	k <- 0
@@ -1264,7 +1268,7 @@ bgKmerContributionsToInformationContent <- function( probs, conds, order,
     }
 
     if( maxorder >= 3 && 3 %in% order ){
-    
+
 	kmerContributions <- double( 256 )
 
 	k <- 0
@@ -1303,7 +1307,7 @@ bgKmerContributionsToInformationContent <- function( probs, conds, order,
 
 	kmerContributions.list[[4]] <- kmerContributions
     }
-    
+
     if( maxorder >= 4 && 4 %in% order ){
 
 	kmerContributions <- double( 1024 )
@@ -1401,7 +1405,7 @@ bgKmerContributionsToInformationContent <- function( probs, conds, order,
 
 	kmerContributions.list[[6]] <- kmerContributions
     }
-    
+
     return( kmerContributions.list )
 }
 
@@ -1438,7 +1442,7 @@ hoBgSeqLogo <- function( file.name, order, base=2, icColumnScale=T,
     if( L != 1 ){
 	stop( "Background model format error." )
     }
-   
+
     # max. model order
     if( any( order > maxorder ) ){
 	missing.order <- order[order > maxorder]
@@ -1473,7 +1477,7 @@ hoBgSeqLogo <- function( file.name, order, base=2, icColumnScale=T,
     wts <- rep( 1, MAXORDER+1 )
     ht.gps <- c( .01, .005, rep( .001, MAXORDER-1 ) )
 
-    chars <- c( "A", "C", "G", "T" )    
+    chars <- c( "A", "C", "G", "T" )
     letters.list <- list()
 
     if( icLetterScale ){
@@ -1669,14 +1673,14 @@ hoBgSeqLogo <- function( file.name, order, base=2, icColumnScale=T,
 	}
 
 	unit <- i * wts[i] # width of one i-mer
-	
+
 	grid.newpage()
 
 	bottomMargin = ifelse( xaxis, 2 + xfontsize/3.5, 2 )
 	leftMargin = ifelse( yaxis, 2 + yfontsize/3.5, 2 )
 
 	pushViewport( plotViewport( c( bottomMargin, leftMargin, 2, 2 ) ) )
-	
+
 	pushViewport( dataViewport( 0:unit, ylim[1]:ylim[2], name="vp1" ) )
 
 	grid.polygon( x=unit( c( 0, unit+1, unit+1, 0 ), "native" ), y=unit( c(
@@ -1732,7 +1736,7 @@ hoContributionsToInformationContent <- function( file.name, useFreqs=F ){
     probs <- Utils.readIMMs.flat( file.probs )
 
     MAXORDER <- 5
-    
+
     # model formats
     L <- unique( c( sapply( probs, nrow ), sapply( conds, nrow ) ) )
     maxorder <- unique( length( probs ), length( conds ) ) - 1
@@ -1740,7 +1744,7 @@ hoContributionsToInformationContent <- function( file.name, useFreqs=F ){
 	stop( paste( file.probs, " and ", file.conds, " formats differ.", sep=""
 	      ) )
     }
-    
+
     # determine max. order
     maxorder <- min( maxorder, MAXORDER )
 
