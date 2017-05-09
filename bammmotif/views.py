@@ -40,8 +40,8 @@ class Plot(TemplateView):
 
         for m in range(result.num_motifs):
             # read in logOdds Scores:
-            score_file = opath + '/' + Output_filename + '_motif_' + str(m+1) + '.logOdds'
-            data = {'start': [], 'end': [], 'score': [], 'strand': [], 'pattern': []}
+            score_file = opath + '/' + Output_filename + '_motif_' + str(m+1) + '.scores'
+            data = {'start': [], 'end': [], 'score': [], 'pVal':[], 'eVal':[], 'strand': [], 'pattern': []}
             
             with open ( score_file ) as fh:
                 for line in fh:
@@ -51,12 +51,14 @@ class Plot(TemplateView):
                         print(line)
                     else:
                         tok = line.split ( ':' )
-                        # start - end - score - strand - pattern :
+                        # start - end - score - pVal - eVal - strand - pattern :
                         data['start'].append(tok[0])
-                        data['end'].append ( tok[1] )
-                        data['score'].append ( tok[2] )
-                        data['strand'].append ( tok[3] )
-                        data['pattern'].append ( tok[4].strip() )
+                        data['end'].append( tok[1] )
+                        data['score'].append( tok[2] )
+                        data['pVal'].append( tok[3] )
+                        data['eVal'].append( tok[4] )
+                        data['strand'].append ( tok[5] )
+                        data['pattern'].append ( tok[6].strip() )
 
 
             #trace1 = go.Scatter(x=data['start'] , y= data['score'],marker={'color': 'red', 'symbol': 104, 'size': "10"},
@@ -451,7 +453,8 @@ def result_detail(request, pk):
             num_logos = range(min(2,result.model_Order) + 1)
             return render(request,'results/result_detail.html', {'result':result, 'opath':opath, 'Output_filename':Output_filename, 'num_logos':num_logos})
         if result.mode == 'Occurrence':
-            return redirect(request,'search_result')
+            print("RESULT.numMOTIFS=" + str(result.num_motifs))
+            return redirect('test', pk)
     else:
         command ="tail -20 /code/media/logs/" + pk + ".log"
         output = os.popen(command).read()

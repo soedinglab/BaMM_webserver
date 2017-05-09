@@ -41,6 +41,7 @@
     <option value="BaMM">BaMM</option>
     </select></font></p>
 
+<p ><label for="id_bgFile"><a class "testpup" onmouseover="nhpup.popup($('#bgFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span> </a>bg File: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="bg_File" type="file" /></p>
 
 
   </div>
@@ -93,6 +94,18 @@
       <div class="modal-body">
         <font color="#0B0719">
            <p  align="justify">Please select the file format of your provided motif Initialization. This option is only necessary when providing a custom MotifInitialization.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="bgFile_Info" tabindex="-1" role="dialog" aria-labelledby="bgFile_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+           <p  align="justify">Please select the background file belonging to the selected BaMM file. This option is only necessary when providing a custom BaMM File Initialization.</p>
         </font>
       </div>
     </div>

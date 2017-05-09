@@ -7,7 +7,7 @@ from . import views
 from .views import Plot
 
 urlpatterns = [
-    url(r'^test/(?P<pk>.*)/$', Plot.as_view()),
+    url(r'^test/(?P<pk>.*)/$', Plot.as_view(), name='test'),
     url(r'^$', views.home, name='home'),
     url(r'^home/',views.home, name='home'),
     url(r'^aboutBaMMmotif/', views.info, name='info'),

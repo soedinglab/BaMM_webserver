@@ -196,7 +196,10 @@ def run_bamm(self, job_pk):
                 process.wait()    
 
                 # count how many motifs have been processed ( 2 files come from backgroundModel )
-                job.num_motifs  = (len(os.listdir(opath))-2)/file_counter
+                if job.mode == 'Predicition':
+                    job.num_motifs  = (len(os.listdir(opath))-2)/file_counter
+                if job.mode == 'Occurrence':
+                    job.num_motifs  = (len(os.listdir(opath))-2)/3
                 
                 for motif in range(1, (int(job.num_motifs)+1)):
                 
