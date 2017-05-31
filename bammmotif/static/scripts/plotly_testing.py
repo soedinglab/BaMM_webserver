@@ -3,7 +3,7 @@ import plotly.graph_objs as go
 import pandas as pd
 import json
 
-filename = "/home/kiesel/Desktop/BaMM_webserver/media/40f791dc-051b-4053-beb7-863289eaf089/Output/positiveSequences_motif_1.logOdds"
+filename = "/home/kiesel/Desktop/BaMM_webserver/media/PlotlyTest/Output/wgEncodeOpenChromChipMcf7CtcfAlnRep0_summit_osMiQOZ_motif_1.scores"
 
 data = {}
 data['start'] = []
@@ -111,3 +111,29 @@ def main():
                                     plot_title='neg LL trace for training and cross-val set',
                                     plot_out='/home/kiesel/Desktop/Desktop/Plotly/Test.html')
 
+
+########
+
+
+with open ( score_file ) as fh:
+    for line in fh:
+        head = list(line)
+        if head[0] == ">":
+            #header line
+            print(line)
+        else:
+            tok = line.split ( ':' )
+            # start - end - score - pVal - eVal - strand - pattern :
+            data['start'].append(tok[0])
+            data['end'].append( tok[1] )
+            data['score'].append( tok[2] )
+            data['pVal'].append( tok[3] )
+            data['eVal'].append( tok[4] )
+            data['strand'].append ( tok[5] )
+            data['pattern'].append ( tok[6].strip() )
+
+trace1 = go.Histogram(x=data['start'] )
+dat=go.Data([trace1])
+layout=go.Layout(title="Motif Occurrence", xaxis={'title':'Position on Sequence'}, yaxis={'title':'Counts'})
+figure=go.Figure(data=dat,layout=layout)
+div = opy.plot(figure, auto_open=False, output_type='div')

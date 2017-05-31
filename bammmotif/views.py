@@ -38,7 +38,8 @@ class Plot(TemplateView):
 
         all_plots = {}
 
-        for m in range(result.num_motifs):
+        NumMotifs = max(1, result.num_motifs)
+        for m in range(NumMotifs):
             # read in logOdds Scores:
             score_file = opath + '/' + Output_filename + '_motif_' + str(m+1) + '.scores'
             data = {'start': [], 'end': [], 'score': [], 'pVal':[], 'eVal':[], 'strand': [], 'pattern': []}
@@ -70,9 +71,9 @@ class Plot(TemplateView):
             #trace1 = go.Scatter(x=x, y=y, marker={'color': 'red', 'symbol': 104, 'size': "10"},
             #                    mode="lines",  name='1st Trace')
 
-            data=go.Data([trace1])
+            dat=go.Data([trace1])
             layout=go.Layout(title="Motif Occurrence", xaxis={'title':'Position on Sequence'}, yaxis={'title':'Counts'})
-            figure=go.Figure(data=data,layout=layout)
+            figure=go.Figure(data=dat,layout=layout)
             div = opy.plot(figure, auto_open=False, output_type='div')
 
             all_plots[m+1]=div
@@ -232,6 +233,10 @@ def data_predict(request):
 
     print("default action applies")
     return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "OK", 'message' : "OK"})
+
+
+def de-novo_example(request):
+    
 
 def data_discover(request):
     if request.method == "POST":

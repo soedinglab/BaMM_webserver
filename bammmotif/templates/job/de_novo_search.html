@@ -42,6 +42,9 @@
     {% endif %}
 
     <p><label for="id_Input_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Input Sequences:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_Input_Sequences" name="Input_Sequences" type="file" required /></p>
+
+    <p>  &emsp; <a href="{% url 'de-novo_example' %}" role="button"> LOAD EXAMPLE DATA <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> </span></a> </td>
+
    
     {% if type == "Fasta" %}
     <p><font color="red">The provided Input Sequence File does not match the expected format.</font> </p>  

@@ -137,7 +137,7 @@ def run_bamm(self, job_pk):
                         process.wait()
 
                         # add bgModelFile as parameter
-                        params = params + " --bgFile " + os.path.join(settings.MEDIA_ROOT, str(job.Motif_InitFile.name.split("_")[0] + ".hbcp"))
+                        params = params + " --bgFile " + os.path.join(settings.MEDIA_ROOT, str(job.Motif_InitFile.name.split(".")[0] + ".hbcp"))
 
                 # general options
                 params = params +  " --order " + str(job.model_Order)
