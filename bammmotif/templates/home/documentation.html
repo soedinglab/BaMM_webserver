@@ -8,11 +8,11 @@
   <hr style="border: 1px solid #1f2e2e">
   <a href="#1. How to use the web tool">1.How to use the web tool</a><br>
   &nbsp;&nbsp; <a href="#1.1 De-novo Motif Prediction">1.1 De-novo Motif Prediction</a><br>
-  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.1 Data Upload">1.1.1 Data Upload</a><br>
-  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.2 Options">1.1.2 Options</a><br>
+  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.1 Required Input">1.1.1 Required Input</a><br>
+  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.2 Advanced Options">1.1.2 Advanced Options</a><br>
   &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.3 Submition">1.1.3 Submition</a><br>
   &nbsp;&nbsp; <a href="#1.2 Motif Instance Discovery">1.2 Motif Instance Discovery</a><br>
-  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.2.1 Data Upload">1.2.1 Data Upload</a><br>
+  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.2.1 Required Input">1.2.1 Required Input</a><br>
   &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.2.2 Submition">1.2.2 Submition</a><br>
 <br>
 <a href="#2. Interpreting BaMM Results">2. Interpreting BaMM Results</a><br>
@@ -30,56 +30,88 @@
   &nbsp;&nbsp; <a href="#4.2 How do I use the command line tool?">4.2 How do I use the command line tool?</a><br>
 <br>
 <a href="#5.FAQs">5.FAQs</a><br>
-
+  &nbsp;&nbsp; <a href="#5.1 Why should I register?">5.1 Why should I register?</a><br>
+  &nbsp;&nbsp; <a href="#5.2 How can I register and what information will be saved?">5.2 How can I register and what information will be saved?</a><br>
 </div>
 
 <div class="jumbotron" style="background-color:white"><font color="black">
 <h2 id="1.How to use the web tool"> 1. How to use the web tool </h2>
-<p align="justify"> The BaMMmotif webserver enables the user to (a) predict de-novo motifs, (b) search for motif instances in custom sequences and (c) browse our database of more than 400 higher order motif models (constantly growing).</p>
+<p align="justify"> The BaMMmotif webserver enables the user to (a) predict de-novo motifs, (b) search for motif instances in custom sequences and (c) browse our database of more than 450 higher order motif models (constantly growing).</p>
 <br>
 
 <h3 id="1.1 De-novo Motif Prediction">1.1 De-novo Motif Prediction </h3>
 <p align="justify"> Most motif discovery algorithms train PWMs (position weight matrices). We derive here an expectation maximization (EM) algorithm to train BaMMs ( Bayesian Markov Models) which take positional interdependencies into account. </p>
-<p align="justify"> Performing de-novo motif prediction using BaMMmotif is a simple 3-step process:</p>
+<p align="justify"> Performing de-novo motif prediction using BaMMmotif only requires a input sequence set, but ḿany more options can be customized:</p>
 <br>
 
-<h4 id="1.1.1 Data Upload"> 1.1.1 Data Upload </h4>
+<h4 id="1.1.1 Required Input"> 1.1.1 Required Input </h4>
     <p> Positive Input Sequences: </p>
     <p align="justify">Please enter a FASTA formated file containing DNA sequences that are enriched for a motif which you want to predict (i.e. peak sequences from ChIP-seq measurements). The sequences need to be of the same length. The maximum file upload size is limited to 250 Mb for registered Users and 2.5Mb for anonymous Users.</p>
     <br>	
+    
+    <p> Reverse Complement </p>
+    <p align="justify"> Select this option when motifs can occus on both strands, i.e. as reverse complements of each other. Transcription factors and micro RNAs can usually bind on both strands ( in reverse orientation ). Deselect if you are searching for directional motifs. </p> 
+    <br>
+
+<h4 id="1.1.2 Advanced Options">1.1.2 Advanced Options </h4>
+
+    <h5 id="1.1.2.1 Model Settings">1.1.2.1 Model Settings </h4>
+
+    <p> Model Order </p>
+    <p align="justify">The model order defines up to which order the BaMM will be optimized. A 0th order BaMM model is equivalent to a PWM model. A 1rst order BaMM model takes dinucleotide probabilities into account. Registered users can learn models up to 8th order while anonymous users are limited to 3rd order models (due to computation time and resource) only.</p>
+    <br>
+    
+    <p> Extend Left + Right </p>
+    <p align="justify">The extend options allow the user to add uniformly initialized positions to the left and/or right of the motif initialization. The number of positions which will be added to either side are by default 0.</p>
+    <br>
+
+    <h5 id="1.1.2.2 Motif Initialization">1.1.2.2 Motif Initialization </h4>
+
+    <p> Motif Initialization: </p>
+    <p align="justify">BaMMmotif needs either a PWM, a BaMM or a list of known binding sites in order to initialize. You can either provide a custom file for initialization or use our brand new tool "PeNGmotif" in order to find seeding patterns in your provided positive input sequences.</p>
+    <br>
+    
+    <p> Motif InitFile and Format </p>
+    <p align="justify"> When you decide to use a custom file for motif initialization you can upload 3 different file formats here.<br>
+    PWM-> The file needs to look like this:<br>
+    BaMM -> The file needs to look like this:</br>
+    BindingSites -> The file needs to look like this:</p>
+    <br>
+
+
+    <h5 id="1.1.2.3 Background Model">1.1.2.3 Background Model </h4>
+
+    <p> Background Order </p>
+    <p align="justify">The background order describes the (homogeneous) model order of the background BaMM. The default is 2, i.e. the background model will be derived from the 3-mer frequencies of the background sequences ( if no background sequences are given the provided positive input sequences are used for sampling).</p>
+    <br>
     
     <p> Background Sequences (optional):</p>
     <p align="justify">A FASTA formated file with negative/background sequences can be provided in order to learn the (homogeneous) background BaMM. These sequences should reflect the genomic background of the positive input sequences without being enriched for a motif. If no background sequence file is provided, the background BaMM is learned from the k-mer frequences of the positive sequences.</p>
 	<br>
 	
-	<p> Motif Initialization: </p>
-	<p align="justify">BaMMmotif needs either a PWM, a BaMM or a list of known binding sites in order to initialize. You can either provide a custom file for initialization or use our brand new tool "PeNGmotif" in order to find seeding patterns in your provided positive input sequences.</p>
+    <h5 id="1.1.2.4 Expectation Maximization Optimization"> 1.1.2.4 Expectation Maximization Optimization </h4>
+    <p> EM </p>
+    <p align="justify">Select this option if you want to refine your Motif initialization by using an expectation maximization optimization to train a higher order markov model. If this is not checked, the initial motif will not be changed. Unchecking this option only makes sense, if you want to have a logo of your initialized motif model without changeing it.</p>
     <br>
-	
-	<p> Motif InitFile and Format </p>
-	<p align="justify"> When you decide to use a custom file for motif initialization you can upload 3 different file formats here.<br>
-	PWM-> The file needs to look like this:<br>
-	BaMM -> The file needs to look like this:</br>
-	BindingSites -> The file needs to look like this:</p>
-	<br>
+    <p> EM q-value </p>
+    <p align="justify">The q-value is the prior probability of the input sequences to conatin a true motif. In most biological experiments we expect to have some false positives within our measured sequences. The q-value is a rough estimation of the error rate from the experiment and by default set to 0.9 (i.e. we expect that 90% of the input sequences represent a true binding site.</p>
+    <br>
 
-<h4 id="1.1.2 Options">1.1.2 Options </h4>
-	<p> Model Order </p>
-	<p align="justify">The model order defines up to which order the BaMM will be optimized. A 0th order BaMM model is equivalent to a PWM model. A 1rst order BaMM model takes dinucleotide probabilities into account. Registered users can learn models up to 8th order while anonymous users are limited to 3rd order models (due to computation time and resource) only.</p>
-	<br>
-	
-	<p> Reverse Complement </p>
-	<p align="justify"> Select this option when motifs can occus on both strands, i.e. as reverse complements of each other. Transcription factors and micro RNAs can usually bind on both strands ( in reverse orientation ). Deselect if you are searching for directional motifs. </p> 
+    <p> EM epsilon </p>
+    <p align="justify">The EM algorithm is deemed to be converged when the sum over the absolute differences in BaMM probabilities from successive EM rounds is smaller than epsilon. The default is 0.001.</p>
     <br>
-	
-	<p> Extend Left + Right </p>
-	<p align="justify">The extend options allow the user to add uniformly initialized positions to the left and/or right of the motif initialization. The number of positions which will be added to either side are by default 0.</p>
+    
+    <p> EM max Iter </p> 
+    <p align="justify">The maxium iterations of the EM algorithm can be reduced with this option. BaMMs stop criteria is given by the convergence of BaMM probabilities (see EM epsilon) first, and by the maximum Iterations second.</p>
     <br>
+
+
+    <h5 id="1.1.2.5 False Discovery Rate Estimation"> 1.1.2.5 False Discovery Rate Estimation </h4>
 	
 	<p> FDR </p>
 	<p align="justify">Select this option if you want to perform a false discovery rate (FDR) estimation for the predicted motif model(s). This will trigger a "cvFold"- cross validation with "mFold"-times negative sampled sequences.</p>
     <br>
-	
+
 	<p> m Fold </p>
 	<p align="justify">If FDR is selected you can adjust the amount of sampled negative sequences with this option. The default 10 indicates that the negative sequence set will be 10 times larger than the positive seuqences. </p>
     <br>
@@ -88,28 +120,13 @@
 	<p align="justify">If FDR is selected you can adjust the fold for cross validation. By default a 5-fold cross validation is performed.</p>
     <br>
 	
-	<p> Background Order </p>
-	<p align="justify">The background order describes the (homogeneous) model order of the background BaMM. The default is 2, i.e. the background model will be derived from the 3-mer frequencies of the background sequences ( if no background sequences are given the provided positive input sequences are used for sampling).</p>
-    <br>
-	
-	<p> Advanced Options </p>
-	<p align="justify">The following options are in general not necessary to be adjusted but can alter the EM sensitivity and running time if needed. </p>
-    <br>
-	
 	<p> FDR sampling Order </p>
 	<p align="justify">The FDR sampling order defines the order of k-mers which will be used for sampling negative sequences during FDR estimation. The default is 2, i.e. sampling trimer frequencies.</p>
     <br>
 	
-	<p> EM epsilon </p>
-	<p align="justify">The EM algorithm is deemed to be converged when the sum over the absolute differences in BaMM probabilities from successive EM rounds is smaller than epsilon. The default is 0.001.</p>
-    <br>
-	
-	<p> EM max Iter </p> 
-	<p align="justify">The maxium iterations of the EM algorithm can be reduced with this option. BaMMs stop criteria is given by the convergence of BaMM probabilities (see EM epsilon) first, and by the maximum Iterations second.</p>
-	<br>
 
 <h4 id="1.1.3 Submition"> 1.1.3 Submition </h4> 
-	<p align="justify"> Names of uploaded files and all selected options are listed in this overview. By pressing the "BaMM!" button, your job will be submitted to the server.</p>
+	<p align="justify"> Once all parameters are set and input files are uploaded, clicking "BaMM!" at the bottom of the page will submit the job to the BaMM cluster. You can follow the running job in a live console and view your results when its finished. If you want to look at your results some other time, you can copy your job-ID and look for your results under "Find My Job" in the header line. </p>
     <br>
 
 <h3 id="1.2 Motif Instance Discovery"> 1.2 Motif Instance Discovery </h3>
@@ -117,7 +134,7 @@
 <p align="justify"> Finding motif sites in a query-sequence is a simple 2 Step process: </p>
 <br>
 
-<h4 id="1.2.1 Data Upload">1.2.1 Data Upload </h4>
+<h4 id="1.2.1 Required Input">1.2.1 Required Input </h4>
 	<p>    Input Sequences: </p>
 	<p align="justify"> Please enter a FASTA formated file which you want to scan for motif occurences. The maximum file upload size is limited to 250 Mb for registered Users and 2.5Mb for anonymous Users.</p>
     <br>
@@ -129,7 +146,7 @@
     <br>	
 	
 <h4 id="1.2.2 Submition">1.2.2 Submition</h4>
-	<p align="justify"> Your uploaded files will be summarized here. By pressing the "BaMM!" button, your job will be submitted to the server.</p>
+	<p align="justify"> Once all parameters are set and input files are uploaded, clicking "BaMM!" at the bottom of the page will submit the job to the BaMM cluster. You can follow the running job in a live console and view your results when its finished. If you want to look at your results some other time, you can copy your job-ID and look for your results under "Find My Job" in the header line. </p>
     <br>
     
 <h2 id="2. Interpreting BaMM Results"> 2. Interpreting BaMM Results </h2>
@@ -179,7 +196,11 @@
 
 <h2 id="5.FAQs"> 5. FAQs </h2>
 <br>
-
+<h3 id="5.1 Why should I register?">5.1 Why should I register? </h3>
+<p align="justify">The BaMMmotif algorithm and its results are freely available for any user without registation. However, registering as BaMM account makes wokring with the BaMM webserver even more convenient. In logged in mode, the user can see all his running and finished jobs in a structured list to keep track of his job status more easliy. This is only possible if a job can be assigned to a defined user, hence only limited to registered users. Moreover, you will be notified vie e-mail once your jobs are finished insteadt of having to check the manually. </p>
+<h3 id="5.2 How can I register and what information will be saved?">5.2 How can I register and what information will be saved? </h3>
+<p>For registering at BaMMmotif, click the "Log in" Button on the top right corner and follow the link to register a new account. The only information that is needed is a username (can be an acronym), a valid e-mail adress, and a password. E-mail addresses will only be used by the BaMMmotif webserver to inform the user of finished jobs. There will be no advertisements or spam mails and absolutely no forwarding of your confidential information to any third parties. </p>
+<br>
 
 </div>
 
