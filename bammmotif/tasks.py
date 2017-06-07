@@ -245,7 +245,8 @@ def run_bamm(self, job_pk):
                     db_param = get_object_or_404(DbParameter, param_id=100)
                     read_order = 0 # we only compare 0-th order models since this makes reverseComplement calculation easy and fast
                     print("READ_ORDER=" + str(read_order))
-                    command = 'python3 /code/bammmotif/static/scripts/tomtomtool.py ' +  opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp ' + opath + '/' +  basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp ' + '/code/DB/ENCODE_ChIPseq/Results ' + str(job.model_Order) + ' --db_order ' + str(db_param.modelorder) + ' --read_order ' + str(read_order) + ' --shuffle_times ' + str(10) + ' --quantile ' + str(0.1) +  ' --p_val_limit ' + str(job.p_value_cutoff)
+                    command = 'R --slave --no-save < /code/bammmotif/static/scripts/bamm_match.R --args' + ' --p_val_limit=' + str(job.p_value_cutoff) + ' --shuffle_times=' + str(10) + ' --read_order=' + str(read_order) + ' --db_order=' + str(db_param.modelorder) + ' --order=' + str(job.model_Order) + ' --query=' +  str(opath) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp' + ' --bg='  +  str(opath) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp' + ' --db_folder=/code/DB/ENCODE_ChIPseq/Results'
+                    #command = 'python3 /code/bammmotif/static/scripts/tomtomtool.py ' +  opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp ' + opath + '/' +  basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp ' + '/code/DB/ENCODE_ChIPseq/Results ' + str(job.model_Order) + ' --db_order ' + str(db_param.modelorder) + ' --read_order ' + str(read_order) + ' --shuffle_times ' + str(10) + ' --quantile ' + str(0.1) +  ' --p_val_limit ' + str(job.p_value_cutoff)
                     print(command)
                     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -270,9 +271,7 @@ def run_bamm(self, job_pk):
                                 p_value=float(nextline.strip().decode('ascii').split()[1]),
                                 e_value=float(nextline.strip().decode('ascii').split()[2]),
                                 score=float(nextline.strip().decode('ascii').split()[3]),
-                                offset_motif=int(float(nextline.strip().decode('ascii').split()[4])),
-                                offset_db=int(float(nextline.strip().decode('ascii').split()[5])),
-                                overlap_len=int(float(nextline.strip().decode('ascii').split()[6]))
+                                overlap_len=int(float(nextline.strip().decode('ascii').split()[4]))
                                 )
                             rel_obj.save()
                             motif_obj.save()

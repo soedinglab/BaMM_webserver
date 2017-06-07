@@ -15,12 +15,10 @@
                 <td>  &emsp; Input Sequence: </td>
                 <td>  &emsp; {{result.Inputseq_filename}}</td>
             </tr>
-            {% if result.mode == "Occurrence" %}
             <tr>
-                <td>  &emsp; Moftil File: </td>
+                <td>  &emsp; Mofti File: </td>
                 <td>  &emsp; {{result.MotifInit_filename}}</td>
             </tr>
-            {% endif %}
             {% if result.mode == "Prediction" %}
             <tr>
                 <td>  &emsp; Reverse Complement: </td>
@@ -261,33 +259,45 @@
 
     {% endif %}
     
+    {% if result.mode == "Predicition" %}
+
     <h2> Best Matches with our Database </h2>
         <hr style="border: 1px solid #1f2e2e">
         
         <table class="table table-hover">
-    <tr>
-        <th> Name </th>
-        <th> p_value </th>
-        <th> e_value </th>
-        <th> PWM </th>
-        <th> reverse Comp. </th>      
-        <th> DB Entry </th>        
-    </tr>
-    {% for match in m.dbmatch_set.all|dictsort:"p_value"   %}
         <tr>
-        <th> {{match.db_entry.target_name}} </th>
-        <th> {{match.p_value|floatformat:3}} </th>
-        <th> {{match.e_value|floatformat:3}} </th>
-        <th> <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </th>
-        <th> <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></th>     
-        <th> <a href="{% url 'db_detail' match.db_entry.db_public_id %}" style="color:black"> 
+            <th> Name </th>
+            <th> p_value </th>
+            <th> e_value </th>
+            <th> PWM </th>
+            <th> reverse Comp. </th>      
+            <th> DB Entry </th>        
+        </tr>   
+        {% for match in m.dbmatch_set.all|dictsort:"p_value"   %}
+        <tr>
+            <th> {{match.db_entry.target_name}} </th>
+            {% if  match.p_value < 0.0000000001 %}
+                <th> < 1e-10 </th>
+            {% else %}
+                <th> {{match.p_value|floatformat:10}} </th>
+            {% endif %}
+            {% if  match.e_value < 0.0000000001 %}
+                <th> < 1e-10 </th>
+            {% else %}
+                <th> {{match.e_value|floatformat:10}} </th>
+            {% endif %}
+            <th> <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </th>
+            <th> <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></th>     
+            <th> <a href="{% url 'db_detail' match.db_entry.db_public_id %}" style="color:black"> 
              <button type="submit" class="btn btn-default" aria-label="Database" >
                 <span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span> 
              </button>
              </a></th>        
-    </tr>
-    {% endfor %}
-    </table>
+        </tr>
+        {% endfor %}
+        </table>
+    {% endif %}
+
  </div>
 
 </div>

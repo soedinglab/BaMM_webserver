@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^imprint/', views.imprint, name='imprint'),
     url(r'^job/$', views.data_predict, name='data_predict'),
     url(r'^job/data_predict/', views.data_predict, name='data_predict'),
+    url(r'^job/data_predict_example/', views.denovo_example, name='denovo_example'),
     url(r'^job/data_discover/$', views.data_discover, name='data_discover'),
     url(r'^job/data_discover/(?P<pk>.*)/', views.data_discover_from_db, name='data_discover_from_db'),
     url(r'^job/submitted/', views.submitted, name='submitted'),

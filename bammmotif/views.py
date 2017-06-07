@@ -235,8 +235,89 @@ def data_predict(request):
     return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "OK", 'message' : "OK"})
 
 
-def de-novo_example(request):
-    
+def denovo_example(request):
+    print("ENTERING Data PREDICT VIEW with example")
+    if request.method == "POST":
+        print("Request IST POST")
+        form = ExampleForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            print("FORM IS VALID")
+            job = form.save(commit=False)
+            job.created_at = datetime.datetime.now()
+            job.status = "data uploaded"
+            if request.user.is_authenticated():
+                print("user is authenticated")
+                job.user = request.user
+            else:
+                print("User is not authenticated")
+                ip = get_ip(request)
+                if ip is not None:
+                    print("we have an IP address for user")
+                    # check if anonymous user already exists
+                    anonymous_users = User.objects.filter(username=ip)
+                    if anonymous_users.exists():
+                        print("user already exists")
+                        job.user = get_object_or_404(User, username=ip)
+                    else:
+                        print("create new anonymous user")
+                        # create an anonymous user and log them in
+                        username = ip
+                        u = User(username=username, first_name='Anonymous', last_name='User')
+                        u.set_unusable_password()
+                        u.save()
+                        job.user = u
+                else:
+                    print("we don't have an IP address for user")
+
+            # upload motifInitFile
+            filename= 'example_data/positiveSequences.fasta'
+            f = open(str(filename))
+            out_filename = "ExampleData.fasta"
+            job.Input_Sequences.save(out_filename , File(f))
+            
+            print("UPLOAD COMPLETE: save job object")
+            job.save() 
+            print("JOB ID = ", str(job.pk))
+            
+            # check if job has a name, if not use first 6 digits of job_id as job_name
+            if job.job_name == None:
+                # truncate job_id
+                job_id_short = str(job.job_ID).split("-",1)
+                job.job_name = job_id_short[0]
+                job.save() 
+
+            # 2. Background Sequence File
+            if job.Background_Sequences.name == None:
+                out = "OK"
+            else:                
+                check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
+                str(os.path.join(settings.MEDIA_ROOT, job.Background_Sequences.name))], 
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                out, err = check.communicate()  
+                out = out.decode('ascii')
+          
+            if out == "OK":  
+                print("OUT IS OK -> run the JOB")
+                run_bamm.delay(job.pk)
+                return render(request, 'job/submitted.html', {'pk': job.pk} ) 
+            else:
+                print("OUT IS NOT OK -> delete job and give error message 2")
+                Job.objects.filter(job_ID=job.pk).delete()
+                form = ExampleForm()
+                return render(request, 'job/de_novo_search_example.html', {'form':form , 'type' : "Background", 'message' : out })
+        else:
+            print("Form is not valid")
+            form = ExampleForm()
+            return render(request, 'job/de_novo_search_example.html', {'form':form , 'type' : "OK", 'message' : "OK"})
+    else:
+        print("Request IS NOT POST -> make form and redirect")
+        form = ExampleForm()
+        return render(request, 'job/de_novo_search_example.html', {'form':form , 'type' : "OK", 'message' : "OK"})
+
+    print("default action applies")
+    return render(request, 'job/de_novo_search_example.html', {'form':form , 'type' : "OK", 'message' : "OK"})
+
 
 def data_discover(request):
     if request.method == "POST":
@@ -454,8 +535,8 @@ def result_detail(request, pk):
     opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
     Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
     if result.status == 'Successfully finished':
+        num_logos = range(min(2,result.model_Order) + 1)
         if result.mode == 'Predicition':
-            num_logos = range(min(2,result.model_Order) + 1)
             return render(request,'results/result_detail.html', {'result':result, 'opath':opath, 'Output_filename':Output_filename, 'num_logos':num_logos})
         if result.mode == 'Occurrence':
             print("RESULT.numMOTIFS=" + str(result.num_motifs))
@@ -464,8 +545,6 @@ def result_detail(request, pk):
         command ="tail -20 /code/media/logs/" + pk + ".log"
         output = os.popen(command).read()
         return render(request,'results/result_status.html', {'result':result, 'opath':opath , 'output':output })
-        
-        
 
 ##########################
 ### DATABASE RELATED VIEWS

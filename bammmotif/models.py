@@ -89,7 +89,7 @@ class Job(models.Model):
     verbose = models.BooleanField(default=True)
     save_BaMMs = models.BooleanField(default=True)
     save_BgModel = models.BooleanField(default=True)
-    p_value_cutoff = models.DecimalField(default=0.1, max_digits=3,decimal_places=2)
+    p_value_cutoff = models.DecimalField(default=0.01, max_digits=3,decimal_places=2)
     
     class Meta:
         ordering = ['-created_at']
@@ -182,8 +182,6 @@ class DbMatch(models.Model):
     p_value      = models.FloatField(default=0.0)
     e_value      = models.FloatField(default=0.0)
     score        = models.FloatField(default=0.0)
-    offset_motif = models.IntegerField(default=0)
-    offset_db    = models.IntegerField(default=0)
     overlap_len  = models.IntegerField(default=0)
 
     def __str__(self):

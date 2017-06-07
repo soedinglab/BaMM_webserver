@@ -16,11 +16,16 @@ class JobForm(forms.ModelForm):
             if help_text != '':
                 self.fields[field].widget.attrs.update({'class':'has-popover', 'data-content':help_text, 'data-placement':'right', 'data-container':'body'})
 
+class ExampleForm(forms.ModelForm):
+    class Meta:
+        model = Job
+        fields = ('job_name','reverse_Complement','model_Order','extend_1','extend_2','Motif_Initialization','Motif_InitFile','Motif_Init_File_Format','background_Order','Background_Sequences','FDR','m_Fold','cv_Fold','sampling_Order','EM','q_value','epsilon','max_EM_Iterations','p_value_cutoff',)
+
 ### upload input files for position discovery
 class DiscoveryForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name','Input_Sequences', 'Motif_InitFile' , 'Motif_Init_File_Format','bgModel_File',)
+        fields = ('job_name','Input_Sequences', 'Motif_InitFile' , 'Motif_Init_File_Format','bgModel_File','reverse_Complement')
 
 
 ### upload input files for position discovery

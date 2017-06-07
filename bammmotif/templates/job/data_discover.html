@@ -30,7 +30,8 @@
     <p><font color="red">The provided Input Sequence File does not match the expected format.</font> </p>  
     {% endif %}
    
-    <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile: <a class="button" href="/database" role="button" style="border:1px; background-color:white"><font color="#1f2e2e"> ... or select from Database </a></label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
+    <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
+    <p>   &emsp;<a href="/database" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> select from Database </span></a></p>
     
     {% if type == "Init" %}
     <p ><font color="red"> The provided Motif Initialization File does not match the expected format. Please select correct Inputformat.</font></p>  

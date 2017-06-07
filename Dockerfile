@@ -15,18 +15,18 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	libssl-dev     
 
 # install python dependencies
-ADD requirements.txt /code/
+COPY requirements.txt /code/
 RUN pip install -r /code/requirements.txt
 
 # install r packages
-ADD	install_packages.R /code/
+COPY	install_packages.R /code/
 RUN	R --vanilla < /code/install_packages.R
 
 USER ${APP_USER}
 
-ADD bammmotif/ /code/ 
-ADD webserver/ /code/ 
-ADD DB/ /code/
-ADD *.sh /code/
-ADD *.py /code/
+COPY bammmotif/ /code/ 
+COPY webserver/ /code/ 
+COPY DB/ /code/
+COPY *.sh /code/
+COPY *.py /code/
 
