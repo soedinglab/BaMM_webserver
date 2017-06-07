@@ -80,7 +80,8 @@ for(split in splits) {
   if(revComp == "True"){
     # find out sequence length
     data = scan(paste0( maindir, "/Input/", FastaFileName ), what = list(fasta=""),quiet=TRUE)
-    next_header = which(startsWith(str = data[[1]], pattern=">"))[2]
+    #next_header = which(startsWith(str = data[[1]], pattern=">"))[2]
+    next_header = grep( x = data[[1]], pattern=">")[2]
     seq.sample = paste0(data[[1]][2:(next_header-1)],collapse="")
     seq.length = nchar(seq.sample)
 
