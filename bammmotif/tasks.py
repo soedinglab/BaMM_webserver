@@ -285,6 +285,7 @@ def run_bamm(self, job_pk):
                         print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
                         command = 'R --slave --no-save < /code/bammmotif/static/scripts/FDRplot_simple.R --args --output_dir=' + os.path.join(settings.MEDIA_ROOT, str(job_pk)) + ' --file_name_in=' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + ' --revComp='+ str(job.reverse_Complement) + ' --fasta_file_name=' + basename(job.Input_Sequences.name)
+                        print(command)
                         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                         # Poll process for new output until finished
                         nextline = process.stdout.readline()
