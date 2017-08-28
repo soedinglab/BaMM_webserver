@@ -24,25 +24,26 @@
       {% endif %}
     {% endif %}
 
-    <p><label for="id_Input_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Input Sequences:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_Input_Sequences" name="Input_Sequences" type="file" required /></p>
+    <p><label for="id_Input_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Input_Sequences" style="color:black"></span></a> Input Sequences:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_Input_Sequences" name="Input_Sequences" type="file" required /></p>
    
     {% if type == "Fasta" %}
     <p><font color="red">The provided Input Sequence File does not match the expected format.</font> </p>  
     {% endif %}
    
-    <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
+    <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Motif_InitFile"  style="color:black"></span></a> Motif InitFile: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
     <p>   &emsp;<a href="/database" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> select from Database </span></a></p>
     
     {% if type == "Init" %}
     <p ><font color="red"> The provided Motif Initialization File does not match the expected format. Please select correct Inputformat.</font></p>  
     {% endif %}
 
-    <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
+    <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Motif_Init_File_Format" style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
     <option value="PWM" selected="selected">PWM</option>
     <option value="BaMM">BaMM</option>
     </select></font></p>
 
-<p ><label for="id_bgFile"><a class "testpup" onmouseover="nhpup.popup($('#bgFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span> </a>bg File: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="bg_File" type="file" /></p>
+    <p ><label for="id_bgModel_File"><a class "testpup" onmouseover="nhpup.popup($('#bgModel_File_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#bgModel_File" style="color:black">
+    </span> </a>bg File: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_bgModel_File" name="bgModel_File" type="file" /></p>
 
 
   </div>
@@ -101,7 +102,7 @@
   </div>
 </div>
 
-<div class="modal fade" id="bgFile_Info" tabindex="-1" role="dialog" aria-labelledby="bgFile_Info">
+<div class="modal fade" id="bgModel_File_Info" tabindex="-1" role="dialog" aria-labelledby="bgModel_File_Info">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">

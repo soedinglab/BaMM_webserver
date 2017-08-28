@@ -82,8 +82,17 @@ def run_bamm(self, job_pk):
                     job.save() 
                     print(datetime.datetime.now(), "\t | START: \t %s " % job.status )
 
-                    command = '/code/bammmotif/static/scripts/peng_motif ' + os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name) + ' -o ' + os.path.join(settings.MEDIA_ROOT, job_pk, 'Input') + '/MotifInitFile.peng'
+                    #command = '/code/bammmotif/static/scripts/peng_motif ' + os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name) + ' -o ' + os.path.join(settings.MEDIA_ROOT, job_pk, 'Input') + '/MotifInitFile.peng'
+                    command = 'python3 /code/bammmotif/static/scripts/PEnG-motif/scripts/shoot_peng.py ' + os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name) + ' -o ' + os.path.join(settings.MEDIA_ROOT, job_pk, 'Input') + '/MotifInitFile.peng' +  ' -w 10 --pseudo-counts 10 -b 0.3 -a 1E3'
+                    print( "\n %s \n" % command )
+                    sys.stdout.flush()
                     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                    while True:
+                            nextline = process.stdout.readline()
+                            if nextline == b'' and process.poll() is not None:
+                                break
+                            sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
+                            sys.stdout.flush()
                     process.wait()
     
                     f = open(str(os.path.join(settings.MEDIA_ROOT, str(job.pk),'Input/', 'MotifInitFile.peng')))        
@@ -92,6 +101,7 @@ def run_bamm(self, job_pk):
                     job.status = "PEnGmotif finished"
                     job.save()
                     print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
+                    sys.stdout.flush()
 
                 file_counter = 4
                 # prepare arguments for bamm call
@@ -124,6 +134,7 @@ def run_bamm(self, job_pk):
                     if str(job.mode) == "Occurrence":
                         # find out model Order of init file if not given
                         command = 'python3 /code/bammmotif/static/scripts/getModelOrder.py ' + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
+                        print(command)
                         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                         # Poll process for new output until finished
                         while True:
@@ -133,11 +144,26 @@ def run_bamm(self, job_pk):
                             sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
                             job.model_Order = int(nextline.strip().decode('ascii'))
                             job.save()
+                            print("Model order = " + str(job.model_Order)+ "\n")
                             sys.stdout.flush()
                         process.wait()
 
-                        # add bgModelFile as parameter
-                        params = params + " --bgFile " + os.path.join(settings.MEDIA_ROOT, str(job.Motif_InitFile.name.split(".")[0] + ".hbcp"))
+                        # add bgModelFile as parameter and find out bgModel order 
+                        params = params + " --bgFile " + os.path.join(settings.MEDIA_ROOT, job.bgModel_File.name)
+                        command = 'python3 /code/bammmotif/static/scripts/getbgModelOrder.py ' + os.path.join(settings.MEDIA_ROOT, job.bgModel_File.name)
+                        print(command)
+                        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                        # Poll process for new output until finished
+                        while True:
+                            nextline = process.stdout.readline()
+                            if nextline == b'' and process.poll() is not None:
+                                break
+                            sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
+                            job.background_Order = int(nextline.strip().decode('ascii'))
+                            job.save()
+                            print("BG order = " + str(job.background_Order)+ "\n")
+                            sys.stdout.flush()
+                        process.wait()
 
                 # general options
                 params = params +  " --order " + str(job.model_Order)
@@ -182,7 +208,7 @@ def run_bamm(self, job_pk):
                 job.save() 
                 print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
-                command = '/code/bammmotif/static/scripts/BaMMmotif ' + params
+                command = '/code/bammmotif/static/scripts/bamm-private/build/BaMMmotif/BaMMmotif ' + params
                 print( "\n %s \n" % command )
                 process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
@@ -401,6 +427,85 @@ def run_bamm(self, job_pk):
                 import traceback
                 traceback.print_exc()
                 return 1
+
+
+@task(bind=True)
+def run_example(self, job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+                          
+    for motif in range(1, (int(job.num_motifs)+1)):
+        # generate new motif database entry for current motif
+        motif_obj = Motifs( parent_job = job, job_rank = motif)
+        motif_obj.save()
+
+        # calculate iupac
+        command = 'python3 /code/bammmotif/static/scripts/pwm2iupac.py ' + opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp ' + str(job.model_Order)
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        # Poll process for new output until finished
+        while True:
+            nextline = process.stdout.readline()
+            if nextline == b'' and process.poll() is not None:
+                break
+            sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
+            motif_obj.iupac = str(nextline.strip().decode('ascii'))
+            motif_obj.length = len(str(nextline.strip().decode('ascii')))
+            motif_obj.save()
+            sys.stdout.flush()
+                    
+        process.wait()
+
+        # calculate db matches
+        # db_matches = models.ManyToManyField(ChIPseq)
+
+        # get DBParams
+        db_param = get_object_or_404(DbParameter, param_id=100)
+        read_order = 0 # we only compare 0-th order models since this makes reverseComplement calculation easy and fast
+        command = 'R --slave --no-save < /code/bammmotif/static/scripts/bamm_match.R --args' + ' --p_val_limit=' + str(job.p_value_cutoff) + ' --shuffle_times=' + str(10) + ' --read_order=' + str(read_order) + ' --db_order=' + str(db_param.modelorder) + ' --order=' + str(job.model_Order) + ' --query=' +  str(opath) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp' + ' --bg='  +  str(opath) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp' + ' --db_folder=/code/DB/ENCODE_ChIPseq/Results'
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
+        # Poll process for new output until finished
+        while True:
+            nextline = process.stdout.readline()
+            if nextline == b'' and process.poll() is not None:
+                break
+            sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
+            sys.stdout.flush()
+            if str(nextline.strip().decode('ascii')) == 'no matches!':
+                print('Comparison with database did not provide any matches!')
+                break
+            else:
+                match_name = str(nextline.strip().decode('ascii').split()[0])
+                db_match = get_object_or_404(ChIPseq, filename=match_name)
+                # create relationship
+                rel_obj = DbMatch(
+                    motif=motif_obj,
+                    db_entry=db_match,
+                    p_value=float(nextline.strip().decode('ascii').split()[1]),
+                    e_value=float(nextline.strip().decode('ascii').split()[2]),
+                    score=float(nextline.strip().decode('ascii').split()[3]),
+                    overlap_len=int(float(nextline.strip().decode('ascii').split()[4]))
+                    )
+                rel_obj.save()
+                motif_obj.save()
+        process.wait()
+
+        # print fdr and position plots plus zipping
+        if job.FDR == True:
+            command = 'R --slave --no-save < /code/bammmotif/static/scripts/FDRplot_simple.R --args --output_dir=' + os.path.join(settings.MEDIA_ROOT, str(job_pk)) + ' --file_name_in=' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + ' --revComp='+ str(job.reverse_Complement) + ' --fasta_file_name=' + basename(job.Input_Sequences.name)
+            process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            # Poll process for new output until finished
+            nextline = process.stdout.readline()
+            sys.stdout.write("AUC = " + str(nextline.strip()) + "\n")
+            motif_obj.auc = float(nextline.strip())
+            sys.stdout.flush()
+            nextline = process.stdout.readline()
+            sys.stdout.write("OCC = " + str(nextline.strip()) + "\n")
+            motif_obj.occurrence = float(nextline.strip())
+            motif_obj.save()
+            sys.stdout.flush()
+    return 0
 
 
 @task(bind=True)

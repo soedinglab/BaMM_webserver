@@ -271,7 +271,7 @@ def denovo_example(request):
                     print("we don't have an IP address for user")
 
             # upload motifInitFile
-            filename= 'example_data/positiveSequences.fasta'
+            filename= 'example_data/ExampleData.fasta'
             f = open(str(filename))
             out_filename = "ExampleData.fasta"
             job.Input_Sequences.save(out_filename , File(f))
@@ -385,6 +385,7 @@ def data_discover(request):
                 job.mode = "Occurrence"
                 job.save()
                 print("OUT IS OK -> run the JOB")
+                print("BG_model_File ->" + job.bg)
                 run_bamm.delay(job.pk)
                 return render(request, 'job/submitted.html', {'pk': job.pk} )    
             else:

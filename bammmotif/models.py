@@ -81,7 +81,7 @@ class Job(models.Model):
     # scoring options
     score_Seqset = models.BooleanField(default=False)
     score_Cutoff = models.FloatField(default=3.0)
-    bgModel_File = models.FileField( upload_to = job_directory_path, null= True, blank=True)
+    bgModel_File = models.FileField( upload_to=job_directory_path, null=True, blank=True)
 
     # advanced options
     alphabet = models.CharField(max_length=255, choices=ALPHABET_CHOICES, default="STANDARD")
