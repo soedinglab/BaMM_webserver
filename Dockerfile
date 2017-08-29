@@ -1,10 +1,6 @@
 FROM python:3.5
 ENV PYTHONUNBUFFERED 1
 
-ENV APP_USER user  
-
-RUN groupadd -r ${APP_USER} && useradd -r -g ${APP_USER} ${APP_USER}
-    
 WORKDIR /code
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \ 
@@ -28,13 +24,23 @@ ENV PATH="${PATH}:/code/bammmotif/static/scripts/bamm-private/build/BaMMmotif/"
 ENV PATH="${PATH}:/code/bammmotif/static/scripts/bamm-private/R/"
 ENV PATH="${PATH}:/code/bammmotif/static/scripts/PEnG-motif/build/bin/"
 
-COPY bammmotif/ /code/ 
-COPY webserver/ /code/ 
-COPY example_data/ExampleData.fasta /code/example_data/ExampleData.fasta
-COPY example_data/result/ /code/media/293aae88-6e1e-48ba-ad87-19e7304e0391/
-COPY DB/ /code/
-COPY *.sh /code/
-COPY *.py /code/
+RUN apt-get install -y \ 
+	cmake\
+	build-essential\
+	libboost-all-dev
 
-RUN chown -R ${APP_USER}:${APP_USER} /code
-USER ${APP_USER}
+ADD tools/bamm /tmp/bamm
+RUN mkdir -p /ext/bin
+RUN cd /tmp/bamm && mkdir build && cd build && cmake .. && make
+RUN cp /tmp/bamm/build/BaMMmotif/BaMMmotif /ext/bin
+RUN cp /tmp/bamm/R/* /ext/bin
+RUN rm -rf /tmp/bamm
+
+ADD tools/PEnG-motif /tmp/peng
+RUN mkdir -p /ext/bin
+RUN cd /tmp/peng && mkdir build && cd build && cmake .. && make
+RUN cp /tmp/peng/build/bin/peng_motif /ext/bin
+RUN cp /tmp/peng/scripts/* /ext/bin
+RUN rm -rf /tmp/peng
+
+ENV PATH="/ext/bin:${PATH}"
