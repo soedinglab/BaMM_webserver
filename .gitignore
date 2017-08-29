@@ -7,6 +7,8 @@
 /bammmotif/static/scripts/Occurrence_plots.R
 /bammmotif/static/scripts/plotly.py
 
+.env
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

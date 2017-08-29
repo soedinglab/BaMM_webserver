@@ -83,7 +83,7 @@ def run_bamm(self, job_pk):
                     print(datetime.datetime.now(), "\t | START: \t %s " % job.status )
 
                     #command = '/code/bammmotif/static/scripts/peng_motif ' + os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name) + ' -o ' + os.path.join(settings.MEDIA_ROOT, job_pk, 'Input') + '/MotifInitFile.peng'
-                    command = 'python3 /code/bammmotif/static/scripts/PEnG-motif/scripts/shoot_peng.py ' + os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name) + ' -o ' + os.path.join(settings.MEDIA_ROOT, job_pk, 'Input') + '/MotifInitFile.peng' +  ' -w 10 --pseudo-counts 10 -b 0.3 -a 1E3'
+                    command = 'shoot_peng.py ' + os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name) + ' -o ' + os.path.join(settings.MEDIA_ROOT, job_pk, 'Input') + '/MotifInitFile.peng' +  ' -w 10 --pseudo-counts 10 -b 0.3 -a 1E3'
                     print( "\n %s \n" % command )
                     sys.stdout.flush()
                     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -208,7 +208,7 @@ def run_bamm(self, job_pk):
                 job.save() 
                 print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
-                command = '/code/bammmotif/static/scripts/bamm-private/build/BaMMmotif/BaMMmotif ' + params
+                command = 'BaMMmotif ' + params
                 print( "\n %s \n" % command )
                 process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
