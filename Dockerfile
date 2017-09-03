@@ -3,12 +3,12 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \ 
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	r-base         \
 	libxml2-dev    \
-	libxslt-dev    \     
+	libxslt-dev    \
 	libffi-dev     \
-	libssl-dev     
+	libssl-dev
 
 # install python dependencies
 COPY requirements.txt /code/
@@ -43,9 +43,10 @@ RUN cp /tmp/peng/build/bin/peng_motif /ext/bin
 RUN cp /tmp/peng/scripts/* /ext/bin
 RUN rm -rf /tmp/peng
 
-ADD tools/bamm-suite /tmp/suite
-RUN cd /tmp/suite && mkdir build && cd build
-RUN cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make install
+ADD tools/suite /tmp/suite
+RUN mkdir -p /tmp/suite/build
+RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make install
+RUN pip install ..
 RUN rm -rf /tmp/suite
 
 ENV PATH="/ext/bin:${PATH}"
