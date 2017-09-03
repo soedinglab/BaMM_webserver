@@ -24,23 +24,28 @@ ENV PATH="${PATH}:/code/bammmotif/static/scripts/bamm-private/build/BaMMmotif/"
 ENV PATH="${PATH}:/code/bammmotif/static/scripts/bamm-private/R/"
 ENV PATH="${PATH}:/code/bammmotif/static/scripts/PEnG-motif/build/bin/"
 
-RUN apt-get install -y \ 
+RUN apt-get install -y \
 	cmake\
 	build-essential\
 	libboost-all-dev
 
-ADD tools/bamm /tmp/bamm
 RUN mkdir -p /ext/bin
+
+ADD tools/bamm /tmp/bamm
 RUN cd /tmp/bamm && mkdir build && cd build && cmake .. && make
 RUN cp /tmp/bamm/build/BaMMmotif/BaMMmotif /ext/bin
 RUN cp /tmp/bamm/R/* /ext/bin
 RUN rm -rf /tmp/bamm
 
 ADD tools/PEnG-motif /tmp/peng
-RUN mkdir -p /ext/bin
 RUN cd /tmp/peng && mkdir build && cd build && cmake .. && make
 RUN cp /tmp/peng/build/bin/peng_motif /ext/bin
 RUN cp /tmp/peng/scripts/* /ext/bin
 RUN rm -rf /tmp/peng
+
+ADD tools/bamm-suite /tmp/suite
+RUN cd /tmp/suite && mkdir build && cd build
+RUN cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make install
+RUN rm -rf /tmp/suite
 
 ENV PATH="/ext/bin:${PATH}"
