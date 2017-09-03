@@ -46,7 +46,7 @@ RUN rm -rf /tmp/peng
 ADD tools/suite /tmp/suite
 RUN mkdir -p /tmp/suite/build
 RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make install
-RUN pip install ..
+RUN pip install /tmp/suite/
 RUN rm -rf /tmp/suite
 
 ENV PATH="/ext/bin:${PATH}"
