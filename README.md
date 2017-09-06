@@ -12,8 +12,8 @@ mkdir -p $WEBSERVER_DIR/{media_db/logs,mysql_db,redis_db}
 
 cd $WEBSERVER_DIR
 git clone git@github.com:soedinglab/BaMM_webserver.git
-git submodule init
-git submodule update
+cd  BaMM_webserver
+git submodule update --init --recursive
 ```
 
 ## Setting the environment variables for docker-compose
@@ -22,10 +22,8 @@ Move to a folder of your choice and clone the webserver again.
 ```bash
 cd ~/git_repositories
 git clone git@github.com:soedinglab/BaMM_webserver.git
-git submodule init
-git submodule update
-
 cd BaMM_webserver
+git submodule update --init --recursive
 cp .env_template .env
 ```
 
