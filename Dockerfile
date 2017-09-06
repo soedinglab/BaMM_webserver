@@ -37,16 +37,10 @@ RUN cp /tmp/bamm/build/BaMMmotif/BaMMmotif /ext/bin
 RUN cp /tmp/bamm/R/* /ext/bin
 RUN rm -rf /tmp/bamm
 
-ADD tools/PEnG-motif /tmp/peng
-RUN cd /tmp/peng && mkdir build && cd build && cmake .. && make
-RUN cp /tmp/peng/build/bin/peng_motif /ext/bin
-RUN cp /tmp/peng/scripts/* /ext/bin
-RUN rm -rf /tmp/peng
-
 ADD tools/suite /tmp/suite
 RUN mkdir -p /tmp/suite/build
 RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make install
-RUN pip install /tmp/suite/
+RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
 
 ENV PATH="/ext/bin:${PATH}"
