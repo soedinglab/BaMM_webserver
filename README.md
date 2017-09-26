@@ -57,4 +57,4 @@ Now you should be able to access the webserver at  `0.0.0.0:10080` in your favor
 ## Noteworthy things
 
 * The webserver code inside the container is in `$WEBSERVER_DIR/BaMM_webserver`. Changes to that code should be automatically be available in the server. The webserver has to be started from `~/git_repositories/BaMM_webserver` however.
-* All files created by the webserver are accessible on the host in `~/webserver/media_db`
+* All files created by the webserver are accessible on the host in `$WEBSERVER_DIR/media_db`
