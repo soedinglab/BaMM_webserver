@@ -12,6 +12,9 @@ mkdir -p $WEBSERVER_DIR/{media_db/logs,mysql_db,redis_db}
 
 cd $WEBSERVER_DIR
 git clone git@github.com:soedinglab/BaMM_webserver.git
+## When working on Marvin use ssh conection (because NginX only allows ssh)
+# git clone ssh://git@ssh.github.com:443/soedinglab/BaMM_webserver.git
+
 cd  BaMM_webserver
 git checkout make_startup_work
 git pull origin make_startup_work
@@ -22,6 +25,7 @@ git submodule update --init --recursive
 Move to a folder of your choice and clone the webserver again.
 
 ```bash
+## this is not necessarily needed
 cd ~/git_repositories
 git clone git@github.com:soedinglab/BaMM_webserver.git
 cd BaMM_webserver
