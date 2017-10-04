@@ -13,6 +13,8 @@ mkdir -p $WEBSERVER_DIR/{media_db/logs,mysql_db,redis_db}
 cd $WEBSERVER_DIR
 git clone git@github.com:soedinglab/BaMM_webserver.git
 cd  BaMM_webserver
+git checkout make_startup_work
+git pull origin make_startup_work
 git submodule update --init --recursive
 ```
 
