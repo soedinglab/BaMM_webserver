@@ -6,6 +6,12 @@
 /bammmotif/templates/home/test.html
 /bammmotif/static/scripts/Occurrence_plots.R
 /bammmotif/static/scripts/plotly.py
+categories.json
+confusables.json
+bammmotif/templates/results/result_detail_backup.html
+bammmotif/static/img/owl_01.png
+bammmotif/static/img/owl_02.png
+
 
 .env
 

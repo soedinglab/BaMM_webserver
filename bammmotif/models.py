@@ -39,7 +39,7 @@ class Job(models.Model):
     job_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     job_name=models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField( default=datetime.datetime.now)
-    mode = models.CharField(max_length=50, default="Predicition", choices=MODE_CHOICES) 
+    mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES) 
     status = models.CharField(max_length=255, default="not initialized", null=True, blank=True)
     num_motifs = models.IntegerField(default=1)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)

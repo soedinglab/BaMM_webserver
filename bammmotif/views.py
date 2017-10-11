@@ -172,7 +172,7 @@ def data_predict(request):
             opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
             
             # 1. Input sequence File
-            check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
+            check = subprocess.Popen(['valid_fasta',
              str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             out, err = check.communicate()
@@ -184,7 +184,7 @@ def data_predict(request):
                 if job.Background_Sequences.name == None:
                     out = "OK"
                 else:                
-                    check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
+                    check = subprocess.Popen(['valid_fasta',
                     str(os.path.join(settings.MEDIA_ROOT, job.Background_Sequences.name))], 
                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     out, err = check.communicate()  
@@ -193,7 +193,8 @@ def data_predict(request):
                 if out == "OK":  
                 
                     # 3. Motif Init File 
-                    #    check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_Init',
+                    #    check = subprocess.Popen(['valid_Init',
+                    #    #check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_Init',
                     #    str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)),
                     #    str(os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)),
                     #    str(job.Motif_Init_File_Format) ], 
@@ -203,7 +204,7 @@ def data_predict(request):
                     
                     if out == "OK":
                         print("OUT IS OK -> run the JOB")
-                        run_bamm.delay(job.pk)
+                        runDiscovery.delay(job.pk)
                         return render(request, 'job/submitted.html', {'pk': job.pk} ) 
                     else:
                         print("OUT IS NOT OK -> delete job and give error message 1")
@@ -275,6 +276,7 @@ def denovo_example(request):
             f = open(str(filename))
             out_filename = "ExampleData.fasta"
             job.Input_Sequences.save(out_filename , File(f))
+            f.close()
             
             print("UPLOAD COMPLETE: save job object")
             job.save() 
@@ -291,7 +293,7 @@ def denovo_example(request):
             if job.Background_Sequences.name == None:
                 out = "OK"
             else:                
-                check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
+                check = subprocess.Popen(['valid_fasta',
                 str(os.path.join(settings.MEDIA_ROOT, job.Background_Sequences.name))], 
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 out, err = check.communicate()  
@@ -299,7 +301,7 @@ def denovo_example(request):
           
             if out == "OK":  
                 print("OUT IS OK -> run the JOB")
-                run_bamm.delay(job.pk)
+                runDiscovery.delay(job.pk)
                 return render(request, 'job/submitted.html', {'pk': job.pk} ) 
             else:
                 print("OUT IS NOT OK -> delete job and give error message 2")
@@ -363,7 +365,7 @@ def data_discover(request):
             opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
             
             # 1. Input sequence File
-            check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
+            check = subprocess.Popen(['valid_fasta',
              str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             out, err = check.communicate()
@@ -372,21 +374,12 @@ def data_discover(request):
 
             if out == "OK":
                 job.status = "job ready to submit" 
-                # turn off optimization to just scan input sequence for model positions.
-                job.EM = False
-                job.CGS = False
-                job.FDR = False
-                job.extend_1 = 0
-                job.extend_2 = 0
                 job.Motif_Initialization = "Custom File"
-                if job.Motif_Init_File_Format == "PWM":
-                    job.model_Order = 0
-                job.score_Seqset = True
                 job.mode = "Occurrence"
                 job.save()
                 print("OUT IS OK -> run the JOB")
-                print("BG_model_File ->" + job.bg)
-                run_bamm.delay(job.pk)
+                print("BG_model_File ->" + str(job.bgModel_File))
+                runDiscovery.delay(job.pk)
                 return render(request, 'job/submitted.html', {'pk': job.pk} )    
             else:
                 job.delete()
@@ -436,6 +429,7 @@ def data_discover_from_db(request, pk):
             f = open(str(filename))
             out_filename = str(db_entry.result_location) + ".ihbcp"
             job.Motif_InitFile.save(out_filename , File(f))
+            f.close()
             job.Motif_Init_File_Format = "BaMM"
             job.save()
             
@@ -444,6 +438,7 @@ def data_discover_from_db(request, pk):
             f = open(str(filename))
             out_filename = str(db_entry.result_location) + ".hbcp"
             job.bgModel_File.save(out_filename , File(f))
+            f.close()
             job.save()
             
              # check if job has a name, if not use first 6 digits of job_id as job_name
@@ -458,7 +453,7 @@ def data_discover_from_db(request, pk):
             opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
             
             # 1. Input sequence File
-            check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
+            check = subprocess.Popen(['valid_fasta',
              str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             out, err = check.communicate()
@@ -467,20 +462,11 @@ def data_discover_from_db(request, pk):
 
             if out == "OK":
                 job.status = "job ready to submit" 
-                # turn off optimization to just scan input sequence for model positions.
-                job.EM = False
-                job.CGS = False
-                job.FDR = False
-                job.extend_1 = 0
-                job.extend_2 = 0
                 job.Motif_Initialization = "Custom File"
-                job.score_Seqset = True
                 job.mode = "Occurrence"
-                if job.Motif_Init_File_Format == "PWM":
-                    job.model_Order = 0
                 job.save()
                 print("OUT IS OK -> run the JOB")
-                run_bamm.delay(job.pk)
+                runDiscovery.delay(job.pk)
                 return render(request, 'job/submitted.html', {'pk': job.pk} )    
             else:
                 job.delete()
@@ -532,17 +518,27 @@ def delete(request, pk ):
         return redirect(request,'find_results')
 
 def result_detail(request, pk):
+    print( 'entered result detail view')
     result = get_object_or_404(Job, pk=pk)
+    print( 'result received')
     opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
+    print('defined opath')
+    print(opath)
     Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
+    print('extracted output filename and ending')
     if result.status == 'Successfully finished':
-        num_logos = range(min(2,result.model_Order) + 1)
-        if result.mode == 'Predicition':
+        print("status is successfull")
+        num_logos = range(1, (min(2,result.model_Order)+1))
+        print('logo number calculated')
+        if result.mode == 'Prediction':
             return render(request,'results/result_detail.html', {'result':result, 'opath':opath, 'Output_filename':Output_filename, 'num_logos':num_logos})
+
         if result.mode == 'Occurrence':
             print("RESULT.numMOTIFS=" + str(result.num_motifs))
             return redirect('test', pk)
+
     else:
+        print('status not ready yet')
         command ="tail -20 /code/media/logs/" + pk + ".log"
         output = os.popen(command).read()
         return render(request,'results/result_status.html', {'result':result, 'opath':opath , 'output':output })
