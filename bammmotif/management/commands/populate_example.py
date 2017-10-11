@@ -20,7 +20,7 @@ class Command(BaseCommand):
             job_ID     = '293aae88-6e1e-48ba-ad87-19e7304e0391',
             job_name   = 'ExampleDataPredicion',
             created_at = datetime.datetime.now(),
-            mode       = 'Predicition',
+            mode       = 'Prediction',
             Motif_Initialization = 'Custom File',
             Motif_Init_File_Format = 'PWM',
             num_init_motifs = 7,
@@ -33,17 +33,16 @@ class Command(BaseCommand):
         u = User(username='Example', first_name='Anonymous', last_name='User')
         u.set_unusable_password()
         u.save()
-
         new_entry.user = u
-
         filename= '/code/example_data/Hepg2JunD.fasta'
         f = open(str(filename))
         new_entry.Input_Sequences.save(filename, File(f))
-
+        f.close()
         filename= '/code/example_data/Hepg2JunD.peng'
         f = open(str(filename))
         new_entry.Motif_InitFile.save(filename, File(f))
+        f.close()
 
         new_entry.save()
         
-        run_example.delay(new_entry.pk)
+        runDiscovery.delay(new_entry.pk)
