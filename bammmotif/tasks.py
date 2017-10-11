@@ -79,8 +79,16 @@ def PeNG_command(self,job_pk):
         print(datetime.datetime.now(), "\t | START: \t %s " % job.status )
         # something is wrong with the permission, it doesn't help to add shoot peng to the paths
         # also the new paths are not set for the plotting scripts so shootpeng refuses
-        # Wanwan,Slack:For running shoot_peng.py , you need three additional binaries/script, namely:  peng_motif, FDR and evaluateBaMM.R (plotAUSFC_benchmark_fdrtool.R is replaced by evaluateBaMM.R). peng_motif can be found in PEnGmotif project and FDR and evaluateBaMM.R can be found in BaMM project
+        # Wanwan,Slack:For running shoot_peng.py , you need three additional binaries/script, namely:  
+        # peng_motif, FDR and evaluateBaMM.R (plotAUSFC_benchmark_fdrtool.R is replaced by evaluateBaMM.R).
+        # peng_motif can be found in PEnGmotif project and FDR and evaluateBaMM.R can be found in BaMM project
         # you just need to adjust the paths in the shoot_peng.py to find these three files.
+        # python3 ${SHOOT_PENG} ${FASTA_DIR}/$f -d ${outdir} -o ${outdir}/${bn}.meme --iupac_optimization_score MUTUAL_INFO > ${outdir}/${bn}.logg
+        # ${FDR} ${outdir}/ ${FASTA_DIR}/${bn}.fasta --PWMFile ${outdir}/${bn}.meme --num 1 -k 0 --cvFold 1
+        # Rscript ${AUSFC_SCRIPT} ${outdir} ${bn}
+        opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Input")
+
+        command = 'python3 shoot_peng.py ' + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)) + ' -d ' + opath + ' -o ' +  opath + '/MotifInitFile.peng' + ' --iupac_optimization_score MUTUAL_INFO'
         print( "\n COMMAND =  %s \n" % command )
         sys.stdout.flush()
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -496,7 +504,9 @@ def runDiscovery(self, job_pk):
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
                 if job.Motif_Initialization == "PEnGmotif":
+                    print( "shortly before entering PeNG_command")
                     PeNG_command(self, job_pk)
+                    print( "finished PeNG_command")
 
                 BaMM_command(self, job_pk)
                 
