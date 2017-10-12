@@ -370,7 +370,7 @@ def motif_compare(request):
             # stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             #out, err = check.communicate()
             out = "OK"  
-            out = out.decode('ascii')
+            #out = out.decode('ascii')
 
             if out == "OK":
                 job.status = "job ready to submit" 

@@ -81,7 +81,7 @@ class Job(models.Model):
 
     # scoring options
     score_Seqset = models.BooleanField(default=False)
-    score_Cutoff = models.FloatField(default=3.0)
+    score_Cutoff = models.FloatField(default=-3.0)
     bgModel_File = models.FileField( upload_to=job_directory_path, null=True, blank=True)
 
     # advanced options
@@ -90,6 +90,9 @@ class Job(models.Model):
     verbose = models.BooleanField(default=True)
     save_BaMMs = models.BooleanField(default=True)
     save_BgModel = models.BooleanField(default=True)
+
+    # MMcompare
+    MMcompare = models.BooleanField(default=True)
     p_value_cutoff = models.DecimalField(default=0.01, max_digits=3,decimal_places=2)
     
     class Meta:
