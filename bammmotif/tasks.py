@@ -88,7 +88,7 @@ def PeNG_command(self,job_pk):
         # Rscript ${AUSFC_SCRIPT} ${outdir} ${bn}
         opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Input")
 
-        command = 'python3 shoot_peng.py ' + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)) + ' -o ' +  opath + '/MotifInitFile.peng' + ' --iupac_optimization_score MUTUAL_INFO'
+        command = 'shoot_peng.py ' + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)) + ' -o ' +  opath + '/MotifInitFile.peng' + ' --iupac_optimization_score MUTUAL_INFO'
         print( "\n COMMAND =  %s \n" % command )
         sys.stdout.flush()
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -521,9 +521,7 @@ def runDiscovery(self, job_pk):
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
                 if job.Motif_Initialization == "PEnGmotif":
-                    print( "shortly before entering PeNG_command")
                     PeNG_command(self, job_pk)
-                    print( "finished PeNG_command")
 
                 BaMM_command(self, job_pk)
                 
@@ -597,9 +595,11 @@ def processMotif(self,job_pk, motif):
         # get IUPAC and motif length
         PWM2IUPAC(self,job_pk, motif, motif_obj.motif_ID)
 
-        if job.MMCompare == True:
+        print("before MMcompare")
+        if job.MMcompare == True:
             # get motif motif comparison to database
             MMcompare(self,job_pk, motif, motif_obj.motif_ID)
+        print('after mmcompare')
 
         if job.FDR == True:
             # plot FDR outcome
