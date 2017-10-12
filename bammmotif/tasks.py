@@ -128,6 +128,19 @@ def BaMM_command(self,job_pk):
             print(datetime.datetime.now(), "\t | START: \t %s " % job.status )
 
         opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+        if str(job.mode) == "Compare":
+            filename = 'example_data/ExampleData.fasta'
+            f = open(str(filename))
+            out_filename = "ExampleData.fasta"
+            job.Input_Sequences.save(out_filename , File(f))
+            f.close()
+            job.FDR=False
+            job.EM=False
+            job.Compare=True
+            job.extend_1 = 0
+            job.extend_2 = 0
+            job.score_Seqset = False
+                
         params = opath + " " + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))
         # optional Files
         if str(job.Background_Sequences.name) != '':
@@ -142,12 +155,16 @@ def BaMM_command(self,job_pk):
             params = params + " --PWMFile " + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
         if str(job.Motif_Init_File_Format) == "BaMM":
             params = params + " --BaMMFile " + os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)
+            # when providing a BaMM file, the corresponding bg File needs to be provided as well
+            if str(job.bgModel_File) == '':
+               print('warning: please provide bgModelFile to the BaMM file or choose PWM File instead')
+            else:
+                params = params + " --bgModelFile " + os.path.join(settings.MEDIA_ROOT, job.bgModel_File.name)
 
         #set enrichment parameters
         if str(job.mode) == "Occurrence":
             if( str(job.Motif_Init_File_Format) == "BaMM"):
                 getModelOrder(self, job_pk, str("model"))
-                params = params + " --bgModelFile " + os.path.join(settings.MEDIA_ROOT, job.bgModel_File.name)
                 getModelOrder(self, job_pk, str("bg"))
             else:
                 job.model_Order = 0
@@ -580,8 +597,9 @@ def processMotif(self,job_pk, motif):
         # get IUPAC and motif length
         PWM2IUPAC(self,job_pk, motif, motif_obj.motif_ID)
 
-        # get motif motif comparison to database
-        MMcompare(self,job_pk, motif, motif_obj.motif_ID)
+        if job.MMCompare == True:
+            # get motif motif comparison to database
+            MMcompare(self,job_pk, motif, motif_obj.motif_ID)
 
         if job.FDR == True:
             # plot FDR outcome

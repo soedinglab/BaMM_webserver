@@ -6,7 +6,7 @@ from .models import Job
 class JobForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name','Input_Sequences','reverse_Complement','model_Order','extend_1','extend_2','Motif_Initialization','Motif_InitFile','Motif_Init_File_Format','background_Order','Background_Sequences','FDR','m_Fold','cv_Fold','sampling_Order','EM','q_value','epsilon','max_EM_Iterations','p_value_cutoff',)
+        fields = ('job_name','Input_Sequences','reverse_Complement','model_Order','extend_1','extend_2','Motif_Initialization','Motif_InitFile','Motif_Init_File_Format','background_Order','Background_Sequences','FDR','m_Fold','cv_Fold','sampling_Order','EM','q_value','MMcompare','p_value_cutoff',)
 
     def __init__(self, *args, **kwargs):
         super(JobForm, self).__init__(*args, **kwargs)
@@ -19,20 +19,20 @@ class JobForm(forms.ModelForm):
 class ExampleForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name','reverse_Complement','model_Order','extend_1','extend_2','Motif_Initialization','Motif_InitFile','Motif_Init_File_Format','background_Order','Background_Sequences','FDR','m_Fold','cv_Fold','sampling_Order','EM','q_value','epsilon','max_EM_Iterations','p_value_cutoff',)
+        fields = ('job_name','reverse_Complement','model_Order','extend_1','extend_2','Motif_Initialization','Motif_InitFile','Motif_Init_File_Format','background_Order','Background_Sequences','FDR','m_Fold','cv_Fold','sampling_Order','EM','q_value','MMcompare','p_value_cutoff',)
 
 ### upload input files for position discovery
 class DiscoveryForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name','Input_Sequences', 'Motif_InitFile' , 'Motif_Init_File_Format','bgModel_File','reverse_Complement')
+        fields = ('job_name','Input_Sequences', 'Motif_InitFile' , 'Motif_Init_File_Format','bgModel_File','reverse_Complement','MMcompare','p_value_cutoff')
 
 
 ### upload input files for position discovery
 class DiscoveryDBForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name','Input_Sequences',)
+        fields = ('job_name','Input_Sequences','reverse_Complement','MMcompare','p_value_cutoff')
 
 
 class CompareForm(forms.ModelForm):

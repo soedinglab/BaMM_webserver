@@ -33,7 +33,34 @@
     
     <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> BaMM</font></p>
         
-  </div>
+
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white"><font color="black">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne" style="background-color:white"><font color="black">
+          <h2 class="panel-title">
+          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color:white"><font color="black">
+          <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"style="color:black"></span> Advanced Options </h3>
+          </a>
+          </h2>
+        </div>
+        
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white"><font color="black">
+        <div class="panel-body">
+        
+        <p class="indent" style="padding-left: 1.8em"><label for="id_reverse_Complement"><a class "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Search on both strands:</label><font color="#1f2e2e"> &nbsp;&nbsp;<input id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font></p>
+
+        <br>
+        <h3> Database Model Comparison: </h3>
+        
+        <p class="indent" style="padding-left: 1.8em"><label for="MMcompare"><a class "testpup" onmouseover="nhpup.popup($('#MMcompare_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> MMcompare:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_MMcompare" name="MMcompare" type="checkbox" checked /></font></p>
+    
+        <p class="indent" style="padding-left: 1.8em"><label for="id_p_value_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#db_match_p_value_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_p_value_cutoff" name="p_value_cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
+
+        </div> 
+        </div> 
+      </div>
+    </div>
+    
   <hr style="border: 1px solid #1f2e2e">
   <p>
     <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font color="white">BaMM!</font></button></p>
@@ -88,5 +115,41 @@
   </div>
 </div>
 
+<div class="modal fade" id="ReverseComplement_Info" tabindex="-1" role="dialog" aria-labelledby="RevverseComplement_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+           <p  align="justify"> When checked, the reverse complementary sequences will used as well for motif search.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="MMcompare_Info" tabindex="-1" role="dialog" aria-labelledby="MMcompare_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+       <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">When checked, the inserted Motif InitFile will be compared to our BaMMmotif Database to find similarities.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="db_match_p_value_cutoff_Info" tabindex="-1" role="dialog" aria-labelledby="db_match_p_value_cutoff_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">The p-value limit will be used to define a threshold for motif comparisons between the inserted model and the database. </p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
