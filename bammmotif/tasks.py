@@ -531,6 +531,41 @@ def runDiscovery(self, job_pk):
         print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
         return 1       
 
+@task(bind=True)
+def runComparison(self, job_pk):
+    try:
+        job = get_object_or_404(Job, pk=job_pk)
+        # first define log file for redirecting output information
+        logfile =   str(settings.MEDIA_ROOT) + "/logs/" + str(job_pk) + ".log"
+        with open(logfile, 'w') as f:
+            with redirect_stdout(f):
+                BaMM_command(self, job_pk)
+                opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+                job.num_motifs  = (len(os.listdir(opath))-2)/5
+                for motif in range(1, (int(job.num_motifs)+1)):
+                    motif_obj = Motifs( parent_job = job, job_rank = motif)
+                    PWM2IUPAC(self, job_pk, motif, motif_obj.moti_ID)
+                    MMCompare(self, job_pk, motif)
+                    # plot Logos
+                    LogoPlotting(self,job_pk, motif)
+                    # compress motif related info
+                    Compress(self,job_pk, motif )
+
+                # compress job related info
+                Compress(self, job_pk, 0)
+
+        job.status = 'Successfully finished'
+        job.save()
+        print(datetime.datetime.now(), "\t | END: \t %s " % job.status )
+        sys.stdout.flush()
+        return 0
+
+    except Exception as e:
+        job.status = 'error running Discovery'
+        job.save()
+        print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
+        return 1
+
 def processMotif(self,job_pk, motif):
     try:
         job = get_object_or_404(Job, pk=job_pk)
@@ -986,13 +1021,11 @@ def run_bamm(self, job_pk):
                     email_header = "BaMM! - your job has finished! ( " + job.name + " )"
                     email_message = "Dear " + job.user.get_short_name() + ", \n" + " your BaMM! job has successfully finished.\n" + "You can view your results following the link below:\n" + "https://bammmotif.mpibpc.mpg.de/results/" + str(job.job_ID) + "/\n\n" + " Greetings from the BaMM! -Team" 
                     job.user.email_user(email_header, email_message)
-'''
+                '''
                 job.status = 'Successfully finished'
                 job.save()
                 print(datetime.datetime.now(), "\t | END: \t %s " % job.status )
-
                 return 0
-
             except Exception as e:
                 job.status = 'error'
                 job.save()

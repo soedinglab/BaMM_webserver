@@ -321,6 +321,153 @@ def denovo_example(request):
     return render(request, 'job/de_novo_search_example.html', {'form':form , 'type' : "OK", 'message' : "OK"})
 
 
+def motif_compare(request):
+    if request.method == "POST":
+        form = CompareForm(request.POST, request.FILES)
+        if form.is_valid():
+            job = form.save(commit=False)
+            job.created_at = datetime.datetime.now()
+            job.status = "data uploaded"
+            if request.user.is_authenticated():
+                print("user is authenticated")
+                job.user = request.user
+            else:
+                print("User is not authenticated")
+                ip = get_ip(request)
+                if ip is not None:
+                    print("we have an IP address for user")
+                    # check if anonymous user already exists
+                    anonymous_users = User.objects.filter(username=ip)
+                    if anonymous_users.exists():
+                        print("user already exists")
+                        job.user = get_object_or_404(User, username=ip)
+                    else:
+                        print("create new anonymous user")
+                        # create an anonymous user and log them in
+                        username = ip
+                        u = User(username=username, first_name='Anonymous', last_name='User')
+                        u.set_unusable_password()
+                        u.save()
+                        job.user = u
+                else:
+                    print("we don't have an IP address for user")
+            job.save() 
+
+            # check if job has a name, if not use first 6 digits of job_id as job_name
+            if job.job_name == None:
+                # truncate job_id
+                job_id_short = str(job.job_ID).split("-",1)
+                job.job_name = job_id_short[0]
+                job.save() 
+
+
+            #check if file formats are correct
+            opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
+            
+            # 1. Motif input File
+            #check = subprocess.Popen(['valid_Init',
+            # str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
+            # stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            #out, err = check.communicate()
+            out = "OK"  
+            out = out.decode('ascii')
+
+            if out == "OK":
+                job.status = "job ready to submit" 
+                job.Motif_Initialization = "Custom File"
+                job.mode = "Compare"
+                job.save()
+                runDiscovery.delay(job.pk)
+                return render(request, 'job/submitted.html', {'pk': job.pk} )    
+            else:
+                job.delete()
+                form = CompareForm()
+                return render(request, 'job/motif_compare.html', {'form':form , 'type' : "Init", 'message' : out })
+        else:
+            form = CompareForm()
+    else:
+        form= CompareForm()
+
+    return render(request, 'job/motif_compare.html', { 'form':form })
+
+def compare_example(request):
+    if request.method == "POST":
+        form = ExampleCompareForm(request.POST, request.FILES)
+        if form.is_valid():
+            job = form.save(commit=False)
+            job.created_at = datetime.datetime.now()
+            job.status = "data uploaded"
+            if request.user.is_authenticated():
+                print("user is authenticated")
+                job.user = request.user
+            else:
+                print("User is not authenticated")
+                ip = get_ip(request)
+                if ip is not None:
+                    print("we have an IP address for user")
+                    # check if anonymous user already exists
+                    anonymous_users = User.objects.filter(username=ip)
+                    if anonymous_users.exists():
+                        print("user already exists")
+                        job.user = get_object_or_404(User, username=ip)
+                    else:
+                        print("create new anonymous user")
+                        # create an anonymous user and log them in
+                        username = ip
+                        u = User(username=username, first_name='Anonymous', last_name='User')
+                        u.set_unusable_password()
+                        u.save()
+                        job.user = u
+                else:
+                    print("we don't have an IP address for user")
+            job.save() 
+
+            # check if job has a name, if not use first 6 digits of job_id as job_name
+            if job.job_name == None:
+                # truncate job_id
+                job_id_short = str(job.job_ID).split("-",1)
+                job.job_name = job_id_short[0]
+                job.save() 
+
+
+            filename= 'example_data/stuff/oneMotif.peng'
+            f = open(str(filename))
+            out_filename = "oneMotif.meme"
+            job.Input_Sequences.save(out_filename , File(f))
+            f.close()
+            job.save() 
+            
+
+            #check if file formats are correct
+            opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
+            
+            # 1. Motif input File
+            #check = subprocess.Popen(['valid_Init',
+            # str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
+            # stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            #out, err = check.communicate()
+            #out = out.decode('ascii')
+            out = "OK"
+
+            if out == "OK":
+                job.status = "job ready to submit" 
+                job.Motif_Initialization = "Custom File"
+                job.mode = "Compare"
+                job.save()
+                runComparison.delay(job.pk)
+                return render(request, 'job/submitted.html', {'pk': job.pk} )    
+            else:
+                job.delete()
+                form = ExampleCompareForm()
+                return render(request, 'job/compare_example.html', {'form':form , 'type' : "Init", 'message' : out })
+        else:
+            form = ExampleCompareForm()
+    else:
+        form= ExampleCompareForm()
+
+    return render(request, 'job/compare_example.html', { 'form':form })
+
+
 def data_discover(request):
     if request.method == "POST":
         form = DiscoveryForm(request.POST, request.FILES)

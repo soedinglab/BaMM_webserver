@@ -17,7 +17,7 @@ class Command(BaseCommand):
          
         # create parent job 
         new_entry = Job(
-            job_ID     = '293aae88-6e1e-48ba-ad87-19e7304e0391',
+            job_ID     = '293aae88-6e1e-48ba-ad87-19e7304e0393',
             job_name   = 'ExampleDataPredicion',
             created_at = datetime.datetime.now(),
             mode       = 'Prediction',
@@ -30,15 +30,15 @@ class Command(BaseCommand):
             extend_2 = 4,
             )
 
-        u = User(username='Example', first_name='Anonymous', last_name='User')
+        u = User(username='UserExample', first_name='Anonymous', last_name='User')
         u.set_unusable_password()
         u.save()
         new_entry.user = u
-        filename= '/code/example_data/Hepg2JunD.fasta'
+        filename= '/code/example_data/ExampleData.fasta'
         f = open(str(filename))
         new_entry.Input_Sequences.save(filename, File(f))
         f.close()
-        filename= '/code/example_data/Hepg2JunD.peng'
+        filename= '/code/example_data/stuff/MotifInitFile.peng'
         f = open(str(filename))
         new_entry.Motif_InitFile.save(filename, File(f))
         f.close()

@@ -35,6 +35,16 @@ class DiscoveryDBForm(forms.ModelForm):
         fields = ('job_name','Input_Sequences',)
 
 
+class CompareForm(forms.ModelForm):
+    class Meta:
+        model = Job
+        fields = ('job_name', 'Motif_InitFile', 'Motif_Init_File_Format', 'model_Order', 'p_value_cutoff')
+
+class ExampleCompareForm(forms.ModelForm):
+    class Meta:
+        model = Job
+        fields = ('job_name', 'p_value_cutoff')
+
  
 ### Parameter settings for denovo prediction
 class ParameterForm(forms.ModelForm):

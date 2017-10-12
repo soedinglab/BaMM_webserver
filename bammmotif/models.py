@@ -28,7 +28,8 @@ ALPHABET_CHOICES = (
 
 MODE_CHOICES = (
     ('Prediction','Prediction'),
-    ('Occurrence','Occurrence')
+    ('Occurrence','Occurrence'),
+    ('Compare','Compare')
 )
 
 def job_directory_path(instance, filename):
