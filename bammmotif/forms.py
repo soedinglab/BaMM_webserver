@@ -38,7 +38,7 @@ class DiscoveryDBForm(forms.ModelForm):
 class CompareForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name', 'Motif_InitFile', 'Motif_Init_File_Format', 'model_Order', 'p_value_cutoff')
+        fields = ('job_name', 'Motif_InitFile', 'Motif_Init_File_Format', 'bgModel_File', 'model_Order', 'p_value_cutoff')
 
 class ExampleCompareForm(forms.ModelForm):
     class Meta:
