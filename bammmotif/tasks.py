@@ -88,7 +88,7 @@ def PeNG_command(self,job_pk):
         # Rscript ${AUSFC_SCRIPT} ${outdir} ${bn}
         opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Input")
 
-        command = 'python3 shoot_peng.py ' + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)) + ' -d ' + opath + ' -o ' +  opath + '/MotifInitFile.peng' + ' --iupac_optimization_score MUTUAL_INFO'
+        command = 'python3 shoot_peng.py ' + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)) + ' -o ' +  opath + '/MotifInitFile.peng' + ' --iupac_optimization_score MUTUAL_INFO'
         print( "\n COMMAND =  %s \n" % command )
         sys.stdout.flush()
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
