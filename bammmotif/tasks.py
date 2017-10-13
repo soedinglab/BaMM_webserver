@@ -38,8 +38,17 @@ def runJob(self, job_pk):
                 BaMM_command(self, job_pk)
                 
                 opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
-                job.num_motifs  = (len(os.listdir(opath))-2)/5
+
+                if job.mode == "Prediction":
+                    job.num_motifs  = (len(os.listdir(opath))-2)/5
+                elif job.mode == "Occurrence":
+                    job.num_motifs  = (len(os.listdir(opath))-2)/3
+                elif job.mode == "Compare":
+                    job.num_motifs  = (len(os.listdir(opath))-2)/2
                 
+                print("Number of Motifs = ", job.num_motifs)
+                job.save()
+
                 for motif in range(1, (int(job.num_motifs)+1)):
                     processMotif(self, job_pk, motif)
 
@@ -164,17 +173,13 @@ def BaMM_command(self,job_pk):
 
         opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
         if str(job.mode) == "Compare":
-            filename = 'example_data/ExampleData.fasta'
-            f = open(str(filename))
-            out_filename = "ExampleData.fasta"
-            job.Input_Sequences.save(out_filename , File(f))
-            f.close()
             job.FDR=False
             job.EM=False
             job.Compare=True
             job.extend_1 = 0
             job.extend_2 = 0
             job.score_Seqset = False
+            job.save()
                 
         params = opath + " " + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))
         # optional Files

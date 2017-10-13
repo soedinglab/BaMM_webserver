@@ -193,14 +193,16 @@ def run_a_job(request, mode, example=False):
             opath = os.path.join(settings.MEDIA_ROOT, str(job.job_ID),"Output")
             
             # if example is requested, load the sampleData
-            if example:
+            if example or mode == "Compare":
                 # load fasta file (needed for any job)
                 filename= 'example_data/ExampleData.fasta'
                 f = open(str(filename))
                 out_filename = "ExampleData.fasta"
                 job.Input_Sequences.save(out_filename , File(f))
                 f.close()
-
+                job.save()
+                
+            if example:
                 # load Initialization Motif
                 filename= 'example_data/stuff/oneMotif.peng'
                 f = open(str(filename))
@@ -210,8 +212,10 @@ def run_a_job(request, mode, example=False):
 
                 job.Motif_Initialization = 'Custom File'
                 job.Motif_Init_File_Format = 'PWM'
+                if mode == "Compare" or mode == "Occurrence":
+                    job.model_Order = 0
                 job.save()
-    
+
             # for occurrence search change MotifInitialization to being Custome file
             if mode == "Occurrence":
                 job.Motif_Initialization = 'Custom File'
