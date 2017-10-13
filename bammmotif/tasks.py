@@ -172,6 +172,7 @@ def BaMM_command(self,job_pk):
             print(datetime.datetime.now(), "\t | START: \t %s " % job.status )
 
         opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+        
         if str(job.mode) == "Compare":
             job.FDR=False
             job.EM=False
@@ -181,6 +182,23 @@ def BaMM_command(self,job_pk):
             job.score_Seqset = False
             job.save()
                 
+        #set enrichment parameters
+        if str(job.mode) == "Occurrence":
+            if( str(job.Motif_Init_File_Format) == "BaMM"):
+                getModelOrder(self, job_pk, str("model"))
+                getModelOrder(self, job_pk, str("bg"))
+            else:
+                job.model_Order = 0
+                job.background_Order = 0
+
+            job.EM = False
+            job.CGS = False
+            job.FDR = False
+            job.extend_1 = 0
+            job.extend_2 = 0
+            job.score_Seqset = True
+
+
         params = opath + " " + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))
         # optional Files
         if str(job.Background_Sequences.name) != '':
@@ -201,22 +219,7 @@ def BaMM_command(self,job_pk):
             else:
                 params = params + " --bgModelFile " + os.path.join(settings.MEDIA_ROOT, job.bgModel_File.name)
 
-        #set enrichment parameters
-        if str(job.mode) == "Occurrence":
-            if( str(job.Motif_Init_File_Format) == "BaMM"):
-                getModelOrder(self, job_pk, str("model"))
-                getModelOrder(self, job_pk, str("bg"))
-            else:
-                job.model_Order = 0
-                job.background_Order = 0
-
-            job.EM = False
-            job.CGS = False
-            job.FDR = False
-            job.extend_1 = 0
-            job.extend_2 = 0
-            job.score_Seqset = True
-       
+               
          # general options
         params = params +  " --order " + str(job.model_Order)
         if job.reverse_Complement == False:
