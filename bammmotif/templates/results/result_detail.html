@@ -11,25 +11,27 @@
         <h2>BaMMmotif Settings </h2>
         <hr style="border: 1px solid #1f2e2e">
         <table>
+        {% if mode == "Prediction" or mode == "Occurrence" %}
             <tr>
                 <td>  &emsp; Input Sequence: </td>
                 <td>  &emsp; {{result.Inputseq_filename}}</td>
             </tr>
+        {% endif %}
             <tr>
                 <td>  &emsp; Mofti File: </td>
                 <td>  &emsp; {{result.MotifInit_filename}}</td>
             </tr>
-            {% if result.mode == "Prediction" %}
+        {% if mode == "Prediction" or mode == "Occurrence" %}
             <tr>
                 <td>  &emsp; Search on Both Strands: </td>
                 <td>  &emsp; {{result.reverse_Complement}}</td>
             </tr>
-            {% endif %}
+        {% endif %}
         </table>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white; border:0px">
 
-    {% if result.mode == "Prediction" %}
+    {% if mode == "Prediction" or mode == "Occurrrence" %}
         <div class="panel-heading" role="tab" id="headingOne" style="background-color:white; border:0px">
           <h2 class="panel-title">
           <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color:white; border:0px">
@@ -40,7 +42,7 @@
         <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white">
         <div class="panel-body">
 
-        {% if result.mode == "Prediction" %}
+        {% if mode == "Prediction" %}
         <h3>Model Settings</h3>
         <table>
             <tr>
@@ -58,7 +60,7 @@
         </table>
         {% endif %}
 
-        {% if result.mode == "Prediction" %}
+        {% if mode == "Prediction" %}
         <h3>Motif Initialization</h3>
         <table>
             <tr>
@@ -78,7 +80,7 @@
         </table>
         {% endif %}
 
-        {% if result.mode == "Prediction" %}
+        {% if mode == "Prediction" %}
         <h3>Background Model</h3>
         <table>
             <tr>
@@ -102,13 +104,6 @@
                 <td>  &emsp; {{result.q_value}}</td>
             </tr>
             <tr>
-                <td>  &emsp; epsilon: </td>
-                <td>  &emsp; {{result.epsilon}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; max Iterations: </td>
-                <td>  &emsp; {{result.max_EM_Iterations}}</td>
-            </tr>
         </table>
         {% endif %}
 
@@ -169,10 +164,12 @@
            </button>
          </p>
        </form>
-{% if result.mode == "Prediction" %}
- <h2>Predicted Motifs </h2>
-{% else %}
- <h2>Scanned Motifs </h2>
+{% if mode == "Prediction" %}
+ <h2> Predicted Motifs </h2>
+{% elif mode == "Occurrence %}
+ <h2> Input Motifs </h2>
+ {%elif mode == "Compare" %}
+ <h2> Query Motifs </h2>
 {% endif %}
 
  <table class="table table-hover">
@@ -181,7 +178,7 @@
         <th> IUPAC </th>
         <th> PWM </th>
         <th> reverse Comp. </th>
-        {% if result.mode == "Prediction" %}
+        {% if mode == "Prediction" %}
           <th> AUSFC </th>        
           <th> % occurrence </th>        
         {% endif %}
@@ -194,7 +191,7 @@
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.iupac}} </a></th>
         <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
         <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
-       {% if result.mode == "Prediction" %}
+       {% if mode == "Prediction" %}
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.auc}} </a></th>        
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.occurrence}} </a></th>        
         {% endif %}
@@ -244,7 +241,7 @@
         </p>
     </form>
 
-    {% if result.mode == "Prediction" %}
+    {% if mode == "Prediction" %}
     <h2> Performance and Positional Distribution on Input Sequences </h2>
         <hr style="border: 1px solid #1f2e2e">
         <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
@@ -262,20 +259,23 @@
            </button>
          </p>
        </form>
-    {% else %}
+    {% elif mode == "Occurrence" %}
         <h2> Positional Distribution and Motif Occurrence on Input Sequences </h2>
+
+        <h3> Feature disabled because bamm-search is not integrated into bamm-private yet (will be done in GOE) </h3>
         <hr style="border: 1px solid #1f2e2e">
-        {% with index=m.job_rank %}
+        <!--{% with index=m.job_rank %}
         {% for idx, p in plot.items %}
             {% if idx == index %}
                 {{p|safe}}
             {% endif %}
         {% endfor %}
         {% endwith %}
+        !-->
 
     {% endif %}
     
-    {% if result.mode == "Prediction" %}
+    {% if result.MMcompare %}
 
     <h2> Best Matches with our Database </h2>
         <hr style="border: 1px solid #1f2e2e">
