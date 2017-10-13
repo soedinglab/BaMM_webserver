@@ -21,7 +21,44 @@ import os
 import sys
 import shutil
 
-#@task(bind=True)
+
+@task(bind=True)
+def runJob(self, job_pk):
+    try:
+        job = get_object_or_404(Job, pk=job_pk)
+
+        # first define log file for redirecting output information
+        logfile =   str(settings.MEDIA_ROOT) + "/logs/" + str(job_pk) + ".log"
+        with open(logfile, 'w') as f:
+            with redirect_stdout(f):
+                print("motif initialization=", job.Motif_Initialization)
+                if job.Motif_Initialization == "PEnGmotif":
+                    PeNG_command(self, job_pk)
+
+                BaMM_command(self, job_pk)
+                
+                opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+                job.num_motifs  = (len(os.listdir(opath))-2)/5
+                
+                for motif in range(1, (int(job.num_motifs)+1)):
+                    processMotif(self, job_pk, motif)
+
+                # compress job related info
+                Compress(self, job_pk, 0)
+
+        job.status = 'Successfully finished'
+        job.save()
+        print(datetime.datetime.now(), "\t | END: \t %s " % job.status )
+        sys.stdout.flush()
+        return 0
+
+    except Exception as e:
+        job.status = 'error running Discovery'
+        job.save()
+        print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
+        return 1       
+
+
 def valid_init(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     try:
@@ -46,7 +83,6 @@ def valid_init(self, job_pk):
         print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
         return 1
 
-#@task(bind=True)
 def valid_fasta(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     try:
@@ -70,7 +106,6 @@ def valid_fasta(self, job_pk):
         print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
         return 1
 
-#@task(bind=True)
 def PeNG_command(self,job_pk):
     job =  get_object_or_404(Job, pk=job_pk)
     try:
@@ -265,12 +300,11 @@ def FDR_command(self,job_pk, motif):
         nextline = process.stdout.readline()
         sys.stdout.write("AUSFC = " + str(nextline.strip()) + "\n")
         motif_obj.auc = float(nextline.strip())
+        nextline = process.stdout.readline()
+        sys.stdout.write("OCC = " + str(nextline.strip()) + "\n")
+        motif_obj.occurrence = float(nextline.strip())
+        motif_obj.save()
         sys.stdout.flush()
-            #nextline = process.stdout.readline()
-            #sys.stdout.write("OCC = " + str(nextline.strip()) + "\n")
-            #motif_obj.occurrence = float(nextline.strip())
-            #motif_obj.save()
-            #sys.stdout.flush()
         
         # plot Motif Distribution
         command = 'plotMotifDistribution.R ' + opath + '/ ' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif)
@@ -512,75 +546,6 @@ def LogoPlotting(self,job_pk, motif):
         print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
         return 1
 
-@task(bind=True)
-def runDiscovery(self, job_pk):
-    try:
-        job = get_object_or_404(Job, pk=job_pk)
-        # first define log file for redirecting output information
-        logfile =   str(settings.MEDIA_ROOT) + "/logs/" + str(job_pk) + ".log"
-        with open(logfile, 'w') as f:
-            with redirect_stdout(f):
-                if job.Motif_Initialization == "PEnGmotif":
-                    PeNG_command(self, job_pk)
-
-                BaMM_command(self, job_pk)
-                
-                opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
-                job.num_motifs  = (len(os.listdir(opath))-2)/5
-                
-                for motif in range(1, (int(job.num_motifs)+1)):
-                    processMotif(self, job_pk, motif)
-
-                # compress job related info
-                Compress(self, job_pk, 0)
-
-        job.status = 'Successfully finished'
-        job.save()
-        print(datetime.datetime.now(), "\t | END: \t %s " % job.status )
-        sys.stdout.flush()
-        return 0
-
-    except Exception as e:
-        job.status = 'error running Discovery'
-        job.save()
-        print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
-        return 1       
-
-@task(bind=True)
-def runComparison(self, job_pk):
-    try:
-        job = get_object_or_404(Job, pk=job_pk)
-        # first define log file for redirecting output information
-        logfile =   str(settings.MEDIA_ROOT) + "/logs/" + str(job_pk) + ".log"
-        with open(logfile, 'w') as f:
-            with redirect_stdout(f):
-                BaMM_command(self, job_pk)
-                opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
-                job.num_motifs  = (len(os.listdir(opath))-2)/5
-                for motif in range(1, (int(job.num_motifs)+1)):
-                    motif_obj = Motifs( parent_job = job, job_rank = motif)
-                    PWM2IUPAC(self, job_pk, motif, motif_obj.moti_ID)
-                    MMCompare(self, job_pk, motif)
-                    # plot Logos
-                    LogoPlotting(self,job_pk, motif)
-                    # compress motif related info
-                    Compress(self,job_pk, motif )
-
-                # compress job related info
-                Compress(self, job_pk, 0)
-
-        job.status = 'Successfully finished'
-        job.save()
-        print(datetime.datetime.now(), "\t | END: \t %s " % job.status )
-        sys.stdout.flush()
-        return 0
-
-    except Exception as e:
-        job.status = 'error running Discovery'
-        job.save()
-        print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
-        return 1
-
 def processMotif(self,job_pk, motif):
     try:
         job = get_object_or_404(Job, pk=job_pk)
@@ -595,11 +560,9 @@ def processMotif(self,job_pk, motif):
         # get IUPAC and motif length
         PWM2IUPAC(self,job_pk, motif, motif_obj.motif_ID)
 
-        print("before MMcompare")
         if job.MMcompare == True:
             # get motif motif comparison to database
             MMcompare(self,job_pk, motif, motif_obj.motif_ID)
-        print('after mmcompare')
 
         if job.FDR == True:
             # plot FDR outcome
@@ -694,7 +657,7 @@ def Compress(self,job_pk, motif):
         return 1       
 
 @task(bind=True)
-def run_bamm(self, job_pk):
+def OLD_run_bamm(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     # first define log file for redirecting output information
     logfile =   str(settings.MEDIA_ROOT) + "/logs/" + str(job_pk) + ".log"
@@ -1053,7 +1016,7 @@ def run_bamm(self, job_pk):
                 return 1
 
 @task(bind=True)
-def run_peng(self, job_pk):
+def OLD_run_peng(self, job_pk):
     print("inside peng motif")
     job = get_object_or_404(Job, pk=job_pk)
     try:
