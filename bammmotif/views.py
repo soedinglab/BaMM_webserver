@@ -110,7 +110,220 @@ def imprint(request):
 ### JOB RELATED VIEWS
 ##########################
 
-def data_predict(request):
+def get_correct_form(request, mode, example = False):
+    print("MODE=" , mode)
+    print("Example=" , example)
+    # first check which job the user wants to perform and load the appropriate form 
+    if str(mode) == "Prediction":
+        if(request.method == "POST"):
+            if example:
+                form = PredictionExampleForm(request.POST, request.FILES)    
+            else:
+                form = PredictionForm(request.POST, request.FILES)
+        else:
+            if example:
+                form = PredictionExampleForm()
+            else:
+                form = PredictionForm()
+
+    elif str(mode) == "Occurrence":
+        if(request.method == "POST"):
+            if example:
+                form = OccurrenceExampleForm(request.POST, request.FILES)    
+            else:
+                form = OccurrenceForm(request.POST, request.FILES)
+        else:
+            if example:
+                form = OccurrenceExampleForm()    
+            else:
+                form = OccurrenceForm()
+
+    elif str(mode) == "Compare":
+        if(request.method == "POST"):
+            if example:
+                form = CompareExampleForm(request.POST, request.FILES)
+            else:
+                form = CompareForm(request.POST, request.FILES)
+        else:
+            if example:
+                form = CompareExampleForm()
+            else:
+                form = CompareForm()
+
+    else:
+        return HttpResponseNotFound('<h1>Problem with the Job Request, please send an email describing what you did to bammmotif-info@mpg.de!</h1>')
+    return form
+
+def run_a_job(request, mode, example=False):
+    form=get_correct_form(request, mode, example)    
+    if request.method == "POST":
+        if form.is_valid():
+            # read in data and parameter
+            job = form.save(commit=False)
+            job.created_at = datetime.datetime.now()
+            
+            # assign user to new job instance
+            if request.user.is_authenticated():
+                job.user = request.user
+            else:
+                ip = get_ip(request)
+                if ip is not None:
+                    # check if anonymous user already exists
+                    anonymous_users = User.objects.filter(username=ip)
+                    if anonymous_users.exists():
+                        job.user = get_object_or_404(User, username=ip)
+                    else:
+                        # create an anonymous user and log them in
+                        username = ip
+                        u = User(username=username, first_name='Anonymous', last_name='User')
+                        u.set_unusable_password()
+                        u.save()
+                        job.user = u
+                else:
+                    print("we don't have an IP address for user")
+            job.save() 
+
+            # check if job has a name, if not use first 6 digits of job_id as job_name
+            if job.job_name == None:
+                # truncate job_id
+                job_id_short = str(job.job_ID).split("-",1)
+                job.job_name = job_id_short[0]
+                job.save() 
+
+            opath = os.path.join(settings.MEDIA_ROOT, str(job.job_ID),"Output")
+            
+            # if example is requested, load the sampleData
+            if example:
+                # load fasta file (needed for any job)
+                filename= 'example_data/ExampleData.fasta'
+                f = open(str(filename))
+                out_filename = "ExampleData.fasta"
+                job.Input_Sequences.save(out_filename , File(f))
+                f.close()
+
+                # load Initialization Motif
+                filename= 'example_data/stuff/oneMotif.peng'
+                f = open(str(filename))
+                out_filename = "oneMotif.meme"
+                job.Motif_InitFile.save(out_filename , File(f))
+                f.close()
+
+                job.Motif_Initialization = 'Custom File'
+                job.Motif_Init_File_Format = 'PWM'
+                job.save()
+    
+            # for occurrence search change MotifInitialization to being Custome file
+            if mode == "Occurrence":
+                job.Motif_Initialization = 'Custom File'
+                job.save()
+
+            #check if file formats are correct
+            check_fasta = False
+            # 1. Input sequence File
+            if check_fasta:
+                check = subprocess.Popen(['valid_fasta',
+                    str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                out, err = check.communicate()
+                out = out.decode('ascii')
+            else:
+                out = "OK"
+            
+            if out == "OK":
+                job.status = "job ready to submit" 
+                job.mode = str(mode)
+                job.save()
+                runJob.delay(job.job_ID)
+                return render(request, 'job/submitted.html', {'pk': job.job_ID} )    
+            else:
+                job.delete()
+                return render(request, 'job/data_input.html', {'form':form , 'mode':str(mode), 'example':example, 'type' : out })
+    
+    print("Form is not OK; mode=", mode, " example= ", example)
+    return render(request, 'job/data_input.html', { 'form':form, 'mode':str(mode), 'example':example })
+
+def submitted(request,pk):
+    return render(request, 'job/submitted.html', {'pk':pk})
+
+##########################
+### RESULT RELATED VIEWS
+##########################
+
+
+
+def find_results(request):
+    if request.method == "POST":
+        form = FindForm(request.POST)
+        if form.is_valid():
+            jobid = form.cleaned_data['job_ID']
+            return redirect('result_detail', pk=jobid)  
+    else:
+        form = FindForm()
+    return render(request, 'results/results_main.html', {'form':form})
+    
+def result_overview(request):
+    if request.user.is_authenticated():
+        user_jobs = Job.objects.filter(user = request.user.id)
+        return render(request,'results/result_overview.html', { 'user_jobs' : user_jobs })
+    else:
+        return redirect(request,'find_results')
+
+def delete(request, pk ):
+    Job.objects.filter(job_ID=pk).delete()
+    if request.user.is_authenticated():
+        user_jobs = Job.objects.filter(user = request.user.id)
+        return render(request,'results/result_overview.html', { 'user_jobs' : user_jobs })
+    else:
+        return redirect(request,'find_results')
+
+def result_detail(request, pk):
+    result = get_object_or_404(Job, pk=pk)
+    opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
+    Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
+    if result.status == 'Successfully finished':
+        print("status is successfull")
+        num_logos = range(1, (min(2,result.model_Order)+1))
+        if result.mode == "Prediction" or result.mode =="Compare":
+            return render(request,'results/result_detail.html', {'result':result, 'opath':opath, ',ode': result.mode, 'Output_filename':Output_filename, 'num_logos':num_logos})
+        elif result.mode == "Occurrence":
+            return redirect('result_occurrence', result.mode, pk)
+
+    else:
+        print('status not ready yet')
+        command ="tail -20 /code/media/logs/" + pk + ".log"
+        output = os.popen(command).read()
+        return render(request,'results/result_status.html', {'result':result, 'opath':opath , 'output':output })
+
+
+##########################
+### DATABASE RELATED VIEWS
+##########################
+
+
+def maindb(request):
+    if request.method == "POST":
+        form = DBForm(request.POST)
+        if form.is_valid():
+            protein_name = form.cleaned_data['db_ID']
+            db_entries = ChIPseq.objects.filter( target_name__icontains=protein_name )
+            return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries })
+    else:
+        form = DBForm()
+    return render(request, 'database/db_main.html', {'form':form})
+
+def db_overview(request, protein_name, db_entries):
+    return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries })
+
+def db_detail(request, pk):
+   entry = get_object_or_404(ChIPseq, db_public_id=pk)
+   return render(request,'database/db_detail.html', {'entry':entry})
+
+
+##########################
+### VIEWS THAT CAN SOON BE DELETED
+##########################
+
+def OLD_data_predict(request):
     print("ENTERING Data PREDICT VIEW")
     if request.method == "POST":
         print("Request IST POST")
@@ -236,7 +449,7 @@ def data_predict(request):
     return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "OK", 'message' : "OK"})
 
 
-def denovo_example(request):
+def OLD_denovo_example(request):
     print("ENTERING Data PREDICT VIEW with example")
     if request.method == "POST":
         print("Request IST POST")
@@ -321,7 +534,7 @@ def denovo_example(request):
     return render(request, 'job/de_novo_search_example.html', {'form':form , 'type' : "OK", 'message' : "OK"})
 
 
-def motif_compare(request):
+def OLD_motif_compare(request):
     if request.method == "POST":
         form = CompareForm(request.POST, request.FILES)
         if form.is_valid():
@@ -390,7 +603,7 @@ def motif_compare(request):
 
     return render(request, 'job/motif_compare.html', { 'form':form })
 
-def compare_example(request):
+def OLD_compare_example(request):
     if request.method == "POST":
         form = ExampleCompareForm(request.POST, request.FILES)
         if form.is_valid():
@@ -468,7 +681,7 @@ def compare_example(request):
     return render(request, 'job/compare_example.html', { 'form':form })
 
 
-def data_discover(request):
+def OLD_data_discover(request):
     if request.method == "POST":
         form = DiscoveryForm(request.POST, request.FILES)
         if form.is_valid():
@@ -538,7 +751,7 @@ def data_discover(request):
         form= DiscoveryForm()
     return render(request, 'job/data_discover.html', { 'form':form })
 
-def data_discover_from_db(request, pk):
+def OLD_data_discover_from_db(request, pk):
     db_entry = get_object_or_404(ChIPseq, pk=pk)
     if request.method == "POST":
         form=DiscoveryDBForm(request.POST, request.FILES)
@@ -626,45 +839,7 @@ def data_discover_from_db(request, pk):
         form = DiscoveryDBForm()
     return render(request, 'job/data_discoverDB.html',{'form': form, 'pk':pk, 'db_entry':db_entry})
 
-def submitted(request,pk):
-    return render(request, 'job/submitted.html', {'pk':pk})
-
-
-
-##########################
-### RESULT RELATED VIEWS
-##########################
-
-
-
-def find_results(request):
-    if request.method == "POST":
-        form = FindForm(request.POST)
-        if form.is_valid():
-            jobid = form.cleaned_data['job_ID']
-            return redirect('result_detail', pk=jobid)  
-    else:
-        form = FindForm()
-    return render(request, 'results/results_main.html', {'form':form})
-    
-
-def result_overview(request):
-    if request.user.is_authenticated():
-        user_jobs = Job.objects.filter(user = request.user.id)
-        return render(request,'results/result_overview.html', { 'user_jobs' : user_jobs })
-    else:
-        return redirect(request,'find_results')
-
-
-def delete(request, pk ):
-    Job.objects.filter(job_ID=pk).delete()
-    if request.user.is_authenticated():
-        user_jobs = Job.objects.filter(user = request.user.id)
-        return render(request,'results/result_overview.html', { 'user_jobs' : user_jobs })
-    else:
-        return redirect(request,'find_results')
-
-def result_detail(request, pk):
+def OLD_result_detail(request, pk):
     print( 'entered result detail view')
     result = get_object_or_404(Job, pk=pk)
     print( 'result received')
@@ -689,35 +864,4 @@ def result_detail(request, pk):
         command ="tail -20 /code/media/logs/" + pk + ".log"
         output = os.popen(command).read()
         return render(request,'results/result_status.html', {'result':result, 'opath':opath , 'output':output })
-
-##########################
-### DATABASE RELATED VIEWS
-##########################
-
-
-def maindb(request):
-    if request.method == "POST":
-        form = DBForm(request.POST)
-        if form.is_valid():
-            protein_name = form.cleaned_data['db_ID']
-            db_entries = ChIPseq.objects.filter( target_name__icontains=protein_name )
-            return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries })
-    else:
-        form = DBForm()
-    return render(request, 'database/db_main.html', {'form':form})
-
-    
-
-def db_overview(request, protein_name, db_entries):
-    return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries })
-
-def db_detail(request, pk):
-   entry = get_object_or_404(ChIPseq, db_public_id=pk)
-   return render(request,'database/db_detail.html', {'entry':entry})
-
-
-
-
-
-
 
