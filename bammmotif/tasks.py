@@ -21,6 +21,29 @@ import os
 import sys
 import shutil
 
+#@task(bind=True)
+#def runPeng(self, job_pk):
+#    try:
+#        job = get_object_or_404(Job, pk=job_pk)##
+#
+#        # first define log file for redirecting output information
+#        logfile =   str(settings.MEDIA_ROOT) + "/" + str(job_pk) + "/" + str(job_pk) + ".log"
+#        with open(logfile, 'w') as f:
+#            with redirect_stdout(f):
+#               
+#                ## do something
+#                job.status = 'Successfully finished'
+#                job.save()
+#                print(datetime.datetime.now(), "\t | END: \t %s " % job.status )
+#                sys.stdout.flush()
+#                return 0#
+#
+#    except Exception as e:
+#        job.status = 'error running '
+#        job.save()
+#        print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
+#        return 1       
+
 
 @task(bind=True)
 def runJob(self, job_pk):

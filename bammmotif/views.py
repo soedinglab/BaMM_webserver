@@ -154,6 +154,26 @@ def get_correct_form(request, mode, example = False):
         return HttpResponseNotFound('<h1>Problem with the Job Request, please send an email describing what you did to bammmotif-info@mpg.de!</h1>')
     return form
 
+
+#def run_peng(request):
+#    if request.method == "POST":
+#        form = PengForm(request.POST, request.FILES)
+#        # verarbeite 
+#        if form.is_valid():
+#            job = form.save(commit= False)
+#            # machen was du willst
+#            job.save()
+#            runPeng.delay(job.job_ID)
+#            return render(request, 'job/submitted.html', {'pk': job.job_ID} )    
+#        else:
+#            # wenn du willst kannst du errors werfen, bzw. einen output für den user generieren der erklärt das der input fehlerhaft ist.
+#            # wenn nicht dann gibt ein leeres form zurück
+#
+#    else:
+#        # gibt dem user die möglchkeit input einzugeben
+#        form = PengForm()
+#    return render(request, 'peng_input', { 'form':form })
+
 def run_a_job(request, mode, example=False):
     form=get_correct_form(request, mode, example)    
     if request.method == "POST":
@@ -288,7 +308,7 @@ def result_detail(request, pk):
         print("status is successfull")
         num_logos = range(1, (min(2,result.model_Order)+1))
         if result.mode == "Prediction" or result.mode =="Compare":
-            return render(request,'results/result_detail.html', {'result':result, 'opath':opath, ',ode': result.mode, 'Output_filename':Output_filename, 'num_logos':num_logos})
+            return render(request,'results/result_detail.html', {'result':result, 'opath':opath, 'mode': result.mode, 'Output_filename':Output_filename, 'num_logos':num_logos})
         elif result.mode == "Occurrence":
             return redirect('result_occurrence', result.mode, pk)
 
