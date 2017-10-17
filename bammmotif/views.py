@@ -216,21 +216,20 @@ def run_a_job(request, mode, example=False):
             if example or mode == "Compare":
                 # load fasta file (needed for any job)
                 filename= 'example_data/ExampleData.fasta'
-                f = open(str(filename))
                 out_filename = "ExampleData.fasta"
-                job.Input_Sequences.save(out_filename , File(f))
-                f.close()
+                with open(filename) as fh:
+                    job.Input_Sequences.save(out_filename , File(fh))
                 job.save()
+
+                job.Motif_Initialization = 'Custom File'
                 
             if example:
                 # load Initialization Motif
                 filename= 'example_data/stuff/oneMotif.peng'
-                f = open(str(filename))
                 out_filename = "oneMotif.meme"
-                job.Motif_InitFile.save(out_filename , File(f))
-                f.close()
-
-                job.Motif_Initialization = 'Custom File'
+                with open(filename) as fh:
+                    job.Motif_InitFile.save(out_filename , File(fh))
+                
                 job.Motif_Init_File_Format = 'PWM'
                 if mode == "Compare" or mode == "Occurrence":
                     job.model_Order = 0
@@ -263,7 +262,7 @@ def run_a_job(request, mode, example=False):
                 job.delete()
                 return render(request, 'job/data_input.html', {'form':form , 'mode':str(mode), 'example':example, 'type' : out })
     
-    print("Form is not OK; mode=", mode, " example= ", example)
+    print("Form is not OK; mode=", mode, " example= ", example, "form=", form)
     return render(request, 'job/data_input.html', { 'form':form, 'mode':str(mode), 'example':example })
 
 def submitted(request,pk):
@@ -302,7 +301,7 @@ def delete(request, pk ):
 
 def result_detail(request, pk):
     result = get_object_or_404(Job, pk=pk)
-    opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
+    opath = os.path.join(settings.MEDIA_ROOT, str(result.pk),"Output")
     Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
     if result.status == 'Successfully finished':
         print("status is successfull")
@@ -336,11 +335,13 @@ def maindb(request):
     return render(request, 'database/db_main.html', {'form':form})
 
 def db_overview(request, protein_name, db_entries):
-    return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries })
+    db_location = db_entries[0].parent.location
+    return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries, 'db_location':db_location })
 
 def db_detail(request, pk):
    entry = get_object_or_404(ChIPseq, db_public_id=pk)
-   return render(request,'database/db_detail.html', {'entry':entry})
+   db_location = entry.parent.location
+   return render(request,'database/db_detail.html', {'entry':entry, 'db_location' : db_location})
 
 
 ##########################
@@ -510,10 +511,9 @@ def OLD_denovo_example(request):
 
             # upload motifInitFile
             filename= 'example_data/ExampleData.fasta'
-            f = open(str(filename))
             out_filename = "ExampleData.fasta"
-            job.Input_Sequences.save(out_filename , File(f))
-            f.close()
+            with open( filename ) as fh:
+                job.Input_Sequences.save(out_filename , File(fh))
             
             print("UPLOAD COMPLETE: save job object")
             job.save() 
@@ -668,10 +668,10 @@ def OLD_compare_example(request):
 
 
             filename= 'example_data/stuff/oneMotif.peng'
-            f = open(str(filename))
             out_filename = "oneMotif.meme"
-            job.Input_Sequences.save(out_filename , File(f))
-            f.close()
+            with open(filename) as fh:
+                job.Input_Sequences.save(out_filename , File(fh))
+
             job.save() 
             
 
@@ -810,19 +810,19 @@ def OLD_data_discover_from_db(request, pk):
             
             # upload motifInitFile
             filename= 'DB/' + str(db_entry.parent.base_dir) + '/Results/' + str(db_entry.result_location) + '/' + str(db_entry.result_location) + '_motif_1.ihbcp'
-            f = open(str(filename))
             out_filename = str(db_entry.result_location) + ".ihbcp"
-            job.Motif_InitFile.save(out_filename , File(f))
-            f.close()
+            with open(filename) as fh:
+                job.Motif_InitFile.save(out_filename , File(fh))
+                
             job.Motif_Init_File_Format = "BaMM"
             job.save()
             
             # upload bgModelFile
             filename= 'DB/' + str(db_entry.parent.base_dir) + '/Results/' + str(db_entry.result_location) + '/' + str(db_entry.result_location) + '.hbcp'
-            f = open(str(filename))
             out_filename = str(db_entry.result_location) + ".hbcp"
-            job.bgModel_File.save(out_filename , File(f))
-            f.close()
+            with open( filename ) as fh:
+                job.bgModel_File.save(out_filename , File(fh))
+            
             job.save()
             
              # check if job has a name, if not use first 6 digits of job_id as job_name
