@@ -18,7 +18,7 @@ class Command(BaseCommand):
         # create parent job 
         new_entry = Job(
             job_ID     = '293aae88-6e1e-48ba-ad87-19e7304e0393',
-            job_name   = 'ExampleDataPredicion',
+            job_name   = 'Example Data ',
             created_at = datetime.datetime.now(),
             mode       = 'Prediction',
             Motif_Initialization = 'Custom File',
@@ -28,21 +28,25 @@ class Command(BaseCommand):
             reverse_Complement = True,
             extend_1 = 4,
             extend_2 = 4,
-            )
+            status = "Successfully Finished",
+            num_motifs =  7
+            score_Seqset = True
+            p_value_cutoff = "0.001"
 
-        u = User(username='UserExample', first_name='Anonymous', last_name='User')
+            )
+        u = User(username='UserExample', first_name='User', last_name='Example')
         u.set_unusable_password()
         u.save()
         new_entry.user = u
         filename= '/code/example_data/ExampleData.fasta'
-        f = open(str(filename))
-        new_entry.Input_Sequences.save(filename, File(f))
-        f.close()
-        filename= '/code/example_data/stuff/MotifInitFile.peng'
-        f = open(str(filename))
-        new_entry.Motif_InitFile.save(filename, File(f))
-        f.close()
+        with open ( filename ) as fh:
+            new_entry.Input_Sequences.save(filename, File(fh))
 
+        filename= '/code/example_data/stuff/MotifInitFile.peng'
+        with open( filename) as fh:
+            new_entry.Motif_InitFile.save(filename, File(fh))
+        
         new_entry.save()
         
-        runDiscovery.delay(new_entry.pk)
+        runJob.delay(new_entry.pk)
+        

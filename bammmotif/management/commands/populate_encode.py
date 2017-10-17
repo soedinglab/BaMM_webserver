@@ -39,7 +39,8 @@ class Command(BaseCommand):
         savelogodds            = True,
         cgs                    = False,
         maxcgsiterations       = 1e5,
-        noalphasampling        = True
+        noalphasampling        = True,
+        location               = '/code/DB/ENCODE_ChIPseq/Results'
         )
       db_param.save()
 

@@ -167,9 +167,8 @@ def PeNG_command(self,job_pk):
             sys.stdout.flush()
         process.wait()
     
-        f = open(str(os.path.join(settings.MEDIA_ROOT, str(job.pk),'Input/', 'MotifInitFile.peng')))        
-        job.Motif_InitFile.save("MotifInitFile.peng", File(f))
-        f.close()
+        with open(str(os.path.join(settings.MEDIA_ROOT, str(job.pk),'Input/', 'MotifInitFile.peng'))) as fh:        
+            job.Motif_InitFile.save("MotifInitFile.peng", File(fh))
 
         job.Motif_Init_File_Format = "PWM"
         job.status = "PEnGmotif finished"
@@ -458,7 +457,7 @@ def MMcompare(self,job_pk, motif, motif_pk):
         
         opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
         
-        # get DBParams
+        # get DBParams (the param_id selects which db -folder to use, since it references to a folder with '.location')
         db_param = get_object_or_404(DbParameter, param_id=100)
         read_order = 0 # we only compare 0-th order models since this makes reverseComplement calculation easy and fast
         print("READ_ORDER=" + str(read_order))
@@ -714,9 +713,9 @@ def OLD_run_bamm(self, job_pk):
                             sys.stdout.flush()
                     process.wait()
     
-                    f = open(str(os.path.join(settings.MEDIA_ROOT, str(job.pk),'Input/', 'MotifInitFile.peng')))        
-                    job.Motif_InitFile.save("MotifInitFile.peng", File(f))
-                    f.close()
+                    with open(str(os.path.join(settings.MEDIA_ROOT, str(job.pk),'Input/', 'MotifInitFile.peng'))) as fh:       
+                        job.Motif_InitFile.save("MotifInitFile.peng", File(fh))
+                    
                     job.Motif_Init_File_Format = "PWM"
                     job.status = "PEnGmotif finished"
                     job.save()
@@ -1059,9 +1058,9 @@ def OLD_run_peng(self, job_pk):
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         check.wait()
     
-        f = open(str(os.path.join(settings.MEDIA_ROOT, str(job.pk),'Input/', 'MotifInitFile.peng')))
-        job.Motif_InitFile.save("MotifInitFile.peng", File(f))
-        f.close()
+        with open(str(os.path.join(settings.MEDIA_ROOT, str(job.pk),'Input/', 'MotifInitFile.peng'))) as fh:
+            job.Motif_InitFile.save("MotifInitFile.peng", File(fh))
+
         job.Motif_Init_File_Format = "PWM"
         job.status = "PEnGmotif finished"
         job.save()
