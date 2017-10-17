@@ -141,7 +141,6 @@ class DbParameter(models.Model):
     cgs = models.IntegerField(db_column='CGS')  # Field name made lowercase.
     maxcgsiterations = models.BigIntegerField(db_column='maxCGSIterations')  # Field name made lowercase.
     noalphasampling = models.IntegerField(db_column='noAlphaSampling')  # Field name made lowercase.
-
     
     def __str__(self):
         return self.param_id
@@ -181,8 +180,8 @@ class Motifs(models.Model):
 
 class DbMatch(models.Model):
     match_ID     = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    motif        = models.ForeignKey('Motifs')
-    db_entry     = models.ForeignKey('ChIPseq')
+    motif        = models.ForeignKey('Motifs', on_delete=models.CASCADE)
+    db_entry     = models.ForeignKey('ChIPseq', on_delete=models.CASCADE)
     p_value      = models.FloatField(default=0.0)
     e_value      = models.FloatField(default=0.0)
     score        = models.FloatField(default=0.0)
