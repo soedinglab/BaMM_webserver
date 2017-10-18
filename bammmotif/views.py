@@ -11,12 +11,14 @@ from django.views.generic import TemplateView
 from .models import *
 from .forms import *
 from .tasks import *
+from .utils import get_job_output_folder, get_log_file
 from ipware.ip import get_ip
 import plotly.offline as opy
 import plotly.graph_objs as go
 import datetime
 import subprocess
 import os
+from os import path
 import sys
 
 class Plot(TemplateView):
@@ -27,7 +29,7 @@ class Plot(TemplateView):
         
         # get Job object
         result = get_object_or_404(Job, pk=self.kwargs.get('pk',None))
-        opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
+        opath = get_job_output_folder(result.pk)
         Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
         num_logos = range(min(2,result.model_Order) + 1)
 
@@ -41,7 +43,7 @@ class Plot(TemplateView):
         NumMotifs = max(1, result.num_motifs)
         for m in range(NumMotifs):
             # read in logOdds Scores:
-            score_file = opath + '/' + Output_filename + '_motif_' + str(m+1) + '.scores'
+            score_file = path.join(opath, Output_filename + '_motif_' + str(m+1) + '.scores')
             data = {'start': [], 'end': [], 'score': [], 'pVal':[], 'eVal':[], 'strand': [], 'pattern': []}
             
             with open ( score_file ) as fh:
@@ -210,12 +212,13 @@ def run_a_job(request, mode, example=False):
                 job.job_name = job_id_short[0]
                 job.save() 
 
-            opath = os.path.join(settings.MEDIA_ROOT, str(job.job_ID),"Output")
+            opath = get_job_output_folder(job.job_ID)
             
             # if example is requested, load the sampleData
             if example or mode == "Compare":
                 # load fasta file (needed for any job)
                 filename= 'example_data/ExampleData.fasta'
+
                 out_filename = "ExampleData.fasta"
                 with open(filename) as fh:
                     job.Input_Sequences.save(out_filename , File(fh))
@@ -226,10 +229,11 @@ def run_a_job(request, mode, example=False):
             if example:
                 # load Initialization Motif
                 filename= 'example_data/stuff/oneMotif.peng'
-                out_filename = "oneMotif.meme"
-                with open(filename) as fh:
-                    job.Motif_InitFile.save(out_filename , File(fh))
-                
+                with open(str(filename)) as f:
+                    out_filename = "oneMotif.meme"
+                    job.Motif_InitFile.save(out_filename , File(f))
+
+                job.Motif_Initialization = 'Custom File'
                 job.Motif_Init_File_Format = 'PWM'
                 if mode == "Compare" or mode == "Occurrence":
                     job.model_Order = 0
@@ -245,7 +249,7 @@ def run_a_job(request, mode, example=False):
             # 1. Input sequence File
             if check_fasta:
                 check = subprocess.Popen(['valid_fasta',
-                    str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
+                    str(os.path.join(settings.FS_JOB_DIR, job.Input_Sequences.name))], 
                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 out, err = check.communicate()
                 out = out.decode('ascii')
@@ -301,9 +305,9 @@ def delete(request, pk ):
 
 def result_detail(request, pk):
     result = get_object_or_404(Job, pk=pk)
-    opath = os.path.join(settings.MEDIA_ROOT, str(result.pk),"Output")
+    opath = get_job_output_folder(pk)
     Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
-    if result.status == 'Successfully finished':
+    if result.complete:
         print("status is successfull")
         num_logos = range(1, (min(2,result.model_Order)+1))
         if result.mode == "Prediction" or result.mode =="Compare":
@@ -313,7 +317,8 @@ def result_detail(request, pk):
 
     else:
         print('status not ready yet')
-        command ="tail -20 /code/media/logs/" + pk + ".log"
+        log_file = get_log_file(pk)
+        command ="tail -20 %r" % log_file
         output = os.popen(command).read()
         return render(request,'results/result_status.html', {'result':result, 'opath':opath , 'output':output })
 
@@ -407,11 +412,11 @@ def OLD_data_predict(request):
 
 
             #check if file formats are correct
-            opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
+            opath = get_job_output_folder(job.pk)
             
             # 1. Input sequence File
             check = subprocess.Popen(['valid_fasta',
-             str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
+             str(os.path.join(settings.FS_JOB_DIR, job.Input_Sequences.name))], 
              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             out, err = check.communicate()
               
@@ -423,7 +428,7 @@ def OLD_data_predict(request):
                     out = "OK"
                 else:                
                     check = subprocess.Popen(['valid_fasta',
-                    str(os.path.join(settings.MEDIA_ROOT, job.Background_Sequences.name))], 
+                    str(os.path.join(settings.FS_JOB_DIR, job.Background_Sequences.name))], 
                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                     out, err = check.communicate()  
                     out = out.decode('ascii')
@@ -511,9 +516,9 @@ def OLD_denovo_example(request):
 
             # upload motifInitFile
             filename= 'example_data/ExampleData.fasta'
-            out_filename = "ExampleData.fasta"
-            with open( filename ) as fh:
-                job.Input_Sequences.save(out_filename , File(fh))
+            with open(filename) as f:
+                out_filename = "ExampleData.fasta"
+                job.Input_Sequences.save(out_filename , File(f))
             
             print("UPLOAD COMPLETE: save job object")
             job.save() 
@@ -531,7 +536,7 @@ def OLD_denovo_example(request):
                 out = "OK"
             else:                
                 check = subprocess.Popen(['valid_fasta',
-                str(os.path.join(settings.MEDIA_ROOT, job.Background_Sequences.name))], 
+                str(os.path.join(settings.FS_JOB_DIR, job.Background_Sequences.name))], 
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 out, err = check.communicate()  
                 out = out.decode('ascii')
@@ -599,7 +604,7 @@ def OLD_motif_compare(request):
 
 
             #check if file formats are correct
-            opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
+            opath = get_job_output_folder(job.pk)
             
             # 1. Motif input File
             #check = subprocess.Popen(['valid_Init',
@@ -668,15 +673,14 @@ def OLD_compare_example(request):
 
 
             filename= 'example_data/stuff/oneMotif.peng'
-            out_filename = "oneMotif.meme"
-            with open(filename) as fh:
-                job.Input_Sequences.save(out_filename , File(fh))
-
+            with open(filename) as f:
+                out_filename = "oneMotif.meme"
+                job.Input_Sequences.save(out_filename , File(f))
             job.save() 
             
 
             #check if file formats are correct
-            opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
+            opath = get_job_output_folder(job.pk)
             
             # 1. Motif input File
             #check = subprocess.Popen(['valid_Init',
@@ -746,11 +750,11 @@ def OLD_data_discover(request):
 
 
             #check if file formats are correct
-            opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
+            opath = get_job_output_folder(job.pk)
             
             # 1. Input sequence File
             check = subprocess.Popen(['valid_fasta',
-             str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
+             str(os.path.join(settings.FS_JOB_DIR, job.Input_Sequences.name))], 
              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             out, err = check.communicate()
               
@@ -834,11 +838,11 @@ def OLD_data_discover_from_db(request, pk):
 
             
             #check if file formats are correct
-            opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
+            opath = get_job_output_folder(job.pk)
             
             # 1. Input sequence File
             check = subprocess.Popen(['valid_fasta',
-             str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
+             str(os.path.join(settings.FS_JOB_DIR, job.Input_Sequences.name))], 
              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             out, err = check.communicate()
               
@@ -867,7 +871,7 @@ def OLD_result_detail(request, pk):
     print( 'entered result detail view')
     result = get_object_or_404(Job, pk=pk)
     print( 'result received')
-    opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
+    opath = get_job_output_folder(job.pk)
     print('defined opath')
     print(opath)
     Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
@@ -885,7 +889,8 @@ def OLD_result_detail(request, pk):
 
     else:
         print('status not ready yet')
-        command ="tail -20 /code/media/logs/" + pk + ".log"
+        log_file = get_log_file(pk)
+        command ="tail -20 %r" % log_file
         output = os.popen(command).read()
         return render(request,'results/result_status.html', {'result':result, 'opath':opath , 'output':output })
 

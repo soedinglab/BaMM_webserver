@@ -12,12 +12,20 @@ from django.contrib.auth.models import User
 from ipware.ip import get_ip
 from .models import *
 
+from .utils import (
+    get_job_output_folder, get_job_input_folder,
+    get_log_file, make_job_folder,
+    JobSaveManager,
+    run_command
+)
+import traceback
 from os.path import basename
 from contextlib import redirect_stdout
 import tempfile
 import subprocess
 import datetime
 import os
+from os import path
 import sys
 import shutil
 
@@ -47,11 +55,11 @@ import shutil
 
 @task(bind=True)
 def runJob(self, job_pk):
-    try:
-        job = get_object_or_404(Job, pk=job_pk)
-
+    job = get_object_or_404(Job, pk=job_pk)
+    with JobSaveManager(job) as mgr:
         # first define log file for redirecting output information
-        logfile =   str(settings.MEDIA_ROOT) + "/logs/" + str(job_pk) + ".log"
+        make_job_folder(job_pk)
+        logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
                 print("motif initialization=", job.Motif_Initialization)
@@ -60,7 +68,7 @@ def runJob(self, job_pk):
 
                 BaMM_command(self, job_pk)
                 
-                opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+                opath = get_job_output_folder(job_pk)
 
                 if job.mode == "Prediction":
                     job.num_motifs  = (len(os.listdir(opath))-2)/5
@@ -78,23 +86,18 @@ def runJob(self, job_pk):
                 # compress job related info
                 Compress(self, job_pk, 0)
 
-        job.status = 'Successfully finished'
-        job.save()
-        print(datetime.datetime.now(), "\t | END: \t %s " % job.status )
-        sys.stdout.flush()
-        return 0
+                sys.stdout.flush()
+                job.complete = True
 
-    except Exception as e:
-        job.status = 'error running Discovery'
-        job.save()
-        print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
-        return 1       
+    return 1 if mgr.had_exception else 0
 
 
 def valid_init(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
-    try:
-        job.status = 'Check Input File'
+    success_status = 'Validated Input'
+    failure_status = 'Invalid Input'
+    with JobSaveManager(job, success_status=success_status, error_status=failure_status) as mgr:
+        job.status = 'Checking Input'
         job.save() 
         check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_Init',
             str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)),
@@ -108,17 +111,15 @@ def valid_init(self, job_pk):
             return 0
         else:
             return 1
+    return 1 if mgr.had_exception else 0
 
-    except Exception as e:
-        job.status = 'invalit initialization file'
-        job.save()
-        print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
-        return 1
 
 def valid_fasta(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
-    try:
-        job.status = 'Check Input File'
+    success_status = 'Validated Input'
+    failure_status = 'Invalid Input'
+    with JobSaveManager(job, success_status=success_status, error_status=failure_status) as mgr:
+        job.status = 'Checking Input'
         job.save() 
         check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
             str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
@@ -131,12 +132,8 @@ def valid_fasta(self, job_pk):
             return 0
         else:
             return 1
+    return 1 if mgr.had_exception else 0
 
-    except Exception as e:
-        job.status = 'invalid fasta file'
-        job.save()
-        print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
-        return 1
 
 def PeNG_command(self,job_pk):
     job =  get_object_or_404(Job, pk=job_pk)
@@ -153,22 +150,16 @@ def PeNG_command(self,job_pk):
         # python3 ${SHOOT_PENG} ${FASTA_DIR}/$f -d ${outdir} -o ${outdir}/${bn}.meme --iupac_optimization_score MUTUAL_INFO > ${outdir}/${bn}.logg
         # ${FDR} ${outdir}/ ${FASTA_DIR}/${bn}.fasta --PWMFile ${outdir}/${bn}.meme --num 1 -k 0 --cvFold 1
         # Rscript ${AUSFC_SCRIPT} ${outdir} ${bn}
-        opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Input")
+        opath = get_job_input_folder(job_pk)
 
         command = 'shoot_peng.py ' + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)) + ' -o ' +  opath + '/MotifInitFile.peng' + ' --iupac_optimization_score MUTUAL_INFO'
         print( "\n COMMAND =  %s \n" % command )
         sys.stdout.flush()
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        while True:
-            nextline = process.stdout.readline()
-            if nextline == b'' and process.poll() is not None:
-                break
-            sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
-            sys.stdout.flush()
-        process.wait()
+
+        run_command(command)
     
-        with open(str(os.path.join(settings.MEDIA_ROOT, str(job.pk),'Input/', 'MotifInitFile.peng'))) as fh:        
-            job.Motif_InitFile.save("MotifInitFile.peng", File(fh))
+        with open(path.join(opath, 'MotifInitFile.peng')) as f:       
+            job.Motif_InitFile.save("MotifInitFile.peng", File(f))
 
         job.Motif_Init_File_Format = "PWM"
         job.status = "PEnGmotif finished"
@@ -178,6 +169,7 @@ def PeNG_command(self,job_pk):
         return 0        
     
     except Exception as e:
+        traceback.print_exc(file=sys.stdout)
         job.status = 'error running PEnG!motif'
         job.save()
         print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status )
@@ -193,7 +185,7 @@ def BaMM_command(self,job_pk):
         else:
             print(datetime.datetime.now(), "\t | START: \t %s " % job.status )
 
-        opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+        opath = get_job_output_folder(job_pk)
         
         if str(job.mode) == "Compare":
             job.FDR=False
@@ -313,7 +305,7 @@ def FDR_command(self,job_pk, motif):
         job.save() 
         print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
-        opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+        opath = get_job_output_folder(job_pk)
         print( 'OPATH= ' + opath)
         sys.stdout.flush()
 
@@ -372,7 +364,7 @@ def PWM2IUPAC(self,job_pk,motif, motif_pk):
         print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
 
         motif_obj = get_object_or_404(Motifs, pk=motif_pk)
-        opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+        opath = get_job_output_folder(job_pk)
 
         # calculate iupac
         command = 'IUPAC.py ' + opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '.ihbcp ' + str(job.model_Order)
@@ -455,7 +447,7 @@ def MMcompare(self,job_pk, motif, motif_pk):
 
         motif_obj = get_object_or_404(Motifs, pk=motif_pk)
         
-        opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+        opath = get_job_output_folder(job_pk)
         
         # get DBParams (the param_id selects which db -folder to use, since it references to a folder with '.location')
         db_param = get_object_or_404(DbParameter, param_id=100)
@@ -511,7 +503,7 @@ def LogoPlotting(self,job_pk, motif):
         print(datetime.datetime.now(), "\t | update: \t %s " % job.status )
         sys.stdout.flush()
         
-        opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+        opath = get_job_output_folder(job_pk)
 
         basic_name = opath + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif)
         for order in range(min(job.model_Order+1,4)): 
@@ -615,7 +607,7 @@ def processMotif(self,job_pk, motif):
 def Compress(self,job_pk, motif):
     try:
         job = get_object_or_404(Job, pk=job_pk)
-        opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+        opath = get_job_output_folder(job_pk)
         if motif == 0:
             job.status = 'Compressing Results ...' 
             job.save() 
@@ -690,7 +682,8 @@ def Compress(self,job_pk, motif):
 def OLD_run_bamm(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     # first define log file for redirecting output information
-    logfile =   str(settings.MEDIA_ROOT) + "/logs/" + str(job_pk) + ".log"
+    make_job_folder(job_pk)
+    logfile = get_log_file(job_id)
     with open(logfile, 'w') as f:
         with redirect_stdout(f):
             try:
@@ -701,7 +694,7 @@ def OLD_run_bamm(self, job_pk):
                     print(datetime.datetime.now(), "\t | START: \t %s " % job.status )
 
                     #command = '/code/bammmotif/static/scripts/peng_motif ' + os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name) + ' -o ' + os.path.join(settings.MEDIA_ROOT, job_pk, 'Input') + '/MotifInitFile.peng'
-                    command = 'shoot_peng.py ' + os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name) + ' -o ' + os.path.join(settings.MEDIA_ROOT, job_pk, 'Input') + '/MotifInitFile.peng' +  ' -w 10 --pseudo-counts 10 -b 0.3 -a 1E3'
+                    command = 'shoot_peng.py ' + os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name) + ' -o ' + get_job_input_folder(job_pk) + '/MotifInitFile.peng' +  ' -w 10 --pseudo-counts 10 -b 0.3 -a 1E3'
                     print( "\n %s \n" % command )
                     sys.stdout.flush()
                     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -713,9 +706,10 @@ def OLD_run_bamm(self, job_pk):
                             sys.stdout.flush()
                     process.wait()
     
-                    with open(str(os.path.join(settings.MEDIA_ROOT, str(job.pk),'Input/', 'MotifInitFile.peng'))) as fh:       
-                        job.Motif_InitFile.save("MotifInitFile.peng", File(fh))
-                    
+                    input_dir = get_job_input_folder(job_pk) 
+                    motif_init_file = path.join(input_dir, 'MotifInitFile.peng')
+                    with open(motif_init_file) as f:
+                        job.Motif_InitFile.save("MotifInitFile.peng", File(f))
                     job.Motif_Init_File_Format = "PWM"
                     job.status = "PEnGmotif finished"
                     job.save()
@@ -731,7 +725,7 @@ def OLD_run_bamm(self, job_pk):
                 else:
                     print(datetime.datetime.now(), "\t | START: \t %s " % job.status )
 
-                opath = os.path.join(settings.MEDIA_ROOT, str(job_pk),"Output")
+                opath = get_job_output_folder(job_pk)
                 params = opath + " " + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))
 
                 # optional Files

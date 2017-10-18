@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from os import path
 
 # CELERY SETTINGS
 BROKER_URL = 'redis://redis_celery:6379/0'
@@ -23,7 +24,6 @@ CELERY_RESULT_SERIALIZER = 'json'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PDOM_MAX_COLUMNS = 4000
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -188,3 +188,7 @@ DEFAULT_FROM_EMAIL = 'bamm@mpibpc.mpg.de'
 
 EMAIL_SUBJECT_SUCCESS = str("BaMM!motif: Your Job has finished!")
 EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You can view its results following this link: xcxdxx\n\n Greetings from the BaMM!team\n")
+
+
+# Settings related to file system structure
+JOB_DIR_PREFIX = 'jobs'

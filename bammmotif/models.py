@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -32,8 +33,10 @@ MODE_CHOICES = (
     ('Compare','Compare')
 )
 
+
 def job_directory_path(instance, filename):
-   	return '{0}/Input/{1}'.format(instance.job_ID, filename)
+    return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID), 
+                        'Input', str(filename))
 
 class Job(models.Model):
     # general info
@@ -44,6 +47,7 @@ class Job(models.Model):
     status = models.CharField(max_length=255, default="not initialized", null=True, blank=True)
     num_motifs = models.IntegerField(default=1)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    complete = models.BooleanField(default=False)
         
     # files  
     Input_Sequences = models.FileField(upload_to=job_directory_path, null=True)
