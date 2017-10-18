@@ -46,5 +46,4 @@ RUN rm -rf /tmp/suite
 #RUN cp meme/ceqlogo /ext/bin
 #RUN rm -rf /tmp/meme_suite
 
-
 ENV PATH="/ext/bin:${PATH}"
