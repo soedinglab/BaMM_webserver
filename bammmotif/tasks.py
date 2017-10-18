@@ -15,7 +15,8 @@ from .models import *
 from .utils import (
     get_job_output_folder, get_job_input_folder,
     get_log_file, make_job_folder,
-    JobSaveManager
+    JobSaveManager,
+    run_command
 )
 import traceback
 from os.path import basename
@@ -154,14 +155,8 @@ def PeNG_command(self,job_pk):
         command = 'shoot_peng.py ' + str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)) + ' -o ' +  opath + '/MotifInitFile.peng' + ' --iupac_optimization_score MUTUAL_INFO'
         print( "\n COMMAND =  %s \n" % command )
         sys.stdout.flush()
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        while True:
-            nextline = process.stdout.readline()
-            if nextline == b'' and process.poll() is not None:
-                break
-            sys.stdout.write(str(nextline.strip().decode('ascii')) + "\n")
-            sys.stdout.flush()
-        process.wait()
+
+        run_command(command)
     
         with open(path.join(opath, 'MotifInitFile.peng')) as f:       
             job.Motif_InitFile.save("MotifInitFile.peng", File(f))
