@@ -4,6 +4,7 @@ from os import path
 import os
 import datetime
 import traceback
+import subprocess
 
 
 def get_job_folder(job_id):
@@ -52,3 +53,16 @@ class JobSaveManager:
             print(datetime.datetime.now(), "\t | END: \t %s " % job.status)
         job.save()
         return True
+
+
+def run_command(command):
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    while True:
+        nextline = process.stdout.readline()
+        if nextline == b'' and process.poll() is not None:
+            break
+        print(nextline.decode('utf-8'), file=sys.stdout, end='')
+        sys.stdout.flush()
+    process.wait()
+    return process.returncode
