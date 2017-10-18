@@ -178,7 +178,6 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'BaMM_webserver/DB')
 
 )
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'email.gwdg.de'
 EMAIL_HOST_PASSWORD = 'BaMM_motif11610'
