@@ -20,10 +20,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-PDOM_MAX_COLUMNS = 4000
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -192,3 +189,7 @@ EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You
 
 # Settings related to file system structure
 JOB_DIR_PREFIX = 'jobs'
+
+# Settings realted to example data
+EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
+EXAMPLE_MOTIF = 'example_data/ExampleMotif.meme' 
