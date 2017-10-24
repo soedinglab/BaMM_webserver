@@ -120,8 +120,22 @@
             </tr>
         </table>
         {% endif %}
-            
-        {% if result.MMcompare %}
+        
+        {% if result.FDR %}
+        <h3>False Discovery Rate Estimation:</h3>
+        <table>
+            <tr>
+                <td>  &emsp; mFold: </td>
+                <td>  &emsp; {{result.m_Fold}}</td>
+            </tr>
+            <tr>
+                <td>  &emsp; sampling Order: </td>
+                <td>  &emsp; {{result.sampling_Order}}</td>
+            </tr>   
+        </table>
+        {% endif %}
+        
+        {% if result.mode == "Prediction" %}
         <h3>Database Model Comparison:</h3>
         <table>
             <tr>

@@ -213,6 +213,7 @@ class DbParameter(models.Model):
     #cgs = models.IntegerField(db_column='CGS')  # Field name made lowercase.
     #maxcgsiterations = models.BigIntegerField(db_column='maxCGSIterations')  # Field name made lowercase.
     #noalphasampling = models.IntegerField(db_column='noAlphaSampling')  # Field name made lowercase.
+    #location = models.CharField(max_length = 255)
     
     def __str__(self):
         return self.param_id
