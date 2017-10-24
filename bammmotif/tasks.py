@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from celery import task
 from contextlib import redirect_stdout
+import sys
 from django.shortcuts import get_object_or_404
 from .models import (
     Job
@@ -24,7 +25,7 @@ def run_peng(self, job_pk):
         logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
-                
+
                 # run PeNGmotif
                 Peng(job_pk, False)
 

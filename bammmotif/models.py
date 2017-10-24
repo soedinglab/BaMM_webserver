@@ -18,9 +18,9 @@ FORMAT_CHOICES = (
 )
 
 INIT_CHOICES = (
-    ('CustomFile','CustomFile'),
+    ('Custom File','Custom File'),
     ('PEnGmotif','PEnGmotif'),
-    ('DBFile','DBFile'),
+    ('DB File','DB File'),
 )
 
 ALPHABET_CHOICES = (
@@ -50,20 +50,20 @@ class Job(models.Model):
     job_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     job_name=models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField( default=datetime.datetime.now)
-    mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES) 
-    status = models.CharField(max_length=255, default="queueing", null=True, blank=True)
+    mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES)
+    status = models.CharField(max_length=255, default="not initialized", null=True, blank=True)
     num_motifs = models.IntegerField(default=1)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     complete = models.BooleanField(default=False)
-        
-    # files  
+
+    # files
     Input_Sequences = models.FileField(upload_to=job_directory_path, null=True)
     Background_Sequences = models.FileField(upload_to=job_directory_path, null=True, blank=True)
     #Intensity_File = models.FileField(upload_to=job_directory_path , null=True, blank=True)
     Motif_Initialization = models.CharField(max_length=255, choices=INIT_CHOICES, default="PEnGmotif")
     Motif_InitFile = models.FileField(upload_to=job_directory_path, null=True, blank=True)
     Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="PWM")
-    num_init_motifs = models.IntegerField(default = 10)
+    num_init_motifs = models.IntegerField(default = 100)
 
     # options
     model_Order =models.PositiveSmallIntegerField(default=4)
@@ -84,15 +84,15 @@ class Job(models.Model):
     #no_Alpha_Sampling = models.BooleanField( default=True)
 
     # EM options
-    EM = models.BooleanField(default=True)    
+    EM = models.BooleanField(default=True)
     #epsilon = models.DecimalField(default=0.001, max_digits=5, decimal_places=4)
     q_value = models.DecimalField(default=0.9, max_digits=3, decimal_places=2)
     #max_EM_Iterations = models.BigIntegerField(default=10e5)
     #no_Alpha_Optimization = models.BooleanField(default=True)
 
     # scoring options
-    score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.1)
+    score_Seqset = models.BooleanField(default=False)
+    score_Cutoff = models.FloatField(default=-3.0)
     bgModel_File = models.FileField( upload_to=job_directory_path, null=True, blank=True)
 
     # advanced options
