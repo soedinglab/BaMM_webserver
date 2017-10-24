@@ -16,7 +16,7 @@
   
   {% if user.is_authenticated %}
   <center>
-   <a class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Prediction' %}" style="background-color:#1f2e2e">De-Novo Motif Discovery
+   <a class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" style="background-color:#1f2e2e">De-Novo Motif Discovery
 </a></center>
   {% else %}
 
@@ -53,9 +53,9 @@ De-Novo Motif Discovery
       </div>
       <div class="modal-footer">
         <p>
-         <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_a_job' 'Prediction' %}" role="button" style="background-color:#1f2e2e">
+         <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_bamm' %}" role="button" style="background-color:#1f2e2e">
          Login for more Comfort</a>
-         <a class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Prediction' %}" role="button" style="background-color:#1f2e2e">
+         <a class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" role="button" style="background-color:#1f2e2e">
          Continue Anonymous</a>
         </p>
       </div>
@@ -91,7 +91,7 @@ De-Novo Motif Discovery
   
   {% if user.is_authenticated %}
   <center>
-   <a class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Compare' %}" style="background-color:#1f2e2e">Motif-Motif Comparison
+   <a class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" style="background-color:#1f2e2e">Motif-Motif Comparison
 </a></center>
   {% else %}
 
@@ -128,9 +128,9 @@ Motif-Motif Comparison
       </div>
       <div class="modal-footer">
         <p>
-         <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_a_job' 'Compare' %}" role="button" style="background-color:#1f2e2e">
+         <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_bamm' %}" role="button" style="background-color:#1f2e2e">
          Login for more Comfort</a>
-         <a class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Compare' %}" role="button" style="background-color:#1f2e2e">
+         <a class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" role="button" style="background-color:#1f2e2e">
          Continue Anonymous</a>
         </p>
       </div>
@@ -163,7 +163,7 @@ Motif-Motif Comparison
 
   {% if user.is_authenticated %}
   <center>
-     <a type="button" class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Occurrence' %}" style="background-color:#1f2e2e">Motif Enrichment</a>
+     <a type="button" class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" style="background-color:#1f2e2e">Motif Enrichment</a>
    </center>
   {% else %}
 <!-- Button trigger modal -->
@@ -197,9 +197,9 @@ Motif-Motif Comparison
       </div>
       <div class="modal-footer">
         <p>
-           <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_a_job' 'Occurrence' %}" role="button" style="background-color:#1f2e2e">
+           <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_bamm' %}" role="button" style="background-color:#1f2e2e">
            Login for more Comfort</a>
-           <a class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Occurrence' %}" role="button" style="background-color:#1f2e2e">
+           <a class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" role="button" style="background-color:#1f2e2e">
            Continue Anonymous</a>
         </p>
       </div>

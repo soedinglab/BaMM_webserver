@@ -1,4 +1,9 @@
 from django.conf import settings
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
+from django.core.files import File
+from ipware.ip import get_ip
+from .models import Job
 import sys
 from os import path
 import os
@@ -66,3 +71,51 @@ def run_command(command):
         sys.stdout.flush()
     process.wait()
     return process.returncode
+
+
+def get_user(request):
+    # assign user to new job instance
+    if request.user.is_authenticated():
+        return request.user
+    else:
+        ip = get_ip(request)
+        if ip is not None:
+            # check if anonymous user already exists
+            anonymous_users = User.objects.filter(username=ip)
+            if anonymous_users.exists():
+                return get_object_or_404(User, username=ip)
+            else:
+                # create an anonymous user and log them in
+                new_u = User(username=ip, first_name='Anonymous',
+                             last_name='User')
+                new_u.set_unusable_password()
+                new_u.save()
+                return new_u
+        else:
+            print("NO USER SETABLE")
+
+
+def set_job_name(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    # truncate job_id
+    job_id_short = str(job.job_ID).split("-", 1)
+    job.job_name = job_id_short[0]
+    job.save()
+
+
+def upload_example_fasta(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    out_filename = "ExampleData.fasta"
+    with open(settings.EXAMPLE_FASTA) as fh:
+        job.Input_Sequences.save(out_filename, File(fh))
+        job.save()
+
+
+def upload_example_motif(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    out_filename = "ExampleMotif.meme"
+    with open(settings.EXAMPLE_MOTIF) as fh:
+        job.Motif_InitFile.save(out_filename, File(fh))
+    job.Motif_Initialization = 'Custom File'
+    job.Motif_Init_File_Format = 'PWM'
+    job.save()

@@ -5,14 +5,8 @@
 <div class="container-fluid" >
 
 <div class="jumbotron container-fluid" style="background-color:white"><font color="black">
-  {% if mode == "Prediction" %}
     <h2> De-novo Motif Discovery </h2>
-  {% elif mode == "Occurrence" %}
-    <h2> Motif Enrichment Analysis</h2>
-  {% elif mode == "Compare" %}
-    <h2> Motif-Motif Comparison</h2>
-  {% endif %}
-  <hr style="border: 1px solid #1f2e2e">
+    <hr style="border: 1px solid #1f2e2e">
   <div class='container-fluid'>
       
     <script>
@@ -39,82 +33,17 @@
   
     <p><label for="id_job_name"><a class "testpup" onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name" style="color:black"></span></a> Job Name:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_job_name" maxlength="50" name="job_name" type="text" placeholder="i.e: My Job #1" /></p>
 
-    {% if mode == "Prediction" or mode == "Occurrence" %}
-
-      {% if type == "FileSize" %}
-        {% if user.is_authenticated %}
-          <p><font color="red"> Please keep file size under 250Mb.</font> </p>  
-        {% else %}
-          <p><font color="red">  Please keep file size under 2.5Mb or login for larger upload size.</font> </p>  
-        {% endif %}
-      {% endif %}
-      
-      {% if type == "Fasta" %}
-      <p><font color="red">The provided Input Sequence File does not match the expected format.</font> </p>  
-      {% endif %}
-   
-      {% if example %}
+      {% if mode == 'example' %}
       <p><label for="id_Input_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Input Sequences:</label> </p> <p class="indent" style="padding-left: 1.8em"> Example Data </p>
       {% else %}
       <p><label for="id_Input_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Input Sequences:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_Input_Sequences" name="Input_Sequences" type="file" required /></p>
-      <p>  &emsp; <a href="{% url 'run_a_job' mode=mode example=True %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> Load Example Data </span></a> </td>
+      <p>  &emsp; <a href="{% url 'run_bamm' mode="example" %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> Load Example Data </span></a> </td>
       {% endif %}
 
-    {% endif %}
-
-    {% if mode == "Prediction" %}
-
+    
       <p><label for="id_reverse_Complement"><a class "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Search on both strands:</label><font color="#1f2e2e"> &nbsp;&nbsp;<input id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font></p>
     
-    {% endif %}
-
-    {% if mode == "Occurrence" or mode == "Compare" %}
-
-    {% if example %}
-    <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Motif_InitFile"  style="color:black"></span></a> Motif InitFile: </label>  <p class="indent" style="padding-left: 1.8em"> Example Motif </p>
-    {% else %}
-    <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Motif_InitFile"  style="color:black"></span></a> Motif InitFile: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
-
-    {% if mode == "Occurrence" %}
-    <p>   &emsp;<a href="/database" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> select from Database </span></a></p>
-    {% elif mode == "Compare" %}
-    <p>  &emsp; <a href="{% url 'run_a_job' mode=mode example=True %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> Load Example Data </span></a> </td>
-    {% endif %}
-
-    {% endif %}
-
-    {% if type == "Init" %}
-    <p ><font color="red"> The provided Motif Initialization File does not match the expected format. Please select correct Inputformat.</font></p>  
-    {% endif %}
-
-    {% if example %}
-    <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Motif_Init_File_Format" style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> PWM </font></p>
-    {% else %}
-    <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Motif_Init_File_Format" style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
-    <option value="PWM" selected="selected">PWM</option>
-    <option value="BaMM">BaMM</option>
-    </select></font></p>
-    {% endif %}
-
-    {% if example == False %}
-    <p ><label for="id_bgModel_File"><a class "testpup" onmouseover="nhpup.popup($('#bgModel_File_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#bgModel_File" style="color:black">
-    </span> </a>Motif Background File: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_bgModel_File" name="bgModel_File" type="file" /></p>
-    {% endif %}
-
-    {% endif %}
-
-    {% if mode == "Compare" %}
-      <br>
-      <p><label for="id_model_Order"><a class "testpup" onmouseover="nhpup.popup($('#ModelOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Model Order:</label><font color="#1f2e2e"><input id="id_model_Order" min="0" max="8" name="model_Order" type="number" value="0" required />
-        </font></p>
-
-     <p><label for="id_p_value_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#db_match_p_value_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_p_value_cutoff" name="p_value_cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
-
-    {% endif %}
-
-
-    {% if mode == "Prediction" or mode == "Occurrence" %}
-
+    
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white"><font color="black">
       <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="headingOne" style="background-color:white"><font color="black">
@@ -128,8 +57,6 @@
         <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white"><font color="black">
         <div class="panel-body">
         
-        {% if mode == "Prediction" %}
-
         <h3> Model Settings:</h3>
 
         <p class="indent" style="padding-left: 1.8em"><label for="id_model_Order"><a class "testpup" onmouseover="nhpup.popup($('#ModelOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Model Order:</label><font color="#1f2e2e">
@@ -147,31 +74,30 @@
         <br>
         <h3> Motif Initialization:</h3>
 
-        {% if example %}
+        {% if mode == 'example' %}
+        
         <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_Initialization"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitialization_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Initialization:</label><font color="#1f2e2e">  <p class="indent" style="padding-left: 1.8em"> Custom File </font></p> 
+        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile:</label>  <p class="indent" style="padding-left: 1.8em"> Example Motif </p>
+        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em">PWM</font></p>
+        
         {% else %}
+        
         <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_Initialization"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitialization_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Initialization:</label><font color="#1f2e2e">  <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Initialization" name="Motif_Initialization" required onchange="Hide()">
          <option value="Custom File" >Custom File</option>
          <option value="PEnGmotif" selected="selected">PEnGmotif</option>
         </select></font></p>
-        {% endif %}
 
-        {% if type == "Init" %}
-          <p class="indent" style="padding-left: 1.8em"><font color="red"> The provided Motif Initialization File does not match the expected format. Please select correct Inputformat or use PEnGmotif for automatically generating Motif Initialization File from Input Sequence File</font></p>  
-        {% endif %}
-
-        {% if example %}
-        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile:</label>  <p class="indent" style="padding-left: 1.8em"> Example Motif </p>
-        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em">PWM</font></p>
-        {% else %}
-        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile:</label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
         <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
          <option value="BindingSites" >BindingSites</option>
          <option value="PWM" selected="selected">PWM</option>
          <option value="BaMM">BaMM</option>
         </select></font></p>
-        {% endif %}
         
+        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile:</label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
+        
+        <p lass="indent" style="padding-left: 1.8em"><label for="id_bgModel_File"><a class "testpup" onmouseover="nhpup.popup($('#bgModel_File_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#bgModel_File" style="color:black"></span> </a>Motif Background File: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_bgModel_File" name="bgModel_File" type="file" /></p>
+        
+        {% endif %}
 
         <br>
         <h3> Background Model: </h3>
@@ -179,39 +105,28 @@
         <p class="indent" style="padding-left: 1.8em"><label for="id_background_Order"><a class "testpup" onmouseover="nhpup.popup($('#BackgroundOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Background Order:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_background_Order" min="0" max="8" name="background_Order" type="number" value="1" required /></font></p>
 
         <p class="indent" style="padding-left: 1.8em"><label for="id_Background_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#BackgroundSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Background Sequences :</label> <p class="indent" style="padding-left: 1.8em"><input id="id_Background_Sequences" name="Background_Sequences" type="file" /></p>
-        {% if type == "Background" %}
-          <p class="indent" style="padding-left: 1.8em"><font color="red"> The provided Background Sequence File does not match the expected format.</font> </p>  
-        {% endif %}
-        
 
         <br>
         <h3> Expectation Maximization Optimization: </h3>
 
-        <p class="indent" style="padding-left: 1.8em"><label for="id_EM"><a class "testpup" onmouseover="nhpup.popup($('#EM_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> EM:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_EM" name="EM" type="checkbox" checked /></font></p>
-    
         <p class="indent" style="padding-left: 1.8em"><label for="id_q_value"><a class "testpup" onmouseover="nhpup.popup($('#EMq_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> EM q-value:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_q_value" min="0.01" max="1" name="q_value" type="number" value="0.9" step="0.01"/></font></p>
+
+        <br>
+        <h3> Motif Enrichment: </h3>
         
-        <p class="indent" style="padding-left: 1.8em"><label for="id_epsilon"><a class "testpup" onmouseover="nhpup.popup($('#EMepsilon_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> EM epsilon:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_epsilon" min="0.001" max="1" name="epsilon" type="number" value="0.001" step="0.001"/></font></p>
-        
-        <p class="indent" style="padding-left: 1.8em"><label for="id_max_EM_Iterations"><a class "testpup" onmouseover="nhpup.popup($('#EMmaxIter_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> EM max Iter:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_max_EM_Iterations" min="0" max="1000000" name="max_EM_Iterations" type="number" value="1000000" step="1"/></font></p>
+        <p class="indent" style="padding-left: 1.8em"><label for="BaMMScan"><a class "testpup" onmouseover="nhpup.popup($('#BaMMScan_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Enrichment:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_score_Seqset" name="score_Seqset" type="checkbox" checked /></font></p>
+    
+        <p class="indent" style="padding-left: 1.8em"><label for="id_score_Cutoff"><a class "testpup" onmouseover="nhpup.popup($('#score_Cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_score_Cutoff" name="score_Cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
 
 
         <br>
-        <h3> False Discovery Rate Estimation: </h3>
+        <h3> Motif Evaluation: </h3>
 
-        <p class="indent" style="padding-left: 1.8em"><label for="id_FDR"><a class "testpup" onmouseover="nhpup.popup($('#FDR_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> FDR:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_FDR" name="FDR" type="checkbox" checked /></font></p>
+        <p class="indent" style="padding-left: 1.8em"><label for="id_FDR"><a class "testpup" onmouseover="nhpup.popup($('#FDR_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Evaluation:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_FDR" name="FDR" type="checkbox" checked /></font></p>
     
         <p class="indent" style="padding-left: 1.8em"><label for="id_m_Fold"><a class "testpup" onmouseover="nhpup.popup($('#mFold_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> m Fold:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_m_Fold" min="1" max="15" name="m_Fold" type="number" value="5" required /></font></p>
     
-        <p class="indent" style="padding-left: 1.8em"><label for="id_cv_Fold"><a class "testpup" onmouseover="nhpup.popup($('#cvFold_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> cv Fold:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_cv_Fold" min="1" max="10" name="cv_Fold" type="number" value="5" required /></font></p>
-
-        <p class="indent" style="padding-left: 1.8em"><label for="id_sampling_Order"><a class "testpup" onmouseover="nhpup.popup($('#FDRSamplingOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> FDR sampling Order:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_sampling_Order" min="0" max="8" name="sampling_Order" type="number" value="2" /></font></p>
-
-        {% endif %}
-
-        {% if mode == "Occurrence" %}
-        <p class="indent" style="padding-left: 1.8em"><label for="id_reverse_Complement"><a class "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Search on both strands:</label><font color="#1f2e2e"> &nbsp;&nbsp;<input id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font></p>
-        {% endif %}
+        <p class="indent" style="padding-left: 1.8em"><label for="id_sampling_Order"><a class "testpup" onmouseover="nhpup.popup($('#FDRSamplingOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> sampling Order:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_sampling_Order" min="0" max="8" name="sampling_Order" type="number" value="2" /></font></p>
 
         <br>
         <h3> Database Model Comparison: </h3>
@@ -225,7 +140,6 @@
         </div> 
       </div>
     </div>
-    {% endif %}
 
     <hr style="border: 1px solid #1f2e2e">
     <p>
