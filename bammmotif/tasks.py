@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from celery import task
 from contextlib import redirect_stdout
+import sys
 from django.shortcuts import get_object_or_404
 from .models import (
     Job
@@ -53,22 +54,24 @@ def run_bamm(self, job_pk):
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
                 # run BaMMmotif
-                BaMM(job_pk, True, False)
+                BaMM(job_pk)
+
                 # run optionals
                 if job.score_Seqset:
-                    BaMMScan(job_pk, False, True)
+                    BaMMScan(job_pk)
                 if job.FDR:
-                    FDR(job_pk, False, True)
-                if job.MMcompare:
-                    MMcompare(job_pk, False, False)
-                Compress(job_pk)
+                    FDR(job_pk)
+                # if job.MMcompare:
+                #    MMcompare(job_pk)
+
+                sys.stdout.flush()
                 job.complete = True
 
     return 1 if mgr.had_exception else 0
 
 
 @task(bind=True)
-def run_bammscan(self, job_pk):
+def run_score(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     with JobSaveManager(job) as mgr:
         # first define log file for redirecting output information
@@ -77,13 +80,15 @@ def run_bammscan(self, job_pk):
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
                 # run BaMMscore
-                BaMMScan(job_pk, True, False)
+                BaMMScan(job_pk)
+
                 # run optionals
                 if job.FDR:
-                    FDR(job_pk, False, False)
-                if job.MMcompare:
-                    MMcompare(job_pk, False, True)
-                Compress(job_pk)
+                    FDR(job_pk)
+                # if job.MMcompare:
+                #     MMcompare(job_pk)
+
+                sys.stdout.flush()
                 job.complete = True
 
     return 1 if mgr.had_exception else 0
@@ -99,8 +104,9 @@ def run_compare(self, job_pk):
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
                 # run MMcompare
-                MMcompare(job_pk, True, True)
-                Compress(job_pk)
+                # MMcompare(job_pk)
+
+                sys.stdout.flush()
                 job.complete = True
 
     return 1 if mgr.had_exception else 0
