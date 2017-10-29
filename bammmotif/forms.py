@@ -64,7 +64,7 @@ class OccurrenceExampleForm(forms.ModelForm):
                   'MMcompare', 'p_value_cutoff')
 
 
-class DiscoveryDBForm(forms.ModelForm):
+class OccurrenceDBForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('job_name', 'Input_Sequences', 'reverse_Complement',

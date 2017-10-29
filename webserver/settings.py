@@ -82,7 +82,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'webserver.wsgi.application'
 
-DB_ROOT = os.path.join(BASE_DIR, '/DB')
+DB_ROOT = os.path.join(BASE_DIR, 'BaMM_webserver/DB')
 
 
 DB_HOST = 'db'
@@ -176,7 +176,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'staticfiles'),
     os.path.join(BASE_DIR, 'BaMM_webserver/DB')
-
 )
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'email.gwdg.de'
