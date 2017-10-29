@@ -6,7 +6,7 @@ class PredictionForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('job_name', 'Input_Sequences', 'reverse_Complement',
-                  'model_Order', 'extend_1', 'extend_2','bgModel_File',
+                  'model_Order', 'extend_1', 'extend_2', 'bgModel_File',
                   'Motif_Initialization', 'Motif_InitFile',
                   'Motif_Init_File_Format', 'background_Order',
                   'Background_Sequences', 'score_Seqset',
@@ -64,7 +64,7 @@ class OccurrenceExampleForm(forms.ModelForm):
                   'MMcompare', 'p_value_cutoff')
 
 
-class DiscoveryDBForm(forms.ModelForm):
+class OccurrenceDBForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('job_name', 'Input_Sequences', 'reverse_Complement',

@@ -61,8 +61,8 @@ class Job(models.Model):
     # options
     model_Order =models.PositiveSmallIntegerField(default=4)
     reverse_Complement = models.BooleanField(default=True)
-    extend_1 = models.PositiveSmallIntegerField(default=10)
-    extend_2 = models.PositiveSmallIntegerField(default=10)
+    extend_1 = models.PositiveSmallIntegerField(default=0)
+    extend_2 = models.PositiveSmallIntegerField(default=0)
 
     # fdr options
     FDR = models.BooleanField(default=True)
@@ -145,7 +145,6 @@ class DbParameter(models.Model):
     #cgs = models.IntegerField(db_column='CGS')  # Field name made lowercase.
     #maxcgsiterations = models.BigIntegerField(db_column='maxCGSIterations')  # Field name made lowercase.
     #noalphasampling = models.IntegerField(db_column='noAlphaSampling')  # Field name made lowercase.
-    #location = models.CharField(max_length = 255)
     
     def __str__(self):
         return self.param_id
