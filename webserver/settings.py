@@ -197,4 +197,4 @@ JOB_DIR_PREFIX = 'jobs'
 
 # Settings realted to example data
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
-EXAMPLE_MOTIF = 'example_data/ExampleMotif.meme' 
+EXAMPLE_MOTIF = 'example_data/ExampleMotif.meme'

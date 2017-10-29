@@ -24,7 +24,6 @@ from .utils import (
 import datetime
 import os
 from os import path
-import sys
 
 
 # #########################
@@ -273,6 +272,8 @@ def maindb(request):
 
 
 def db_overview(request, protein_name, db_entries):
+    db_location = path.join(db_entries[0].parent.base_dir, 'Results')
+
     return render(request, 'database/db_overview.html',
                   {'protein_name': protein_name,
                    'db_entries': db_entries,

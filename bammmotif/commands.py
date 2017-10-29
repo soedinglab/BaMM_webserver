@@ -203,7 +203,7 @@ def get_BaMMScan_command(job_pk, useRefined, m=1):
     return command
 
 
-def get_BaMMmotif_command(job_pk, useRefined, first):
+def get_BaMMmotif_command(job_pk, useRefined):
     job = get_object_or_404(Job, pk=job_pk)
     param = []
 
