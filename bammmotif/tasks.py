@@ -1,13 +1,13 @@
 from __future__ import absolute_import
 from celery import task
 from contextlib import redirect_stdout
-import sys
 from django.shortcuts import get_object_or_404
 from .models import (
     Job
 )
 from .commands import (
-    BaMM, BaMMScan, FDR
+    BaMM, BaMMScan, FDR,
+    Compress, MMcompare
 )
 from .utils import (
     get_log_file, make_job_folder,
@@ -26,17 +26,18 @@ def run_peng(self, job_pk):
             with redirect_stdout(f):
 
                 # run PeNGmotif
-                # Peng(job_pk)
+                # Peng(job_pk,True, False)
 
                 # run optionals
-                # if job.score_Seqset:
-                #    BaMMScan(job_pk)
-                # if job.FDR:
-                #    FDR_command(job_pk)
-                # if job.MMcompare:
-                #    MMcompare(job_pk)
-
-                sys.stdout.flush()
+                if job.EM:
+                    BaMM(job_pk, False, True)
+                if job.score_Seqset:
+                    BaMMScan(job_pk, False, True)
+                if job.FDR:
+                    FDR(job_pk, False, True)
+                if job.MMcompare:
+                    MMcompare(job_pk, False, False)
+                Compress(job_pk)
                 job.complete = True
 
     return 1 if mgr.had_exception else 0
@@ -52,24 +53,22 @@ def run_bamm(self, job_pk):
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
                 # run BaMMmotif
-                BaMM(job_pk)
-
+                BaMM(job_pk, True, False)
                 # run optionals
                 if job.score_Seqset:
-                    BaMMScan(job_pk)
+                    BaMMScan(job_pk, False, True)
                 if job.FDR:
-                    FDR(job_pk)
-                # if job.MMcompare:
-                #    MMcompare(job_pk)
-
-                sys.stdout.flush()
+                    FDR(job_pk, False, True)
+                if job.MMcompare:
+                    MMcompare(job_pk, False, False)
+                Compress(job_pk)
                 job.complete = True
 
     return 1 if mgr.had_exception else 0
 
 
 @task(bind=True)
-def run_score(self, job_pk):
+def run_bammscan(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     with JobSaveManager(job) as mgr:
         # first define log file for redirecting output information
@@ -78,15 +77,13 @@ def run_score(self, job_pk):
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
                 # run BaMMscore
-                BaMMScan(job_pk)
-
+                BaMMScan(job_pk, True, False)
                 # run optionals
                 if job.FDR:
-                    FDR(job_pk)
-                # if job.MMcompare:
-                #     MMcompare(job_pk)
-
-                sys.stdout.flush()
+                    FDR(job_pk, False, False)
+                if job.MMcompare:
+                    MMcompare(job_pk, False, True)
+                Compress(job_pk)
                 job.complete = True
 
     return 1 if mgr.had_exception else 0
@@ -102,9 +99,8 @@ def run_compare(self, job_pk):
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
                 # run MMcompare
-                # MMcompare(job_pk)
-
-                sys.stdout.flush()
+                MMcompare(job_pk, True, True)
+                Compress(job_pk)
                 job.complete = True
 
     return 1 if mgr.had_exception else 0

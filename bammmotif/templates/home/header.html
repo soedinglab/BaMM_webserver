@@ -49,9 +49,20 @@
       <div class="col-sm-12">
         <br>
           <a href="/home/"><span><img src="{% static 'img/BaMMmotif.png' %}" class="responsive-img" style='max-height:100px;' alt="logo"></span></a>
-         <center><font color="#B22222">BETA VERSION: This webserver is currently in beta version. If you encounter any errors or bugs please report to: <a href="mailto:bamm@mpibpc.mpg.de?subject=Bug Report">bamm@mpibpc.mpg.de</a></font></center>
-        <br>
-      </div>
+         <br>
+      </div> 
+
+      <!--<div class="col-sm-1">
+        <p align="right">
+          {% if user.is_authenticated %}
+            <font color="#1f2e2e">Hi {{ user.username }}!</font>
+            <a href="{% url 'logout' %}"><font color="#1f2e2e">logout</font></a>
+          {% else %}
+            <a href="{% url 'login' %}"><font color="#1f2e2e">login</font></a>
+          {% endif %}
+        </p>
+      </div>-->
+					
               
       </div>
 
