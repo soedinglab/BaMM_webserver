@@ -20,10 +20,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-PDOM_MAX_COLUMNS = 4000
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -84,6 +81,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'webserver.wsgi.application'
+
+DB_ROOT = os.path.join(BASE_DIR, 'BaMM_webserver/DB')
+
 
 DB_HOST = 'db'
 DB_NAME = 'webserver'
@@ -175,23 +175,18 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'staticfiles'),
-)
+    os.path.join(BASE_DIR, 'BaMM_webserver/DB')
 
+)
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'email.gwdg.de'
-EMAIL_HOST_PASSWORD = 'gwdg_ASK_88'
-EMAIL_HOST_USER = 'akiesel1@mpibpc.mpg.de'
+EMAIL_HOST_PASSWORD = 'BaMM_motif11610'
+EMAIL_HOST_USER = 'bamm@mpibpc.mpg.de'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-SERVER_EMAIL = 'akiesel1@mpibpc.mpg.de'
-DEFAULT_FROM_EMAIL = 'akiesel1@mpibpc.mpg.de'
-
-#EMAIL_HOST = 'smtp.gmail.com'
-#EMAIL_HOST_PASSWORD = 'superserver'
-#EMAIL_HOST_USER = 'BaMMmotif.info@gmail.com'
-#SERVER_EMAIL = 'BaMMmotif.info@gmail.com'
-#DEFAULT_FROM_EMAIL = "BaMMmotif"
+SERVER_EMAIL = 'bamm@mpibpc.mpg.de'
+DEFAULT_FROM_EMAIL = 'bamm@mpibpc.mpg.de'
 
 EMAIL_SUBJECT_SUCCESS = str("BaMM!motif: Your Job has finished!")
 EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You can view its results following this link: xcxdxx\n\n Greetings from the BaMM!team\n")
@@ -199,3 +194,7 @@ EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You
 
 # Settings related to file system structure
 JOB_DIR_PREFIX = 'jobs'
+
+# Settings realted to example data
+EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
+EXAMPLE_MOTIF = 'example_data/ExampleMotif2.meme' 

@@ -19,10 +19,9 @@ RUN pip install -r /code/requirements.txt
 
 # install r packages
 COPY	install_packages.R /code/
-RUN	R --vanilla < /code/install_packages.R
+# silent output due to docker-compose unicode issue
+RUN	Rscript /code/install_packages.R >/dev/null 2>/dev/null
 
-ADD DB/ /code/DB
-COPY DB/ENCODE.hg19.TFBS.QC.metadata.jun2012-TFs_SPP_pooled.tsv /code/DB/ENCODE.hg19.TFBS.QC.metadata.jun2012-TFs_SPP_pooled.tsv 
 RUN mkdir /code/media/
 RUN mkdir -p /ext/bin
 
@@ -34,7 +33,7 @@ RUN rm -rf /tmp/bamm
 
 ADD tools/suite /tmp/suite
 RUN mkdir -p /tmp/suite/build
-RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make install
+RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make install >/dev/null 2>/dev/null
 RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
 

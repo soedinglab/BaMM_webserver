@@ -31,6 +31,7 @@ services:
     command: celery --app=webserver.celery:app worker --loglevel=DEBUG
     user: ${BAMM_USER_UID}
     volumes:
+      - ${DB_DIR}:/code/BaMM_webserver/DB/
       - ${WEBSERVER_DIR}:/code
       - ${MEDIA_DIR}:/code/media
     links:
@@ -38,13 +39,14 @@ services:
       - db
     networks:
       bamm_net:
-        ipv4_address: ${NETWORK_PREFIX}.4      
+        ipv4_address: ${NETWORK_PREFIX}.4
 
   web:
     build: .
     command: ./run_web.sh
     user: ${BAMM_USER_UID}
     volumes:
+      - ${DB_DIR}:/code/BaMM_webserver/DB/
       - ${WEBSERVER_DIR}:/code
       - ${MEDIA_DIR}:/code/media
     ports:

@@ -1,12 +1,17 @@
 from django import forms
 from .models import Job
 
-### upload input files for denovo prediction
 
 class PredictionForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name','Input_Sequences','reverse_Complement','model_Order','extend_1','extend_2','Motif_Initialization','Motif_InitFile','Motif_Init_File_Format','background_Order','Background_Sequences','FDR','m_Fold','cv_Fold','sampling_Order','EM','q_value','MMcompare','p_value_cutoff',)
+        fields = ('job_name', 'Input_Sequences', 'reverse_Complement',
+                  'model_Order', 'extend_1', 'extend_2', 'bgModel_File',
+                  'Motif_Initialization', 'Motif_InitFile',
+                  'Motif_Init_File_Format', 'background_Order',
+                  'Background_Sequences', 'score_Seqset',
+                  'score_Cutoff', 'FDR', 'm_Fold', 'sampling_Order',
+                  'q_value', 'MMcompare', 'p_value_cutoff')
 
     def __init__(self, *args, **kwargs):
         super(PredictionForm, self).__init__(*args, **kwargs)
@@ -14,12 +19,20 @@ class PredictionForm(forms.ModelForm):
             help_text = self.fields[field].help_text
             self.fields[field].help_text = None
             if help_text != '':
-                self.fields[field].widget.attrs.update({'class':'has-popover', 'data-content':help_text, 'data-placement':'right', 'data-container':'body'})
+                self.fields[field].widget.attrs.update({'class': 'has-popover',
+                                                        'data-content': help_text,
+                                                        'data-placement': 'right',
+                                                        'data-container': 'body'})
+
 
 class PredictionExampleForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name','reverse_Complement','model_Order','extend_1','extend_2','background_Order','Background_Sequences','FDR','m_Fold','cv_Fold','sampling_Order','EM','q_value','MMcompare','p_value_cutoff',)
+        fields = ('job_name', 'reverse_Complement', 'model_Order',
+                  'extend_1', 'extend_2', 'background_Order',
+                  'Background_Sequences', 'score_Seqset', 'score_Cutoff',
+                  'FDR', 'm_Fold', 'sampling_Order', 'q_value',
+                  'MMcompare', 'p_value_cutoff')
 
     def __init__(self, *args, **kwargs):
         super(PredictionExampleForm, self).__init__(*args, **kwargs)
@@ -27,47 +40,54 @@ class PredictionExampleForm(forms.ModelForm):
             help_text = self.fields[field].help_text
             self.fields[field].help_text = None
             if help_text != '':
-                self.fields[field].widget.attrs.update({'class':'has-popover', 'data-content':help_text, 'data-placement':'right', 'data-container':'body'})
+                self.fields[field].widget.attrs.update({'class': 'has-popover',
+                                                        'data-content': help_text,
+                                                        'data-placement': 'right',
+                                                        'data-container': 'body'})
 
-### upload input files for position discovery
+
 class OccurrenceForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name','Input_Sequences', 'Motif_InitFile' , 'Motif_Init_File_Format','bgModel_File','reverse_Complement','MMcompare','p_value_cutoff')
+        fields = ('job_name', 'Input_Sequences', 'Motif_InitFile',
+                  'Motif_Init_File_Format', 'bgModel_File',
+                  'reverse_Complement', 'score_Cutoff', 'FDR',
+                  'm_Fold', 'sampling_Order',
+                  'MMcompare', 'p_value_cutoff')
 
-### upload input files for position discovery
+
 class OccurrenceExampleForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name','reverse_Complement','MMcompare','p_value_cutoff')
+        fields = ('job_name', 'reverse_Complement', 'score_Cutoff',
+                  'FDR', 'm_Fold', 'sampling_Order',
+                  'MMcompare', 'p_value_cutoff')
 
-### upload input files for position discovery
-class DiscoveryDBForm(forms.ModelForm):
+
+class OccurrenceDBForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name','Input_Sequences','reverse_Complement','MMcompare','p_value_cutoff')
+        fields = ('job_name', 'Input_Sequences', 'reverse_Complement',
+                  'score_Cutoff', 'FDR', 'm_Fold', 'sampling_Order',
+                  'MMcompare', 'p_value_cutoff')
 
 
 class CompareForm(forms.ModelForm):
     class Meta:
         model = Job
-        fields = ('job_name', 'Motif_InitFile', 'Motif_Init_File_Format', 'bgModel_File', 'model_Order', 'p_value_cutoff')
+        fields = ('job_name', 'Motif_InitFile', 'Motif_Init_File_Format',
+                  'bgModel_File', 'model_Order', 'p_value_cutoff')
+
 
 class CompareExampleForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('job_name', 'p_value_cutoff')
 
- 
-### Parameter settings for denovo prediction
-class ParameterForm(forms.ModelForm):
-    class Meta:
-        model = Job
-        fields = ('model_Order', 'extend_1', 'extend_2',)
 
-### insert job id to find corresponding results
 class FindForm(forms.Form):
     job_ID = forms.CharField(max_length=255)
+
 
 class DBForm(forms.Form):
     db_ID = forms.CharField(max_length=255)

@@ -105,6 +105,9 @@
 
     {% if mode == "Compare" %}
       <br>
+      <p><label for="id_model_Order"><a class "testpup" onmouseover="nhpup.popup($('#ModelOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Model Order:</label><font color="#1f2e2e"><input id="id_model_Order" min="0" max="8" name="model_Order" type="number" value="0" required />
+        </font></p>
+
      <p><label for="id_p_value_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#db_match_p_value_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_p_value_cutoff" name="p_value_cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
 
     {% endif %}
