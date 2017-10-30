@@ -10,13 +10,13 @@
     <div class="col-md-6">
       <div class='container-fluid'>
         <center>
-              <img src="{% static 'img/Prediction.png' %}" class="responsive-img" style='max-height:120px;' alt="logo">
+              <img src="{% static 'img/Prediction_new.png' %}" class="responsive-img" style='max-height:180px;' alt="logo">
         </center>
         <div class="jumbotron" style="background-color:white"><font color="black">
   
   {% if user.is_authenticated %}
   <center>
-   <a class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Prediction' %}" style="background-color:#1f2e2e">De-Novo Motif Discovery
+   <a class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" style="background-color:#1f2e2e">De-Novo Motif Discovery
 </a></center>
   {% else %}
 
@@ -53,9 +53,9 @@ De-Novo Motif Discovery
       </div>
       <div class="modal-footer">
         <p>
-         <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_a_job' 'Prediction' %}" role="button" style="background-color:#1f2e2e">
+         <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_bamm' %}" role="button" style="background-color:#1f2e2e">
          Login for more Comfort</a>
-         <a class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Prediction' %}" role="button" style="background-color:#1f2e2e">
+         <a class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" role="button" style="background-color:#1f2e2e">
          Continue Anonymous</a>
         </p>
       </div>
@@ -65,7 +65,7 @@ De-Novo Motif Discovery
   
   {% endif %}
     <hr style="border: 1px solid #1f2e2e">
-  <p align="justify"><font size=3>De-novo motif discovery enables you to predict new binding site models based on your personal data set... </font></p> <!--You can either start from a pwm file, known binding sites, or let PengMotif do the work for you...</p>-->
+  <p align="justify"><font size=3>Discover motifs enriched in your input sequence set </font></p> <!--You can either start from a pwm file, known binding sites, or let PengMotif do the work for you...</p>-->
 
   </font>
 </div>
@@ -84,14 +84,14 @@ De-Novo Motif Discovery
    <div class="col-md-6">
       <div class='container-fluid'>
         <center>
-              <img src="{% static 'img/compare.png' %}" class="responsive-img" style='max-height:120px;' alt="logo">
+              <img src="{% static 'img/compare_new.png' %}" class="responsive-img" style='max-height:180px;' alt="logo">
         </center>
         <div class="jumbotron" style="background-color:white"><font color="black">
   
   
   {% if user.is_authenticated %}
   <center>
-   <a class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Compare' %}" style="background-color:#1f2e2e">Motif-Motif Comparison
+   <a class="btn btn-primary btn-lg" href="{% url 'run_compare' %}" style="background-color:#1f2e2e">Motif-Motif Comparison
 </a></center>
   {% else %}
 
@@ -128,9 +128,9 @@ Motif-Motif Comparison
       </div>
       <div class="modal-footer">
         <p>
-         <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_a_job' 'Compare' %}" role="button" style="background-color:#1f2e2e">
+         <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_compare' %}" role="button" style="background-color:#1f2e2e">
          Login for more Comfort</a>
-         <a class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Compare' %}" role="button" style="background-color:#1f2e2e">
+         <a class="btn btn-primary btn-lg" href="{% url 'run_compare' %}" role="button" style="background-color:#1f2e2e">
          Continue Anonymous</a>
         </p>
       </div>
@@ -140,7 +140,7 @@ Motif-Motif Comparison
   
   {% endif %}
     <hr style="border: 1px solid #1f2e2e">
-  <p align="justify"><font size=3>Compare a Motif with our Database to find out which Factor may bind to your motif....</font></p>
+  <p align="justify"><font size=3>Search with your input model through our database of 450 BaMM models</font></p>
 
   </font>
 </div>
@@ -157,13 +157,13 @@ Motif-Motif Comparison
 <div class="col-md-6">
   <div class='container-fluid'>
     <center>
-              <img src="{% static 'img/Discovery.png' %}" class="responsive-img" style='max-height:120px;' alt="logo">
+              <img src="{% static 'img/Discovery_new.png' %}" class="responsive-img" style='max-height:180px;' alt="logo">
             </center>
 <div class="jumbotron" style="background-color:white"><font color="black">
 
   {% if user.is_authenticated %}
   <center>
-     <a type="button" class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Occurrence' %}" style="background-color:#1f2e2e">Motif Enrichment</a>
+     <a type="button" class="btn btn-primary btn-lg" href="{% url 'run_bamm_scan' %}" style="background-color:#1f2e2e">Motif Enrichment</a>
    </center>
   {% else %}
 <!-- Button trigger modal -->
@@ -197,9 +197,9 @@ Motif-Motif Comparison
       </div>
       <div class="modal-footer">
         <p>
-           <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_a_job' 'Occurrence' %}" role="button" style="background-color:#1f2e2e">
+           <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={% url 'run_bamm_scan' %}" role="button" style="background-color:#1f2e2e">
            Login for more Comfort</a>
-           <a class="btn btn-primary btn-lg" href="{% url 'run_a_job' 'Occurrence' %}" role="button" style="background-color:#1f2e2e">
+           <a class="btn btn-primary btn-lg" href="{% url 'run_bamm_scan' %}" role="button" style="background-color:#1f2e2e">
            Continue Anonymous</a>
         </p>
       </div>
@@ -208,7 +208,7 @@ Motif-Motif Comparison
 </div>
    {% endif %}
 <hr style="border: 1px solid #1f2e2e">
-<p align="justify"><font size=3>Use a higher order model or select one from the database and find its positions within your custom sequence file...</font> </p>
+<p align="justify"><font size=3>Scan your input sequence set for matches of an input or database motif model.</font> </p>
 
 </font>
 </div>
@@ -225,12 +225,12 @@ Motif-Motif Comparison
 <div class="col-md-6">
   <div class='container-fluid'>
    <center>
-              <img src="{% static 'img/database.png' %}" class="responsive-img" style='max-height:120px;' alt="logo">
+              <img src="{% static 'img/database_new.png' %}" class="responsive-img" style='max-height:180px;' alt="logo">
    </center>
 <div class="jumbotron" style="background-color:white"><font color="black">
 <center><a class="btn btn-primary btn-lg" href='/database/' role="button" style="background-color:#1f2e2e">Motif Database</a></center>
   <hr style="border: 1px solid #1f2e2e">
-  <p align="justify"><font size=3>For over 450 data sets from human, we provide higher order models. Browse, download or directly use entries for your analysis...</font></p>
+  <p align="justify"><font size=3>Download or select for analysis models from a database of over 450 models learned on ChIP-seq data</font></p>
 </font>
 </div>
 </div>
