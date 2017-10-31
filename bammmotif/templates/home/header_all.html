@@ -32,12 +32,28 @@
       <ul class="nav nav-tabs navbar-fixed-top" role="tablist" style="background-color:white">
         <li role="navigation"><a href="/home/"><font color="#1f2e2e">Home</font></a></li>
         <li role="nativation">  
+          {% if user.is_authenticated %}
+            <a  href='/results/result_overview' ><font color="#1f2e2e">Find My Job</font></a>
+          {% else %}
             <a href="/results/" ><font color="#1f2e2e">Find My Job</font></a></p>
+          {% endif %}
         </li>
         <li role="navigation"><a href="/aboutBaMMmotif/"><font color="#1f2e2e">About BaMMmotif</font></a></li>
         <li role="navigation"><a href="/documentation/"><font color="#1f2e2e">Documentation</font></a></li>
         <li role="navigation"><a href="{% url 'download' %}"><font color="#1f2e2e">Download</font></a></li>
         <li role="navigation"><a rel="external noopener" target="_blank" href="http://www.mpibpc.mpg.de/soeding"><font color="#1f2e2e">Söding Lab</font></a></li>
+       <li role="navigation" style="float: right;">
+          {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}"><font color="#1f2e2e">Log out</font></a>
+          {% else %}
+            <a href="{% url 'login' %}"><font color="#1f2e2e">Log in</font></a>
+          {% endif %}
+        </li>
+         <li role="naviation" style="float: right;">
+          {% if user.is_authenticated %}
+            <a><font color="#1f2e2e">Hi {{ user.username }}!</font></a>
+          {% endif %}
+        </li>
       </ul>  
       </center>
       </div>
@@ -50,7 +66,19 @@
         <br>
           <a href="/home/"><span><img src="{% static 'img/BaMMmotif.png' %}" class="responsive-img" style='max-height:100px;' alt="logo"></span></a>
          <br>
-      </div> 				
+      </div> 
+
+      <!--<div class="col-sm-1">
+        <p align="right">
+          {% if user.is_authenticated %}
+            <font color="#1f2e2e">Hi {{ user.username }}!</font>
+            <a href="{% url 'logout' %}"><font color="#1f2e2e">logout</font></a>
+          {% else %}
+            <a href="{% url 'login' %}"><font color="#1f2e2e">login</font></a>
+          {% endif %}
+        </p>
+      </div>-->
+					
               
       </div>
 
