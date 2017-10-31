@@ -62,7 +62,6 @@ def validate_fasta(path):
 
 
 def validate_input_data(job):
-    print("VALIDATE_INPUT_DATA")
     success = "Validation succeeded!"
     msg_seq, valid_seq = validate_fasta(os.path.join(settings.MEDIA, job.Input_Sequences.name))
     if not valid_seq:
