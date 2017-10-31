@@ -122,12 +122,8 @@
         {% endif %}
         
         {% if result.FDR %}
-        <h3>False Discovery Rate Estimation:</h3>
+        <h3>Motif Evaluation:</h3>
         <table>
-            <tr>
-                <td>  &emsp; mFold: </td>
-                <td>  &emsp; {{result.m_Fold}}</td>
-            </tr>
             <tr>
                 <td>  &emsp; sampling Order: </td>
                 <td>  &emsp; {{result.sampling_Order}}</td>
@@ -135,7 +131,7 @@
         </table>
         {% endif %}
         
-        {% if result.mode == "Prediction" %}
+        {% if result.MMcompare %}
         <h3>Database Model Comparison:</h3>
         <table>
             <tr>

@@ -112,9 +112,9 @@
         <p class="indent" style="padding-left: 1.8em"><label for="id_q_value"><a class "testpup" onmouseover="nhpup.popup($('#EMq_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> EM q-value:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_q_value" min="0.01" max="1" name="q_value" type="number" value="0.9" step="0.01"/></font></p>
 
         <br>
-        <h3> Motif Enrichment: </h3>
+        <h3> Motif Positions: </h3>
         
-        <p class="indent" style="padding-left: 1.8em"><label for="BaMMScan"><a class "testpup" onmouseover="nhpup.popup($('#BaMMScan_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Enrichment:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_score_Seqset" name="score_Seqset" type="checkbox" checked /></font></p>
+        <p class="indent" style="padding-left: 1.8em"><label for="BaMMScan"><a class "testpup" onmouseover="nhpup.popup($('#BaMMScan_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Positions:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_score_Seqset" name="score_Seqset" type="checkbox" checked /></font></p>
     
         <p class="indent" style="padding-left: 1.8em"><label for="id_score_Cutoff"><a class "testpup" onmouseover="nhpup.popup($('#score_Cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_score_Cutoff" name="score_Cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
 
@@ -123,17 +123,6 @@
         <h3> Motif Evaluation: </h3>
 
         <p class="indent" style="padding-left: 1.8em"><label for="id_FDR"><a class "testpup" onmouseover="nhpup.popup($('#FDR_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Evaluation:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_FDR" name="FDR" type="checkbox" checked /></font></p>
-    
-        <p class="indent" style="padding-left: 1.8em"><label for="id_m_Fold"><a class "testpup" onmouseover="nhpup.popup($('#mFold_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> m Fold:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_m_Fold" min="1" max="15" name="m_Fold" type="number" value="5" required /></font></p>
-    
-        <p class="indent" style="padding-left: 1.8em"><label for="id_sampling_Order"><a class "testpup" onmouseover="nhpup.popup($('#FDRSamplingOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> sampling Order:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_sampling_Order" min="0" max="8" name="sampling_Order" type="number" value="2" /></font></p>
-
-        <br>
-        <h3> Database Model Comparison: </h3>
-        
-        <p class="indent" style="padding-left: 1.8em"><label for="MMcompare"><a class "testpup" onmouseover="nhpup.popup($('#MMcompare_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> MMcompare:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_MMcompare" name="MMcompare" type="checkbox" checked /></font></p>
-    
-        <p class="indent" style="padding-left: 1.8em"><label for="id_p_value_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#db_match_p_value_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_p_value_cutoff" name="p_value_cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
  
 
         </div> 
@@ -143,9 +132,11 @@
 
     <hr style="border: 1px solid #1f2e2e">
     <p>
-      <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font color="white">BaMM!</font></button></p>
+      <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font color="white">BaMM!</font></button>
+      &emsp; <a href="{% url 'result_detail' pk='293aae88-6e1e-48ba-ad87-19e7304e0393' %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> View Example Result </span></a> 
     </p>
   </form>
+   
 </div>
 </div>
 
