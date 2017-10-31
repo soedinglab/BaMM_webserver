@@ -53,14 +53,13 @@ DB_DIR=/var/webserver/BaMM_webserver/DB
 Make sure `BAMM_USER_UID` matches the UID of your user account. You can find your UID by executing `echo $UID` in the shell.
 
 The DB_DIR needs to direct to the location of the folder where you have stored the database, so the folder which currently contains:
-NOTE: Place the DB folder at /var/webserver/BaMM_webserver/DB for the moment to have proper database population.
 
 ```
 ENCODE.hg19.TFBS.QC.metadata.jun2012-TFs_SPP_pooled.tsv
 ENCODE_ChIPseq/Results/
 ```
 
-## Building the webserver
+## Building and starting the webserver
 Now use `docker-compose build` to download and build all docker images.
 
 ## Populating the database
