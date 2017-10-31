@@ -5,6 +5,7 @@ from django.conf import settings
 from django.views.generic import TemplateView
 from . import views
 from .views import Plot
+from . import peng_bamm_split_views
 
 urlpatterns = [
     url(r'^test/(?P<pk>.*)/$', Plot.as_view(), name='test'),
@@ -29,6 +30,7 @@ urlpatterns = [
     url(r'^database/$', views.maindb, name='maindb'),
     url(r'^database/db_overview/$', views.db_overview, name='db_overview'),
     url(r'^database/(?P<pk>.*)/$', views.db_detail, name='db_detail'),
+    url(r'^job/data_predict_peng/', peng_bamm_split_views.data_predict_peng, name='data_predict')
  ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 #    url(r'^results/(?P<pk>.*)/$', Plot.as_view()),
