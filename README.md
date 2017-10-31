@@ -47,9 +47,17 @@ WEBSERVER_DIR=/var/webserver/BaMM_webserver
 MYSQL_DB_DIR=/var/webserver/mysql_db
 REDIS_DB_DIR=/var/webserver/redis_db
 MEDIA_DIR=/var/webserver/media_db
+DB_DIR=/var/webserver/BaMM_webserver/DB
 ```
 
 Make sure `BAMM_USER_UID` matches the UID of your user account. You can find your UID by executing `echo $UID` in the shell.
+
+The DB_DIR needs to direct to the location of the folder where you have stored the database, so the folder which currently contains:
+
+```
+ENCODE.hg19.TFBS.QC.metadata.jun2012-TFs_SPP_pooled.tsv
+ENCODE_ChIPseq/Results/
+```
 
 ## Building and starting the webserver
 Now use `docker-compose build` to download and build all docker images.
