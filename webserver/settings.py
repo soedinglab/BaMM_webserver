@@ -82,7 +82,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'webserver.wsgi.application'
 
-DB_ROOT = os.path.join(BASE_DIR, 'BaMM_webserver/DB')
+DB_ROOT = os.path.join(BASE_DIR, '/DB')
 
 
 DB_HOST = 'db'
@@ -157,7 +157,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC'‚
 
 USE_I18N = True
 
@@ -197,4 +197,4 @@ JOB_DIR_PREFIX = 'jobs'
 
 # Settings realted to example data
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
-EXAMPLE_MOTIF = 'example_data/ExampleMotif2.meme' 
+EXAMPLE_MOTIF = 'example_data/ExampleMotif.meme' 
