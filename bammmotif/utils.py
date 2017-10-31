@@ -175,6 +175,8 @@ def add_motif_evaluation(job_pk):
     motifs = Motifs.objects.filter(parent_job=job)
     filename = str(get_job_output_folder(job_pk)) + "/" + str(basename(os.path.splitext(job.Input_Sequences.name)[0])) + ".bmscore"
     with open(filename) as fh:
+        # skip header line
+        next(fh)
         for line in fh:
             tokens = line.split()
             motif_obj = motifs.filter(job_rank=tokens[1])[0]

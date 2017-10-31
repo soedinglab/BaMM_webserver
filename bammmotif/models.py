@@ -96,7 +96,7 @@ class Job(models.Model):
     #save_BgModel = models.BooleanField(default=True)
 
     # MMcompare
-    MMcompare = models.BooleanField(default=True)
+    MMcompare = models.BooleanField(default=False)
     p_value_cutoff = models.DecimalField(default=0.01, max_digits=3,decimal_places=2)
     
     class Meta:
