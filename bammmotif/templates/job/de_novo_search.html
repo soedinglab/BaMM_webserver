@@ -51,7 +51,7 @@
     <p><font color="red">The provided Input Sequence File does not match the expected format.</font> </p>  
     {% endif %}
    
-    <p><label for="id_reverse_Complement"><a class "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Reverse Complement:</label><font color="#1f2e2e"> &nbsp;&nbsp;<input id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font></p>
+    <p><label for="id_reverse_Complement"><a class "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Search on both strands:</label><font color="#1f2e2e"> &nbsp;&nbsp;<input id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font></p>
 
 
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white"><font color="black">
@@ -125,7 +125,7 @@
 
 
         <br>
-        <h3> False Dircovery Rate Estimation: </h3>
+        <h3> False Discovery Rate Estimation: </h3>
 
         <p class="indent" style="padding-left: 1.8em"><label for="id_FDR"><a class "testpup" onmouseover="nhpup.popup($('#FDR_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> FDR:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_FDR" name="FDR" type="checkbox" checked /></font></p>
     
@@ -137,7 +137,9 @@
 
         <br>
         <h3> Database Model Comparison: </h3>
-
+        
+        <p class="indent" style="padding-left: 1.8em"><label for="MMcompare"><a class "testpup" onmouseover="nhpup.popup($('#MMcompare_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> MMcompare:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_MMcompare" name="MMcompare" type="checkbox" checked /></font></p>
+    
         <p class="indent" style="padding-left: 1.8em"><label for="id_p_value_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#db_match_p_value_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_p_value_cutoff" name="p_value_cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
     
 
@@ -393,12 +395,24 @@
   </div>
 </div>
 
+<div class="modal fade" id="MMcompare_Info" tabindex="-1" role="dialog" aria-labelledby="MMcompare_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+       <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">When checked, the inserted Motif InitFile will be compared to our BaMMmotif Database to find similarities.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="db_match_p_value_cutoff_Info" tabindex="-1" role="dialog" aria-labelledby="db_match_p_value_cutoff_Info">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-body">
         <font color="#0B0719">
-            <p  align="justify">The p-value limit will be used to define a threshold for motif matches between the predicted model and the database. </p>
+            <p  align="justify">The p-value limit will be used to define a threshold for motif comparisons between the inserted model and the database. </p>
         </font>
       </div>
     </div>

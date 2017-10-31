@@ -11,25 +11,27 @@
         <h2>BaMMmotif Settings </h2>
         <hr style="border: 1px solid #1f2e2e">
         <table>
+        {% if mode == "Prediction" or mode == "Occurrence" %}
             <tr>
                 <td>  &emsp; Input Sequence: </td>
                 <td>  &emsp; {{result.Inputseq_filename}}</td>
             </tr>
+        {% endif %}
             <tr>
                 <td>  &emsp; Mofti File: </td>
                 <td>  &emsp; {{result.MotifInit_filename}}</td>
             </tr>
-            {% if result.mode == "Prediction" %}
+        {% if mode == "Prediction" or mode == "Occurrence" %}
             <tr>
-                <td>  &emsp; Reverse Complement: </td>
+                <td>  &emsp; Search on Both Strands: </td>
                 <td>  &emsp; {{result.reverse_Complement}}</td>
             </tr>
-            {% endif %}
+        {% endif %}
         </table>
 
 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white; border:0px">
 
-    {% if result.mode == "Prediction" %}
+    {% if mode == "Prediction" or mode == "Occurrrence" %}
         <div class="panel-heading" role="tab" id="headingOne" style="background-color:white; border:0px">
           <h2 class="panel-title">
           <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color:white; border:0px">
@@ -40,7 +42,7 @@
         <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white">
         <div class="panel-body">
 
-        {% if result.mode == "Predicition" %}
+        {% if mode == "Prediction" %}
         <h3>Model Settings</h3>
         <table>
             <tr>
@@ -58,7 +60,7 @@
         </table>
         {% endif %}
 
-        {% if result.mode == "Predicition" %}
+        {% if mode == "Prediction" %}
         <h3>Motif Initialization</h3>
         <table>
             <tr>
@@ -78,7 +80,7 @@
         </table>
         {% endif %}
 
-        {% if result.mode == "Predicition" %}
+        {% if mode == "Prediction" %}
         <h3>Background Model</h3>
         <table>
             <tr>
@@ -102,13 +104,6 @@
                 <td>  &emsp; {{result.q_value}}</td>
             </tr>
             <tr>
-                <td>  &emsp; epsilon: </td>
-                <td>  &emsp; {{result.epsilon}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; max Iterations: </td>
-                <td>  &emsp; {{result.max_EM_Iterations}}</td>
-            </tr>
         </table>
         {% endif %}
 
@@ -127,16 +122,8 @@
         {% endif %}
         
         {% if result.FDR %}
-        <h3>False Discovery Rate Estimation:</h3>
+        <h3>Motif Evaluation:</h3>
         <table>
-            <tr>
-                <td>  &emsp; mFold: </td>
-                <td>  &emsp; {{result.m_Fold}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; cvFold: </td>
-                <td>  &emsp; {{result.cv_Fold}}</td>
-            </tr> 
             <tr>
                 <td>  &emsp; sampling Order: </td>
                 <td>  &emsp; {{result.sampling_Order}}</td>
@@ -144,7 +131,7 @@
         </table>
         {% endif %}
         
-        {% if result.mode == "Predicition" %}
+        {% if result.MMcompare %}
         <h3>Database Model Comparison:</h3>
         <table>
             <tr>
@@ -162,17 +149,20 @@
 </div>
 
 <div class="jumbotron" style="background-color:white"><font color="black">
-  <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_complete.zip" method="get" target="_blank">
+  <form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_BaMMmotif.zip" method="get" target="_blank">
          <p align="right">           
            <button type="submit" class="btn btn-default" aria-label="Download">
              <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD ALL </span> 
            </button>
          </p>
        </form>
-{% if result.mode == "Predicition" %}
- <h2>Predicted Motifs </h2>
-{% else %}
- <h2>Scanned Motifs </h2>
+
+{% if mode == "Prediction" %}
+ <h2> Predicted Motifs </h2>
+{% elif mode == "Occurrence" %}
+ <h2> Input Motifs </h2>
+ {%elif mode == "Compare" %}
+ <h2> Query Motifs </h2>
 {% endif %}
 
  <table class="table table-hover">
@@ -181,25 +171,24 @@
         <th> IUPAC </th>
         <th> PWM </th>
         <th> reverse Comp. </th>
-        {% if result.mode == "Predicition" %}
-          <th> AUC </th>        
+        {% if mode == "Prediction" %}
+          <th> AUSFC </th>        
           <th> % occurrence </th>        
         {% endif %}
         <th> Download </th>        
     </tr>
-
-{% for m in result.motifs_set.all|dictsort:"job_rank" %}
+   {% for m in result.motifs_set.all|dictsort:"job_rank" %}
     <tr>
         <th> <a href="#{{m.job_rank}}" style="color:black">{{m.job_rank}} </a></th>
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.iupac}} </a></th>
-        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0-icColumnScale-icLetterScale_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
-        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
-       {% if result.mode == "Predicition" %}
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+       {% if mode == "Prediction" %}
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.auc}} </a></th>        
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.occurrence}} </a></th>        
         {% endif %}
         <th> <a href="#{{m.job_rank}}" style="color:black"> 
-             <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">
+             <form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">
              <button type="submit" class="btn btn-default" aria-label="Download" >
                 <span class="glyphicon glyphicon-download" aria-hidden="true"> </span> 
              </button>
@@ -218,7 +207,7 @@
 
 
 
-    <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">
+    <form action="{% get_media_prefix %}/{{opath}}{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">
         <h2> Moitf # {{m.job_rank}} &emsp;
           <button type="submit" class="btn btn-default" aria-label="Download" >
              <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD MODEL</span> 
@@ -229,49 +218,37 @@
 
        
     <hr style="border: 1px solid #1f2e2e">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
     {% for i in num_logos %}
-        <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-{{i}}-icColumnScale-icLetterScale.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
     {% endfor %}
-            <br>
-            <br>
-    <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_logos.zip" method="get" target="_blank">
-        <p align="right">           
-        <button type="submit" class="btn btn-default" aria-label="Download">
-        <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD LOGO PLOTS </span> 
-        </button>
-        </p>
-    </form>
 
-    {% if result.mode == "Predicition" %}
+    {% if mode == "Prediction" %}
     <h2> Performance and Positional Distribution on Input Sequences </h2>
         <hr style="border: 1px solid #1f2e2e">
-        <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_FDR.jpeg" class="responsive-img" style='max-height:400px;' alt="ROC Curve Plot"> &emsp;
-        <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_Positions.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Plot">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partiacl ROC5 curve">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_PRC.jpeg" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Ditsribution"> &emsp;
 
-
-        <br>
-        <br>
-       <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_performance.zip" method="get" target="_blank">
-         <p align="right">           
-           <button type="submit" class="btn btn-default" aria-label="Download">
-             <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD PERFORMANCE PLOTS</span> 
-           </button>
-         </p>
-       </form>
-    {% else %}
+    {% elif mode == "Occurrence" %}
         <h2> Positional Distribution and Motif Occurrence on Input Sequences </h2>
+
+        <h3> Feature disabled because bamm-search is not integrated into bamm-private yet (will be done in GOE) </h3>
         <hr style="border: 1px solid #1f2e2e">
-        {% with index=m.job_rank %}
+        <!--{% with index=m.job_rank %}
         {% for idx, p in plot.items %}
             {% if idx == index %}
                 {{p|safe}}
             {% endif %}
         {% endfor %}
         {% endwith %}
+        !-->
 
     {% endif %}
     
-    {% if result.mode == "Predicition" %}
+    {% if result.MMcompare %}
 
     <h2> Best Matches with our Database </h2>
         <hr style="border: 1px solid #1f2e2e">
@@ -298,8 +275,8 @@
             {% else %}
                 <th> {{match.e_value|floatformat:10}} </th>
             {% endif %}
-            <th> <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </th>
-            <th> <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></th>     
+            <th> <img src="{% get_static_prefix %}{{db_dir}}/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </th>
+            <th> <img src="{% get_static_prefix %}{{db_dir}}/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></th>     
             <th> <a href="{% url 'db_detail' match.db_entry.db_public_id %}" style="color:black"> 
              <button type="submit" class="btn btn-default" aria-label="Database" >
                 <span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span> 

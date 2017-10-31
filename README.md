@@ -3,16 +3,21 @@
 
 ## Preparing the database directories on the host
 
-All persistent data will be stored on the host. I am using the directory `~/webserver`.
+All persistent data will be stored on the host. I am using the directory `/var/webserver`. Make sure to choose a folder in which your BaMM user account has read/write access.
 
 ```bash
-WEBSERVER_DIR=~/webserver
+WEBSERVER_DIR=/var/webserver
 # create folder structure
 mkdir -p $WEBSERVER_DIR/{media_db/logs,mysql_db,redis_db}
 
 cd $WEBSERVER_DIR
 git clone git@github.com:soedinglab/BaMM_webserver.git
+## When working on Marvin use ssh conection (because NginX only allows ssh)
+# git clone ssh://git@ssh.github.com:443/soedinglab/BaMM_webserver.git
+
 cd  BaMM_webserver
+git checkout make_startup_work
+git pull origin make_startup_work
 git submodule update --init --recursive
 ```
 
@@ -20,6 +25,7 @@ git submodule update --init --recursive
 Move to a folder of your choice and clone the webserver again.
 
 ```bash
+## this is not necessarily needed
 cd ~/git_repositories
 git clone git@github.com:soedinglab/BaMM_webserver.git
 cd BaMM_webserver
@@ -36,13 +42,22 @@ MYSQL_PASSWORD=3aMM!mot1f
 MYSQL_ROOT_PASSWORD=3aMM!mot1f
 NETWORK_PREFIX=172.12.12
 
-MYSQL_DB_DIR=~/webserver/mysql_db
-REDIS_DB_DIR=~/webserver/redis_db
-WEBSERVER_DIR=~/webserver/BaMM_webserver
-MEDIA_DIR=~/webserver/media_db
+
+WEBSERVER_DIR=/var/webserver/BaMM_webserver
+MYSQL_DB_DIR=/var/webserver/mysql_db
+REDIS_DB_DIR=/var/webserver/redis_db
+MEDIA_DIR=/var/webserver/media_db
+DB_DIR=/var/webserver/BaMM_webserver/DB
 ```
 
 Make sure `BAMM_USER_UID` matches the UID of your user account. You can find your UID by executing `echo $UID` in the shell.
+
+The DB_DIR needs to direct to the location of the folder where you have stored the database, so the folder which currently contains:
+
+```
+ENCODE.hg19.TFBS.QC.metadata.jun2012-TFs_SPP_pooled.tsv
+ENCODE_ChIPseq/Results/
+```
 
 ## Building and starting the webserver
 Now use `docker-compose build` to download and build all docker images.
@@ -55,5 +70,5 @@ Now you should be able to access the webserver at  `0.0.0.0:10080` in your favor
 
 ## Noteworthy things
 
-* The webserver code inside the container is in `WEBSERVER_DIR/BaMM_webserver`. Changes to that code should be automatically be available in the server. The webserver has to be started from `~/git_repositories/BaMM_webserver` however.
-* All files created by the webserver are accessible on the host in `~/webserver/media_db`
+* The webserver code inside the container is in `$WEBSERVER_DIR/BaMM_webserver`. Changes to that code should be automatically be available in the server. The webserver has to be started from `~/git_repositories/BaMM_webserver` however.
+* All files created by the webserver are accessible on the host in `$WEBSERVER_DIR/media_db`

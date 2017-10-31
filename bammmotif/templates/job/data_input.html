@@ -1,0 +1,501 @@
+  {% extends "home/header.html" %}
+
+{% block content %}
+
+<div class="container-fluid" >
+
+<div class="jumbotron container-fluid" style="background-color:white"><font color="black">
+  {% if mode == "Prediction" %}
+    <h2> De-novo Motif Discovery </h2>
+  {% elif mode == "Occurrence" %}
+    <h2> Motif Enrichment Analysis</h2>
+  {% elif mode == "Compare" %}
+    <h2> Motif-Motif Comparison</h2>
+  {% endif %}
+  <hr style="border: 1px solid #1f2e2e">
+  <div class='container-fluid'>
+      
+    <script>
+    function Hide_motifInit() {
+      if(document.getElementById('id_Motif_Initialization').options[document.getElementById('id_Motif_Initialization').selectedIndex].value == "PEnGmotif") {
+        document.getElementById('id_Motif_InitFile').style.display = 'none';
+        document.getElementById('id_Motif_Init_File_Format').style.display = 'none';
+      } else {
+        document.getElementById('id_Motif_InitFile').style.display = '';
+        document.getElementById('id_Motif_Init_File_Format').style.display = '';
+      }
+    }
+
+    window.onload = function() {
+      document.getElementById('id_Motif_Initialization').default = Hide_motifInit;
+      document.getElementById('id_Motif_Initialization').onchange = Hide_motifInit;
+    };
+    </script>
+
+    
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+  
+    <p><label for="id_job_name"><a class "testpup" onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name" style="color:black"></span></a> Job Name:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_job_name" maxlength="50" name="job_name" type="text" placeholder="i.e: My Job #1" /></p>
+
+    {% if mode == "Prediction" or mode == "Occurrence" %}
+
+      {% if type == "FileSize" %}
+        {% if user.is_authenticated %}
+          <p><font color="red"> Please keep file size under 250Mb.</font> </p>  
+        {% else %}
+          <p><font color="red">  Please keep file size under 2.5Mb or login for larger upload size.</font> </p>  
+        {% endif %}
+      {% endif %}
+      
+      {% if type == "Fasta" %}
+      <p><font color="red">The provided Input Sequence File does not match the expected format.</font> </p>  
+      {% endif %}
+   
+      {% if example %}
+      <p><label for="id_Input_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Input Sequences:</label> </p> <p class="indent" style="padding-left: 1.8em"> Example Data </p>
+      {% else %}
+      <p><label for="id_Input_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Input Sequences:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_Input_Sequences" name="Input_Sequences" type="file" required /></p>
+      <p>  &emsp; <a href="{% url 'run_a_job' mode=mode example=True %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> Load Example Data </span></a> </td>
+      {% endif %}
+
+    {% endif %}
+
+    {% if mode == "Prediction" %}
+
+      <p><label for="id_reverse_Complement"><a class "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Search on both strands:</label><font color="#1f2e2e"> &nbsp;&nbsp;<input id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font></p>
+    
+    {% endif %}
+
+    {% if mode == "Occurrence" or mode == "Compare" %}
+
+    {% if example %}
+    <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Motif_InitFile"  style="color:black"></span></a> Motif InitFile: </label>  <p class="indent" style="padding-left: 1.8em"> Example Motif </p>
+    {% else %}
+    <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Motif_InitFile"  style="color:black"></span></a> Motif InitFile: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
+
+    {% if mode == "Occurrence" %}
+    <p>   &emsp;<a href="/database" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> select from Database </span></a></p>
+    {% elif mode == "Compare" %}
+    <p>  &emsp; <a href="{% url 'run_a_job' mode=mode example=True %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> Load Example Data </span></a> </td>
+    {% endif %}
+
+    {% endif %}
+
+    {% if type == "Init" %}
+    <p ><font color="red"> The provided Motif Initialization File does not match the expected format. Please select correct Inputformat.</font></p>  
+    {% endif %}
+
+    {% if example %}
+    <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Motif_Init_File_Format" style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> PWM </font></p>
+    {% else %}
+    <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#Motif_Init_File_Format" style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
+    <option value="PWM" selected="selected">PWM</option>
+    <option value="BaMM">BaMM</option>
+    </select></font></p>
+    {% endif %}
+
+    {% if example == False %}
+    <p ><label for="id_bgModel_File"><a class "testpup" onmouseover="nhpup.popup($('#bgModel_File_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#bgModel_File" style="color:black">
+    </span> </a>Motif Background File: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_bgModel_File" name="bgModel_File" type="file" /></p>
+    {% endif %}
+
+    {% endif %}
+
+    {% if mode == "Compare" %}
+      <br>
+      <p><label for="id_model_Order"><a class "testpup" onmouseover="nhpup.popup($('#ModelOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Model Order:</label><font color="#1f2e2e"><input id="id_model_Order" min="0" max="8" name="model_Order" type="number" value="0" required />
+        </font></p>
+
+     <p><label for="id_p_value_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#db_match_p_value_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_p_value_cutoff" name="p_value_cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
+
+    {% endif %}
+
+
+    {% if mode == "Prediction" or mode == "Occurrence" %}
+
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white"><font color="black">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne" style="background-color:white"><font color="black">
+          <h2 class="panel-title">
+          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color:white"><font color="black">
+          <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"style="color:black"></span> Advanced Options </h3>
+          </a>
+          </h2>
+        </div>
+        
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white"><font color="black">
+        <div class="panel-body">
+        
+        {% if mode == "Prediction" %}
+
+        <h3> Model Settings:</h3>
+
+        <p class="indent" style="padding-left: 1.8em"><label for="id_model_Order"><a class "testpup" onmouseover="nhpup.popup($('#ModelOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Model Order:</label><font color="#1f2e2e">
+        {% if user.is_authenticated %}
+          &nbsp;&nbsp; <input id="id_model_Order" min="0" max="8" name="model_Order" type="number" value="4" required />
+        {% else %}
+          &nbsp;&nbsp; <input id="id_model_Order" min="0" max="4" name="model_Order" type="number" value="4" required />
+        {% endif %}
+        </font></p>
+
+        <p class="indent" style="padding-left: 1.8em"><label for="id_extend_1"><a class "testpup" onmouseover="nhpup.popup($('#Extend1_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Extend left:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_extend_1" min="0" max="25" name="extend_1" type="number" value="4" required /></font></p>
+    
+        <p class="indent" style="padding-left: 1.8em"><label for="id_extend_2"><a class "testpup" onmouseover="nhpup.popup($('#Extend2_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Extend right:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_extend_2" min="0" max="25" name="extend_2" type="number" value="4" required /></font></p>
+
+        <br>
+        <h3> Motif Initialization:</h3>
+
+        {% if example %}
+        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_Initialization"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitialization_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Initialization:</label><font color="#1f2e2e">  <p class="indent" style="padding-left: 1.8em"> Custom File </font></p> 
+        {% else %}
+        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_Initialization"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitialization_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Initialization:</label><font color="#1f2e2e">  <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Initialization" name="Motif_Initialization" required onchange="Hide()">
+         <option value="Custom File" >Custom File</option>
+         <option value="PEnGmotif" selected="selected">PEnGmotif</option>
+        </select></font></p>
+        {% endif %}
+
+        {% if type == "Init" %}
+          <p class="indent" style="padding-left: 1.8em"><font color="red"> The provided Motif Initialization File does not match the expected format. Please select correct Inputformat or use PEnGmotif for automatically generating Motif Initialization File from Input Sequence File</font></p>  
+        {% endif %}
+
+        {% if example %}
+        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile:</label>  <p class="indent" style="padding-left: 1.8em"> Example Motif </p>
+        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em">PWM</font></p>
+        {% else %}
+        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile:</label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
+        <p class="indent" style="padding-left: 1.8em"><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
+         <option value="BindingSites" >BindingSites</option>
+         <option value="PWM" selected="selected">PWM</option>
+         <option value="BaMM">BaMM</option>
+        </select></font></p>
+        {% endif %}
+        
+
+        <br>
+        <h3> Background Model: </h3>
+        
+        <p class="indent" style="padding-left: 1.8em"><label for="id_background_Order"><a class "testpup" onmouseover="nhpup.popup($('#BackgroundOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Background Order:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_background_Order" min="0" max="8" name="background_Order" type="number" value="1" required /></font></p>
+
+        <p class="indent" style="padding-left: 1.8em"><label for="id_Background_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#BackgroundSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Background Sequences :</label> <p class="indent" style="padding-left: 1.8em"><input id="id_Background_Sequences" name="Background_Sequences" type="file" /></p>
+        {% if type == "Background" %}
+          <p class="indent" style="padding-left: 1.8em"><font color="red"> The provided Background Sequence File does not match the expected format.</font> </p>  
+        {% endif %}
+        
+
+        <br>
+        <h3> Expectation Maximization Optimization: </h3>
+
+        <p class="indent" style="padding-left: 1.8em"><label for="id_EM"><a class "testpup" onmouseover="nhpup.popup($('#EM_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> EM:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_EM" name="EM" type="checkbox" checked /></font></p>
+    
+        <p class="indent" style="padding-left: 1.8em"><label for="id_q_value"><a class "testpup" onmouseover="nhpup.popup($('#EMq_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> EM q-value:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_q_value" min="0.01" max="1" name="q_value" type="number" value="0.9" step="0.01"/></font></p>
+        
+        <p class="indent" style="padding-left: 1.8em"><label for="id_epsilon"><a class "testpup" onmouseover="nhpup.popup($('#EMepsilon_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> EM epsilon:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_epsilon" min="0.001" max="1" name="epsilon" type="number" value="0.001" step="0.001"/></font></p>
+        
+        <p class="indent" style="padding-left: 1.8em"><label for="id_max_EM_Iterations"><a class "testpup" onmouseover="nhpup.popup($('#EMmaxIter_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> EM max Iter:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_max_EM_Iterations" min="0" max="1000000" name="max_EM_Iterations" type="number" value="1000000" step="1"/></font></p>
+
+
+        <br>
+        <h3> False Discovery Rate Estimation: </h3>
+
+        <p class="indent" style="padding-left: 1.8em"><label for="id_FDR"><a class "testpup" onmouseover="nhpup.popup($('#FDR_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> FDR:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_FDR" name="FDR" type="checkbox" checked /></font></p>
+    
+        <p class="indent" style="padding-left: 1.8em"><label for="id_m_Fold"><a class "testpup" onmouseover="nhpup.popup($('#mFold_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> m Fold:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_m_Fold" min="1" max="15" name="m_Fold" type="number" value="5" required /></font></p>
+    
+        <p class="indent" style="padding-left: 1.8em"><label for="id_cv_Fold"><a class "testpup" onmouseover="nhpup.popup($('#cvFold_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> cv Fold:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_cv_Fold" min="1" max="10" name="cv_Fold" type="number" value="5" required /></font></p>
+
+        <p class="indent" style="padding-left: 1.8em"><label for="id_sampling_Order"><a class "testpup" onmouseover="nhpup.popup($('#FDRSamplingOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> FDR sampling Order:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_sampling_Order" min="0" max="8" name="sampling_Order" type="number" value="2" /></font></p>
+
+        {% endif %}
+
+        {% if mode == "Occurrence" %}
+        <p class="indent" style="padding-left: 1.8em"><label for="id_reverse_Complement"><a class "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Search on both strands:</label><font color="#1f2e2e"> &nbsp;&nbsp;<input id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font></p>
+        {% endif %}
+
+        <br>
+        <h3> Database Model Comparison: </h3>
+        
+        <p class="indent" style="padding-left: 1.8em"><label for="MMcompare"><a class "testpup" onmouseover="nhpup.popup($('#MMcompare_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> MMcompare:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_MMcompare" name="MMcompare" type="checkbox" checked /></font></p>
+    
+        <p class="indent" style="padding-left: 1.8em"><label for="id_p_value_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#db_match_p_value_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_p_value_cutoff" name="p_value_cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
+ 
+
+        </div> 
+        </div> 
+      </div>
+    </div>
+    {% endif %}
+
+    <hr style="border: 1px solid #1f2e2e">
+    <p>
+      <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font color="white">BaMM!</font></button></p>
+    </p>
+  </form>
+</div>
+</div>
+
+<div class="modal fade" id="job_name" tabindex="-1" role="dialog" aria-labelledby="job_name">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">You can give your job a name to better distinguish between several runs.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="InputSequence_Info" tabindex="-1" role="dialog" aria-labelledby="InputSequence_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">The Input Sequence File needs to be of Fasta Format.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="BackgroundSequence_Info" tabindex="-1" role="dialog" aria-labelledby="BackgroundSequence_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+        <p  align="justify">Insert a file of sequences that reflect the genomic background of your input sequences. Alternatively the genomic background is estimated from your input sequence set.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MotifInitialization_Info" tabindex="-1" role="dialog" aria-labelledby="MotifInitialization_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">Please select if you want PEnGmotif be in charge of the Motif Initialization or provide a custom Initialization File. The initialization file can be either in PWM or BaMM format.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MotifInitFile_Info" tabindex="-1" role="dialog" aria-labelledby="MotifInitFile_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">If you already have a PWM or BaMM model which you want to refine insert it file here. Alternatively you can leave this empty and PEnG!motif will seed your input sequence set.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MotifInitFileFormat_Info" tabindex="-1" role="dialog" aria-labelledby="MotifInitFileFormat_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+           <p  align="justify">Please select the file format of your provided motif Initialization. This option is only necessary when providing a custom MotifInitialization.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ModelOrder_Info" tabindex="-1" role="dialog" aria-labelledby="ModelOrder_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+        <p  align="justify">The Model Order describes the maximal higher Order contribution which will be taken into account. The default is 2. A model Order of 0 corresonds to a typical PWM model. </p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="ReverseComplement_Info" tabindex="-1" role="dialog" aria-labelledby="RevverseComplement_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+           <p  align="justify"> When checked, the reverse complementary sequences will used as well for motif search.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="Extend1_Info" tabindex="-1" role="dialog" aria-labelledby="Extend1_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+       <div class="modal-body">
+        <font color="#0B0719">
+             <p  align="justify">   Extend BaMMs by adding uniformly initialized positions to the left
+        and/or right of initial BaMMs. Extend_1 corresponds to the LEFT side
+          of the model, while Extend_2 corresponds to the RIGHT side. By default, BaMMs
+        are not being extended.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="Extend2_Info" tabindex="-1" role="dialog" aria-labelledby="Extend2_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+             <p  align="justify">   Extend BaMMs by adding uniformly initialized positions to the left
+        and/or right of initial BaMMs.Extend_1 corresponds to the LEFT side
+          of the model, while Extend_2 corresponds to the RIGHT side. By default, BaMMs
+        are not being extended.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="FDR_Info" tabindex="-1" role="dialog" aria-labelledby="FDR_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+       <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">When checked, False Dirscovery Rate calulcation will be triggered.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="mFold_Info" tabindex="-1" role="dialog" aria-labelledby="mFold_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+           <p  align="justify"> The number of negative sequences as multiple of positive sequences used during FDR calculation.
+        The default is 5.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="cvFold_Info" tabindex="-1" role="dialog" aria-labelledby="cvFold_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+         <p  align="justify">Number of cross-validation folds during FDR calculation.
+         The default is 5.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="BackgroundOrder_Info" tabindex="-1" role="dialog" aria-labelledby="BackgroundOrder_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+               <p  align="justify"> Order of background model should not exceed order of motif model. If searching for a short motif ( up to 4 nucleotides ), the backrgound order should be reduced. Otherwise the motif may already be picked up in the background model and therefore not be treated as significantly enriched motif in the positive search sequences. For longer motifs higher order background models can lead to more precise results. Default is 1 in order to be compatible with short motifs.</p>
+         </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="FDRSamplingOrder_Info" tabindex="-1" role="dialog" aria-labelledby="FDRSamplingOrder_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">Order of kmer for sampling negative sets during FDR calculation. The default is 2.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="EM_Info" tabindex="-1" role="dialog" aria-labelledby="EM_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+           <p  align="justify"> When checked, Expectation Maximization Optimization of Initial Motif will be triggered.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="EMq_Info" tabindex="-1" role="dialog" aria-labelledby="EMq_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+             <p  align="justify">   Prior probability for a positive sequence to contain a motif. The default is 0.9.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="EMepsilon_Info" tabindex="-1" role="dialog" aria-labelledby="EMepsilon_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+             <p  align="justify">   The EM algorithm is deemed to be converged when the sum over the
+        absolute differences in BaMM probabilities from successive EM rounds
+        is smaller than epsilon. The default is 0.001</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="EMmaxIter_Info" tabindex="-1" role="dialog" aria-labelledby="EMmaxIter_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+           <p  align="justify"> Limit the number of EM iterations.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="MMcompare_Info" tabindex="-1" role="dialog" aria-labelledby="MMcompare_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+       <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">When checked, the inserted Motif InitFile will be compared to our BaMMmotif Database to find similarities.</p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="db_match_p_value_cutoff_Info" tabindex="-1" role="dialog" aria-labelledby="db_match_p_value_cutoff_Info">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <font color="#0B0719">
+            <p  align="justify">The p-value limit will be used to define a threshold for motif comparisons between the inserted model and the database. </p>
+        </font>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+

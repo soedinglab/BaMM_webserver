@@ -8,17 +8,16 @@
      <h2> BaMMmotif Results for Job  {{result.job_name}} </h2>
      <hr style="border: 1px solid #1f2e2e">
      <div id="{{result.job_ID}}">
-        <p> Your job is currently running....</p>
         <p> Your Job status: {{result.status}} </p>
         <p> You can view the current calculations in the window below. </p>
-        <p> If you have submitted this job while being logged in, you will receive an email when it is finished. </p> 
+        <!--<p> If you have submitted this job while being logged in, you will receive an email when it is finished. </p> -->
         
         <div style="background-color:black"><font color="white">
             <pre> {{output}} </pre>     
         </front>
 
         </div>
-        <p>  &emsp; <a href="{% url 'result_detail' pk='293aae88-6e1e-48ba-ad87-19e7304e0391' %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> View Example Result </span></a> </td>
+
 
     </div>
   </font>

@@ -1,507 +1,187 @@
-from django.conf import settings
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
-from django.utils.encoding import smart_str
-from django.core.mail import send_mail
-from django.contrib.auth.models import User
-from django.core.files import File
-from django.http import HttpResponse
-from django.views.generic import TemplateView
-from .models import *
-from .forms import *
-from .tasks import *
-from ipware.ip import get_ip
-import plotly.offline as opy
-import plotly.graph_objs as go
+from .models import (
+    Job, ChIPseq, DbParameter
+)
+from .forms import (
+    PredictionForm, PredictionExampleForm,
+    OccurrenceForm, OccurrenceExampleForm,
+    OccurrenceDBForm,
+    CompareForm, CompareExampleForm,
+    FindForm, DBForm
+)
+from .tasks import (
+    run_bamm, run_bammscan, run_compare
+)
+from .utils import (
+    get_log_file,
+    get_user, set_job_name, upload_example_fasta,
+    upload_example_motif, get_result_folder,
+    upload_db_input
+)
 import datetime
-import subprocess
 import os
-import sys
-
-class Plot(TemplateView):
-    template_name = 'results/result_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super( Plot, self).get_context_data(**kwargs)
-        
-        # get Job object
-        result = get_object_or_404(Job, pk=self.kwargs.get('pk',None))
-        opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
-        Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
-        num_logos = range(min(2,result.model_Order) + 1)
-
-        context['result'] = result
-        context['opath'] = opath
-        context['Output_filename'] = Output_filename
-        context['num_logos'] = num_logos
-
-        all_plots = {}
-
-        NumMotifs = max(1, result.num_motifs)
-        for m in range(NumMotifs):
-            # read in logOdds Scores:
-            score_file = opath + '/' + Output_filename + '_motif_' + str(m+1) + '.scores'
-            data = {'start': [], 'end': [], 'score': [], 'pVal':[], 'eVal':[], 'strand': [], 'pattern': []}
-            
-            with open ( score_file ) as fh:
-                for line in fh:
-                    head = list(line)
-                    if head[0] == ">":
-                        #header line
-                        print(line)
-                    else:
-                        tok = line.split ( ':' )
-                        # start - end - score - pVal - eVal - strand - pattern :
-                        data['start'].append(tok[0])
-                        data['end'].append( tok[1] )
-                        data['score'].append( tok[2] )
-                        data['pVal'].append( tok[3] )
-                        data['eVal'].append( tok[4] )
-                        data['strand'].append ( tok[5] )
-                        data['pattern'].append ( tok[6].strip() )
+from os import path
 
 
-            #trace1 = go.Scatter(x=data['start'] , y= data['score'],marker={'color': 'red', 'symbol': 104, 'size': "10"},
-            #                    mode="lines",  name='1st Trace')
-            trace1 = go.Histogram(x=data['start'] )
+# #########################
+# ## HOME and GENERAL VIEWS
+# #########################
 
-            #x = [-2+m,0+m,4+m,6+m,7+m]
-            #y = [q**2-q+3 for q in x]
-            #trace1 = go.Scatter(x=x, y=y, marker={'color': 'red', 'symbol': 104, 'size': "10"},
-            #                    mode="lines",  name='1st Trace')
-
-            dat=go.Data([trace1])
-            layout=go.Layout(title="Motif Occurrence", xaxis={'title':'Position on Sequence'}, yaxis={'title':'Counts'})
-            figure=go.Figure(data=dat,layout=layout)
-            div = opy.plot(figure, auto_open=False, output_type='div')
-
-            all_plots[m+1]=div
-  
-        context['plot'] = all_plots
-
-
-        return context
-
-
-##########################
-### HOME and GENERAL VIEWS
-##########################
 
 def home(request):
     return render(request, 'home/home.html')
 
+
 def info(request):
     return render(request, 'home/aboutBaMMmotif.html')
+
 
 def documentation(request):
     return render(request, 'home/documentation.html')
 
+
 def download(request):
     return render(request, 'home/download.html')
-    
+
+
 def contact(request):
     return render(request, 'home/contact.html')
-    
+
+
 def imprint(request):
     return render(request, 'home/imprint.html')
 
-##########################
-### JOB RELATED VIEWS
-##########################
 
-def data_predict(request):
-    print("ENTERING Data PREDICT VIEW")
+# #########################
+# ## JOB RELATED VIEWS
+# #########################
+
+
+def run_compare_view(request, mode='normal'):
     if request.method == "POST":
-        print("Request IST POST")
-        form = JobForm(request.POST, request.FILES)
-        
-        if form.is_valid():
-            print("FORM IS VALID")
-            # Test if data maximum size is not reached
-            content = form.cleaned_data['Input_Sequences']
-            if request.user.is_authenticated():
-                if content._size > int(settings.MAX_UPLOAD_SIZE):
-                    form = JobForm()
-                    return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "FileSize", 'message' : settings.MAX_UPLOAD_SIZE})
-            else:
-                if content._size > int(settings.MAX_UPLOAD_SIZE_ANONYMOUS):
-                    form = JobForm()
-                    return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "FileSize", 'message' : settings.MAX_UPLOAD_SIZE_ANONYMOUS })
-
-            job = form.save(commit=False)
-            job.created_at = datetime.datetime.now()
-            job.status = "data uploaded"
-            if request.user.is_authenticated():
-                print("user is authenticated")
-                job.user = request.user
-            else:
-                print("User is not authenticated")
-                ip = get_ip(request)
-                if ip is not None:
-                    print("we have an IP address for user")
-                    # check if anonymous user already exists
-                    anonymous_users = User.objects.filter(username=ip)
-                    if anonymous_users.exists():
-                        print("user already exists")
-                        job.user = get_object_or_404(User, username=ip)
-                    else:
-                        print("create new anonymous user")
-                        # create an anonymous user and log them in
-                        username = ip
-                        u = User(username=username, first_name='Anonymous', last_name='User')
-                        u.set_unusable_password()
-                        u.save()
-                        job.user = u
-                else:
-                    print("we don't have an IP address for user")
-
-            print("UPLOAD COMPLETE: save job object")
-            job.save() 
-            print("JOB ID = ", str(job.pk))
-            
-            # check if job has a name, if not use first 6 digits of job_id as job_name
-            if job.job_name == None:
-                # truncate job_id
-                job_id_short = str(job.job_ID).split("-",1)
-                job.job_name = job_id_short[0]
-                job.save() 
-
-
-            #check if file formats are correct
-            opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
-            
-            # 1. Input sequence File
-            check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
-             str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
-             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            out, err = check.communicate()
-              
-            out = out.decode('ascii')
-           
-            if out == "OK":
-                # 2. Background Sequence File
-                if job.Background_Sequences.name == None:
-                    out = "OK"
-                else:                
-                    check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
-                    str(os.path.join(settings.MEDIA_ROOT, job.Background_Sequences.name))], 
-                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                    out, err = check.communicate()  
-                    out = out.decode('ascii')
-          
-                if out == "OK":  
-                
-                    # 3. Motif Init File 
-                    #    check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_Init',
-                    #    str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name)),
-                    #    str(os.path.join(settings.MEDIA_ROOT, job.Motif_InitFile.name)),
-                    #    str(job.Motif_Init_File_Format) ], 
-                    #    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                    #    out, err = check.communicate()  
-                    #    out = out.decode('ascii')
-                    
-                    if out == "OK":
-                        print("OUT IS OK -> run the JOB")
-                        run_bamm.delay(job.pk)
-                        return render(request, 'job/submitted.html', {'pk': job.pk} ) 
-                    else:
-                        print("OUT IS NOT OK -> delete job and give error message 1")
-                        Job.objects.filter(job_ID=job.pk).delete()
-                        form = JobForm()
-                        return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "Init", 'message' : out })
-                else:
-                    print("OUT IS NOT OK -> delete job and give error message 2")
-                    Job.objects.filter(job_ID=job.pk).delete()
-                    form = JobForm()
-                    return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "Background", 'message' : out })
-            else:
-                print("OUT IS NOT OK -> delete job and give error message 3")
-                print(out)
-                Job.objects.filter(job_ID=job.pk).delete()
-                form = JobForm()
-                return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "Fasta", 'message' : out })
+        if mode == 'example':
+            form = CompareExampleForm(request.POST, request.FILES)
         else:
-            print("Form is not valid")
-            form = JobForm()
-            return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "OK", 'message' : "OK"})
-
-    else:
-        print("Request IS NOT POST -> make form and redirect")
-        form = JobForm()
-        return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "OK", 'message' : "OK"})
-
-    print("default action applies")
-    return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "OK", 'message' : "OK"})
-
-
-def denovo_example(request):
-    print("ENTERING Data PREDICT VIEW with example")
-    if request.method == "POST":
-        print("Request IST POST")
-        form = ExampleForm(request.POST, request.FILES)
-        
+            print('store normal form')
+            form = CompareForm(request.POST, request.FILES)
         if form.is_valid():
-            print("FORM IS VALID")
+            # read in data and parameter
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
-            job.status = "data uploaded"
-            if request.user.is_authenticated():
-                print("user is authenticated")
-                job.user = request.user
-            else:
-                print("User is not authenticated")
-                ip = get_ip(request)
-                if ip is not None:
-                    print("we have an IP address for user")
-                    # check if anonymous user already exists
-                    anonymous_users = User.objects.filter(username=ip)
-                    if anonymous_users.exists():
-                        print("user already exists")
-                        job.user = get_object_or_404(User, username=ip)
-                    else:
-                        print("create new anonymous user")
-                        # create an anonymous user and log them in
-                        username = ip
-                        u = User(username=username, first_name='Anonymous', last_name='User')
-                        u.set_unusable_password()
-                        u.save()
-                        job.user = u
-                else:
-                    print("we don't have an IP address for user")
-
-            # upload motifInitFile
-            filename= 'example_data/ExampleData.fasta'
-            f = open(str(filename))
-            out_filename = "ExampleData.fasta"
-            job.Input_Sequences.save(out_filename , File(f))
-            
-            print("UPLOAD COMPLETE: save job object")
-            job.save() 
-            print("JOB ID = ", str(job.pk))
-            
-            # check if job has a name, if not use first 6 digits of job_id as job_name
-            if job.job_name == None:
-                # truncate job_id
-                job_id_short = str(job.job_ID).split("-",1)
-                job.job_name = job_id_short[0]
-                job.save() 
-
-            # 2. Background Sequence File
-            if job.Background_Sequences.name == None:
-                out = "OK"
-            else:                
-                check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
-                str(os.path.join(settings.MEDIA_ROOT, job.Background_Sequences.name))], 
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                out, err = check.communicate()  
-                out = out.decode('ascii')
-          
-            if out == "OK":  
-                print("OUT IS OK -> run the JOB")
-                run_bamm.delay(job.pk)
-                return render(request, 'job/submitted.html', {'pk': job.pk} ) 
-            else:
-                print("OUT IS NOT OK -> delete job and give error message 2")
-                Job.objects.filter(job_ID=job.pk).delete()
-                form = ExampleForm()
-                return render(request, 'job/de_novo_search_example.html', {'form':form , 'type' : "Background", 'message' : out })
-        else:
-            print("Form is not valid")
-            form = ExampleForm()
-            return render(request, 'job/de_novo_search_example.html', {'form':form , 'type' : "OK", 'message' : "OK"})
-    else:
-        print("Request IS NOT POST -> make form and redirect")
-        form = ExampleForm()
-        return render(request, 'job/de_novo_search_example.html', {'form':form , 'type' : "OK", 'message' : "OK"})
-
-    print("default action applies")
-    return render(request, 'job/de_novo_search_example.html', {'form':form , 'type' : "OK", 'message' : "OK"})
-
-
-def data_discover(request):
-    if request.method == "POST":
-        form = DiscoveryForm(request.POST, request.FILES)
-        if form.is_valid():
-            job = form.save(commit=False)
-            job.created_at = datetime.datetime.now()
-            job.status = "data uploaded"
-            if request.user.is_authenticated():
-                print("user is authenticated")
-                job.user = request.user
-            else:
-                print("User is not authenticated")
-                ip = get_ip(request)
-                if ip is not None:
-                    print("we have an IP address for user")
-                    # check if anonymous user already exists
-                    anonymous_users = User.objects.filter(username=ip)
-                    if anonymous_users.exists():
-                        print("user already exists")
-                        job.user = get_object_or_404(User, username=ip)
-                    else:
-                        print("create new anonymous user")
-                        # create an anonymous user and log them in
-                        username = ip
-                        u = User(username=username, first_name='Anonymous', last_name='User')
-                        u.set_unusable_password()
-                        u.save()
-                        job.user = u
-                else:
-                    print("we don't have an IP address for user")
-            job.save() 
-
-            # check if job has a name, if not use first 6 digits of job_id as job_name
-            if job.job_name == None:
-                # truncate job_id
-                job_id_short = str(job.job_ID).split("-",1)
-                job.job_name = job_id_short[0]
-                job.save() 
-
-
-            #check if file formats are correct
-            opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
-            
-            # 1. Input sequence File
-            check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
-             str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
-             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            out, err = check.communicate()
-              
-            out = out.decode('ascii')
-
-            if out == "OK":
-                job.status = "job ready to submit" 
-                # turn off optimization to just scan input sequence for model positions.
-                job.EM = False
-                job.CGS = False
-                job.FDR = False
-                job.extend_1 = 0
-                job.extend_2 = 0
-                job.Motif_Initialization = "Custom File"
-                if job.Motif_Init_File_Format == "PWM":
-                    job.model_Order = 0
-                job.score_Seqset = True
-                job.mode = "Occurrence"
-                job.save()
-                print("OUT IS OK -> run the JOB")
-                print("BG_model_File ->" + job.bg)
-                run_bamm.delay(job.pk)
-                return render(request, 'job/submitted.html', {'pk': job.pk} )    
-            else:
-                job.delete()
-                form = DiscoveryForm()
-                return render(request, 'job/data_dicover.html', {'form':form , 'type' : "Fasta", 'message' : out })
-        else:
-            form = DiscoveryForm()
-    else:
-        form= DiscoveryForm()
-    return render(request, 'job/data_discover.html', { 'form':form })
-
-def data_discover_from_db(request, pk):
-    db_entry = get_object_or_404(ChIPseq, pk=pk)
-    if request.method == "POST":
-        form=DiscoveryDBForm(request.POST, request.FILES)
-        if form.is_valid():
-            job = form.save(commit=False)
-            job.created_at = datetime.datetime.now()
-            job.status = "data uploaded"
-            if request.user.is_authenticated():
-                print("user is authenticated")
-                job.user = request.user
-            else:
-                print("User is not authenticated")
-                ip = get_ip(request)
-                if ip is not None:
-                    print("we have an IP address for user")
-                    # check if anonymous user already exists
-                    anonymous_users = User.objects.filter(username=ip)
-                    if anonymous_users.exists():
-                        print("user already exists")
-                        job.user = get_object_or_404(User, username=ip)
-                    else:
-                        print("create new anonymous user")
-                        # create an anonymous user and log them in
-                        username = ip
-                        u = User(username=username, first_name='Anonymous', last_name='User')
-                        u.set_unusable_password()
-                        u.save()
-                        job.user = u
-                else:
-                    print("we don't have an IP address for user")
-            job.save() 
-            
-            # upload motifInitFile
-            filename= 'DB/' + str(db_entry.parent.base_dir) + '/Results/' + str(db_entry.result_location) + '/' + str(db_entry.result_location) + '_motif_1.ihbcp'
-            f = open(str(filename))
-            out_filename = str(db_entry.result_location) + ".ihbcp"
-            job.Motif_InitFile.save(out_filename , File(f))
-            job.Motif_Init_File_Format = "BaMM"
+            job.user = get_user(request)
             job.save()
-            
-            # upload bgModelFile
-            filename= 'DB/' + str(db_entry.parent.base_dir) + '/Results/' + str(db_entry.result_location) + '/' + str(db_entry.result_location) + '.hbcp'
-            f = open(str(filename))
-            out_filename = str(db_entry.result_location) + ".hbcp"
-            job.bgModel_File.save(out_filename , File(f))
-            job.save()
-            
-             # check if job has a name, if not use first 6 digits of job_id as job_name
-            if job.job_name == None:
-                # truncate job_id
-                job_id_short = str(job.job_ID).split("-",1)
-                job.job_name = job_id_short[0]
-                job.save() 
+            job_pk = job.job_ID
 
-            
-            #check if file formats are correct
-            opath = os.path.join(settings.MEDIA_ROOT, str(job.pk),"Output")
-            
-            # 1. Input sequence File
-            check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
-             str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))], 
-             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            out, err = check.communicate()
-              
-            out = out.decode('ascii')
+            if job.job_name is None:
+                set_job_name(job_pk)
 
-            if out == "OK":
-                job.status = "job ready to submit" 
-                # turn off optimization to just scan input sequence for model positions.
-                job.EM = False
-                job.CGS = False
-                job.FDR = False
-                job.extend_1 = 0
-                job.extend_2 = 0
-                job.Motif_Initialization = "Custom File"
-                job.score_Seqset = True
-                job.mode = "Occurrence"
-                if job.Motif_Init_File_Format == "PWM":
-                    job.model_Order = 0
-                job.save()
-                print("OUT IS OK -> run the JOB")
-                run_bamm.delay(job.pk)
-                return render(request, 'job/submitted.html', {'pk': job.pk} )    
-            else:
-                job.delete()
-                form = DiscoveryDBForm()
-                return render(request, 'job/data_discoverDB.html', {'form':form , 'type' : "Fasta", 'message' : out })
+            # if example is requested, load the sampleData
+            if mode == 'example':
+                upload_example_fasta(job_pk)
+                upload_example_motif(job_pk)
 
-        else:
-            form = DiscoveryDBForm()
+            run_compare.delay(job_pk)
+            return render(request, 'job/submitted.html', {'pk': job_pk})
+
+    if mode == 'example':
+        form = CompareExampleForm()
     else:
-        form = DiscoveryDBForm()
-    return render(request, 'job/data_discoverDB.html',{'form': form, 'pk':pk, 'db_entry':db_entry})
-
-def submitted(request,pk):
-    return render(request, 'job/submitted.html', {'pk':pk})
+        form = CompareForm()
+    return render(request, 'job/compare_input.html',
+                  {'form': form, 'mode': mode})
 
 
+def run_bammscan_view(request, mode='normal', pk='null'):
+    print('mode = ' + mode)
+    print('pk = ' + pk)
+    if request.method == "POST":
+        if mode == 'example':
+            form = OccurrenceExampleForm(request.POST, request.FILES)
+        if mode == 'db':
+            form = OccurrenceDBForm(request.POST, request.FILES)
+        if mode == 'normal':
+            form = OccurrenceForm(request.POST, request.FILES)
+        if form.is_valid():
+            # read in data and parameter
+            job = form.save(commit=False)
+            job.created_at = datetime.datetime.now()
+            job.user = get_user(request)
+            job.save()
+            job_pk = job.job_ID
 
-##########################
-### RESULT RELATED VIEWS
-##########################
+            if job.job_name is None:
+                set_job_name(job_pk)
 
+            # if example is requested, load the sampleData
+            if mode == 'example':
+                upload_example_fasta(job_pk)
+                upload_example_motif(job_pk)
+
+            # enter db input
+            if mode == 'db':
+                upload_db_input(job_pk, pk)
+
+            run_bammscan.delay(job_pk)
+            return render(request, 'job/submitted.html', {'pk': job_pk})
+        else:
+            print('POST Form is not valid!')
+    if mode == 'db':
+        form = OccurrenceDBForm()
+        db_entry = get_object_or_404(ChIPseq, pk=pk)
+        return render(request, 'job/bammscan_input.html',
+                      {'form': form, 'mode': mode, 'pk': pk,
+                       'db_entry': db_entry})
+    if mode == 'example':
+        form = OccurrenceExampleForm()
+    if mode == 'normal':
+        form = OccurrenceForm()
+    return render(request, 'job/bammscan_input.html',
+                  {'form': form, 'mode': mode})
+
+
+def run_bamm_view(request, mode='normal'):
+    if request.method == "POST":
+        if mode == 'example':
+            form = PredictionExampleForm(request.POST, request.FILES)
+        else:
+            print('store normal form')
+            form = PredictionForm(request.POST, request.FILES)
+        if form.is_valid():
+            # read in data and parameter
+            job = form.save(commit=False)
+            job.created_at = datetime.datetime.now()
+            job.user = get_user(request)
+            job.save()
+            job_pk = job.job_ID
+
+            if job.job_name is None:
+                set_job_name(job_pk)
+
+            # if example is requested, load the sampleData
+            if mode == 'example':
+                upload_example_fasta(job_pk)
+                upload_example_motif(job_pk)
+
+            run_bamm.delay(job_pk)
+            return render(request, 'job/submitted.html', {'pk': job_pk})
+
+    if mode == 'example':
+        form = PredictionExampleForm()
+    else:
+        form = PredictionForm()
+    return render(request, 'job/bamm_input.html',
+                  {'form': form, 'mode': mode})
+
+
+def submitted(request, pk):
+    return render(request, 'job/submitted.html', {'pk': pk})
+
+
+# #########################
+# ## RESULT RELATED VIEWS
+# #########################
 
 
 def find_results(request):
@@ -509,72 +189,92 @@ def find_results(request):
         form = FindForm(request.POST)
         if form.is_valid():
             jobid = form.cleaned_data['job_ID']
-            return redirect('result_detail', pk=jobid)  
+            return redirect('result_detail', pk=jobid)
     else:
         form = FindForm()
-    return render(request, 'results/results_main.html', {'form':form})
-    
+    return render(request, 'results/results_main.html', {'form': form})
+
 
 def result_overview(request):
     if request.user.is_authenticated():
-        user_jobs = Job.objects.filter(user = request.user.id)
-        return render(request,'results/result_overview.html', { 'user_jobs' : user_jobs })
+        user_jobs = Job.objects.filter(user=request.user.id)
+        return render(request, 'results/result_overview.html',
+                      {'user_jobs': user_jobs})
     else:
-        return redirect(request,'find_results')
+        return redirect(request, 'find_results')
 
 
-def delete(request, pk ):
+def delete(request, pk):
     Job.objects.filter(job_ID=pk).delete()
     if request.user.is_authenticated():
-        user_jobs = Job.objects.filter(user = request.user.id)
-        return render(request,'results/result_overview.html', { 'user_jobs' : user_jobs })
+        user_jobs = Job.objects.filter(user=request.user.id)
+        return render(request, 'results/result_overview.html',
+                      {'user_jobs': user_jobs})
     else:
-        return redirect(request,'find_results')
+        return redirect(request, 'find_results')
+
 
 def result_detail(request, pk):
     result = get_object_or_404(Job, pk=pk)
-    opath = os.path.join(settings.MEDIA_ROOT,str(result.pk),"Output")
-    Output_filename, ending = os.path.splitext(os.path.basename(result.Input_Sequences.name))
-    if result.status == 'Successfully finished':
-        num_logos = range(min(2,result.model_Order) + 1)
-        if result.mode == 'Predicition':
-            return render(request,'results/result_detail.html', {'result':result, 'opath':opath, 'Output_filename':Output_filename, 'num_logos':num_logos})
-        if result.mode == 'Occurrence':
-            print("RESULT.numMOTIFS=" + str(result.num_motifs))
-            return redirect('test', pk)
-    else:
-        command ="tail -20 /code/media/logs/" + pk + ".log"
-        output = os.popen(command).read()
-        return render(request,'results/result_status.html', {'result':result, 'opath':opath , 'output':output })
+    opath = get_result_folder(pk)
+    Output_filename = result.Output_filename()
 
-##########################
-### DATABASE RELATED VIEWS
-##########################
+    database = 100
+    db = get_object_or_404(DbParameter, pk=database)
+    db_dir = path.join(db.base_dir, 'Results')
+
+    if result.complete:
+        print("status is successfull")
+        num_logos = range(1, (min(2, result.model_Order)+1))
+        if result.mode == "Prediction" or result.mode == "Compare":
+            return render(request, 'results/result_detail.html',
+                          {'result': result, 'opath': opath,
+                           'mode': result.mode,
+                           'Output_filename': Output_filename,
+                           'num_logos': num_logos,
+                           'db_dir': db_dir})
+        elif result.mode == "Occurrence":
+            return redirect('result_occurrence', result.mode, pk)
+
+    else:
+        print('status not ready yet')
+        log_file = get_log_file(pk)
+        command = "tail -20 %r" % log_file
+        output = os.popen(command).read()
+        return render(request, 'results/result_status.html',
+                      {'result': result, 'opath': opath, 'output': output})
+
+
+# #########################
+# ## DATABASE RELATED VIEWS
+# #########################
 
 
 def maindb(request):
     if request.method == "POST":
         form = DBForm(request.POST)
         if form.is_valid():
-            protein_name = form.cleaned_data['db_ID']
-            db_entries = ChIPseq.objects.filter( target_name__icontains=protein_name )
-            return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries })
+            p_name = form.cleaned_data['db_ID']
+            db_entries = ChIPseq.objects.filter(target_name__icontains=p_name)
+            return render(request, 'database/db_overview.html',
+                          {'protein_name': p_name,
+                           'db_entries': db_entries})
     else:
         form = DBForm()
-    return render(request, 'database/db_main.html', {'form':form})
+    return render(request, 'database/db_main.html', {'form': form})
 
-    
 
 def db_overview(request, protein_name, db_entries):
-    return render(request,'database/db_overview.html', {'protein_name':protein_name, 'db_entries':db_entries })
+    db_location = path.join(db_entries[0].parent.base_dir, 'Results')
+
+    return render(request, 'database/db_overview.html',
+                  {'protein_name': protein_name,
+                   'db_entries': db_entries,
+                   'db_location': db_location})
+
 
 def db_detail(request, pk):
-   entry = get_object_or_404(ChIPseq, db_public_id=pk)
-   return render(request,'database/db_detail.html', {'entry':entry})
-
-
-
-
-
-
-
+    entry = get_object_or_404(ChIPseq, db_public_id=pk)
+    db_location = path.join(entry.parent.base_dir, 'Results')
+    return render(request, 'database/db_detail.html',
+                  {'entry': entry, 'db_location': db_location})

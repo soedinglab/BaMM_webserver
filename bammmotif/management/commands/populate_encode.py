@@ -26,8 +26,8 @@ class Command(BaseCommand):
         alphabet               = 'STANDARD',
         reversecomp            = True,
         modelorder             = 4,
-        extend_1               = 10,
-        extend_2               = 10,
+        extend_1               = 4,
+        extend_2               = 4,
         bgmodelorder           = 2,
         em                     = True,
         maxemiterations        = 1e5,
@@ -39,7 +39,8 @@ class Command(BaseCommand):
         savelogodds            = True,
         cgs                    = False,
         maxcgsiterations       = 1e5,
-        noalphasampling        = True
+        noalphasampling        = True,
+        location               = '/code/DB/ENCODE_ChIPseq/Results'
         )
       db_param.save()
 
