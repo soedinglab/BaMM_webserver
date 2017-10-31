@@ -117,6 +117,16 @@
         </table>
         {% endif %}
 
+        {% if result.FDR %}
+        <h3>Motif Evaluation:</h3>
+        <table>
+            <tr>
+                <td>  &emsp; sampling Order: </td>
+                <td>  &emsp; {{result.sampling_Order}}</td>
+            </tr>   
+        </table>
+        {% endif %}
+        
         {% if result.MMcompare %}
         <h3>Database Model Comparison:</h3>
         <table>
