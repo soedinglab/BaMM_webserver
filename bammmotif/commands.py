@@ -91,10 +91,55 @@ def get_logo_command(job_pk, order):
 def get_peng_command(job_pk, useRefined):
     job = get_object_or_404(Job, pk=job_pk)
     param = []
-    param.append("peng_motif")
-    param.append(path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))
-    param.append("-o")
-    param.append(path.join(get_job_input_folder(job_pk), settings.PENG_INIT))
+    param.append('plotMotifDistribution.R')
+    param.append(get_job_output_folder(job_pk) + '/')
+    param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
+    command = " ".join(str(s) for s in param)
+    return command
+
+
+def get_evaluation_command(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    param = []
+    param.append('evaluateBaMM.R')
+    param.append(get_job_output_folder(job_pk) + '/')
+    param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
+    param.append('--SFC 1')
+    param.append('--ROC5 1')
+    param.append('--PRC 1')
+    command = " ".join(str(s) for s in param)
+    return command
+
+
+def get_iupac_command(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    param = []
+    param.append('IUPAC.py')
+    param.append(get_job_output_folder(job_pk) + '/')
+    param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
+    param.append(job.model_Order)
+    command = " ".join(str(s) for s in param)
+    return command
+
+
+def get_compress_command(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    param = []
+    param.append('zip -j')
+    param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_BaMMmotif.zip')
+    param.append(get_job_output_folder(job_pk) + '/*')
+    command = " ".join(str(s) for s in param)
+    print(command)
+    return command
+
+
+def get_motif_compress_command(job_pk, motif):
+    job = get_object_or_404(Job, pk=job_pk)
+    param = []
+    param.append('zip -j')
+    param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_Motif_' + str(motif) + '.zip')
+    param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '*')
+    param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hb*')
     command = " ".join(str(s) for s in param)
     print(command)
     return command
