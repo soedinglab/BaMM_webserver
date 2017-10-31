@@ -13,6 +13,7 @@ from .utils import (
     run_command, initialize_motifs,
     add_motif_evaluation,
     add_motif_motif_matches,
+    add_motif_iupac,
     transfer_motif
 )
 
@@ -104,6 +105,17 @@ def get_evaluation_command(job_pk):
     param.append('--SFC 1')
     param.append('--ROC5 1')
     param.append('--PRC 1')
+    command = " ".join(str(s) for s in param)
+    return command
+
+
+def get_iupac_command(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    param = []
+    param.append('IUPAC.py')
+    param.append(get_job_output_folder(job_pk) + '/')
+    param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
+    param.append(job.model_Order)
     command = " ".join(str(s) for s in param)
     return command
 
@@ -232,6 +244,9 @@ def BaMM(job_pk, first, useRefined):
     if first is True:
         # generate motif objects
         initialize_motifs(job_pk, 2, 2)
+    # add IUPACs
+    run_command(get_iupac_command(job_pk))
+    add_motif_iupac(job_pk)
     # plot logos
     for order in range(min(job.model_Order+1, 4)):
         run_command(get_logo_command(job_pk, order))
