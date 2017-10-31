@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^job/run_peng_view/$', peng_bamm_split_views.run_peng_view, name='peng_predict'),
     url(r'^job/run_peng_view/(?P<mode>\w+)/$', peng_bamm_split_views.run_peng_view, name='peng_predict'),
     url(r'^peng_results/(?P<pk>.*)/$', peng_bamm_split_views.peng_result_detail, name='peng_result_detail'),
+    url(r'^job/data_predict_peng/', peng_bamm_split_views.data_predict_peng, name='data_predict')
  ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
