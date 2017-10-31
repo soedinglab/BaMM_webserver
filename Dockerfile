@@ -23,6 +23,7 @@ RUN mkdir /code/media/
 ENV PATH="${PATH}:/code/bammmotif/static/scripts/bamm-private/build/BaMMmotif/"
 ENV PATH="${PATH}:/code/bammmotif/static/scripts/bamm-private/R/"
 ENV PATH="${PATH}:/code/bammmotif/static/scripts/PEnG-motif/build/bin/"
+ENV PATH="${PATH}:/code/tools/suite/PEnG-motif/scripts/"
 
 RUN apt-get install -y \
 	cmake\
