@@ -133,14 +133,6 @@
                 <td>  &emsp; q value: </td>
                 <td>  &emsp; {{entry.parent.q_value}}</td>
             </tr>
-            <tr>
-                <td>  &emsp; epsilon: </td>
-                <td>  &emsp; {{entry.parent.epsilon}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; max Iterations: </td>
-                <td>  &emsp; {{entry.parent.maxemiterations}}</td>
-            </tr>
         </table>
         {% endif %}
 
@@ -158,23 +150,6 @@
         </table>
         {% endif %}
         
-        {% if entry.parent.fdr == 1%}
-        <h3>False Discovery Rate Estimation:</h3>
-        <table>
-            <tr>
-                <td>  &emsp; mFold: </td>
-                <td>  &emsp; {{entry.parent.mfold}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; cvFold: </td>
-                <td>  &emsp; {{entry.parent.cvfold}}</td>
-            </tr> 
-            <tr>
-                <td>  &emsp; sampling Order: </td>
-                <td>  &emsp; {{entry.parent.samplingorder}}</td>
-            </tr>   
-        </table>
-        {% endif %}
 </div>
 </div>
 

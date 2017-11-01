@@ -27,8 +27,8 @@
         <tr>
             <td> {{ forloop.counter           }} </td>
             <td> {{ entry.target_name         }} </td>
-            <td> <img src="{% get_static_prefix %}DB/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </td>
-            <td> <img src="{% get_static_prefix %}DB/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></td>     
+            <td> <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </td>
+            <td> <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></td>     
             <td> {{ entry.cell_type           }} </td>
             <td> {{ entry.parent.experiment   }} </td>
             <td> {{ entry.lab                 }} </td>            
