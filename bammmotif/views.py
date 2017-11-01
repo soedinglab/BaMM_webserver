@@ -23,6 +23,7 @@ from .utils import (
 import datetime
 import os
 from os import path
+import sys
 
 
 # #########################
@@ -256,17 +257,18 @@ def maindb(request):
         if form.is_valid():
             p_name = form.cleaned_data['db_ID']
             db_entries = ChIPseq.objects.filter(target_name__icontains=p_name)
+            sample = db_entries.first()
+            db_location = path.join(sample.parent.base_dir, 'Results')
             return render(request, 'database/db_overview.html',
                           {'protein_name': p_name,
-                           'db_entries': db_entries})
+                           'db_entries': db_entries,
+                           'db_location': db_location})
     else:
         form = DBForm()
     return render(request, 'database/db_main.html', {'form': form})
 
 
 def db_overview(request, protein_name, db_entries):
-    db_location = path.join(db_entries[0].parent.base_dir, 'Results')
-
     return render(request, 'database/db_overview.html',
                   {'protein_name': protein_name,
                    'db_entries': db_entries,
