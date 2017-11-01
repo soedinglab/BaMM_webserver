@@ -60,7 +60,7 @@ ENCODE.hg19.TFBS.QC.metadata.jun2012-TFs_SPP_pooled.tsv
 ENCODE_ChIPseq/Results/
 ```
 
-## Building and starting the webserver
+## Building the webserver
 Now use `docker-compose build` to download and build all docker images.
 
 ## Populating the database
