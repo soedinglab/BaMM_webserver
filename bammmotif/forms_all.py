@@ -12,8 +12,8 @@ class PredictionForm(forms.ModelForm):
                   'Motif_Initialization', 'Motif_InitFile',
                   'Motif_Init_File_Format', 'background_Order',
                   'Background_Sequences', 'score_Seqset',
-                  'score_Cutoff', 'FDR', 
-                  'q_value')
+                  'score_Cutoff', 'FDR', 'm_Fold', 'sampling_Order',
+                  'q_value', 'MMcompare', 'p_value_cutoff')
 
     def __init__(self, *args, **kwargs):
         super(PredictionForm, self).__init__(*args, **kwargs)
@@ -33,7 +33,8 @@ class PredictionExampleForm(forms.ModelForm):
         fields = ('job_name', 'reverse_Complement', 'model_Order',
                   'extend_1', 'extend_2', 'background_Order',
                   'Background_Sequences', 'score_Seqset', 'score_Cutoff',
-                  'FDR', 'q_value')
+                  'FDR', 'm_Fold', 'sampling_Order', 'q_value',
+                  'MMcompare', 'p_value_cutoff')
 
     def __init__(self, *args, **kwargs):
         super(PredictionExampleForm, self).__init__(*args, **kwargs)

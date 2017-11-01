@@ -16,8 +16,8 @@ git clone git@github.com:soedinglab/BaMM_webserver.git
 # git clone ssh://git@ssh.github.com:443/soedinglab/BaMM_webserver.git
 
 cd  BaMM_webserver
-git checkout make_startup_work
-git pull origin make_startup_work
+git checkout fixit
+git pull origin fixit
 git submodule update --init --recursive
 ```
 
@@ -47,13 +47,26 @@ WEBSERVER_DIR=/var/webserver/BaMM_webserver
 MYSQL_DB_DIR=/var/webserver/mysql_db
 REDIS_DB_DIR=/var/webserver/redis_db
 MEDIA_DIR=/var/webserver/media_db
+DB_DIR=/var/webserver/BaMM_webserver/DB
 ```
 
 Make sure `BAMM_USER_UID` matches the UID of your user account. You can find your UID by executing `echo $UID` in the shell.
 
-## Building and starting the webserver
+The DB_DIR needs to direct to the location of the folder where you have stored the database, so the folder which currently contains:
+NOTE: Place the DB folder at /var/webserver/BaMM_webserver/DB for the moment to have proper database population.
+
+```
+ENCODE.hg19.TFBS.QC.metadata.jun2012-TFs_SPP_pooled.tsv
+ENCODE_ChIPseq/Results/
+```
+
+## Building the webserver
 Now use `docker-compose build` to download and build all docker images.
 
+## Populating the database
+When starting the webserver for the very first time comment in `populate.sh` (line 9) in the file `run_web.sh`. This will fill the mysql database updon running `docker-compose up`. NOTE: this should only be done the very first time when you start your webserver, because a repeated call of populate.sh will lead to redundancies in the database. AFTER having started t he webserver for the first time please comment out `populate.sh`(line 9) in the file `run_web.sh`again.
+
+## Starting the webserver
 After successfully building the webserver, use `docker-compose up` to start the webserver. In case you see errors related to mysql stop the server by `ctrl-C` and let is shut down gracefully and restart with `docker-compose up`. The error should be gone.
 
 ## Profit
