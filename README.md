@@ -16,8 +16,8 @@ git clone git@github.com:soedinglab/BaMM_webserver.git
 # git clone ssh://git@ssh.github.com:443/soedinglab/BaMM_webserver.git
 
 cd  BaMM_webserver
-git checkout make_startup_work
-git pull origin make_startup_work
+git checkout fixit
+git pull origin fixit
 git submodule update --init --recursive
 ```
 
