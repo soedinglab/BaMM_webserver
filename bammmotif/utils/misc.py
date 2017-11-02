@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.core.files import File
 from ipware.ip import get_ip
-from .models import (
+from ..models import (
     Job, Motifs, ChIPseq, DbMatch
 )
 import sys
