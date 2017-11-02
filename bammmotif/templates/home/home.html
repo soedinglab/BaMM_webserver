@@ -74,7 +74,7 @@
    <div class="col-md-6">
       <div class='container-fluid'>
         <center>
-              <img src="{% static 'img/compare_new2.png' %}" class="responsive-img" style='max-height:180px;' alt="logo">
+              <img src="{% static 'img/compare_comingSoon.png' %}" class="responsive-img" style='max-height:180px;' alt="logo">
         </center>
         <div class="jumbotron" style="background-color:white"><font color="black">
   
@@ -131,7 +131,7 @@ Motif-Motif Comparison
 <div class="col-md-6">
   <div class='container-fluid'>
     <center>
-              <img src="{% static 'img/Discovery_new2.png' %}" class="responsive-img" style='max-height:180px;' alt="logo">
+              <img src="{% static 'img/discovery_comingSoon.png' %}" class="responsive-img" style='max-height:180px;' alt="logo">
             </center>
 <div class="jumbotron" style="background-color:white"><font color="black">
 
@@ -199,10 +199,15 @@ Motif-Motif Comparison
 <div class="col-md-6">
   <div class='container-fluid'>
    <center>
-              <img src="{% static 'img/database_new2.png' %}" class="responsive-img" style='max-height:180px;' alt="logo">
+              <img src="{% static 'img/database_comingSoon.png' %}" class="responsive-img" style='max-height:180px;' alt="logo">
    </center>
 <div class="jumbotron" style="background-color:white"><font color="black">
-<center><a class="btn btn-primary btn-lg" href='/database/' role="button" style="background-color:#1f2e2e">Motif Database</a></center>
+
+<center><a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal_BETA" style="background-color:#1f2e2e">
+Motif Database
+</a></center>
+
+<!--<center><a class="btn btn-primary btn-lg" href='/database/' role="button" style="background-color:#1f2e2e">Motif Database</a></center>-->
   <hr style="border: 1px solid #1f2e2e">
   <p align="justify"><font size=3>Download or select for analysis models from a database of over 450 models learned on ChIP-seq data</font></p>
 </font>
@@ -211,6 +216,7 @@ Motif-Motif Comparison
 </div>
   </div>
 </div>
+
 
 {% endblock %}
 
