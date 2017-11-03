@@ -12,7 +12,8 @@ from .forms import (
     FindForm, DBForm
 )
 from .tasks import (
-    run_bamm, run_bammscan, run_compare
+    run_bamm, run_bammscan,
+    run_compare, run_peng
 )
 from .utils import (
     get_log_file,
@@ -165,7 +166,10 @@ def run_bamm_view(request, mode='normal'):
                 upload_example_fasta(job_pk)
                 upload_example_motif(job_pk)
 
-            run_bamm.delay(job_pk)
+            if job.Motif_Initialization == 'PEnGmotif':
+                run_peng.delay(job_pk)
+            else:
+                run_bamm.delay(job_pk)
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
     if mode == 'example':
