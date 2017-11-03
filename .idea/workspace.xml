@@ -11,6 +11,7 @@
 =======
     <list default="true" id="c75acfec-2eef-4ef2-a200-872fbc7cc2d4" name="Default" comment="">
 <<<<<<< HEAD
+<<<<<<< HEAD
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Dockerfile" afterPath="$PROJECT_DIR$/Dockerfile" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/peng_bamm_split_views.py" afterPath="$PROJECT_DIR$/bammmotif/peng_bamm_split_views.py" />
@@ -24,6 +25,12 @@
 =======
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/templates/home/home.html" afterPath="$PROJECT_DIR$/bammmotif/templates/home/home.html" />
 >>>>>>> peng home changed
+=======
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/peng_bamm_split_job.py" afterPath="$PROJECT_DIR$/bammmotif/peng_bamm_split_job.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/templates/home/home.html" afterPath="$PROJECT_DIR$/bammmotif/templates/home/home.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_peng_input.html" afterPath="$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_peng_input.html" />
+>>>>>>> Updated Peng html job submission
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -256,9 +263,14 @@
       <file leaf-file-name="home.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bammmotif/templates/home/home.html">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="54">
               <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
 >>>>>>> peng home changed
+=======
+            <state relative-caret-position="416">
+              <caret line="476" column="0" lean-forward="false" selection-start-line="476" selection-start-column="0" selection-end-line="476" selection-end-column="0" />
+>>>>>>> Updated Peng html job submission
               <folding />
             </state>
           </provider>
@@ -942,6 +954,7 @@
           <caret line="271" column="47" lean-forward="false" selection-start-line="271" selection-start-column="47" selection-end-line="271" selection-end-column="47" />
           <folding>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <marker date="1509971694609" expanded="false" signature="8438:8457" ph="..." />
             <marker date="1509971694609" expanded="false" signature="8774:8785" ph="..." />
             <marker date="1509971694609" expanded="false" signature="8882:8888" ph=" " />
@@ -960,6 +973,16 @@
             <marker date="1509971138069" expanded="false" signature="12950:12956" ph=" " />
             <marker date="1509971138069" expanded="false" signature="12956:12962" ph=" " />
 >>>>>>> peng home changed
+=======
+            <marker date="1509971616259" expanded="false" signature="8438:8457" ph="..." />
+            <marker date="1509971616259" expanded="false" signature="8774:8785" ph="..." />
+            <marker date="1509971616259" expanded="false" signature="8882:8888" ph=" " />
+            <marker date="1509971616259" expanded="false" signature="8888:8894" ph=" " />
+            <marker date="1509971616259" expanded="false" signature="12501:12520" ph="..." />
+            <marker date="1509971616259" expanded="false" signature="12844:12855" ph="..." />
+            <marker date="1509971616259" expanded="false" signature="12950:12956" ph=" " />
+            <marker date="1509971616259" expanded="false" signature="12956:12962" ph=" " />
+>>>>>>> Updated Peng html job submission
           </folding>
 >>>>>>> Updated Peng html job submission
         </state>
@@ -1515,8 +1538,8 @@
 =======
     <entry file="file://$PROJECT_DIR$/bammmotif/templates/home/home.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="0" lean-forward="false" selection-start-line="3" selection-start-column="0" selection-end-line="3" selection-end-column="0" />
+        <state relative-caret-position="416">
+          <caret line="476" column="0" lean-forward="false" selection-start-line="476" selection-start-column="0" selection-end-line="476" selection-end-column="0" />
           <folding />
 >>>>>>> peng home changed
         </state>
