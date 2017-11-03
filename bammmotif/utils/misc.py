@@ -135,6 +135,17 @@ def upload_example_motif(job_pk):
     job.save()
 
 
+def add_peng_output(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    out_filename = settings.PENG_INIT
+    infile = path.join(get_job_input_folder(job_pk), settings.PENG_INIT)
+    with open(infile) as fh:
+        job.Motif_InitFile.save(out_filename, File(fh))
+    job.Motif_Initialization = 'PeNGmotif'
+    job.Motif_Init_File_Format = 'PWM'
+    job.save()
+
+
 def upload_db_input(job_pk, db_pk):
     job = get_object_or_404(Job, pk=job_pk)
     db_entry = get_object_or_404(ChIPseq, pk=db_pk)
