@@ -48,8 +48,9 @@ class CommandlineModule:
             if isinstance(option_value, str):
                 cmd_tokens.append('%s' % option_value)
             elif isinstance(option_value, bool):
-                if option_value:
-                    cmd_tokens.append('%s' % option_value)
+                if not option_value:
+                    del cmd_tokens[-1]
+                    # cmd_tokens.append('%s' % option_value)
             elif isinstance(option_value, list):
                 for item in option_value:
                     if isinstance(item, str):
@@ -75,6 +76,7 @@ class CommandlineModule:
         extra_args.update(kw_args)
         print("Command line tokens")
         print(self.command_tokens)
+        print(os.getcwd())
         return subprocess.run(self.command_tokens, **extra_args)
 
 
@@ -148,7 +150,7 @@ class ShootPengModule(CommandlineModule):
     def from_job(cls, peng_job):
         spm = cls()
         for key, val in peng_job.__dict__.items():
-            if key in spm.options:
+            if key in spm.options and val:
                 spm.options[key] = val
 
         print("PENG_JOB")

@@ -77,3 +77,9 @@ Now you should be able to access the webserver at  `0.0.0.0:10080` in your favor
 
 * The webserver code inside the container is in `$WEBSERVER_DIR/BaMM_webserver`. Changes to that code should be automatically be available in the server. The webserver has to be started from `~/git_repositories/BaMM_webserver` however.
 * All files created by the webserver are accessible on the host in `$WEBSERVER_DIR/media_db`
+* If the database layout in the models.py file is changed, one hack to apply these changes is:
+** docker-compose down
+** remove everything in media_db, redis_db and mysql_db
+** docker-compose up; "wait until the database is rebuilt"
+** docker-compose down
+** Now you can use the docker container as usual with docker-compose up
