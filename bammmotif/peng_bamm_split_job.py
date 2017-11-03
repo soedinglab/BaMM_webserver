@@ -22,6 +22,8 @@ def create_anonymuous_user(request):
     else:
         # check if anonymous user already exists
         anonymous_users = User.objects.filter(username=ip)
+        type(anonymous_users)
+        print("ANONYMOUS: ", anonymous_users)
         if anonymous_users.exists():
             print("user already exists")
             return get_object_or_404(User, username=ip)
