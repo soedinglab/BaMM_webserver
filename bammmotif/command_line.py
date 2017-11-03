@@ -1,6 +1,8 @@
 from collections import OrderedDict
 import subprocess
 import sys
+import os
+import shutil
 
 
 class CommandlineModule:
@@ -41,16 +43,17 @@ class CommandlineModule:
             if option_value is None:
                 continue
             flag_tmpl = self._cmd_flag_templates[option_name]
-            cmd_tokens.append(flag_tmpl)
+            if flag_tmpl is not None:
+                cmd_tokens.append(flag_tmpl)
             if isinstance(option_value, str):
-                cmd_tokens.append('%r' % option_value)
+                cmd_tokens.append('%s' % option_value)
             elif isinstance(option_value, bool):
                 if option_value:
                     cmd_tokens.append('%s' % option_value)
             elif isinstance(option_value, list):
                 for item in option_value:
                     if isinstance(item, str):
-                        cmd_tokens.append('%r' % item)
+                        cmd_tokens.append('%s' % item)
                     else:
                         cmd_tokens.append(str(item))
             else:
@@ -70,6 +73,8 @@ class CommandlineModule:
             'universal_newlines': True
         }
         extra_args.update(kw_args)
+        print("Command line tokens")
+        print(self.command_tokens)
         return subprocess.run(self.command_tokens, **extra_args)
 
 
@@ -99,7 +104,8 @@ class ShootPengModule(CommandlineModule):
         'silent': True,
         'meme_output': 'out.meme',
         'json_output': 'out.json',
-        'temp_dir': 'temp'
+        'temp_dir': 'temp',
+        'bg_sequences': None
     }
 
     def __init__(self):
@@ -127,16 +133,34 @@ class ShootPengModule(CommandlineModule):
             ('n_threads', '--threads'),
             ('silent', '--silent'),
         ]
+        # Build temp directory
         super().__init__('shoot_peng.py', config)
 
+
+    def create_temp_directory(self):
+        if not os.path.exists(self.options['temp_dir']):
+            os.mkdir(self.options['temp_dir'])
+
+    def remove_temp_directory(self):
+        shutil.rmtree(self.options['temp_dir'])
 
     @classmethod
     def from_job(cls, peng_job):
         spm = cls()
-        for key, val in peng_job.__dict__:
+        for key, val in peng_job.__dict__.items():
             if key in spm.options:
                 spm.options[key] = val
+
+        print("PENG_JOB")
+        print(peng_job.__dict__)
+        print("SPM")
+        print(spm.__dict__)
         return spm
+
+    def run(self, **kw_args):
+        self.create_temp_directory()
+        super().run(**kw_args)
+        self.remove_temp_directory()
 
 class ValidateFasta(CommandlineModule):
     def __init__(self):
