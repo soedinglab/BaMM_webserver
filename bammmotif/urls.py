@@ -2,6 +2,7 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views
+from . import peng_bamm_split_views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -26,4 +27,7 @@ urlpatterns = [
     url(r'^database/$', views.maindb, name='maindb'),
     url(r'^database/db_overview/$', views.db_overview, name='db_overview'),
     url(r'^database/(?P<pk>.*)/$', views.db_detail, name='db_detail'),
- ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    url(r'^job/run_peng_view/$', peng_bamm_split_views.run_peng_view, name='peng_predict'),
+    url(r'^job/run_peng_view/(?P<mode>\w+)/$', peng_bamm_split_views.run_peng_view, name='peng_predict'),
+    url(r'^peng_results/(?P<pk>.*)/$', peng_bamm_split_views.peng_result_detail, name='peng_result_detail'),
+ ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
