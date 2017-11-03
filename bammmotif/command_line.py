@@ -57,6 +57,13 @@ class CommandlineModule:
                 cmd_tokens.append(str(option_value))
         return cmd_tokens
 
+    @property
+    def options(self):
+        return self._options
+
+    @property
+    def defaults(self):
+        return self._defaults
 
     def run(self, **kw_args):
         extra_args = {
@@ -71,6 +78,30 @@ class OptionError(ValueError):
 
 
 class ShootPengModule(CommandlineModule):
+
+    defaults = {
+        'pattern_length': 10,
+        'zscore_threshold': 10,
+        'count_threshold': 1,
+        'bg_model_order': 2,
+        'strand': 'BOTH',
+        'iupac_optimization_score': 'LOGPVAL',
+        'enrich_pseudocount_factor': 0.005,
+        'no_em': True,
+        'em_threshold': 0.08,
+        'em_max_iterations': 100,
+        'no-merging': True,
+        'bit_factor_threshold': 0.4,
+        'use_default_pwm': False,
+        'pwm_pseudo_counts': 10,
+        'n_threads': 1,
+        'em_saturation_threshold': 1E4,
+        'silent': True,
+        'meme_output': 'out.meme',
+        'json_output': 'out.json',
+        'temp_dir': 'temp'
+    }
+
     def __init__(self):
         config = [
             ('fasta_file', None),
@@ -98,6 +129,14 @@ class ShootPengModule(CommandlineModule):
         ]
         super().__init__('shoot_peng.py', config)
 
+
+    @classmethod
+    def from_job(cls, peng_job):
+        spm = cls()
+        for key, val in peng_job.__dict__:
+            if key in spm.options:
+                spm.options[key] = val
+        return spm
 
 class ValidateFasta(CommandlineModule):
     def __init__(self):
