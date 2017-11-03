@@ -16,6 +16,8 @@ def create_anonymuous_user(request):
     else:
         # check if anonymous user already exists
         anonymous_users = User.objects.filter(username=ip)
+        type(anonymous_users)
+        print("ANONYMOUS: ", anonymous_users)
         if anonymous_users.exists():
             print("user already exists")
             return get_object_or_404(User, username=ip)
@@ -64,10 +66,11 @@ def validate_fasta(path):
 def validate_input_data(job):
     print("VALIDATE_INPUT_DATA")
     success = "Validation succeeded!"
-    msg_seq, valid_seq = validate_fasta(os.path.join(settings.MEDIA, job.Input_Sequences.name))
+    msg_seq, valid_seq = validate_fasta(os.path.join(settings.MEDIA_ROOT, job.fasta_file.name))
     if not valid_seq:
         return msg_seq, False
-    msg_background, valid_background = validate_fasta(os.path.join(settings.MEDIA_ROOT, job.Background_Sequences.name))
-    if not valid_background:
-        return msg_background, False
+    if job.bg_sequences.name is not None:
+        msg_background, valid_background = validate_fasta(os.path.join(settings.MEDIA_ROOT, job.bg_sequences.name))
+        if not valid_background:
+            return msg_background, False
     return success, True
