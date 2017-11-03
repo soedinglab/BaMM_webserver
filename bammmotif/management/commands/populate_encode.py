@@ -23,24 +23,15 @@ class Command(BaseCommand):
         experiment             = 'ChIPseq',
         base_dir               = 'ENCODE_ChIPseq',
         motif_init_file_format = 'fasta',
-        alphabet               = 'STANDARD',
         reversecomp            = True,
         modelorder             = 4,
         extend_1               = 4,
         extend_2               = 4,
         bgmodelorder           = 2,
         em                     = True,
-        maxemiterations        = 1e5,
-        epsilon                = 0.0010,
         fdr                    = True,
         mfold                  = 10,
-        cvfold                 = 5,  
         samplingorder          = 2,
-        savelogodds            = True,
-        cgs                    = False,
-        maxcgsiterations       = 1e5,
-        noalphasampling        = True,
-        location               = '/code/DB/ENCODE_ChIPseq/Results'
         )
       db_param.save()
 

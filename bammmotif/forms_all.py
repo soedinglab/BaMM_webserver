@@ -1,7 +1,32 @@
 from django import forms
-from .models import Job
+from .models import Job, PengJob
+from .command_line import ShootPengModule
 
 
+#class PengForm(forms.ModelForm):
+#
+#    class Meta:
+#        model = PengJob
+#        fields = tuple(ShootPengModule().options.keys()) + ('job_name',)
+#        #fields = (
+#        #    'fasta_file', 'meme_output', 'json_output', 'temp_dir', 'bg_sequences',
+#        #    'pattern_length', 'zscore_threshold', 'count_threshold', 'bg_model_order',
+#        #    'strand', 'objective_function', 'enrich_pseudocount_factor', 'no_em',
+#        #    'em_saturation_threshold', 'em_threshold', 'em_max_iterations', 'no_merging',
+#        #    'bit_factor_threshold', 'use_default_pwm', 'pwm_pseudo_counts', 'n_threads',
+#        #    'silent', 'job_name'
+#        #)
+#
+#    def __init__(self, *args, **kwargs):
+#        super(PengForm, self).__init__(*args, **kwargs)
+#        for field in self.fields:
+#            help_text = self.fields[field].help_text
+#            self.fields[field].help_text = None
+#            if help_text != '':
+#                self.fields[field].widget.attrs.update({'class': 'has-popover',
+#                                                        'data-content': help_text,
+#                                                        'data-placement': 'right',
+#                                                        'data-container': 'body'})
 
 
 class PredictionForm(forms.ModelForm):
