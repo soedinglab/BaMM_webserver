@@ -147,7 +147,7 @@ class PengJob(models.Model):
     bg_model_order = models.IntegerField(default=ShootPengModule.defaults['bg_model_order'])
     strand = models.CharField(max_length=5, default="BOTH")
     objective_function = models.CharField(max_length=50, default=ShootPengModule.defaults['iupac_optimization_score'])
-    enrich_pseudocount_factor = models.BooleanField(default=ShootPengModule.defaults['enrich_pseudocount_factor'])
+    enrich_pseudocount_factor = models.FloatField(default=ShootPengModule.defaults['enrich_pseudocount_factor'])
     no_em = models.BooleanField(default=ShootPengModule.defaults['no_em'])
     em_saturation_threshold = models.FloatField(default=ShootPengModule.defaults['em_saturation_threshold'])
     em_threshold = models.FloatField(default=ShootPengModule.defaults['em_threshold'])
