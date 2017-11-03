@@ -132,7 +132,6 @@ def upload_example_motif(job_pk):
         job.Motif_InitFile.save(out_filename, File(fh))
     job.Motif_Initialization = 'Custom File'
     job.Motif_Init_File_Format = 'PWM'
-    job.model_Order = 0
     job.save()
 
 
