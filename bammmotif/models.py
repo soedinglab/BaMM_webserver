@@ -7,7 +7,6 @@ from django.dispatch import receiver
 import datetime
 import uuid
 import os
-from .command_line import ShootPengModule
 
 from .command_line import ShootPengModule
 
@@ -140,11 +139,11 @@ class PengJob(models.Model):
     complete = models.BooleanField(default=False)
 
     # Peng specific
-    fasta_file = models.FileField(upload_to=job_directory_path_peng, null=True)
-    meme_output = models.CharField(default=ShootPengModule.defaults['meme_output'], max_length=150)
-    json_output = models.CharField(default=ShootPengModule.defaults['json_output'], max_length=150)
+    fasta_file = models.FileField(upload_to=job_directory_path, null=True)
+    meme_output = models.FileField(upload_to=job_directory_path, null=True, default=ShootPengModule.defaults['meme_output'])
+    json_output = models.FileField(upload_to=job_directory_path, null=True, default=ShootPengModule.defaults['json_output'])
     temp_dir = models.CharField(max_length=100, null=True, default=ShootPengModule.defaults['temp_dir'])
-    bg_sequences = models.FileField(upload_to=job_directory_path_peng, null=True, blank=True)
+    bg_sequences = models.FileField(upload_to=job_directory_path, null=True, blank=True)
     pattern_length = models.IntegerField(default=ShootPengModule.defaults['pattern_length'])
     zscore_threshold = models.FloatField(default=ShootPengModule.defaults['zscore_threshold'])
     count_threshold = models.IntegerField(default=ShootPengModule.defaults['count_threshold'])

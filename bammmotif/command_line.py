@@ -74,9 +74,6 @@ class CommandlineModule:
             'universal_newlines': True
         }
         extra_args.update(kw_args)
-        print("Command line tokens")
-        print(self.command_tokens)
-        print(os.getcwd())
         return subprocess.run(self.command_tokens, **extra_args)
 
 

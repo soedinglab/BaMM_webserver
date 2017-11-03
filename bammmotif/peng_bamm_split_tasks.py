@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import os
 
 
+
 from .utils import JobSaveManager, make_job_folder, get_log_file
 from .commands import Compress
 from celery import task

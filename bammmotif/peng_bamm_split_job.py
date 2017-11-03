@@ -7,10 +7,6 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 
-def job_directory_path_peng(job_ID, filename):
-    path_to_job = "/code/media"
-    return os.path.join(path_to_job, settings.JOB_DIR_PREFIX, str(job_ID), 'Input', str(filename))
-
 def create_anonymuous_user(request):
     ip = get_ip(request)
     if ip is None:
@@ -63,7 +59,6 @@ def create_job(form, request):
         job.job_name = job_id_short[0]
     print("UPLOAD COMPLETE: save job object")
     job.save()
-    print(job.__dict__)
     return job
 
 
