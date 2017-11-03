@@ -38,8 +38,12 @@ MODE_CHOICES = (
 
 
 def job_directory_path(instance, filename):
-    return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID), 
+    return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID),
                         'Input', str(filename))
+
+def job_directory_path_peng(instance, filename):
+    path_to_job = "/code/media"
+    return os.path.join(path_to_job, settings.JOB_DIR_PREFIX, str(instance.job_ID), 'Input', str(filename))
 
 class Job(models.Model):
     # general info
@@ -136,11 +140,11 @@ class PengJob(models.Model):
     complete = models.BooleanField(default=False)
 
     # Peng specific
-    fasta_file = models.FileField(upload_to=job_directory_path, null=True)
-    meme_output = models.FileField(upload_to=job_directory_path, null=True, default=ShootPengModule.defaults['meme_output'])
-    json_output = models.FileField(upload_to=job_directory_path, null=True, default=ShootPengModule.defaults['json_output'])
+    fasta_file = models.FileField(upload_to=job_directory_path_peng, null=True)
+    meme_output = models.CharField(default=ShootPengModule.defaults['meme_output'], max_length=150)
+    json_output = models.CharField(default=ShootPengModule.defaults['json_output'], max_length=150)
     temp_dir = models.CharField(max_length=100, null=True, default=ShootPengModule.defaults['temp_dir'])
-    bg_sequences = models.FileField(upload_to=job_directory_path, null=True, blank=True)
+    bg_sequences = models.FileField(upload_to=job_directory_path_peng, null=True, blank=True)
     pattern_length = models.IntegerField(default=ShootPengModule.defaults['pattern_length'])
     zscore_threshold = models.FloatField(default=ShootPengModule.defaults['zscore_threshold'])
     count_threshold = models.IntegerField(default=ShootPengModule.defaults['count_threshold'])
