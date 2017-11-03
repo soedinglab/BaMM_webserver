@@ -7,6 +7,10 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 
+def job_directory_path_peng(job_ID, filename):
+    path_to_job = "/code/media"
+    return os.path.join(path_to_job, settings.JOB_DIR_PREFIX, str(job_ID), 'Input', str(filename))
+
 def create_anonymuous_user(request):
     ip = get_ip(request)
     if ip is None:
@@ -16,8 +20,6 @@ def create_anonymuous_user(request):
     else:
         # check if anonymous user already exists
         anonymous_users = User.objects.filter(username=ip)
-        type(anonymous_users)
-        print("ANONYMOUS: ", anonymous_users)
         if anonymous_users.exists():
             print("user already exists")
             return get_object_or_404(User, username=ip)
