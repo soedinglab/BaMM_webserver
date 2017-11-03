@@ -7,6 +7,9 @@ from django.dispatch import receiver
 import datetime
 import uuid
 import os
+from .command_line import ShootPengModule
+
+from .command_line import ShootPengModule
 
 FORMAT_CHOICES = (
     ('BindingSites', 'BindingSites'),
@@ -97,7 +100,7 @@ class Job(models.Model):
 
     # MMcompare
     MMcompare = models.BooleanField(default=False)
-    p_value_cutoff = models.DecimalField(default=0.01, max_digits=3,decimal_places=2)
+    p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
     
     class Meta:
         ordering = ['-created_at']
@@ -119,6 +122,67 @@ class Job(models.Model):
 
     def MotifInit_filename(self):
         return os.path.basename(self.Motif_InitFile.name)
+
+
+class PengJob(models.Model):
+    # general info
+    job_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    job_name = models.CharField(max_length=50, null=True, blank=True)
+    created_at = models.DateTimeField( default=datetime.datetime.now)
+    mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES)
+    status = models.CharField(max_length=255, default="not initialized", null=True, blank=True)
+    num_motifs = models.IntegerField(default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    complete = models.BooleanField(default=False)
+
+    # Peng specific
+    fasta_file = models.FileField(upload_to=job_directory_path, null=True)
+    meme_output = models.FileField(upload_to=job_directory_path, null=True, default=ShootPengModule.defaults['meme_output'])
+    json_output = models.FileField(upload_to=job_directory_path, null=True, default=ShootPengModule.defaults['json_output'])
+    temp_dir = models.CharField(max_length=100, null=True, default=ShootPengModule.defaults['temp_dir'])
+    bg_sequences = models.FileField(upload_to=job_directory_path, null=True, blank=True)
+    pattern_length = models.IntegerField(default=ShootPengModule.defaults['pattern_length'])
+    zscore_threshold = models.FloatField(default=ShootPengModule.defaults['zscore_threshold'])
+    count_threshold = models.IntegerField(default=ShootPengModule.defaults['count_threshold'])
+    bg_model_order = models.IntegerField(default=ShootPengModule.defaults['bg_model_order'])
+    strand = models.CharField(max_length=5, default="BOTH")
+    objective_function = models.CharField(max_length=50, default=ShootPengModule.defaults['iupac_optimization_score'])
+    enrich_pseudocount_factor = models.BooleanField(default=ShootPengModule.defaults['enrich_pseudocount_factor'])
+    no_em = models.BooleanField(default=ShootPengModule.defaults['no_em'])
+    em_saturation_threshold = models.FloatField(default=ShootPengModule.defaults['em_saturation_threshold'])
+    em_threshold = models.FloatField(default=ShootPengModule.defaults['em_threshold'])
+    em_max_iterations = models.IntegerField(default=ShootPengModule.defaults['em_max_iterations'])
+    no_merging = models.BooleanField(default=ShootPengModule.defaults['no-merging'])
+    bit_factor_threshold = models.FloatField(default=ShootPengModule.defaults['bit_factor_threshold'])
+    use_default_pwm = models.BooleanField(default=ShootPengModule.defaults['use_default_pwm'])
+    pwm_pseudo_counts = models.IntegerField(default=ShootPengModule.defaults['pwm_pseudo_counts'])
+    n_threads = models.IntegerField(default=ShootPengModule.defaults['n_threads'])
+    silent = models.BooleanField(default=ShootPengModule.defaults['silent'])
+
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return str(self.job_ID)
+
+#    def Output_filename(self):
+#        return os.path.splitext(os.path.basename(self.Input_Sequences.name))[0]
+#
+#    def Inputseq_filename(self):
+#        return os.path.basename(self.Input_Sequences.name)
+#
+#    def Background_filename(self):
+#        return os.path.basename(self.Background_Sequences.name)
+#
+#    def Intensity_filename(self):
+#        return os.path.basename(self.Intensity_File.name)
+#
+#    def MotifInit_filename(self):
+#        return os.path.basename(self.Motif_InitFile.name)
+
+
+
 
 
 class DbParameter(models.Model):
