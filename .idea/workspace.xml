@@ -4,9 +4,17 @@
     <bookmark url="file://$PROJECT_DIR$/bammmotif/urls.py" line="29" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="5656d386-afcc-4923-ac51-bae84306867f" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/bammmotif/templates/results/result_detail.html" afterPath="$PROJECT_DIR$/bammmotif/templates/results/result_detail.html" />
       <change beforePath="$PROJECT_DIR$/tools/suite" afterPath="$PROJECT_DIR$/tools/suite" />
+=======
+    <list default="true" id="c75acfec-2eef-4ef2-a200-872fbc7cc2d4" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/peng_bamm_split_job.py" afterPath="$PROJECT_DIR$/bammmotif/peng_bamm_split_job.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/templates/home/home.html" afterPath="$PROJECT_DIR$/bammmotif/templates/home/home.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_peng_input.html" afterPath="$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_peng_input.html" />
+>>>>>>> Updated Peng html job submission
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -141,8 +149,13 @@
       <file leaf-file-name="header.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bammmotif/templates/home/header.html">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="414">
               <caret line="55" column="0" lean-forward="false" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
+=======
+            <state relative-caret-position="416">
+              <caret line="476" column="0" lean-forward="false" selection-start-line="476" selection-start-column="0" selection-end-line="476" selection-end-column="0" />
+>>>>>>> Updated Peng html job submission
               <folding />
             </state>
           </provider>
@@ -719,9 +732,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bammmotif/templates/home/home.html">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="756">
           <caret line="240" column="0" lean-forward="false" selection-start-line="240" selection-start-column="0" selection-end-line="240" selection-end-column="0" />
           <folding />
+=======
+        <state relative-caret-position="4878">
+          <caret line="271" column="47" lean-forward="false" selection-start-line="271" selection-start-column="47" selection-end-line="271" selection-end-column="47" />
+          <folding>
+            <marker date="1509971616259" expanded="false" signature="8438:8457" ph="..." />
+            <marker date="1509971616259" expanded="false" signature="8774:8785" ph="..." />
+            <marker date="1509971616259" expanded="false" signature="8882:8888" ph=" " />
+            <marker date="1509971616259" expanded="false" signature="8888:8894" ph=" " />
+            <marker date="1509971616259" expanded="false" signature="12501:12520" ph="..." />
+            <marker date="1509971616259" expanded="false" signature="12844:12855" ph="..." />
+            <marker date="1509971616259" expanded="false" signature="12950:12956" ph=" " />
+            <marker date="1509971616259" expanded="false" signature="12956:12962" ph=" " />
+          </folding>
+>>>>>>> Updated Peng html job submission
         </state>
       </provider>
     </entry>
@@ -910,8 +938,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/result_detail.html">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="3708">
           <caret line="206" column="0" lean-forward="false" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
+=======
+        <state relative-caret-position="416">
+          <caret line="476" column="0" lean-forward="false" selection-start-line="476" selection-start-column="0" selection-end-line="476" selection-end-column="0" />
+>>>>>>> Updated Peng html job submission
           <folding />
         </state>
       </provider>
