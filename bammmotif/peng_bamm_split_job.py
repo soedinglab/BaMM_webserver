@@ -34,6 +34,14 @@ def create_job(form, request):
     job = form.save(commit=False)
     job.created_at = datetime.datetime.now()
     job.status = "data uploaded"
+    # Invert Default boolean values beginning with "no"
+    # TODO: Find a better solution for this.
+    job.no_em = not job.no_em
+    job.no_merging = not job.no_merging
+    if job.strand == 'on':
+        job.strand = "BOTH"
+    else:
+        job.stand = "PLUS"
     if request.user.is_authenticated():
         print("user is authenticated")
         job.user = request.user
