@@ -37,13 +37,15 @@ RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make ins
 RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
 
-#ADD tools/meme_suite /tmp/meme_suite
-#RUN cd /tmp/meme_suite
-#RUN tar xfvz meme_4.12.0.tar.gz
-#RUN cd meme_4.12.0
-#RUN ./configure --prefix=/tmp/meme-suite/meme --with-url=http://meme-suite.org --enable-build-libxml2 --enable-build-libxslt
-#RUN make && make test && make install
-#RUN cp meme/ceqlogo /ext/bin
-#RUN rm -rf /tmp/meme_suite
+ADD tools/meme_suite /tmp/meme_suite
+RUN cp tools/meme_suite/meme_4.12.0.tar.gz /tmp/meme_suite
+RUN cd /tmp/meme_suite
+RUN tar xfvz meme_4.12.0.tar.gz
+RUN cd meme_4.12.0
+RUN ./configure --prefix=/tmp/meme-suite/meme --with-url=http://meme-suite.org --enable-build-libxml2 --enable-build-libxslt
+RUN make && make test && make install
+RUN cp meme/ceqlogo /ext/bin
+RUN rm -rf /tmp/meme_suite
+
 
 ENV PATH="/ext/bin:${PATH}"
