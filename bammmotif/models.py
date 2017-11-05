@@ -51,7 +51,7 @@ class Job(models.Model):
     job_name=models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField( default=datetime.datetime.now)
     mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES) 
-    status = models.CharField(max_length=255, default="not initialized", null=True, blank=True)
+    status = models.CharField(max_length=255, default="queueing", null=True, blank=True)
     num_motifs = models.IntegerField(default=1)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     complete = models.BooleanField(default=False)
