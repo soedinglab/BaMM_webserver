@@ -92,7 +92,7 @@ class Job(models.Model):
 
     # scoring options
     score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=-0.1)
+    score_Cutoff = models.FloatField(default=0.1)
     bgModel_File = models.FileField( upload_to=job_directory_path, null=True, blank=True)
 
     # advanced options
