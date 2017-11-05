@@ -120,26 +120,8 @@
             </tr>
         </table>
         {% endif %}
-        
-        {% if result.FDR %}
-        <h3>False Discovery Rate Estimation:</h3>
-        <table>
-            <tr>
-                <td>  &emsp; mFold: </td>
-                <td>  &emsp; {{result.m_Fold}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; cvFold: </td>
-                <td>  &emsp; {{result.cv_Fold}}</td>
-            </tr> 
-            <tr>
-                <td>  &emsp; sampling Order: </td>
-                <td>  &emsp; {{result.sampling_Order}}</td>
-            </tr>   
-        </table>
-        {% endif %}
-        
-        {% if result.mode == "Prediction" %}
+            
+        {% if result.MMcompare %}
         <h3>Database Model Comparison:</h3>
         <table>
             <tr>
@@ -157,7 +139,7 @@
 </div>
 
 <div class="jumbotron" style="background-color:white"><font color="black">
-  <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_complete.zip" method="get" target="_blank">
+  <form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_BaMMmotif.zip" method="get" target="_blank">
          <p align="right">           
            <button type="submit" class="btn btn-default" aria-label="Download">
              <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD ALL </span> 
@@ -185,19 +167,18 @@
         {% endif %}
         <th> Download </th>        
     </tr>
-
-{% for m in result.motifs_set.all|dictsort:"job_rank" %}
+   {% for m in result.motifs_set.all|dictsort:"job_rank" %}
     <tr>
         <th> <a href="#{{m.job_rank}}" style="color:black">{{m.job_rank}} </a></th>
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.iupac}} </a></th>
-        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
-        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
        {% if mode == "Prediction" %}
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.auc}} </a></th>        
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.occurrence}} </a></th>        
         {% endif %}
         <th> <a href="#{{m.job_rank}}" style="color:black"> 
-             <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">
+             <form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">
              <button type="submit" class="btn btn-default" aria-label="Download" >
                 <span class="glyphicon glyphicon-download" aria-hidden="true"> </span> 
              </button>
@@ -216,8 +197,8 @@
 
 
 
-    <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">
-        <h2> Moitf # {{m.job_rank}} &emsp;
+    <form action="{% get_media_prefix %}/{{opath}}{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">
+        <h2> Motif # {{m.job_rank}} &emsp;
           <button type="submit" class="btn btn-default" aria-label="Download" >
              <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD MODEL</span> 
            </button>
@@ -227,39 +208,20 @@
 
        
     <hr style="border: 1px solid #1f2e2e">
-        <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
-        <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
     {% for i in num_logos %}
-        <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
     {% endfor %}
-            <br>
-            <br>
-    <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_logos.zip" method="get" target="_blank">
-        <p align="right">           
-        <button type="submit" class="btn btn-default" aria-label="Download">
-        <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD LOGO PLOTS </span> 
-        </button>
-        </p>
-    </form>
 
     {% if mode == "Prediction" %}
     <h2> Performance and Positional Distribution on Input Sequences </h2>
         <hr style="border: 1px solid #1f2e2e">
-        <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
-        <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partiacl ROC5 curve">
-        <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_PRC.jpeg" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
-        <img src="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_distribution.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Ditsribution"> &emsp;
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partiacl ROC5 curve">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_PRC.jpeg" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Ditsribution"> &emsp;
 
-
-        <br>
-        <br>
-       <form action="{% get_media_prefix %}/{{result.job_ID}}/Output/{{Output_filename}}_motif_{{m.job_rank}}_performance.zip" method="get" target="_blank">
-         <p align="right">           
-           <button type="submit" class="btn btn-default" aria-label="Download">
-             <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD PERFORMANCE PLOTS</span> 
-           </button>
-         </p>
-       </form>
     {% elif mode == "Occurrence" %}
         <h2> Positional Distribution and Motif Occurrence on Input Sequences </h2>
 
@@ -303,8 +265,8 @@
             {% else %}
                 <th> {{match.e_value|floatformat:10}} </th>
             {% endif %}
-            <th> <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </th>
-            <th> <img src="{% get_static_prefix %}DB/ENCODE_ChIPseq/Results/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></th>     
+            <th> <img src="{% get_static_prefix %}{{db_dir}}/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </th>
+            <th> <img src="{% get_static_prefix %}{{db_dir}}/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></th>     
             <th> <a href="{% url 'db_detail' match.db_entry.db_public_id %}" style="color:black"> 
              <button type="submit" class="btn btn-default" aria-label="Database" >
                 <span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span> 

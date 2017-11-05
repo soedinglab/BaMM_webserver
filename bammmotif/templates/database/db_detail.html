@@ -42,8 +42,8 @@
             
         </table>
         </font>
-        <br>
-        <td>  &emsp; <a href="{% url 'data_discover_from_db' pk=entry.db_public_id %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> USE THIS MODEL FOR MOTIF SEARCH  </span></a> </td>
+        <br>    
+        <!--<td>  &emsp; <a href="{% url 'run_bamm_scan' mode="db" pk=entry.db_public_id %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> USE THIS MODE FOR MOTIF SEARCH  </span></a> </td>-->
     </div>
     </font>
 </div>
@@ -55,7 +55,7 @@
 
 
 
-    <form action="{% get_static_prefix %}DB/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motifs.zip" method="get" target="_blank">
+    <form action="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motifs.zip" method="get" target="_blank">
         <h2> Predicted Higher Order Model &emsp;
           <button type="submit" class="btn btn-default" aria-label="Download" >
              <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD MODEL</span> 
@@ -66,27 +66,26 @@
 
        
     <hr style="border: 1px solid #1f2e2e">
-    <img src="{% get_static_prefix %}DB/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo; reverse Complement">
+    <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo; reverse Complement">
     {% for i in "012" %}
-        <img src="{% get_static_prefix %}DB/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-{{i}}-icColumnScale-icLetterScale.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
+        <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-{{i}}-icColumnScale-icLetterScale.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
     {% endfor %}
             <br>
             <br>
-    <form action="{% get_static_prefix %}DB/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_logos.zip" method="get" target="_blank">
+    <form action="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_logos.zip" method="get" target="_blank">
         <p align="right">           
         <button type="submit" class="btn btn-default" aria-label="Download">
         <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD LOGO PLOTS </span> 
         </button>
         </p>
     </form>
-
     <h2> Performance and Positional Distribution on Input Sequences </h2>
         <hr style="border: 1px solid #1f2e2e">
-        <img src="{% get_static_prefix %}DB/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_FDR.jpeg" class="responsive-img" style='max-height:400px;' alt="ROC Curve Plot">&emsp;
-        <img src="{% get_static_prefix %}DB/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_Positions.jpeg" class="responsive-img" style='max-height:400px;' alt="LogOdds">
+        <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_FDR.jpeg" class="responsive-img" style='max-height:400px;' alt="ROC Curve Plot">&emsp;
+        <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_Positions.jpeg" class="responsive-img" style='max-height:400px;' alt="LogOdds">
         <br>
         <br>
-       <form action="{% get_static_prefix %}DB/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_performance.zip" method="get" target="_blank">
+       <form action="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_performance.zip" method="get" target="_blank">
          <p align="right">           
            <button type="submit" class="btn btn-default" aria-label="Download">
              <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD PERFORMANCE PLOTS</span> 
@@ -134,14 +133,6 @@
                 <td>  &emsp; q value: </td>
                 <td>  &emsp; {{entry.parent.q_value}}</td>
             </tr>
-            <tr>
-                <td>  &emsp; epsilon: </td>
-                <td>  &emsp; {{entry.parent.epsilon}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; max Iterations: </td>
-                <td>  &emsp; {{entry.parent.maxemiterations}}</td>
-            </tr>
         </table>
         {% endif %}
 
@@ -159,23 +150,6 @@
         </table>
         {% endif %}
         
-        {% if entry.parent.fdr == 1%}
-        <h3>False Discovery Rate Estimation:</h3>
-        <table>
-            <tr>
-                <td>  &emsp; mFold: </td>
-                <td>  &emsp; {{entry.parent.mfold}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; cvFold: </td>
-                <td>  &emsp; {{entry.parent.cvfold}}</td>
-            </tr> 
-            <tr>
-                <td>  &emsp; sampling Order: </td>
-                <td>  &emsp; {{entry.parent.samplingorder}}</td>
-            </tr>   
-        </table>
-        {% endif %}
 </div>
 </div>
 
