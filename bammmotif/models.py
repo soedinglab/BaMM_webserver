@@ -18,9 +18,9 @@ FORMAT_CHOICES = (
 )
 
 INIT_CHOICES = (
-    ('Custom File','Custom File'),
+    ('CustomFile','CustomFile'),
     ('PEnGmotif','PEnGmotif'),
-    ('DB File','DB File'),
+    ('DBFile','DBFile'),
 )
 
 ALPHABET_CHOICES = (

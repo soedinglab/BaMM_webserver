@@ -165,11 +165,14 @@ def run_bamm_view(request, mode='normal'):
             if mode == 'example':
                 upload_example_fasta(job_pk)
                 upload_example_motif(job_pk)
-
+                job.Motif_Initialization = 'CustomFile'
+                job.Motif_Init_File_Format = 'PWM'
+            
             if job.Motif_Initialization == 'PEnGmotif':
                 run_peng.delay(job_pk)
             else:
                 run_bamm.delay(job_pk)
+            
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
     if mode == 'example':

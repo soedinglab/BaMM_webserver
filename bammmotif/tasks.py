@@ -24,7 +24,7 @@ def run_peng(self, job_pk):
         logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
-
+                
                 # run PeNGmotif
                 Peng(job_pk, False)
 
