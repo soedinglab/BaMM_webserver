@@ -130,7 +130,7 @@ def upload_example_motif(job_pk):
     out_filename = "ExampleMotif.meme"
     with open(settings.EXAMPLE_MOTIF) as fh:
         job.Motif_InitFile.save(out_filename, File(fh))
-    job.Motif_Initialization = 'Custom File'
+    job.Motif_Initialization = 'CustomFile'
     job.Motif_Init_File_Format = 'PWM'
     job.save()
 
@@ -141,7 +141,7 @@ def add_peng_output(job_pk):
     infile = path.join(get_job_input_folder(job_pk), settings.PENG_INIT)
     with open(infile) as fh:
         job.Motif_InitFile.save(out_filename, File(fh))
-    job.Motif_Initialization = 'PeNGmotif'
+    job.Motif_Initialization = 'PEnGmotif'
     job.Motif_Init_File_Format = 'PWM'
     job.save()
 
@@ -155,7 +155,7 @@ def upload_db_input(job_pk, db_pk):
     out_f = str(db_entry.result_location) + ".ihbcp"
     with open(f) as fh:
         job.Motif_InitFile.save(out_f, File(fh))
-    job.Motif_Initialization = 'Custom File'
+    job.Motif_Initialization = 'CustomFile'
     job.Motif_Init_File_Format = "BaMM"
 
     # upload bgModelFile

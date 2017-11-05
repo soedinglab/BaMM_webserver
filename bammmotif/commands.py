@@ -208,7 +208,7 @@ def get_BaMMmotif_command(job_pk, useRefined, first):
     param = []
 
     # restrict to top 5 motifs from PeNG
-    if first is False:
+    if job.Motif_Initialization == "PEnGmotif":
         job.num_init_motifs = 5
         job.save()
 
