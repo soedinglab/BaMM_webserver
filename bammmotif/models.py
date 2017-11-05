@@ -68,8 +68,8 @@ class Job(models.Model):
     # options
     model_Order =models.PositiveSmallIntegerField(default=4)
     reverse_Complement = models.BooleanField(default=True)
-    extend_1 = models.PositiveSmallIntegerField(default=0)
-    extend_2 = models.PositiveSmallIntegerField(default=0)
+    extend = models.PositiveSmallIntegerField(default=0)
+    #extend_2 = models.PositiveSmallIntegerField(default=0)
 
     # fdr options
     FDR = models.BooleanField(default=True)

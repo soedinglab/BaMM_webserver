@@ -67,8 +67,8 @@ def get_core_params(job_pk, useRefined, m=1):
     param.append("--Order")
     param.append(job.background_Order)
     param.append("--extend")
-    param.append(job.extend_1)
-    param.append(job.extend_2)
+    param.append(job.extend)
+    param.append(job.extend)
     param.append("--maxPWM")
     param.append(job.num_init_motifs)
 
@@ -188,8 +188,7 @@ def get_BaMMScan_command(job_pk, useRefined, m=1):
     param.append('BaMMScan')
 
     # adjust extensions
-    job.extend_1 = 0
-    job.extend_2 = 0
+    job.extend = 0
     job.save()
 
     # get params shared between bammmotif bammscan and fdr
