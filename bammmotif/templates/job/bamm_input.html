@@ -94,30 +94,21 @@
                                         {% if user.is_authenticated %}
                                             &nbsp;&nbsp;
                                             <input id="id_model_Order" min="0" max="8" name="model_Order" type="number"
-                                                   value="4" required/>
+                                                   value="2" required/>
                                         {% else %}
                                             &nbsp;&nbsp;
                                             <input id="id_model_Order" min="0" max="4" name="model_Order" type="number"
-                                                   value="4" required/>
+                                                   value="2" required/>
                                         {% endif %}
                                     </font></p>
 
-                                    <p class="indent" style="padding-left: 1.8em"><label for="id_extend_1"><a class
-                                        "testpup" onmouseover="nhpup.popup($('#Extend1_Info').html(),{'width':400});"
+                                    <p class="indent" style="padding-left: 1.8em"><label for="id_extend"><a class
+                                        "testpup" onmouseover="nhpup.popup($('#Extend_Info').html(),{'width':400});"
                                         ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"
-                                               style="color:black"></span></a> Extend left:</label><font
-                                            color="#1f2e2e">&nbsp;&nbsp;<input id="id_extend_1" min="0" max="25"
-                                                                               name="extend_1" type="number" value="4"
+                                               style="color:black"></span></a> add flanking positions:</label><font
+                                            color="#1f2e2e">&nbsp;&nbsp;<input id="id_extend" min="0" max="10"
+                                                                               name="extend" type="number" value="0"
                                                                                required/></font></p>
-
-                                    <p class="indent" style="padding-left: 1.8em"><label for="id_extend_2"><a class
-                                        "testpup" onmouseover="nhpup.popup($('#Extend2_Info').html(),{'width':400});"
-                                        ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"
-                                               style="color:black"></span></a> Extend right:</label><font
-                                            color="#1f2e2e">&nbsp;&nbsp;<input id="id_extend_2" min="0" max="25"
-                                                                               name="extend_2" type="number" value="4"
-                                                                               required/></font></p>
-
                                     <br>
                                     <h3> Motif Initialization:</h3>
 
@@ -201,7 +192,7 @@
                         class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a>
                 Background Order:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_background_Order" min="0"
                                                                                   max="8" name="background_Order"
-                                                                                  type="number" value="1"
+                                                                                  type="number" value="2"
                                                                                   required/></font></p>
 
             <p class="indent" style="padding-left: 1.8em"><label for="id_Background_Sequences"><a class "testpup"
@@ -216,8 +207,8 @@
 
             <p class="indent" style="padding-left: 1.8em"><label for="id_q_value"><a class "testpup"
                 onmouseover="nhpup.popup($('#EMq_Info').html(),{'width':400});" ><span
-                        class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a> EM
-                q-value:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_q_value" min="0.01" max="1"
+                        class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a> 
+                Motif prior probability:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_q_value" min="0.01" max="1"
                                                                          name="q_value" type="number" value="0.9"
                                                                          step="0.01"/></font></p>
 
@@ -232,7 +223,7 @@
 
             <p class="indent" style="padding-left: 1.8em"><label for="id_score_Cutoff"><a class "testpup"
                 onmouseover="nhpup.popup($('#score_Cutoff_Info').html(),{'width':400});" ><span
-                        class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a> P-value
+                        class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a> Motif score
                 limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_score_Cutoff" name="score_Cutoff"
                                                                        type="number" min="0.01" max="3.00" value="0.01"
                                                                        step="0.01"/></font></p>
@@ -249,8 +240,7 @@
 
 
         </div>
-    </div>
-    </div>
+      </div>
     </div>
 
     <hr style="border: 1px solid #1f2e2e">
@@ -265,7 +255,7 @@
     </div>
     </div>
 
-    <div class="modal fade" id="job_name" tabindex="-1" role="dialog" aria-labelledby="job_name">
+    <div class="modal fade" id="job_name_info" tabindex="-1" role="dialog" aria-labelledby="job_name_info">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
@@ -311,8 +301,8 @@
                 <div class="modal-body">
                     <font color="#0B0719">
                         <p align="justify">Please select if you want PEnGmotif be in charge of the Motif Initialization
-                            or provide a custom Initialization File. The initialization file can be either in PWM or
-                            BaMM format.</p>
+                            or provide a custom Initialization File. The initialization file can be a list of binding sites, a PWM or
+                            BaMM file.</p>
                     </font>
                 </div>
             </div>
@@ -324,8 +314,8 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <font color="#0B0719">
-                        <p align="justify">If you already have a PWM or BaMM model which you want to refine insert it
-                            file here. Alternatively you can leave this empty and PEnG!motif will seed your input
+                        <p align="justify">If you have a list of binding sites, a PWM or a BaMM model which you want to refine insert it
+                            here. Alternatively you can leave this empty and PEnGmotif will seed your input
                             sequence set.</p>
                     </font>
                 </div>
@@ -352,8 +342,7 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <font color="#0B0719">
-                        <p align="justify">The Model Order describes the maximal higher Order contribution which will be
-                            taken into account. The default is 2. A model Order of 0 corresonds to a typical PWM
+                        <p align="justify">The Model Order describes the maximal higher Order contribution. The default is 2. A model Order of 0 corresonds to a PWM
                             model. </p>
                     </font>
                 </div>
@@ -362,7 +351,7 @@
     </div>
 
     <div class="modal fade" id="ReverseComplement_Info" tabindex="-1" role="dialog"
-         aria-labelledby="RevverseComplement_Info">
+         aria-labelledby="ReverseComplement_Info">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
@@ -375,30 +364,13 @@
         </div>
     </div>
 
-    <div class="modal fade" id="Extend1_Info" tabindex="-1" role="dialog" aria-labelledby="Extend1_Info">
+    <div class="modal fade" id="Extend_Info" tabindex="-1" role="dialog" aria-labelledby="Extend_Info">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
                     <font color="#0B0719">
-                        <p align="justify"> Extend BaMMs by adding uniformly initialized positions to the left
-                            and/or right of initial BaMMs. Extend_1 corresponds to the LEFT side
-                            of the model, while Extend_2 corresponds to the RIGHT side. By default, BaMMs
-                            are not being extended.</p>
-                    </font>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="Extend2_Info" tabindex="-1" role="dialog" aria-labelledby="Extend2_Info">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <font color="#0B0719">
-                        <p align="justify"> Extend BaMMs by adding uniformly initialized positions to the left
-                            and/or right of initial BaMMs.Extend_1 corresponds to the LEFT side
-                            of the model, while Extend_2 corresponds to the RIGHT side. By default, BaMMs
-                            are not being extended.</p>
+                        <p align="justify"> Extends the motif by adding uniformly initialized positions to the left
+                            and right of the initialization. The number corresponds to the amount of nucleotides added to either side of the original motif.</p>
                     </font>
                 </div>
             </div>
@@ -410,7 +382,7 @@
             <div class="modal-content">
                 <div class="modal-body">
                     <font color="#0B0719">
-                        <p align="justify">When checked, False Dirscovery Rate calulcation will be triggered.</p>
+                        <p align="justify">When checked, the a false discovery rate estimation will be triggered to evaluate motif performance.</p>
                     </font>
                 </div>
             </div>
@@ -495,7 +467,7 @@
                 <div class="modal-body">
                     <font color="#0B0719">
                         <p align="justify"> Prior probability for a positive sequence to contain a motif. The default is
-                            0.9.</p>
+                            0.9 which is the expected probability of a successfull ChIPseq experiment.</p>
                     </font>
                 </div>
             </div>
@@ -554,6 +526,46 @@
             </div>
         </div>
     </div>
+
+<div class="modal fade" id="score_Cutoff_Info" tabindex="-1" role="dialog"
+         aria-labelledby="db_match_p_value_cutoff_Info">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <font color="#0B0719">
+                        <p align="justify">The Motif Score Limit defines up to which similarity a motif position on a sequence will be called as motif instance. The higher this value, the lower the number of reported motif positions.  </p>
+                    </font>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="BaMMScan_Info" tabindex="-1" role="dialog"
+         aria-labelledby="db_match_p_value_cutoff_Info">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <font color="#0B0719">
+                        <p align="justify">When checked, a motif distribution plot is generated to visualize localization of the motif in the input seqeunces.  </p>
+                    </font>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="modal fade" id="bgModel_File_Info" tabindex="-1" role="dialog"
+         aria-labelledby="db_match_p_value_cutoff_Info">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <font color="#0B0719">
+                        <p align="justify">Only needed when providing a BaMM model as initialization. Enter the background model file which belongs to the BaMM model provided as initialization.  </p>
+                    </font>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 {% endblock %}
 
