@@ -91,7 +91,7 @@ class Job(models.Model):
     #no_Alpha_Optimization = models.BooleanField(default=True)
 
     # scoring options
-    score_Seqset = models.BooleanField(default=False)
+    score_Seqset = models.BooleanField(default=True)
     score_Cutoff = models.FloatField(default=-3.0)
     bgModel_File = models.FileField( upload_to=job_directory_path, null=True, blank=True)
 
