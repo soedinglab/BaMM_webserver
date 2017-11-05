@@ -196,15 +196,14 @@
   <div class="well" style="background-color:white">
 
 
-
-    <form action="{% get_media_prefix %}/{{opath}}{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">
+        <form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">    
         <h2> Motif # {{m.job_rank}} &emsp;
           <button type="submit" class="btn btn-default" aria-label="Download" >
              <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD MODEL</span> 
            </button>
-
+          </form>
          </h2>
-       </form>
+   
 
        
     <hr style="border: 1px solid #1f2e2e">
@@ -214,27 +213,15 @@
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
     {% endfor %}
 
-    {% if mode == "Prediction" %}
+    {% if result.FDR %}
     <h2> Performance and Positional Distribution on Input Sequences </h2>
         <hr style="border: 1px solid #1f2e2e">
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partiacl ROC5 curve">
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_PRC.jpeg" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
+    {% endif %}
+    {% if result.score_Seqset %}
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Ditsribution"> &emsp;
-
-    {% elif mode == "Occurrence" %}
-        <h2> Positional Distribution and Motif Occurrence on Input Sequences </h2>
-
-        <h3> Feature disabled because bamm-search is not integrated into bamm-private yet (will be done in GOE) </h3>
-        <hr style="border: 1px solid #1f2e2e">
-        <!--{% with index=m.job_rank %}
-        {% for idx, p in plot.items %}
-            {% if idx == index %}
-                {{p|safe}}
-            {% endif %}
-        {% endfor %}
-        {% endwith %}
-        !-->
 
     {% endif %}
     
