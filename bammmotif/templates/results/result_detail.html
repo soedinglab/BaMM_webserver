@@ -50,12 +50,8 @@
                 <td>  &emsp; {{result.model_Order}}</td>
             </tr>
             <tr>
-                <td>  &emsp; Extend Motif to the Left By: </td>
-                <td>  &emsp; {{result.extend_1}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; Extend Motif to the Right By: </td>
-                <td>  &emsp; {{result.extend_2}}</td>
+                <td>  &emsp; added flanking Positions: </td>
+                <td>  &emsp; {{result.extend}}</td>
             </tr>
         </table>
         {% endif %}
@@ -100,7 +96,7 @@
         <h3>Expectation Maximization Optimization:</h3>
         <table>
             <tr>
-                <td>  &emsp; q value: </td>
+                <td>  &emsp; Motif Prior Probability: </td>
                 <td>  &emsp; {{result.q_value}}</td>
             </tr>
             <tr>
