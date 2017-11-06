@@ -2,207 +2,402 @@
 
 {% block content %}
 
+<div class="col-md-4">
+                <div class='container-fluid'>
+ <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to BaMMmotif server</a><ul>
+<li><a class="reference internal" href="#why-bammmotif-server">Why BaMMmotif server?</a></li>
+<li><a class="reference internal" href="#how-to-use-bammmotif-server">How to use BaMMmotif server?</a><ul>
+<li><a class="reference internal" href="#de-novo-motif-discovery"><em>De novo</em> Motif Discovery</a><ul>
+<li><a class="reference internal" href="#input-items">Input items</a></li>
+<li><a class="reference internal" href="#advanced-options">Advanced Options</a></li>
+<li><a class="reference internal" href="#submission">Submission</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#motif-motif-comparison">Motif-Motif Comparison</a></li>
+<li><a class="reference internal" href="#motif-scan">Motif Scan</a></li>
+<li><a class="reference internal" href="#motif-database">Motif Database:</a><ul>
+<li><a class="reference internal" href="#what-does-the-bamm-database-contain">What does the BaMM database contain?</a></li>
+<li><a class="reference internal" href="#how-to-search-for-a-specific-entry-in-the-database">How to search for a specific entry in the database?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-to-interpret-bamm-results">How to interpret BaMM results?</a><ul>
+<li><a class="reference internal" href="#how-do-i-obtain-my-job-results">How do I obtain my job results?</a></li>
+<li><a class="reference internal" href="#what-does-the-result-page-show">What does the result page show?</a></li>
+<li><a class="reference internal" href="#how-to-interpret-bammmotif-logos">How to interpret BaMMmotif logos?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#command-line-tools">Command line tools</a><ul>
+<li><a class="reference internal" href="#peng-motif">PEnG!motif</a></li>
+<li><a class="reference internal" href="#bamm-motif">BaMM!motif</a></li>
+{% comment %}
+<li><a class="reference internal" href="#bammscan">BaMMScan</a></li>
+<li><a class="reference internal" href="#fdr-analysis">FDR analysis</a></li>
+{% endcomment %}
+<li><a class="reference internal" href="#how-to-use-these-tools-via-command-lines">How to use these tools via command lines?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#faqs">FAQs</a><ul>
+<li><a class="reference internal" href="#why-shall-i-register">Why shall I register?</a></li>
+<li><a class="reference internal" href="#how-can-i-register">How can I register?</a></li>
+<li><a class="reference internal" href="#how-long-are-the-results-available">How long are the results available?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#citing-and-references">Citing and References</a></li>
+<li><a class="reference internal" href="#contact">Contact</a></li>
+</ul>
+</li> 
+</ul>
+</div>
+</div>  
 
-<div class="jumbotron" style="background-color:white"><font color="black">
-  <h2>Documentation</h2>
-  <hr style="border: 1px solid #1f2e2e">
-  <a href="#1. How to use the web tool">1.How to use the web tool</a><br>
-  &nbsp;&nbsp; <a href="#1.1 De-novo Motif Prediction">1.1 De-novo Motif Prediction</a><br>
-  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.1 Required Input">1.1.1 Required Input</a><br>
-  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.2 Advanced Options">1.1.2 Advanced Options</a><br>
-  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.1.3 Submition">1.1.3 Submition</a><br>
-  &nbsp;&nbsp; <a href="#1.2 Motif Instance Discovery">1.2 Motif Instance Discovery</a><br>
-  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.2.1 Required Input">1.2.1 Required Input</a><br>
-  &nbsp;&nbsp;&nbsp;&nbsp; <a href="#1.2.2 Submition">1.2.2 Submition</a><br>
-<br>
-<a href="#2. Interpreting BaMM Results">2. Interpreting BaMM Results</a><br>
-  &nbsp;&nbsp; <a href="#2.1 How do I obtain my job results?">2.1 How do I obtain my job results?</a><br>
-  &nbsp;&nbsp; <a href="#2.2 What does the Result Page show?">2.2 What does the Result Page show?</a><br>
-  &nbsp;&nbsp; <a href="#2.3 How to interprete BaMMmotif logo plots?">2.3 How to interprete BaMMmotif logo plots?</a><br>
-<br>
-<a href="#3. The BaMM database">3. The BaMM database</a><br>
-  &nbsp;&nbsp; <a href="#3.1 What can I find in the database?">3.1 What can I find in the database?</a><br>
-  &nbsp;&nbsp; <a href="#3.2 How can I search for a specific entry?">3.2 How can I search for a specific entry?</a><br>
-  &nbsp;&nbsp; <a href="#3.3 How can I use a Motif from the database?">3.3 How can I use a Motif from the database?</a><br>
-<br>
-<a href="#4. The BaMMmotif Command Line Tool">4. The BaMMmotif Command Line Tool</a><br>
-  &nbsp;&nbsp; <a href="#4.1 Where can I download the command line tool?">4.1 Where can I download the command line tool?</a><br>
-  &nbsp;&nbsp; <a href="#4.2 How do I use the command line tool?">4.2 How do I use the command line tool?</a><br>
-<br>
-<a href="#5.FAQs">5.FAQs</a><br>
-  &nbsp;&nbsp; <a href="#5.1 Why should I register?">5.1 Why should I register?</a><br>
-  &nbsp;&nbsp; <a href="#5.2 How can I register and what information will be saved?">5.2 How can I register and what information will be saved?</a><br>
+<div class="col-md-8">
+                <div class='container-fluid'>
+                <h1>Welcome to BaMMmotif server<a class="headerlink" href="#welcome-to-bammmotif-server" title="Permalink to this headline"></a></h1>
+<div class="section" id="why-bammmotif-server">
+<h2>Why BaMMmotif server?<a class="headerlink" href="#why-bammmotif-server" title="Permalink to this headline"></a></h2>
+<p id="id1">The BaMMmotif web server enables the user to</p>
+<ul class="simple">
+<li><ol class="first loweralpha">
+<li>predict <em>de-novo</em> motifs</li>
+</ol>
+</li>
+<li><ol class="first loweralpha" start="2">
+<li>optimize initial motifs to higher-order models</li>
+</ol>
+</li>
+<li><ol class="first loweralpha" start="3">
+<li>search for motif instances in custom sequences</li>
+</ol>
+</li>
+<li><ol class="first loweralpha" start="4">
+<li>search for similar motifs in the existing datasets</li>
+</ol>
+</li>
+<li><ol class="first loweralpha" start="5">
+<li>browse a database of more than 450 higher order motif models for about 100 TFs (constantly growing)</li>
+</ol>
+</li>
+</ul>
+</div>
+<div class="section" id="how-to-use-bammmotif-server">
+<h2>How to use BaMMmotif server?<a class="headerlink" href="#how-to-use-bammmotif-server" title="Permalink to this headline"></a></h2>
+<div class="section" id="de-novo-motif-discovery">
+<span id="id2"></span><h3><em>De novo</em> Motif Discovery<a class="headerlink" href="#de-novo-motif-discovery" title="Permalink to this headline"></a></h3>
+<p id="id3">We developed a new and fast method called <strong>PEnG!motif</strong> for searching motifs (position specific weight matrices,
+PWMs) in a set of nucleotide sequences (DNA or RNA). Based on the PWMs discovered by PEnG!motif, we train BaMMs
+(Bayesian Markov Models) which take positional inter-dependencies into account and give us more information about
+the motifs derived from the sequence set.</p>
+<div class="section" id="input-items">
+<h4>Input items<a class="headerlink" href="#input-items" title="Permalink to this headline"></a></h4>
+<p id="id4"><strong>Job Name</strong> (optional)</p>
+<p>You can specify the job name.</p>
+<p>By default, a random job ID is generated  so that you can easily search for it later on the &#8220;Find My Job&#8221; page.</p>
+<p><strong>Input Sequences</strong> (required)</p>
+<p>Please enter a FASTA formatted file containing DNA sequences that are enriched for a motif which you want to predict
+(i.e. peak sequences from ChIP-seq measurements). The sequences need to be of the same length. The maximum file upload
+size is limited to 250 Mb for registered users and 2.5 Mb for anonymous users.</p>
+<p>You can choose to &#8220;Load Example Data&#8221; for testing.</p>
+<p>Example for FASTA file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">&gt;</span><span class="n">chr5</span>
+<span class="n">GATGAGGGGAAGAGAAACTCAGAAGAGTTTGAAGGGCCTGGGAAGCAGGTGTGCATTCTCCTTAAGCTAGCCTGGGCATG</span>
+<span class="n">ACGTCATCAAGAATTTTGCTTAAGTGGTTGGGTACAATTGGTGTACACATCAAAGAATGCGGACTTTGGATCAGGTTGGA</span>
+<span class="n">GTTGGAACTCCACTGTTTGTCAACCACATGACCCCGGGCAAGTTA</span>
+<span class="o">&gt;</span><span class="n">chr17</span>
+<span class="n">ATCTCGTAGGAAAGCCCCGCCTCTATCCGCATGGAGGCGGGAATTGCCACGAAGCTCCTGTGGAGGGAGAGGAAGCAGCT</span>
+<span class="n">GCGGAAAGCCAATAAGAGTGGGGAATCGATGACGTCAACCAATGGGGACGCGGGGATATTACGGCCAATGAGAATGGAGA</span>
+<span class="n">AGGTCCAGGACACGTGGGTGGGGGAAGCTGAGCGCTGAGACCAAG</span>
+<span class="o">&gt;</span><span class="n">chr6</span>
+<span class="n">AATATGCCTAAATTTCCTCTTTGGGAACGCAAGACTTGCAGAGATGACTCCATGGAGAGCGGACTCTGCCGGCGGGAACT</span>
+<span class="n">GGAGTCGTTGGTGACGTCATCCCAGTCTGATCTGTGAAGGGTAGGGCCAGCAGGCAGCACCAAAGTTCCCGTATGCGCGT</span>
+<span class="n">TTTCAGTCTTCATTTAGGTCCGAATTCCCGGCATATAAGAATACT</span>
+<span class="o">&gt;</span><span class="n">chr6</span>
+<span class="n">TTGGCTTGGAGATGTGGCGGGTTGCCACTTCCCTGTGGGTCTCTGCGGCACTCTTCTGCCTGGTGACTGACACCTTGGAA</span>
+<span class="n">ATGAAGTTTATGACGTCATCGTTGCGGCTGGCCAATAGAAAAAGCTCCCGCGGAGAGGTGTTCCTTCCCCTTCGACTCAG</span>
+<span class="n">CTTCTTCACCCGCGTGAGCGAGCGCGCGCGCGCGGAGGGGGTGGG</span>
+<span class="o">&gt;</span><span class="n">chr2</span>
+<span class="n">CCCCCAGAGTAGGGAGCGGCGGCACTAGGGGATGTTGCGCATGCGCCATACGCCTGCGCAGAATCGAGTGAGTGGGAGAC</span>
+<span class="n">TAGTCAAAAAGGCTGACGTCATCGCACATGTTCTGGTCATGTCTGTGTGGGGGAGACCACGGATTCGGTGCTTTTCGTAA</span>
+<span class="n">GGTGTAGAAATGATTGCTCTGAAAGATACGAATTTGTTGGCTACA</span>
+<span class="o">&gt;</span><span class="n">chr9</span>
+<span class="n">AAGCCCCTACGCTGCACGTAGCTGCTCCAGCTACTGAGCCAAGACTACGCAGACAGTACAAGTCTTATAACAAAGCGGAA</span>
+<span class="n">CAAGCCAGATGACGTCATCCCGCTCGCCAAAGCACATCACGTGGTCTCCGCAGCACGTGACCCGTGCCTTCGCCGTAGGT</span>
+<span class="n">AAAAGAATGACGCACGTCAGTTCCAGATCGTGCGTTTTACACCCC</span>
+</pre></div>
+</div>
+<p><strong>Search on both strands</strong> (optional)</p>
+<p>When checked, the reverse complementary sequences are used for motif search as well.</p>
+<p>Select this option when motifs can occur on both strands. Transcription factors and micro RNAs can usually bind on
+both strands (in reverse orientation). Deselect if you are searching for directional motifs.</p>
+</div>
+<div class="section" id="advanced-options">
+<h4>Advanced Options<a class="headerlink" href="#advanced-options" title="Permalink to this headline"></a></h4>
+<p id="id5"><strong>Model Settings</strong></p>
+<p><em>Model Order</em></p>
+<p>The model order <em>k</em> defines up to which order the BaMM will be optimized. A zeroth-order BaMM is equivalent to a PWM.
+A first-order BaMM model takes dinucleotide probabilities into account. Registered users can learn models up to 8th-
+order while anonymous users are limited to forth-order models (due to the computation time and resource).</p>
+<p><em>add flanking positions</em>
+Extends the motif by adding uniformly initialized positions to the left and right of the initialization.
+The number corresponds to the amount of nucleotides added to either side of the original motif.</p>
+<p><strong>Model Initialization</strong></p>
+<p>BaMM!motif requires either a PWM, a BaMM or a list of known binding sites for initialization.</p>
+<p>By default, BaMM!motif uses <strong>PEnG!motif</strong> to find seeding patterns in your input sequences. It generates MEME-formatted
+files which contain a bunch of PWMs of the motifs ranked by ausfc scores.</p>
+<p>You can also provide a custom file for initialization.</p>
+<p><em>Motif Init File Format</em></p>
+<p>When you decide to use a custom file for motif initialization you can upload files in 3 different formats here.</p>
+<p>The <strong>PWM</strong> file is MEME-like format and looks like:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MOTIF</span> <span class="n">TGASTCATC</span>
+<span class="n">letter</span><span class="o">-</span><span class="n">probability</span> <span class="n">matrix</span><span class="p">:</span> <span class="n">alength</span><span class="o">=</span> <span class="mi">4</span> <span class="n">w</span><span class="o">=</span> <span class="mi">9</span> <span class="n">nsites</span><span class="o">=</span> <span class="mi">14428</span>
+<span class="mf">0.0025</span> <span class="mf">0.0005</span> <span class="mf">0.0020</span> <span class="mf">0.9950</span>
+<span class="mf">0.0272</span> <span class="mf">0.0243</span> <span class="mf">0.9241</span> <span class="mf">0.0244</span>
+<span class="mf">0.9370</span> <span class="mf">0.0283</span> <span class="mf">0.0149</span> <span class="mf">0.0198</span>
+<span class="mf">0.0144</span> <span class="mf">0.4522</span> <span class="mf">0.5203</span> <span class="mf">0.0132</span>
+<span class="mf">0.0207</span> <span class="mf">0.0144</span> <span class="mf">0.0094</span> <span class="mf">0.9556</span>
+<span class="mf">0.0150</span> <span class="mf">0.9506</span> <span class="mf">0.0245</span> <span class="mf">0.0099</span>
+<span class="mf">0.9695</span> <span class="mf">0.0146</span> <span class="mf">0.0034</span> <span class="mf">0.0125</span>
+<span class="mf">0.0118</span> <span class="mf">0.2790</span> <span class="mf">0.0681</span> <span class="mf">0.6410</span>
+<span class="mf">0.1644</span> <span class="mf">0.5324</span> <span class="mf">0.1150</span> <span class="mf">0.1881</span>
+
+<span class="n">MOTIF</span> <span class="n">CACTAG</span>
+<span class="n">letter</span><span class="o">-</span><span class="n">probability</span> <span class="n">matrix</span><span class="p">:</span> <span class="n">alength</span><span class="o">=</span> <span class="mi">4</span> <span class="n">w</span><span class="o">=</span> <span class="mi">6</span> <span class="n">nsites</span><span class="o">=</span> <span class="mi">12819</span>
+<span class="mf">0.0005</span> <span class="mf">0.9992</span> <span class="mf">0.0000</span> <span class="mf">0.0003</span>
+<span class="mf">0.9899</span> <span class="mf">0.0009</span> <span class="mf">0.0004</span> <span class="mf">0.0088</span>
+<span class="mf">0.0000</span> <span class="mf">0.9814</span> <span class="mf">0.0184</span> <span class="mf">0.0002</span>
+<span class="mf">0.0016</span> <span class="mf">0.0563</span> <span class="mf">0.0052</span> <span class="mf">0.9369</span>
+<span class="mf">0.9977</span> <span class="mf">0.0000</span> <span class="mf">0.0000</span> <span class="mf">0.0023</span>
+<span class="mf">0.0001</span> <span class="mf">0.0022</span> <span class="mf">0.9977</span> <span class="mf">0.0000</span>
+</pre></div>
+</div>
+<p>The <strong>BindingSites</strong> file contains blocks of enriched nucleotide patterns:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">GTGAGTCATC</span>
+<span class="n">ATGACTCATC</span>
+<span class="n">ATGAGTCACC</span>
+<span class="n">ATGAGTCACC</span>
+<span class="n">ATGACTCACT</span>
+<span class="n">ATGACTCATC</span>
+<span class="n">ATGAGTCACC</span>
+<span class="n">GTGACTCATC</span>
+<span class="n">ATGACTCATC</span>
+<span class="n">ATGACTCATC</span>
+<span class="n">ATGAGTCATA</span>
+<span class="n">GTGACTCATA</span>
+<span class="n">GTGACTCACG</span>
+<span class="n">GTGAGTCATC</span>
+<span class="n">ATGAGTCATA</span>
+<span class="n">GTGACTCACT</span>
+<span class="n">ATGACTCACA</span>
+<span class="n">CTGAGTCATC</span>
+<span class="n">ATGAGTCACC</span>
+<span class="n">ATGACTCATA</span>
+<span class="n">ATGACTCACC</span>
+<span class="n">ATGACTCATT</span>
+<span class="n">ATGAGTCATG</span>
+<span class="n">ATGAGTCACT</span>
+<span class="n">GTGACTCACC</span>
+</pre></div>
+</div>
+<p>The <strong>BaMM</strong>-formatted file (usually with .ihbcp suffix) contains conditional probabilities for each <em>k</em>-mer at each position:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span>
+<span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span>
+<span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span> <span class="mf">6.576e-01</span> <span class="mf">9.077e-02</span> <span class="mf">2.376e-01</span> <span class="mf">1.397e-02</span>
+
+<span class="mf">5.641e-05</span> <span class="mf">4.102e-04</span> <span class="mf">4.905e-05</span> <span class="mf">9.995e-01</span>
+<span class="mf">6.031e-07</span> <span class="mf">3.452e-04</span> <span class="mf">3.872e-07</span> <span class="mf">9.996e-01</span> <span class="mf">4.294e-06</span> <span class="mf">2.490e-05</span> <span class="mf">2.333e-06</span> <span class="mf">1.000e+00</span> <span class="mf">1.177e-06</span> <span class="mf">5.591e-04</span> <span class="mf">2.244e-06</span> <span class="mf">9.994e-01</span> <span class="mf">1.534e-05</span> <span class="mf">1.833e-04</span> <span class="mf">1.764e-05</span> <span class="mf">9.998e-01</span>
+<span class="mf">6.031e-07</span> <span class="mf">3.452e-04</span> <span class="mf">3.872e-07</span> <span class="mf">9.996e-01</span> <span class="mf">4.294e-06</span> <span class="mf">2.490e-05</span> <span class="mf">2.333e-06</span> <span class="mf">1.000e+00</span> <span class="mf">1.177e-06</span> <span class="mf">5.591e-04</span> <span class="mf">2.244e-06</span> <span class="mf">9.994e-01</span> <span class="mf">1.534e-05</span> <span class="mf">1.833e-04</span> <span class="mf">1.764e-05</span> <span class="mf">9.998e-01</span> <span class="mf">6.031e-07</span> <span class="mf">3.452e-04</span> <span class="mf">3.872e-07</span> <span class="mf">9.996e-01</span> <span class="mf">4.294e-06</span> <span class="mf">2.490e-05</span> <span class="mf">2.333e-06</span> <span class="mf">1.000e+00</span> <span class="mf">1.177e-06</span> <span class="mf">5.591e-04</span> <span class="mf">2.244e-06</span> <span class="mf">9.994e-01</span> <span class="mf">1.534e-05</span> <span class="mf">1.833e-04</span> <span class="mf">1.764e-05</span> <span class="mf">9.998e-01</span> <span class="mf">6.031e-07</span> <span class="mf">3.452e-04</span> <span class="mf">3.872e-07</span> <span class="mf">9.996e-01</span> <span class="mf">4.294e-06</span> <span class="mf">2.490e-05</span> <span class="mf">2.333e-06</span> <span class="mf">1.000e+00</span> <span class="mf">1.177e-06</span> <span class="mf">5.591e-04</span> <span class="mf">2.244e-06</span> <span class="mf">9.994e-01</span> <span class="mf">1.534e-05</span> <span class="mf">1.833e-04</span> <span class="mf">1.764e-05</span> <span class="mf">9.998e-01</span> <span class="mf">6.031e-07</span> <span class="mf">3.452e-04</span> <span class="mf">3.872e-07</span> <span class="mf">9.996e-01</span> <span class="mf">4.294e-06</span> <span class="mf">2.490e-05</span> <span class="mf">2.333e-06</span> <span class="mf">1.000e+00</span> <span class="mf">1.177e-06</span> <span class="mf">5.591e-04</span> <span class="mf">2.244e-06</span> <span class="mf">9.994e-01</span> <span class="mf">1.534e-05</span> <span class="mf">1.833e-04</span> <span class="mf">1.764e-05</span> <span class="mf">9.998e-01</span>
+
+<span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">8.509e-02</span>
+<span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">8.511e-02</span> <span class="mf">1.154e-04</span> <span class="mf">5.300e-05</span> <span class="mf">9.130e-01</span> <span class="mf">8.686e-02</span> <span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">1.705e-01</span> <span class="mf">6.390e-05</span> <span class="mf">5.626e-06</span> <span class="mf">9.149e-01</span> <span class="mf">8.467e-02</span>
+<span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">8.512e-02</span> <span class="mf">1.140e-04</span> <span class="mf">5.290e-05</span> <span class="mf">9.118e-01</span> <span class="mf">8.803e-02</span> <span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">1.705e-01</span> <span class="mf">1.160e-05</span> <span class="mf">3.908e-06</span> <span class="mf">9.135e-01</span> <span class="mf">8.648e-02</span> <span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">8.511e-02</span> <span class="mf">1.154e-04</span> <span class="mf">5.299e-05</span> <span class="mf">9.129e-01</span> <span class="mf">8.687e-02</span> <span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">1.762e-01</span> <span class="mf">5.495e-04</span> <span class="mf">3.594e-06</span> <span class="mf">8.862e-01</span> <span class="mf">1.124e-01</span> <span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">8.512e-02</span> <span class="mf">1.154e-04</span> <span class="mf">5.300e-05</span> <span class="mf">9.136e-01</span> <span class="mf">8.625e-02</span> <span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">1.931e-01</span> <span class="mf">4.276e-06</span> <span class="mf">1.047e-05</span> <span class="mf">9.294e-01</span> <span class="mf">6.938e-02</span> <span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">8.511e-02</span> <span class="mf">1.154e-04</span> <span class="mf">5.300e-05</span> <span class="mf">9.129e-01</span> <span class="mf">8.688e-02</span> <span class="mf">1.197e-04</span> <span class="mf">5.324e-05</span> <span class="mf">9.147e-01</span> <span class="mf">1.705e-01</span> <span class="mf">3.922e-05</span> <span class="mf">3.445e-06</span> <span class="mf">9.249e-01</span> <span class="mf">7.482e-02</span>
+
+<span class="mf">9.600e-01</span> <span class="mf">1.404e-03</span> <span class="mf">3.318e-02</span> <span class="mf">5.416e-03</span>
+<span class="mf">9.602e-01</span> <span class="mf">1.429e-03</span> <span class="mf">3.297e-02</span> <span class="mf">5.378e-03</span> <span class="mf">9.600e-01</span> <span class="mf">1.402e-03</span> <span class="mf">3.314e-02</span> <span class="mf">9.644e-03</span> <span class="mf">9.935e-01</span> <span class="mf">1.356e-03</span> <span class="mf">1.587e-04</span> <span class="mf">4.977e-03</span> <span class="mf">6.174e-01</span> <span class="mf">1.363e-03</span> <span class="mf">3.721e-01</span> <span class="mf">9.112e-03</span>
+<span class="mf">9.602e-01</span> <span class="mf">1.429e-03</span> <span class="mf">3.297e-02</span> <span class="mf">5.378e-03</span> <span class="mf">9.600e-01</span> <span class="mf">1.402e-03</span> <span class="mf">3.314e-02</span> <span class="mf">9.644e-03</span> <span class="mf">9.935e-01</span> <span class="mf">1.356e-03</span> <span class="mf">1.587e-04</span> <span class="mf">4.977e-03</span> <span class="mf">6.174e-01</span> <span class="mf">1.363e-03</span> <span class="mf">3.721e-01</span> <span class="mf">9.112e-03</span> <span class="mf">9.602e-01</span> <span class="mf">1.429e-03</span> <span class="mf">3.297e-02</span> <span class="mf">5.378e-03</span> <span class="mf">9.600e-01</span> <span class="mf">1.402e-03</span> <span class="mf">3.314e-02</span> <span class="mf">9.645e-03</span> <span class="mf">9.936e-01</span> <span class="mf">1.326e-03</span> <span class="mf">1.550e-04</span> <span class="mf">4.906e-03</span> <span class="mf">6.180e-01</span> <span class="mf">1.359e-03</span> <span class="mf">3.715e-01</span> <span class="mf">9.092e-03</span> <span class="mf">9.602e-01</span> <span class="mf">1.429e-03</span> <span class="mf">3.297e-02</span> <span class="mf">5.378e-03</span> <span class="mf">9.600e-01</span> <span class="mf">1.402e-03</span> <span class="mf">3.314e-02</span> <span class="mf">9.644e-03</span> <span class="mf">9.935e-01</span> <span class="mf">1.356e-03</span> <span class="mf">1.587e-04</span> <span class="mf">4.977e-03</span> <span class="mf">6.280e-01</span> <span class="mf">1.325e-03</span> <span class="mf">3.618e-01</span> <span class="mf">8.860e-03</span> <span class="mf">9.603e-01</span> <span class="mf">1.437e-03</span> <span class="mf">3.290e-02</span> <span class="mf">5.366e-03</span> <span class="mf">9.600e-01</span> <span class="mf">1.402e-03</span> <span class="mf">3.313e-02</span> <span class="mf">1.105e-02</span> <span class="mf">9.936e-01</span> <span class="mf">1.356e-03</span> <span class="mf">3.034e-06</span> <span class="mf">4.976e-03</span> <span class="mf">6.005e-01</span> <span class="mf">1.366e-03</span> <span class="mf">3.888e-01</span> <span class="mf">9.315e-03</span>
+
+<span class="mf">1.888e-02</span> <span class="mf">6.247e-01</span> <span class="mf">3.503e-01</span> <span class="mf">6.167e-03</span>
+<span class="mf">1.958e-02</span> <span class="mf">6.138e-01</span> <span class="mf">3.606e-01</span> <span class="mf">1.941e-03</span> <span class="mf">1.761e-02</span> <span class="mf">4.885e-01</span> <span class="mf">4.888e-01</span> <span class="mf">5.053e-03</span> <span class="mf">2.342e-03</span> <span class="mf">9.502e-01</span> <span class="mf">4.646e-02</span> <span class="mf">1.028e-03</span> <span class="mf">8.912e-03</span> <span class="mf">5.351e-01</span> <span class="mf">4.175e-01</span> <span class="mf">4.397e-01</span>
+<span class="mf">1.949e-02</span> <span class="mf">6.141e-01</span> <span class="mf">3.605e-01</span> <span class="mf">1.933e-03</span> <span class="mf">1.761e-02</span> <span class="mf">4.885e-01</span> <span class="mf">4.889e-01</span> <span class="mf">5.053e-03</span> <span class="mf">2.342e-03</span> <span class="mf">9.502e-01</span> <span class="mf">4.648e-02</span> <span class="mf">1.028e-03</span> <span class="mf">8.912e-03</span> <span class="mf">5.351e-01</span> <span class="mf">4.175e-01</span> <span class="mf">4.397e-01</span> <span class="mf">1.957e-02</span> <span class="mf">6.139e-01</span> <span class="mf">3.605e-01</span> <span class="mf">1.940e-03</span> <span class="mf">1.761e-02</span> <span class="mf">4.885e-01</span> <span class="mf">4.888e-01</span> <span class="mf">5.053e-03</span> <span class="mf">2.342e-03</span> <span class="mf">9.502e-01</span> <span class="mf">4.646e-02</span> <span class="mf">1.028e-03</span> <span class="mf">8.899e-03</span> <span class="mf">5.357e-01</span> <span class="mf">4.169e-01</span> <span class="mf">7.361e-01</span> <span class="mf">2.044e-02</span> <span class="mf">6.080e-01</span> <span class="mf">3.653e-01</span> <span class="mf">2.019e-03</span> <span class="mf">1.734e-02</span> <span class="mf">4.504e-01</span> <span class="mf">5.275e-01</span> <span class="mf">4.748e-03</span> <span class="mf">2.342e-03</span> <span class="mf">9.502e-01</span> <span class="mf">4.646e-02</span> <span class="mf">1.028e-03</span> <span class="mf">6.753e-03</span> <span class="mf">5.072e-01</span> <span class="mf">4.417e-01</span> <span class="mf">3.424e-01</span> <span class="mf">7.173e-03</span> <span class="mf">6.971e-01</span> <span class="mf">2.943e-01</span> <span class="mf">5.361e-04</span> <span class="mf">1.748e-02</span> <span class="mf">4.848e-01</span> <span class="mf">4.927e-01</span> <span class="mf">5.016e-03</span> <span class="mf">7.781e-04</span> <span class="mf">9.810e-01</span> <span class="mf">1.773e-02</span> <span class="mf">5.415e-04</span> <span class="mf">8.531e-03</span> <span class="mf">5.417e-01</span> <span class="mf">4.085e-01</span> <span class="mf">4.197e-01</span>
+
+<span class="mf">1.472e-01</span> <span class="mf">3.000e-03</span> <span class="mf">2.894e-01</span> <span class="mf">5.603e-01</span>
+<span class="mf">3.011e-02</span> <span class="mf">6.401e-04</span> <span class="mf">1.026e-01</span> <span class="mf">8.667e-01</span> <span class="mf">2.319e-01</span> <span class="mf">4.488e-03</span> <span class="mf">4.098e-01</span> <span class="mf">3.539e-01</span> <span class="mf">7.011e-03</span> <span class="mf">4.268e-04</span> <span class="mf">9.210e-02</span> <span class="mf">9.004e-01</span> <span class="mf">6.726e-02</span> <span class="mf">1.465e-03</span> <span class="mf">1.589e-01</span> <span class="mf">7.724e-01</span>
+<span class="mf">1.405e-02</span> <span class="mf">3.164e-04</span> <span class="mf">7.682e-02</span> <span class="mf">9.088e-01</span> <span class="mf">2.083e-01</span> <span class="mf">3.050e-03</span> <span class="mf">4.171e-01</span> <span class="mf">3.715e-01</span> <span class="mf">5.328e-03</span> <span class="mf">3.981e-04</span> <span class="mf">9.011e-02</span> <span class="mf">9.042e-01</span> <span class="mf">5.942e-02</span> <span class="mf">1.383e-03</span> <span class="mf">1.565e-01</span> <span class="mf">7.827e-01</span> <span class="mf">3.011e-02</span> <span class="mf">6.400e-04</span> <span class="mf">1.026e-01</span> <span class="mf">8.666e-01</span> <span class="mf">2.321e-01</span> <span class="mf">4.492e-03</span> <span class="mf">4.081e-01</span> <span class="mf">3.553e-01</span> <span class="mf">6.405e-03</span> <span class="mf">4.043e-04</span> <span class="mf">8.420e-02</span> <span class="mf">9.089e-01</span> <span class="mf">6.730e-02</span> <span class="mf">1.465e-03</span> <span class="mf">1.589e-01</span> <span class="mf">7.724e-01</span> <span class="mf">3.011e-02</span> <span class="mf">6.405e-04</span> <span class="mf">1.027e-01</span> <span class="mf">8.665e-01</span> <span class="mf">5.447e-01</span> <span class="mf">2.359e-02</span> <span class="mf">3.149e-01</span> <span class="mf">1.168e-01</span> <span class="mf">6.913e-03</span> <span class="mf">4.232e-04</span> <span class="mf">9.133e-02</span> <span class="mf">9.013e-01</span> <span class="mf">6.722e-02</span> <span class="mf">1.465e-03</span> <span class="mf">1.589e-01</span> <span class="mf">7.724e-01</span> <span class="mf">3.012e-02</span> <span class="mf">6.402e-04</span> <span class="mf">1.026e-01</span> <span class="mf">8.666e-01</span> <span class="mf">2.414e-01</span> <span class="mf">4.076e-03</span> <span class="mf">4.404e-01</span> <span class="mf">3.159e-01</span> <span class="mf">7.118e-03</span> <span class="mf">3.884e-04</span> <span class="mf">9.073e-02</span> <span class="mf">9.000e-01</span> <span class="mf">5.390e-02</span> <span class="mf">1.150e-03</span> <span class="mf">1.280e-01</span> <span class="mf">8.170e-01</span>
+</pre></div>
+</div>
+<p><em>Motif InitFile</em></p>
+<p>A file contains initial motif model(s) in one of the formats (PWM, BindingSites or BaMM) mentioned above.</p>
+<p><em>Motif Background File</em></p>
+<p>It is also a <strong>BaMM</strong>-formatted file which contains conditional probabilities for each <em>k</em>-mer at each position learned
+from a background sequence set. This file (usually the .hbcp file generated by BaMMmotif) is mandatory only
+when your initial model is BaMM-formatted.</p>
+<p><strong>Background Model</strong></p>
+<p>Background model is used for generating background sequences for evaluating the foreground model. By default, the
+background model is derived from the trimer frequencies of the positive sequences. If background sequences are provided
+by the user, the background model is then derived from the given sequences.</p>
+<p><em>Background Order K</em></p>
+<p>The background order describes the order of the background BaMM. The default <em>K</em> is 2, which means that the background
+model will be derived from the 3-mer frequencies of the background sequences.</p>
+<p><em>Background Sequences</em></p>
+<p>A FASTA-formatted file with background sequences can be provided in order to learn the background BaMM. These sequences
+should reflect the genomic background of the positive input sequences without being enriched for a motif.</p>
+<p>If no background sequence file is provided, the background model is learned from the <em>K</em>-mer frequencies of the positive
+sequences.</p>
+<p><strong>Expectation Maximization Optimization</strong></p>
+<p><em>Motif prior probability</em></p>
+<p>By default, your initial models are optimized by applying an expectation maximization algorithm. The Motif prior probability indicates the prior knowledge about the probability of a sequence containg a motif instance. The default value is 0.9 which is the expected rate of a successfull ChIPseq experiment.</p>
+<p><strong>Motif Position</strong></p>
+<p>By selecting this function, it will scan your input sequences with the optimized motifs and find the most
+probable site for the motif to occur till a p-value cutoff (determined by the motif score limit).
+You will also get the distribution plot indicating the relative position of the motif from the sequence center.</p>
+<p><em>Motif score limit</em></p>
+<p>The motif score limit defines up to which similarity a motif position on a sequence will be counted as a motif instance.
+The higher this score, the fewer the reported motif positions.</p>
+<p><strong>Motif Evaluation</strong></p>
+<p>By selecting this function, the optimized BaMM model will be evaluated by calculating the false-discovery-rate
+(FDR) and sensitivity values, and the area under the sensitivity-FDR curve (AUSFC).</p>
+<p>The AUSFC score is a good measure of motif model quality. The AUSFC score is normalised to the range of FDR values on
+the x axis, <span class="math">\(log( 0.5 ) − log( 10^{−4} )\)</span>. The AUSFC score has the great advantage that is summarises the
+performance of the model for the entire range of FDR values that are relevant in practice, without putting undue
+emphasis on any specific region. It can be interpreted as the mean model sensitivity, averaged over the log false
+discovery rate.</p>
+</div>
+<div class="section" id="submission">
+<h4>Submission<a class="headerlink" href="#submission" title="Permalink to this headline"></a></h4>
+<p id="id6">Submit your job by clicking &#8220;BaMM!&#8221; button at the bottom. This will lead you to a page where you can view your job
+status (while the job is running) and the result (when the job is complete).</p>
+</div>
+</div>
+<div class="section" id="motif-motif-comparison">
+<h3>Motif-Motif Comparison<a class="headerlink" href="#motif-motif-comparison" title="Permalink to this headline"></a></h3>
+<p id="id7">With this function, you can search with your input motif model through the existing databases and find similar motifs.</p>
+</div>
+<div class="section" id="motif-scan">
+<h3>Motif Scan<a class="headerlink" href="#motif-scan" title="Permalink to this headline"></a></h3>
+<p id="id8">This function allows you to scan your sequence set for occurrences of an input motif model. You can give an overview of
+the motif distribution on the sequence set and a detailed look at motif occurrences.</p>
+</div>
+<div class="section" id="motif-database">
+<h3>Motif Database:<a class="headerlink" href="#motif-database" title="Permalink to this headline"></a></h3>
+<p id="id9">In this database, we provide over 450 higher-order models learned from ChIP-seq data for about 100 transcription factors.
+The size of our database is consistently growing.</p>
+<p>These models are learned by applying BaMM!motif with model order of 4.</p>
+<div class="section" id="what-does-the-bamm-database-contain">
+<h4>What does the BaMM database contain?<a class="headerlink" href="#what-does-the-bamm-database-contain" title="Permalink to this headline"></a></h4>
+<p id="id10">Currently our database contains 445 higher order BaMM models derived from ENCODE ChIP-Seq data of 94 human transcription
+factor measurements from various laboratories. We will continuously enlarge this database with higher order BaMM models
+predicted on further publicly available data sets such as PBM data and HT-SELEX.</p>
+</div>
+<div class="section" id="how-to-search-for-a-specific-entry-in-the-database">
+<h4>How to search for a specific entry in the database?<a class="headerlink" href="#how-to-search-for-a-specific-entry-in-the-database" title="Permalink to this headline"></a></h4>
+<p id="id11">Follow the link &#8220;Motif Database&#8221; from the home website and enter the name of your protein target of interest. You will
+obtain a list of all database entries which contain your protein name. Details for each entry can be viewed by clicking
+the &#8220;more...&#8221; button. By clicking the &#8220;DOWNLOAD MODEL&#8221; button, you can download all the plots for the chosen motif model.</p>
+</div>
+</div>
+</div>
+<div class="section" id="how-to-interpret-bamm-results">
+<h2>How to interpret BaMM results?<a class="headerlink" href="#how-to-interpret-bamm-results" title="Permalink to this headline"></a></h2>
+<div class="section" id="how-do-i-obtain-my-job-results">
+<span id="id12"></span><h3>How do I obtain my job results?<a class="headerlink" href="#how-do-i-obtain-my-job-results" title="Permalink to this headline"></a></h3>
+<p id="id13">You can obtain your job results on the page that you are redirected to after submitting your job. You can also search
+for it on the &#8220;Find My Job&#8221; page with your job ID.</p>
+</div>
+<div class="section" id="what-does-the-result-page-show">
+<h3>What does the result page show?<a class="headerlink" href="#what-does-the-result-page-show" title="Permalink to this headline"></a></h3>
+<p id="id14">BaMMmotif outputs the best five motifs after seeding all possible motifs and optimized the top 5 motifs.
+It shows the parameter settings used for obtaining the result.</p>
+<p>For each model, the IUPAC code, PWMs for both sense and anti-sense sequences, AUSFC score (see <strong>Motif Evaluation</strong> for
+details) and occurrence ratio are shown.</p>
+<p>When you click on one motif, or scroll down the page, you will find more details, such as 1st- and 2nd-order sequence
+logos, which show the amount of information contributed by each order over and above what is provided by lower orders,
+for each oligonucleotide and position.</p>
+<p>You will also see three measures for the motif performance, namely, Sensitivity-False Discovery Rate curve,
+partial Receiver Operating Characteristic (pROC) curve, Precision-Recall curve and their corresponding
+area-under-the curve (AUC value). This hopefully makes it easy for you to estimate the suitablity of a motif model to
+predict binding sites in your dataset.</p>
+<p>The last plot shows the motif position distribution in your sequence set. If you search on both strands, it will show
+your the motif distribution on both strands.</p>
+<p>You can download all the models by clicking &#8220;DOWNLOAD ALL&#8221; button or each individual model by clicking &#8220;DOWNLOAD MODEL&#8221;.</p>
+</div>
+<div class="section" id="how-to-interpret-bammmotif-logos">
+<h3>How to interpret BaMMmotif logos?<a class="headerlink" href="#how-to-interpret-bammmotif-logos" title="Permalink to this headline"></a></h3>
+<p id="id15">In the 0th-order sequence logo, the higher of the four bases on each column is determined by their relative frequencies.
+More frequent bases are depicted on top of less frequent bases. Consequently, the consensus sequence can be assembled
+from the top bases, while the vertical order of bases in each column corresponds to their order of predominance.</p>
+<p>This 0th-order sequence logo was designed to reflect the characteristics of the PWM model and has been widely used.
+However, it is not suited to illustrate dependencies between binding site positions. Thus, we generate higher-order
+logos for you. In the higher-order logos, the height of both columns and <em>k</em>-mers corresponds to the contribution to the
+information content that is not yet described in a lower order, in other words, the information you can gain by taking
+into consideration of the dependencies between positions in the motif. Note that <em>k</em>-mers can exhibit negative
+contributions to the information content.</p>
+</div>
+</div>
+<div class="section" id="command-line-tools">
+<h2>Command line tools<a class="headerlink" href="#command-line-tools" title="Permalink to this headline"></a></h2>
+<p id="id16">Here are the stand-alone tools which can be downloaded from our Github repository and used via command lines:</p>
+<div class="section" id="peng-motif">
+<h3>PEnG!motif<a class="headerlink" href="#peng-motif" title="Permalink to this headline"></a></h3>
+<p id="pengmotif">The command line version of PEnG!motif can be downloaded from our GitHub <a class="reference external" href="https://github.com/soedinglab/PEnG-motif">PEnGmotif repository</a>.</p>
+</div>
+<div class="section" id="bamm-motif">
+<h3>BaMM!motif<a class="headerlink" href="#bamm-motif" title="Permalink to this headline"></a></h3>
+<p id="bammmotif">The command line version of BaMM!motif can be downloaded from our GitHub <a class="reference external" href="https://github.com/soedinglab/BaMMmotif">BaMMmotif repository</a>.</p>
 </div>
 
-<div class="jumbotron" style="background-color:white"><font color="black">
-<h2 id="1.How to use the web tool"> 1. How to use the web tool </h2>
-<p align="justify"> The BaMMmotif webserver enables the user to (a) predict de-novo motifs, (b) search for motif instances in custom sequences and (c) browse our database of more than 450 higher order motif models (constantly growing).</p>
-<br>
-
-<h3 id="1.1 De-novo Motif Prediction">1.1 De-novo Motif Prediction </h3>
-<p align="justify"> Most motif discovery algorithms train PWMs (position weight matrices). We derive here an expectation maximization (EM) algorithm to train BaMMs ( Bayesian Markov Models) which take positional interdependencies into account. </p>
-<p align="justify"> Performing de-novo motif prediction using BaMMmotif only requires a input sequence set, but ḿany more options can be customized:</p>
-<br>
-
-<h4 id="1.1.1 Required Input"> 1.1.1 Required Input </h4>
-    <p> Positive Input Sequences: </p>
-    <p align="justify">Please enter a FASTA formated file containing DNA sequences that are enriched for a motif which you want to predict (i.e. peak sequences from ChIP-seq measurements). The sequences need to be of the same length. The maximum file upload size is limited to 250 Mb for registered Users and 2.5Mb for anonymous Users.</p>
-    <br>	
-    
-    <p> Reverse Complement </p>
-    <p align="justify"> Select this option when motifs can occus on both strands, i.e. as reverse complements of each other. Transcription factors and micro RNAs can usually bind on both strands ( in reverse orientation ). Deselect if you are searching for directional motifs. </p> 
-    <br>
-
-<h4 id="1.1.2 Advanced Options">1.1.2 Advanced Options </h4>
-
-    <h5 id="1.1.2.1 Model Settings">1.1.2.1 Model Settings </h4>
-
-    <p> Model Order </p>
-    <p align="justify">The model order defines up to which order the BaMM will be optimized. A 0th order BaMM model is equivalent to a PWM model. A 1rst order BaMM model takes dinucleotide probabilities into account. Registered users can learn models up to 8th order while anonymous users are limited to 3rd order models (due to computation time and resource) only.</p>
-    <br>
-    
-    <p> Extend Left + Right </p>
-    <p align="justify">The extend options allow the user to add uniformly initialized positions to the left and/or right of the motif initialization. The number of positions which will be added to either side are by default 0.</p>
-    <br>
-
-    <h5 id="1.1.2.2 Motif Initialization">1.1.2.2 Motif Initialization </h4>
-
-    <p> Motif Initialization: </p>
-    <p align="justify">BaMMmotif needs either a PWM, a BaMM or a list of known binding sites in order to initialize. You can either provide a custom file for initialization or use our brand new tool "PeNGmotif" in order to find seeding patterns in your provided positive input sequences.</p>
-    <br>
-    
-    <p> Motif InitFile and Format </p>
-    <p align="justify"> When you decide to use a custom file for motif initialization you can upload 3 different file formats here.<br>
-    PWM-> The file needs to look like this:<br>
-    BaMM -> The file needs to look like this:</br>
-    BindingSites -> The file needs to look like this:</p>
-    <br>
-
-
-    <h5 id="1.1.2.3 Background Model">1.1.2.3 Background Model </h4>
-
-    <p> Background Order </p>
-    <p align="justify">The background order describes the (homogeneous) model order of the background BaMM. The default is 2, i.e. the background model will be derived from the 3-mer frequencies of the background sequences ( if no background sequences are given the provided positive input sequences are used for sampling).</p>
-    <br>
-    
-    <p> Background Sequences (optional):</p>
-    <p align="justify">A FASTA formated file with negative/background sequences can be provided in order to learn the (homogeneous) background BaMM. These sequences should reflect the genomic background of the positive input sequences without being enriched for a motif. If no background sequence file is provided, the background BaMM is learned from the k-mer frequences of the positive sequences.</p>
-	<br>
-	
-    <h5 id="1.1.2.4 Expectation Maximization Optimization"> 1.1.2.4 Expectation Maximization Optimization </h4>
-    <p> EM </p>
-    <p align="justify">Select this option if you want to refine your Motif initialization by using an expectation maximization optimization to train a higher order markov model. If this is not checked, the initial motif will not be changed. Unchecking this option only makes sense, if you want to have a logo of your initialized motif model without changeing it.</p>
-    <br>
-    <p> EM q-value </p>
-    <p align="justify">The q-value is the prior probability of the input sequences to conatin a true motif. In most biological experiments we expect to have some false positives within our measured sequences. The q-value is a rough estimation of the error rate from the experiment and by default set to 0.9 (i.e. we expect that 90% of the input sequences represent a true binding site.</p>
-    <br>
-
-    <p> EM epsilon </p>
-    <p align="justify">The EM algorithm is deemed to be converged when the sum over the absolute differences in BaMM probabilities from successive EM rounds is smaller than epsilon. The default is 0.001.</p>
-    <br>
-    
-    <p> EM max Iter </p> 
-    <p align="justify">The maxium iterations of the EM algorithm can be reduced with this option. BaMMs stop criteria is given by the convergence of BaMM probabilities (see EM epsilon) first, and by the maximum Iterations second.</p>
-    <br>
-
-
-    <h5 id="1.1.2.5 False Discovery Rate Estimation"> 1.1.2.5 False Discovery Rate Estimation </h4>
-	
-	<p> FDR </p>
-	<p align="justify">Select this option if you want to perform a false discovery rate (FDR) estimation for the predicted motif model(s). This will trigger a "cvFold"- cross validation with "mFold"-times negative sampled sequences.</p>
-    <br>
-
-	<p> m Fold </p>
-	<p align="justify">If FDR is selected you can adjust the amount of sampled negative sequences with this option. The default 10 indicates that the negative sequence set will be 10 times larger than the positive seuqences. </p>
-    <br>
-	
-	<p> cv Fold </p>
-	<p align="justify">If FDR is selected you can adjust the fold for cross validation. By default a 5-fold cross validation is performed.</p>
-    <br>
-	
-	<p> FDR sampling Order </p>
-	<p align="justify">The FDR sampling order defines the order of k-mers which will be used for sampling negative sequences during FDR estimation. The default is 2, i.e. sampling trimer frequencies.</p>
-    <br>
-	
-
-<h4 id="1.1.3 Submition"> 1.1.3 Submition </h4> 
-	<p align="justify"> Once all parameters are set and input files are uploaded, clicking "BaMM!" at the bottom of the page will submit the job to the BaMM cluster. You can follow the running job in a live console and view your results when its finished. If you want to look at your results some other time, you can copy your job-ID and look for your results under "Find My Job" in the header line. </p>
-    <br>
-
-<h3 id="1.2 Motif Instance Discovery"> 1.2 Motif Instance Discovery </h3>
-<p align="justify"> If you have a motif model already predicted (or load from the database) you can use it to find motif instances in sequences that are hundreds or thousands of nucleotides long. BaMMmotif will give you a logOdds Score ( measure of how good the motif matches a sequence ) for each position in your query sequence and/or indicate which positions contain the most probable binding sites of your model. </p>
-<p align="justify"> Finding motif sites in a query-sequence is a simple 2 Step process: </p>
-<br>
-
-<h4 id="1.2.1 Required Input">1.2.1 Required Input </h4>
-	<p>    Input Sequences: </p>
-	<p align="justify"> Please enter a FASTA formated file which you want to scan for motif occurences. The maximum file upload size is limited to 250 Mb for registered Users and 2.5Mb for anonymous Users.</p>
-    <br>
-	
-	<p>    Model File and Format: </p>
-	<p align="justify"> You can either upload a custom Motif in PWM or BaMM format, or select a BaMM model from our BaMM-DB.
-	PWM file format looks like this: 
-	BaMM file format looks like this: </p>
-    <br>	
-	
-<h4 id="1.2.2 Submition">1.2.2 Submition</h4>
-	<p align="justify"> Once all parameters are set and input files are uploaded, clicking "BaMM!" at the bottom of the page will submit the job to the BaMM cluster. You can follow the running job in a live console and view your results when its finished. If you want to look at your results some other time, you can copy your job-ID and look for your results under "Find My Job" in the header line. </p>
-    <br>
-    
-<h2 id="2. Interpreting BaMM Results"> 2. Interpreting BaMM Results </h2>
-<br>
-
-<h3 id="2.1 How do I obtain my job results?"> 2.1 How do I obtain my job results? </h3>
-	<p align="justify"> You can find your results under "Find My Job". If you are registered you will find a summary list of all your jobs and their status. When a job has finished you can click on "Finished" in order to view your results. If you have run your job anonymously, you can enter your job ID under "Find My Job".</p>
-    <br>	
-    
-<h3 id="2.2 What does the Result Page show?">2.2 What does the Results Page show? </h3>	
-	<p align="justify"> The results page summarizes your job settings in the first panel. Here you can recapitualte your selected options and uploaded files. For each motif you will obtain Motif Logos up to 3rd order contributions. If you have selected the option "FDR" you will obtain a "Motif Performance" panel, which show a ROC curve and the LogOdds Score distributions of positive and negative sequence sets. in comparison. 
-	The performance in discriminating binding from background sequences is assessed using cross-validation, by sorting in descending order the sequences by their maximum log-odds score over all possible motif positions and recording the cumulated number of correct predictions (TP) and false predictions (FP) above a score threshold. Lowering the score threshold from maximum to minimum we trace out a curve of TP versus FP. The normalized version in which one plots the true positive rate (TPR), the fraction of TP out of all positive sequences, versus the false positive rate (FPR), the fraction of FP out of all background sequences, is called receiver operating charac- teristic (ROC) curve. The partial area under the ROC curve (pAUC) up to the fith percentile of FPR (insets in Figure 2A and B) is a good measure of performance, because at FPR > 0.05 and TPR = 1 the precision, i.e. the fraction of predictions that are correct (i.e. truly bound), has already fallen to below 1/(1 + 0.05 × 100) = 0.167. The pAUC therefore summarises the part of the ROC curve most relevant in practice for predicting factor binding sites and is preferable over the AUC.
-	The Panel "Motif Positions" describes where in your query sequences motif instances with a high logOdds score are positioned. Each panel content can be downloaded in .zip format.</p>
-<br>
-
-<h3 id="2.3 How to interprete BaMMmotif logo plots?">2.3  How to interprete BaMMmotif logo plots? </h3>
-	<p align="justify"> We developed sequence logos for higher orders to visualize the Bamms. We split the relative entropy of the model into a sum of terms, one for each order. The logos show the amount of information contributed by each order over and above what is provided by lower orders, for each oligonucleotide and position. </p>
-<br>
-
-<h2 id="3. The BaMM database"> 3. The BaMM database </h2>
-<p align="justify">The BaMM database offers a wide range of higher order binding site models predicted using BaMMmotif. <p>
-<br>
-
-<h3 id="3.1 What can I find in the database?">3.1  What can I find in the database? </h3>
-<p align="justify"> Currently our database contains 445 higher order BaMM models derived from ENCODE ChIP-Seq data of 94 human transcription factor measurements from various laboratories. We will continuously enlarge this database with higher order BaMM models predicted on further publicly avaiable data sets such as PBM data and HT-SELEX. </p>
-<br>
-
-<h3 id="3.2 How can I search for a specific entry?">3.2  How can I search for a specific entry in the database? </h3>
-<p align="justify"> Follow the link "search database" from the Home website and enter the name of your protein target of interest. You will obtain a list of all database entries which contain your protein name. Details for each entry can be viewed by clicking the "more" button.</p>
-<br>
-
-<h3 id="3.3 How can I use a Motif from the database?">3.3  How can I use a Motif from the database to scan over my custom sequences? </h3>
-<p align="justify"> When you want to use a higher order model from the database to scan over your squery sequence, simply click on "Use this model" on the database details entry page. You will be redierected to upload your query sequence for scanning with BaMM!.</p>
-<br>
-
-<h2 id="4. The BaMMmotif Command Line Tool"> 4. The BaMMmotif Command Line Tool </h2>
-<p align="justify">BaMMmotif is also available as command line tool. Using the command line tool enables experienced users to i.e. work without limited file upload sizes and/or using the tool in offline mode.</p>
-<br>
-
-<h3 id="4.1 Where can I download the command line tool?">4.1  Where can I download the tool? </h3>
-<p align="justify"> The command line version of BaMMmotif can be downloaded from our <a href="https://github.com/soedinglab/BaMMmotif" > GitHub Repository</a>. </p>
-<br>
-
-<h3 id="4.2 How do I use the command line tool?">4.2  How do I use the command line tool? </h3>
-<p align="justify"> A detailed description of how to use the command line tool can be found in the Readme section of the respective GitHub repository.</p>
-<br>
-
-<h2 id="5.FAQs"> 5. FAQs </h2>
-<br>
-<h3 id="5.1 Why should I register?">5.1 Why should I register? </h3>
-<p align="justify">The BaMMmotif algorithm and its results are freely available for any user without registation. However, registering as BaMM account makes wokring with the BaMM webserver even more convenient. In logged in mode, the user can see all his running and finished jobs in a structured list to keep track of his job status more easliy. This is only possible if a job can be assigned to a defined user, hence only limited to registered users. Moreover, you will be notified vie e-mail once your jobs are finished insteadt of having to check the manually. </p>
-<h3 id="5.2 How can I register and what information will be saved?">5.2 How can I register and what information will be saved? </h3>
-<p>For registering at BaMMmotif, click the "Log in" Button on the top right corner and follow the link to register a new account. The only information that is needed is a username (can be an acronym), a valid e-mail adress, and a password. E-mail addresses will only be used by the BaMMmotif webserver to inform the user of finished jobs. There will be no advertisements or spam mails and absolutely no forwarding of your confidential information to any third parties. </p>
-<br>
-
+{% comment %}
+<div class="section" id="bammscan">
+<h3>BaMMScan<a class="headerlink" href="#bammscan" title="Permalink to this headline"></a></h3>
+<p id="id17">The command line version of BaMMScan can be downloaded from our GitHub <a class="reference external" href="https://github.com/soedinglab/BaMMmotif">BaMMmotif repository</a>.</p>
 </div>
+<div class="section" id="fdr-analysis">
+<h3>FDR analysis<a class="headerlink" href="#fdr-analysis" title="Permalink to this headline"></a></h3>
+<p id="fdr">The command line version of FDR can be downloaded from our GitHub <a class="reference external" href="https://github.com/soedinglab/BaMMmotif">BaMMmotif repository</a>.</p>
+</div>
+{% endcomment %}
+
+<div class="section" id="how-to-use-these-tools-via-command-lines">
+<h3>How to use these tools via command lines?<a class="headerlink" href="#how-to-use-these-tools-via-command-lines" title="Permalink to this headline"></a></h3>
+<p id="id18">A detailed description of how to use the command line tool can be found in the README section of the respective GitHub
+repository.</p>
+</div>
+</div>
+<div class="section" id="faqs">
+<h2>FAQs<a class="headerlink" href="#faqs" title="Permalink to this headline"></a></h2>
+<div class="section" id="why-shall-i-register">
+<span id="id19"></span><h3>Why shall I register?<a class="headerlink" href="#why-shall-i-register" title="Permalink to this headline"></a></h3>
+<p id="id20">The BaMM!motif algorithm and its results are <strong>freely</strong> available for <strong>all users</strong> without registration.</p>
+<p>However, registering for a BaMM account makes working with the BaMMmotif server even more convenient.</p>
+<p>In logged in mode, the user can see all his running and finished jobs in a structured list to keep track of the job
+status more easily. This is only possible if a job can be assigned to a defined user, hence only limited to registered
+users. Moreover, you will be notified via e-mail once your jobs are finished.
+<strong>NOTE</strong>: registration is not available in BETA version.</p>
+</div>
+<div class="section" id="how-can-i-register">
+<h3>How can I register?<a class="headerlink" href="#how-can-i-register" title="Permalink to this headline"></a></h3>
+<p id="id21">For registering at BaMM!motif, click the &#8220;Log in&#8221; button on the top right corner and follow the link to register
+a new account. The only information required is a username (can be an acronym), a valid e-mail address, and a password.
+E-mail addresses will only be used by the BaMM!motif web server to inform the user of the finished jobs. There will
+be no advertisements or spam mails and absolutely no forwarding of your confidential information to any third parties.
+<strong>NOTE</strong>: registration is not available in BETA version.</p>
+</div>
+<div class="section" id="how-long-are-the-results-available">
+<h3>How long are the results available?<a class="headerlink" href="#how-long-are-the-results-available" title="Permalink to this headline"></a></h3>
+<p id="id22">Currently, the results will be kept for 4 weeks for unregistered users.</p>
+</div>
+</div>
+<div class="section" id="citing-and-references">
+<h2>Citing and References<a class="headerlink" href="#citing-and-references" title="Permalink to this headline"></a></h2>
+<p id="id23">Please cite our paper: <a class="reference external" href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5291271/">BaMMmotif paper</a> .DOI: 10.1093/nar/gkw521</p>
+</div>
+<div class="section" id="contact">
+<h2>Contact<a class="headerlink" href="#contact" title="Permalink to this headline">¶</a></h2>
+<p id="id24">bamm(at)mpibpc(dot)mpg(dot)de</p>
+</div>
+</div>
+</div>
+
 
 {% endblock %}
-
