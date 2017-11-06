@@ -258,4 +258,8 @@ tramp
 /GetOpt_ppLibrary/
 
 .idea/
+<<<<<<< HEAD
 .idea
+=======
+.idea/*
+>>>>>>> updated gitignore
