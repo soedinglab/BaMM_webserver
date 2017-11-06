@@ -7,6 +7,9 @@
 <div class="jumbotron" style="background-color:white"><font color="black">
   <h2> Find your Job </h2>
       <hr style="border: 1px solid #1f2e2e">
+      {% if warning %}
+        <p> <font color="#B22222">No Job found with the provided Job ID, did you enter the correct Job ID ? </font></p>
+      {% endif %}
      <form method="post"  enctype="multipart/form-data">
         {% csrf_token %}
         <p>

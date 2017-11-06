@@ -19,7 +19,7 @@ from .utils import (
     get_log_file,
     get_user, set_job_name, upload_example_fasta,
     upload_example_motif, get_result_folder,
-    upload_db_input
+    upload_db_input,valid_uuid
 )
 import datetime
 import os
@@ -197,10 +197,15 @@ def find_results(request):
         form = FindForm(request.POST)
         if form.is_valid():
             jobid = form.cleaned_data['job_ID']
-            return redirect('result_detail', pk=jobid)
+            if valid_uuid(jobid):
+                job = Job.objects.get(pk=jobid).exists()
+                if job.exists():
+                    return redirect('result_detail', pk=jobid)
+            form = FindForm()
+            return render(request, 'results/results_main.html', {'form': form, 'warning': True})                
     else:
         form = FindForm()
-    return render(request, 'results/results_main.html', {'form': form})
+    return render(request, 'results/results_main.html', {'form': form, 'warning': False})
 
 
 def result_overview(request):
