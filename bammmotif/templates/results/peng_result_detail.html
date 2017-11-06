@@ -4,7 +4,7 @@
     {% load static %}
     {% load bammmotif_extras %}
 
-    <div class="jumbotron" style="background-color:white">
+    <div class="jumbotron" style="background-color:white" xmlns="http://www.w3.org/1999/html">
         <h2> Results for  {{result.job_name}} </h2>
         <hr style="border: 1px solid #1f2e2e">
         <div class="well" style="background-color:white">
@@ -164,9 +164,9 @@
             {% for motif in motif_ids %}
                 <tr>
                     <div>
-                        <div> {{ motif }} </div>
+                        <div> <br>Motif: {{ motif }} </br></div>
                         <div>
-                            <img src="/code{% get_media_prefix %}{{ opath }}/{{ motif }}.png" class="responsive-img" style='max-height:400px;' alt="/code{% get_media_prefix %}{{ opath }}/{{ motif }}.png">
+                            <img src="{% get_media_prefix %}{{ opath }}/{{ motif }}.png" class="responsive-img" style='max-height:400px;' alt="{% get_media_prefix %}{{ opath }}/{{ motif }}.png">
                         </div>
                     </div>
                 </tr>
