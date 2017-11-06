@@ -42,8 +42,8 @@ def get_core_params(job_pk, useRefined, m=1):
         param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp')
     else:
         # motif Initialization File
-        if str(job.Motif_Init_File_Format) == "BindingSite":
-            param.append("--BindingSiteFile")
+        if str(job.Motif_Init_File_Format) == "BindingSites":
+            param.append("--bindingSiteFile")
             param.append(path.join(root, job.Motif_InitFile.name))
         if str(job.Motif_Init_File_Format) == "PWM":
             param.append("--PWMFile")
