@@ -65,7 +65,6 @@ def create_job(form, request):
         job.job_name = job_id_short[0]
     print("UPLOAD COMPLETE: save job object")
     job.save()
-    print(job.__dict__)
     return job
 
 

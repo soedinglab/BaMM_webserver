@@ -15,18 +15,12 @@ from .utils import get_result_folder
 def peng_result_detail(request, pk):
     result = get_object_or_404(PengJob, pk=pk)
     meme_result_file_path = file_path_peng(result.job_ID, result.meme_output)
-    # opath = get_result_folder(pk)
-
-    # database = 100
-    # db = get_object_or_404(DbParameter, pk=database)
-    # db_dir = path.join(db.base_dir, 'Results')
 
     if result.complete:
         print("status is successfull")
         print("now plot result")
         plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], "meme_plots")
         opath = os.path.join(get_result_folder(result.job_ID), "meme_plots").split('/', maxsplit=1)[1]
-        print(opath)
         if not os.path.exists(plot_output_directory):
             os.makedirs(plot_output_directory)
         motif_ids = get_motif_ids(meme_result_file_path)
