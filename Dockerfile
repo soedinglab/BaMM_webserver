@@ -3,6 +3,8 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 
+ENV MEME_VERSION=4.12.0
+
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	r-base          \
 	libxml2-dev     \
@@ -51,9 +53,17 @@ RUN rm -rf /tmp/suite
 
 
 # Note: NOT ALL OF MEME-SUITES TOOLS INSTALL CORRECTLY. For now this is fine, since we are only interested in plotting.
-ADD tools/meme_suite /tmp/meme_suite
-RUN cd /tmp/meme_suite && tar xfv meme_4.12.0.tar.gz
-RUN cd /tmp/meme_suite/meme_4.12.0 && ./configure --prefix=/ext/meme --with-url=http://meme-suite.org --enable-build-libxml2 --enable-build-libxslt --enable-serial  && make && make install
+# http://meme-suite.org/meme-software/4.12.0/meme_4.12.0.tar.gz
+#ADD tools/meme_suite /tmp/meme_suite
+#RUN cd /tmp/meme_suite && tar xfv meme_4.12.0.tar.gz
+RUN mkdir -p /tmp/meme_suite
+RUN cd /tmp/meme_suite && \
+    wget http://meme-suite.org/meme-software/${MEME_VERSION}/meme_${MEME_VERSION}.tar.gz && \
+    tar xfvz meme_${MEME_VERSION}.tar.gz && \
+    cd meme_${MEME_VERSION} && \
+    ./configure --prefix=/ext/meme --with-url=http://meme-suite.org --enable-build-libxml2 --enable-build-libxslt --enable-serial  && \
+    make && \
+    make install
 RUN cp /ext/meme/bin/ceqlogo /ext/bin
 RUN rm -rf /tmp/meme_suite
 
