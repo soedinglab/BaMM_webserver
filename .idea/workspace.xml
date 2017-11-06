@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
 <<<<<<< HEAD
+<<<<<<< HEAD
     <list default="true" id="5656d386-afcc-4923-ac51-bae84306867f" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/bammmotif/templates/results/result_detail.html" afterPath="$PROJECT_DIR$/bammmotif/templates/results/result_detail.html" />
       <change beforePath="$PROJECT_DIR$/tools/suite" afterPath="$PROJECT_DIR$/tools/suite" />
@@ -37,6 +38,9 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html" afterPath="$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html" />
 >>>>>>> Peng working
     </list>
+=======
+    <list default="true" id="c75acfec-2eef-4ef2-a200-872fbc7cc2d4" name="Default" comment="" />
+>>>>>>> commit
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -219,8 +223,8 @@
       <file leaf-file-name="result_detail.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/result_detail.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3780">
-              <caret line="210" column="61" lean-forward="true" selection-start-line="210" selection-start-column="61" selection-end-line="210" selection-end-column="61" />
+            <state relative-caret-position="1944">
+              <caret line="210" column="61" lean-forward="false" selection-start-line="210" selection-start-column="61" selection-end-line="210" selection-end-column="61" />
               <folding>
                 <element signature="e#7546#7552#0#HTML" expanded="true" />
               </folding>
@@ -229,17 +233,17 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="peng_result_detail.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="peng_result_detail.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="166" column="56" lean-forward="false" selection-start-line="166" selection-start-column="56" selection-end-line="166" selection-end-column="56" />
+            <state relative-caret-position="288">
+              <caret line="154" column="83" lean-forward="false" selection-start-line="154" selection-start-column="83" selection-end-line="154" selection-end-column="83" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Dockerfile" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Dockerfile" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Dockerfile">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="456">
@@ -467,6 +471,7 @@
   </component>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   <component name="ProjectFrameBounds" extendedState="1">
 =======
   <component name="ProjectFrameBounds">
@@ -476,6 +481,12 @@
 >>>>>>> Peng working
     <option name="width" value="1916" />
     <option name="height" value="1076" />
+=======
+  <component name="ProjectFrameBounds" extendedState="1">
+    <option name="x" value="1920" />
+    <option name="width" value="1676" />
+    <option name="height" value="1046" />
+>>>>>>> commit
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -726,6 +737,7 @@
   <component name="ToolWindowManager">
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     <frame x="0" y="0" width="1916" height="1076" extended-state="1" />
     <editor active="true" />
     <layout>
@@ -737,18 +749,25 @@
 =======
 >>>>>>> Peng working
     <frame x="0" y="0" width="1916" height="1076" extended-state="0" />
+=======
+    <frame x="1920" y="0" width="1676" height="1046" extended-state="1" />
+>>>>>>> commit
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12794432" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1468059" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3393617" sideWeight="0.50982803" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3393617" sideWeight="0.490172" order="10" side_tool="false" content_ui="tabs" />
+<<<<<<< HEAD
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32061857" sideWeight="0.497543" order="8" side_tool="false" content_ui="tabs" />
 <<<<<<< HEAD
 >>>>>>> Peng working
 =======
 >>>>>>> Peng working
+=======
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33085108" sideWeight="0.497543" order="8" side_tool="false" content_ui="tabs" />
+>>>>>>> commit
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32978722" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15578158" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -1561,6 +1580,7 @@
     </entry>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/bammmotif/command_line.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
@@ -1668,6 +1688,8 @@
         </state>
       </provider>
     </entry>
+=======
+>>>>>>> commit
     <entry file="file://$PROJECT_DIR$/bammmotif/utils/misc.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
@@ -1700,15 +1722,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html">
+    <entry file="file://$PROJECT_DIR$/Dockerfile">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="306">
           <caret line="166" column="56" lean-forward="false" selection-start-line="166" selection-start-column="56" selection-end-line="166" selection-end-column="56" />
 >>>>>>> Peng working
+=======
+        <state relative-caret-position="456">
+          <caret line="50" column="4" lean-forward="false" selection-start-line="50" selection-start-column="4" selection-end-line="50" selection-end-column="4" />
+>>>>>>> commit
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/bammmotif/peng_bamm_split_views.py">
@@ -1756,6 +1784,30 @@
         <state relative-caret-position="456">
           <caret line="50" column="4" lean-forward="false" selection-start-line="50" selection-start-column="4" selection-end-line="50" selection-end-column="4" />
 >>>>>>> Peng working
+=======
+    <entry file="file://$PROJECT_DIR$/bammmotif/templatetags/bammmotif_extras.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/result_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1944">
+          <caret line="210" column="61" lean-forward="false" selection-start-line="210" selection-start-column="61" selection-end-line="210" selection-end-column="61" />
+          <folding>
+            <element signature="e#7546#7552#0#HTML" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="154" column="83" lean-forward="false" selection-start-line="154" selection-start-column="83" selection-end-line="154" selection-end-column="83" />
+>>>>>>> commit
           <folding />
         </state>
       </provider>
