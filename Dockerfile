@@ -53,6 +53,7 @@ RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
 
 #ADD tools/meme_suite /tmp/meme_suite
+#COPY tools/meme_suite/meme_4.12.0.tar.gz /tmp/meme_suite
 #RUN cd /tmp/meme_suite
 #RUN tar xfvz meme_4.12.0.tar.gz
 #RUN cd meme_4.12.0
