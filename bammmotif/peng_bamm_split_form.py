@@ -82,4 +82,3 @@ def get_valid_peng_form(post, files, user, mode):
         return form, valid, args
     valid = True
     return form, valid, args
-

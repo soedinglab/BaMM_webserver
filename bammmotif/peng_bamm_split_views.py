@@ -7,6 +7,7 @@ from .peng_bamm_split_job import create_job, validate_input_data
 from .peng_bamm_split_tasks import run_peng
 from .peng_bamm_split_utils import upload_example_fasta_for_peng
 from .models import Job, PengJob, DbParameter
+<<<<<<< HEAD
 from .forms import FindForm
 from .peng_bamm_split_job import file_path_peng
 from .peng_utils import get_motif_ids, plot_meme_output

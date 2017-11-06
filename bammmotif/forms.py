@@ -63,8 +63,6 @@ class OccurrenceExampleForm(forms.ModelForm):
         fields = ('job_name', 'reverse_Complement', 'score_Cutoff',
                   'FDR', 'm_Fold', 'sampling_Order',
                   'MMcompare', 'p_value_cutoff')
-
-
 class OccurrenceDBForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -92,3 +90,4 @@ class FindForm(forms.Form):
 
 class DBForm(forms.Form):
     db_ID = forms.CharField(max_length=255)
+
