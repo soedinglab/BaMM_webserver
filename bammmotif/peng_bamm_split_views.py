@@ -25,7 +25,8 @@ def peng_result_detail(request, pk):
         print("status is successfull")
         print("now plot result")
         plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], "meme_plots")
-        opath = os.path.join(get_result_folder(result.job_ID), "meme_plots")
+        opath = os.path.join(get_result_folder(result.job_ID), "meme_plots").split('/', maxsplit=1)[1]
+        print(opath)
         if not os.path.exists(plot_output_directory):
             os.makedirs(plot_output_directory)
         motif_ids = get_motif_ids(meme_result_file_path)
