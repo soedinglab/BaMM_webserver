@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c75acfec-2eef-4ef2-a200-872fbc7cc2d4" name="Default" comment="" />
+    <list default="true" id="c75acfec-2eef-4ef2-a200-872fbc7cc2d4" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -76,7 +78,7 @@
       <file leaf-file-name="peng_result_detail.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
+            <state relative-caret-position="396">
               <caret line="154" column="83" lean-forward="false" selection-start-line="154" selection-start-column="83" selection-end-line="154" selection-end-column="83" />
               <folding />
             </state>
@@ -169,8 +171,8 @@
         <option value="$PROJECT_DIR$/bammmotif/templates/results/results_main.html" />
         <option value="$PROJECT_DIR$/bammmotif/templates/home/home.html" />
         <option value="$PROJECT_DIR$/bammmotif/peng_bamm_split_views.py" />
-        <option value="$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html" />
         <option value="$PROJECT_DIR$/Dockerfile" />
+        <option value="$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html" />
       </list>
     </option>
   </component>
@@ -584,14 +586,14 @@
         <state relative-caret-position="4878">
           <caret line="271" column="47" lean-forward="false" selection-start-line="271" selection-start-column="47" selection-end-line="271" selection-end-column="47" />
           <folding>
-            <marker date="1509971694609" expanded="false" signature="8438:8457" ph="..." />
-            <marker date="1509971694609" expanded="false" signature="8774:8785" ph="..." />
-            <marker date="1509971694609" expanded="false" signature="8882:8888" ph=" " />
-            <marker date="1509971694609" expanded="false" signature="8888:8894" ph=" " />
-            <marker date="1509971694609" expanded="false" signature="12501:12520" ph="..." />
-            <marker date="1509971694609" expanded="false" signature="12844:12855" ph="..." />
-            <marker date="1509971694609" expanded="false" signature="12950:12956" ph=" " />
-            <marker date="1509971694609" expanded="false" signature="12956:12962" ph=" " />
+            <marker date="1509978364059" expanded="false" signature="8438:8457" ph="..." />
+            <marker date="1509978364059" expanded="false" signature="8774:8785" ph="..." />
+            <marker date="1509978364059" expanded="false" signature="8882:8888" ph=" " />
+            <marker date="1509978364059" expanded="false" signature="8888:8894" ph=" " />
+            <marker date="1509978364059" expanded="false" signature="12501:12520" ph="..." />
+            <marker date="1509978364059" expanded="false" signature="12844:12855" ph="..." />
+            <marker date="1509978364059" expanded="false" signature="12950:12956" ph=" " />
+            <marker date="1509978364059" expanded="false" signature="12956:12962" ph=" " />
           </folding>
         </state>
       </provider>
@@ -872,7 +874,7 @@
         <state relative-caret-position="18">
           <caret line="43" column="22" lean-forward="false" selection-start-line="43" selection-start-column="22" selection-end-line="43" selection-end-column="22" />
           <folding>
-            <element signature="e#0#39#0" expanded="true" />
+            <element signature="e#0#39#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -993,7 +995,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
+        <state relative-caret-position="396">
           <caret line="154" column="83" lean-forward="false" selection-start-line="154" selection-start-column="83" selection-end-line="154" selection-end-column="83" />
           <folding />
         </state>
