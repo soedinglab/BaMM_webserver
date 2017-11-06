@@ -7,9 +7,11 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 
-def job_directory_path_peng(job_ID, filename):
-    path_to_job = "/code/media"
-    return os.path.join(path_to_job, settings.JOB_DIR_PREFIX, str(job_ID), 'Input', str(filename))
+def file_path_peng(job_id, filename):
+    path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id), 'Output')
+    if not os.path.exists(path_to_job):
+        os.makedirs(path_to_job)
+    return os.path.join(path_to_job, str(filename))
 
 def create_anonymuous_user(request):
     ip = get_ip(request)
@@ -41,8 +43,8 @@ def create_job(form, request):
     job.no_em = not job.no_em
     job.no_merging = not job.no_merging
     # Add correct path to files.
-    job.meme_output = job_directory_path_peng(job.job_ID, job.meme_output)
-    job.json_output = job_directory_path_peng(job.job_ID, job.json_output)
+    job.meme_output = file_path_peng(job.job_ID, job.meme_output)
+    job.json_output = file_path_peng(job.job_ID, job.json_output)
     if job.strand == 'on':
         job.strand = "BOTH"
     else:

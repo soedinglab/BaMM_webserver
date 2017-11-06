@@ -194,6 +194,7 @@ EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You
 
 # Settings related to file system structure
 JOB_DIR_PREFIX = 'jobs'
+JOB_DIR_PREFIX_PENG = '/code/media/jobs'  # TODO: Make this relative, not absolute.
 
 # Settings realted to example data
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
