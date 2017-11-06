@@ -11,6 +11,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	libssl-dev      \ 
     libboost-all-dev\
     cmake           \
+    imagemagick     \
+    ghostscript     \
     build-essential 
 
 # install python dependencies
@@ -38,6 +40,7 @@ RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
 
 #ADD tools/meme_suite /tmp/meme_suite
+#COPY tools/meme_suite/meme_4.12.0.tar.gz /tmp/meme_suite
 #RUN cd /tmp/meme_suite
 #RUN tar xfvz meme_4.12.0.tar.gz
 #RUN cd meme_4.12.0
@@ -46,5 +49,12 @@ RUN rm -rf /tmp/suite
 #RUN cp meme/ceqlogo /ext/bin
 #RUN rm -rf /tmp/meme_suite
 
+
+# Note: NOT ALL OF MEME-SUITES TOOLS INSTALL CORRECTLY. For now this is fine, since we are only interested in plotting.
+ADD tools/meme_suite /tmp/meme_suite
+RUN cd /tmp/meme_suite && tar xfv meme_4.12.0.tar.gz
+RUN cd /tmp/meme_suite/meme_4.12.0 && ./configure --prefix=/ext/meme --with-url=http://meme-suite.org --enable-build-libxml2 --enable-build-libxslt --enable-serial  && make && make install
+RUN cp /ext/meme/bin/ceqlogo /ext/bin
+RUN rm -rf /tmp/meme_suite
 
 ENV PATH="/ext/bin:${PATH}"
