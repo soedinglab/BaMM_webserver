@@ -29,5 +29,7 @@ urlpatterns = [
     url(r'^database/(?P<pk>.*)/$', views.db_detail, name='db_detail'),
     url(r'^job/run_peng_view/$', peng_bamm_split_views.run_peng_view, name='peng_predict'),
     url(r'^job/run_peng_view/(?P<mode>\w+)/$', peng_bamm_split_views.run_peng_view, name='peng_predict'),
+    url(r'^peng_results/$', peng_bamm_split_views.find_peng_results, name='find_peng_result'),
+    url(r'^peng_results/result_overview/(?P<pk>.*)/$', peng_bamm_split_views.peng_result_overview, name='peng_result_overview'),
     url(r'^peng_results/(?P<pk>.*)/$', peng_bamm_split_views.peng_result_detail, name='peng_result_detail'),
  ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
