@@ -11,10 +11,15 @@
 =======
     <list default="true" id="c75acfec-2eef-4ef2-a200-872fbc7cc2d4" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/peng_bamm_split_job.py" afterPath="$PROJECT_DIR$/bammmotif/peng_bamm_split_job.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Dockerfile" afterPath="$PROJECT_DIR$/Dockerfile" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/peng_bamm_split_views.py" afterPath="$PROJECT_DIR$/bammmotif/peng_bamm_split_views.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/templates/home/home.html" afterPath="$PROJECT_DIR$/bammmotif/templates/home/home.html" />
+<<<<<<< HEAD
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_peng_input.html" afterPath="$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_peng_input.html" />
 >>>>>>> Updated Peng html job submission
+=======
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html" afterPath="$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html" />
+>>>>>>> Peng working
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -41,6 +46,7 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bammmotif/models.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="-1156">
               <caret line="153" column="0" lean-forward="false" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="0" />
               <folding>
@@ -57,6 +63,10 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="540">
               <caret line="163" column="0" lean-forward="false" selection-start-line="163" selection-start-column="0" selection-end-line="163" selection-end-column="0" />
+=======
+            <state relative-caret-position="2610">
+              <caret line="170" column="18" lean-forward="false" selection-start-line="170" selection-start-column="18" selection-end-line="170" selection-end-column="18" />
+>>>>>>> Peng working
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
               </folding>
@@ -92,6 +102,7 @@
       <file leaf-file-name="bamm_input.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bammmotif/templates/job/bamm_input.html">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="738">
               <caret line="629" column="0" lean-forward="false" selection-start-line="629" selection-start-column="0" selection-end-line="629" selection-end-column="0" />
               <folding>
@@ -108,6 +119,13 @@
             <state relative-caret-position="504">
               <caret line="32" column="64" lean-forward="false" selection-start-line="32" selection-start-column="64" selection-end-line="32" selection-end-column="64" />
               <folding />
+=======
+            <state relative-caret-position="177">
+              <caret line="27" column="97" lean-forward="false" selection-start-line="27" selection-start-column="97" selection-end-line="27" selection-end-column="97" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+>>>>>>> Peng working
             </state>
           </provider>
         </entry>
@@ -125,17 +143,49 @@
       <file leaf-file-name="peng_bamm_split_job.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bammmotif/peng_bamm_split_job.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="126">
               <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
+=======
+            <state relative-caret-position="3780">
+              <caret line="210" column="61" lean-forward="true" selection-start-line="210" selection-start-column="61" selection-end-line="210" selection-end-column="61" />
+              <folding>
+                <element signature="e#7546#7552#0#HTML" expanded="true" />
+>>>>>>> Peng working
               </folding>
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="peng_bamm_split_form.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bammmotif/peng_bamm_split_form.py">
+=======
+      <file leaf-file-name="peng_result_detail.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="166" column="56" lean-forward="false" selection-start-line="166" selection-start-column="56" selection-end-line="166" selection-end-column="56" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Dockerfile" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Dockerfile">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="456">
+              <caret line="50" column="4" lean-forward="false" selection-start-line="50" selection-start-column="4" selection-end-line="50" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="bammmotif_extras.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bammmotif/templatetags/bammmotif_extras.py">
+>>>>>>> Peng working
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="788">
               <caret line="83" column="27" lean-forward="false" selection-start-line="83" selection-start-column="27" selection-end-line="83" selection-end-column="27" />
@@ -146,6 +196,7 @@
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="header.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bammmotif/templates/home/header.html">
           <provider selected="true" editor-type-id="text-editor">
@@ -156,6 +207,26 @@
             <state relative-caret-position="416">
               <caret line="476" column="0" lean-forward="false" selection-start-line="476" selection-start-column="0" selection-end-line="476" selection-end-column="0" />
 >>>>>>> Updated Peng html job submission
+=======
+      <file leaf-file-name="home.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bammmotif/templates/home/home.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="429">
+              <caret line="476" column="0" lean-forward="false" selection-start-line="476" selection-start-column="0" selection-end-line="476" selection-end-column="0" />
+              <folding>
+                <element signature="n#style#0;n#a#0;n#p#0;n#div#2;n#div#0;n#div#0;n#div#0;n#font#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#a#1;n#p#0;n#div#2;n#div#0;n#div#0;n#div#0;n#font#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webserver/settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="127">
+              <caret line="159" column="16" lean-forward="false" selection-start-line="159" selection-start-column="16" selection-end-line="159" selection-end-column="16" />
+>>>>>>> Peng working
               <folding />
             </state>
           </provider>
@@ -199,6 +270,7 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/run_web.sh" />
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/tools/suite/PEnG-motif/scripts/shoot_peng.py" />
         <option value="$PROJECT_DIR$/bammmotif/peng_bamm_split_tag_extensions.py" />
         <option value="$PROJECT_DIR$/bammmotif/templatetags/peng_bamm_split_tag_extensions.py" />
@@ -249,6 +321,28 @@
         <option value="$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_peng_input.html" />
         <option value="$PROJECT_DIR$/bammmotif/templates/job/bamm_input.html" />
         <option value="$PROJECT_DIR$/bammmotif/templates/results/result_detail.html" />
+=======
+        <option value="$PROJECT_DIR$/bammmotif/peng_bamm_split_tasks.py" />
+        <option value="$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_peng_input.html" />
+        <option value="$PROJECT_DIR$/bammmotif/migrations/0002_auto_20171103_1433.py" />
+        <option value="$PROJECT_DIR$/bammmotif/command_line.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/webserver/settings.py" />
+        <option value="$PROJECT_DIR$/bammmotif/models.py" />
+        <option value="$PROJECT_DIR$/bammmotif/peng_bamm_split_job.py" />
+        <option value="$PROJECT_DIR$/bammmotif/urls.py" />
+        <option value="$PROJECT_DIR$/bammmotif/templates/results/peng_resutl_detail.html" />
+        <option value="$PROJECT_DIR$/bammmotif/templates/results/peng_results_main.html" />
+        <option value="$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_submitted.html" />
+        <option value="$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_job_submitted.html" />
+        <option value="$PROJECT_DIR$/bammmotif/peng_utils.py" />
+        <option value="$PROJECT_DIR$/bammmotif/views.py" />
+        <option value="$PROJECT_DIR$/bammmotif/templates/results/results_main.html" />
+        <option value="$PROJECT_DIR$/bammmotif/templates/home/home.html" />
+        <option value="$PROJECT_DIR$/bammmotif/peng_bamm_split_views.py" />
+        <option value="$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html" />
+        <option value="$PROJECT_DIR$/Dockerfile" />
+>>>>>>> Peng working
       </list>
     </option>
   </component>
@@ -258,7 +352,11 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
+<<<<<<< HEAD
   <component name="ProjectFrameBounds" extendedState="1">
+=======
+  <component name="ProjectFrameBounds">
+>>>>>>> Peng working
     <option name="width" value="1916" />
     <option name="height" value="1076" />
   </component>
@@ -277,8 +375,11 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+<<<<<<< HEAD
       <pane id="Scratches" />
       <pane id="Scope" />
+=======
+>>>>>>> Peng working
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -342,6 +443,27 @@
               <item name="BaMM_webserver" type="b2602c69:ProjectViewProjectNode" />
               <item name="BaMM_webserver" type="462c0819:PsiDirectoryNode" />
               <item name="bammmotif" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="home" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BaMM_webserver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BaMM_webserver" type="462c0819:PsiDirectoryNode" />
+              <item name="bammmotif" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="job" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BaMM_webserver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BaMM_webserver" type="462c0819:PsiDirectoryNode" />
+              <item name="bammmotif" type="462c0819:PsiDirectoryNode" />
+              <item name="templates" type="462c0819:PsiDirectoryNode" />
+              <item name="results" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="BaMM_webserver" type="b2602c69:ProjectViewProjectNode" />
+              <item name="BaMM_webserver" type="462c0819:PsiDirectoryNode" />
+              <item name="bammmotif" type="462c0819:PsiDirectoryNode" />
               <item name="templatetags" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -353,6 +475,7 @@
             <path>
               <item name="BaMM_webserver" type="b2602c69:ProjectViewProjectNode" />
               <item name="BaMM_webserver" type="462c0819:PsiDirectoryNode" />
+<<<<<<< HEAD
               <item name="tools" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -379,12 +502,19 @@
             <path>
               <item name="BaMM_webserver" type="b2602c69:ProjectViewProjectNode" />
               <item name="BaMM_webserver" type="462c0819:PsiDirectoryNode" />
+=======
+>>>>>>> Peng working
               <item name="webserver" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+<<<<<<< HEAD
+=======
+      <pane id="Scope" />
+      <pane id="Scratches" />
+>>>>>>> Peng working
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -465,6 +595,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
     <frame x="0" y="0" width="1916" height="1076" extended-state="1" />
     <editor active="true" />
     <layout>
@@ -472,6 +603,17 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.05638298" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32886598" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+=======
+    <frame x="0" y="0" width="1916" height="1076" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12794432" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3393617" sideWeight="0.50982803" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3393617" sideWeight="0.490172" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32061857" sideWeight="0.497543" order="8" side_tool="false" content_ui="tabs" />
+>>>>>>> Peng working
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32978722" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15578158" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -520,15 +662,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_peng_to_bamm.html">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="2070">
           <caret line="115" column="38" lean-forward="false" selection-start-line="115" selection-start-column="38" selection-end-line="115" selection-end-column="38" />
+=======
+        <state relative-caret-position="450">
+          <caret line="79" column="0" lean-forward="false" selection-start-line="79" selection-start-column="0" selection-end-line="79" selection-end-column="0" />
+>>>>>>> Peng working
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_submitted.html">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="180">
           <caret line="10" column="115" lean-forward="false" selection-start-line="10" selection-start-column="115" selection-end-line="10" selection-end-column="115" />
+=======
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+>>>>>>> Peng working
         </state>
       </provider>
     </entry>
@@ -714,6 +866,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/bammmotif/utils/misc.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="482">
@@ -723,6 +876,9 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bammmotif/utils.py">
+=======
+    <entry file="file://$PROJECT_DIR$/bammmotif/forms.py">
+>>>>>>> Peng working
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1782">
           <caret line="114" column="47" lean-forward="false" selection-start-line="114" selection-start-column="47" selection-end-line="114" selection-end-column="47" />
@@ -740,14 +896,14 @@
         <state relative-caret-position="4878">
           <caret line="271" column="47" lean-forward="false" selection-start-line="271" selection-start-column="47" selection-end-line="271" selection-end-column="47" />
           <folding>
-            <marker date="1509971616259" expanded="false" signature="8438:8457" ph="..." />
-            <marker date="1509971616259" expanded="false" signature="8774:8785" ph="..." />
-            <marker date="1509971616259" expanded="false" signature="8882:8888" ph=" " />
-            <marker date="1509971616259" expanded="false" signature="8888:8894" ph=" " />
-            <marker date="1509971616259" expanded="false" signature="12501:12520" ph="..." />
-            <marker date="1509971616259" expanded="false" signature="12844:12855" ph="..." />
-            <marker date="1509971616259" expanded="false" signature="12950:12956" ph=" " />
-            <marker date="1509971616259" expanded="false" signature="12956:12962" ph=" " />
+            <marker date="1509971694609" expanded="false" signature="8438:8457" ph="..." />
+            <marker date="1509971694609" expanded="false" signature="8774:8785" ph="..." />
+            <marker date="1509971694609" expanded="false" signature="8882:8888" ph=" " />
+            <marker date="1509971694609" expanded="false" signature="8888:8894" ph=" " />
+            <marker date="1509971694609" expanded="false" signature="12501:12520" ph="..." />
+            <marker date="1509971694609" expanded="false" signature="12844:12855" ph="..." />
+            <marker date="1509971694609" expanded="false" signature="12950:12956" ph=" " />
+            <marker date="1509971694609" expanded="false" signature="12956:12962" ph=" " />
           </folding>
 >>>>>>> Updated Peng html job submission
         </state>
@@ -820,6 +976,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bammmotif/forms_all.py">
       <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="158">
           <caret line="84" column="0" lean-forward="false" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
           <folding>
@@ -837,6 +994,24 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bammmotif/templates/home/header.html">
+=======
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bammmotif/peng_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="38" lean-forward="false" selection-start-line="12" selection-start-column="38" selection-end-line="12" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#9#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/peng_results_main.html">
+>>>>>>> Peng working
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
           <caret line="55" column="0" lean-forward="false" selection-start-line="55" selection-start-column="0" selection-end-line="55" selection-end-column="0" />
@@ -844,6 +1019,7 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/bammmotif/peng_bamm_split_tasks.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -880,20 +1056,65 @@
             <element signature="e#0#39#0" expanded="true" />
             <marker date="1515854229069" expanded="true" signature="1176:4092" ph="..." />
             <marker date="1515854229069" expanded="true" signature="6627:7647" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bammmotif/command_line.py">
+=======
+    <entry file="file://$PROJECT_DIR$/bammmotif/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="163" column="0" lean-forward="false" selection-start-line="163" selection-start-column="0" selection-end-line="163" selection-end-column="0" />
+        <state relative-caret-position="2610">
+          <caret line="170" column="18" lean-forward="false" selection-start-line="170" selection-start-column="18" selection-end-line="170" selection-end-column="18" />
           <folding>
             <element signature="e#0#35#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/results_main.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webserver/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="127">
+          <caret line="159" column="16" lean-forward="false" selection-start-line="159" selection-start-column="16" selection-end-line="159" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bammmotif/templates/home/home.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="476" column="0" lean-forward="false" selection-start-line="476" selection-start-column="0" selection-end-line="476" selection-end-column="0" />
+          <folding>
+            <element signature="n#style#0;n#a#0;n#p#0;n#div#2;n#div#0;n#div#0;n#div#0;n#font#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#1;n#p#0;n#div#2;n#div#0;n#div#0;n#div#0;n#font#0;n#div#0;n#div#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+>>>>>>> Peng working
+          </folding>
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
+    <entry file="file://$PROJECT_DIR$/bammmotif/command_line.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="163" column="0" lean-forward="false" selection-start-line="163" selection-start-column="0" selection-end-line="163" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+=======
+    <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/result_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3780">
+          <caret line="210" column="61" lean-forward="true" selection-start-line="210" selection-start-column="61" selection-end-line="210" selection-end-column="61" />
+          <folding>
+            <element signature="e#7546#7552#0#HTML" expanded="true" />
+>>>>>>> Peng working
+          </folding>
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/bammmotif/templates/job/peng_bamm_split_peng_input.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="756">
@@ -932,10 +1153,43 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="504">
           <caret line="32" column="64" lean-forward="false" selection-start-line="32" selection-start-column="64" selection-end-line="32" selection-end-column="64" />
+=======
+    <entry file="file://$PROJECT_DIR$/bammmotif/templatetags/bammmotif_extras.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/bammmotif/utils/misc.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="18" column="4" lean-forward="false" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bammmotif/peng_bamm_split_views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="27" column="97" lean-forward="false" selection-start-line="27" selection-start-column="97" selection-end-line="27" selection-end-column="97" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/peng_result_detail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="166" column="56" lean-forward="false" selection-start-line="166" selection-start-column="56" selection-end-line="166" selection-end-column="56" />
+>>>>>>> Peng working
+          <folding />
+        </state>
+      </provider>
+    </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/bammmotif/templates/results/result_detail.html">
       <provider selected="true" editor-type-id="text-editor">
 <<<<<<< HEAD
@@ -945,6 +1199,12 @@
         <state relative-caret-position="416">
           <caret line="476" column="0" lean-forward="false" selection-start-line="476" selection-start-column="0" selection-end-line="476" selection-end-column="0" />
 >>>>>>> Updated Peng html job submission
+=======
+    <entry file="file://$PROJECT_DIR$/Dockerfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="50" column="4" lean-forward="false" selection-start-line="50" selection-start-column="4" selection-end-line="50" selection-end-column="4" />
+>>>>>>> Peng working
           <folding />
         </state>
       </provider>
