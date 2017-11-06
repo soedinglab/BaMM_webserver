@@ -262,4 +262,8 @@ tramp
 .idea
 =======
 .idea/*
+<<<<<<< HEAD
 >>>>>>> updated gitignore
+=======
+.idea/workspace.xml
+>>>>>>> missed files
