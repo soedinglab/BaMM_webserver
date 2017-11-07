@@ -257,4 +257,7 @@ tramp
 
 /GetOpt_ppLibrary/
 
+.idea
 .idea/
+.idea/*
+.idea/workspace.xml

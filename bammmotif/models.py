@@ -41,9 +41,11 @@ def job_directory_path(instance, filename):
     return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID),
                         'Input', str(filename))
 
-def job_directory_path_peng(instance, filename):
-    path_to_job = "/code/media"
-    return os.path.join(path_to_job, settings.JOB_DIR_PREFIX, str(instance.job_ID), 'Input', str(filename))
+def job_directory_path_peng(instance, filename, intermediate_dir="Input"):
+    path = os.path.join(settings.MEDIA_ROOT, str(instance.job_ID), intermediate_dir)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return os.path.join(path, str(filename))
 
 class Job(models.Model):
     # general info

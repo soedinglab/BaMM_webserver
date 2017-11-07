@@ -176,9 +176,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'staticfiles'),
     os.path.join(BASE_DIR, 'BaMM_webserver/DB')
-
 )
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'email.gwdg.de'
 EMAIL_HOST_PASSWORD = 'BaMM_motif11610'
@@ -194,6 +192,7 @@ EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You
 
 # Settings related to file system structure
 JOB_DIR_PREFIX = 'jobs'
+JOB_DIR_PREFIX_PENG = '/code/media/jobs'  # TODO: Make this relative, not absolute.
 
 # Settings realted to example data
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
