@@ -197,3 +197,4 @@ JOB_DIR_PREFIX_PENG = '/code/media/jobs'  # TODO: Make this relative, not absolu
 # Settings realted to example data
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
 EXAMPLE_MOTIF = 'example_data/ExampleMotif.meme' 
+PENG_INIT = 'Peng_Initialization.meme'

@@ -8,7 +8,7 @@ class PredictionForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('job_name', 'Input_Sequences', 'reverse_Complement',
-                  'model_Order', 'extend_1', 'extend_2', 'bgModel_File',
+                  'model_Order', 'extend', 'bgModel_File',
                   'Motif_Initialization', 'Motif_InitFile',
                   'Motif_Init_File_Format', 'background_Order',
                   'Background_Sequences', 'score_Seqset',
@@ -31,7 +31,7 @@ class PredictionExampleForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('job_name', 'reverse_Complement', 'model_Order',
-                  'extend_1', 'extend_2', 'background_Order',
+                  'extend', 'background_Order',
                   'Background_Sequences', 'score_Seqset', 'score_Cutoff',
                   'FDR', 'q_value')
 

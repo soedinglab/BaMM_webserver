@@ -4,6 +4,7 @@
     <div class="container-fluid">
         <div class="row">
 
+            {% comment %}
             <div class="col-md-6">
                 <div class='container-fluid'>
                     <center>
@@ -54,7 +55,7 @@
                                     </div>
                                     <div class="modal-footer">
                                         <p>
-                                            <a class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" role="button"
+                                            <a class="btn btn-primary btn-lg"
                                                href="{% url 'login' %}?next={% url 'peng_predict' %}" role="button"
                                                style="background-color:#1f2e2e">
                                                 Login for more Comfort</a>
@@ -75,6 +76,7 @@
                     </div>
                 </div>
             </div>
+            {% endcomment %}
             <div class="col-md-6">
                 <div class='container-fluid'>
                     <center>

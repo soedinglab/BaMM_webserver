@@ -18,9 +18,9 @@ FORMAT_CHOICES = (
 )
 
 INIT_CHOICES = (
-    ('Custom File','Custom File'),
+    ('CustomFile','CustomFile'),
     ('PEnGmotif','PEnGmotif'),
-    ('DB File','DB File'),
+    ('DBFile','DBFile'),
 )
 
 ALPHABET_CHOICES = (
@@ -53,7 +53,7 @@ class Job(models.Model):
     job_name=models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField( default=datetime.datetime.now)
     mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES) 
-    status = models.CharField(max_length=255, default="not initialized", null=True, blank=True)
+    status = models.CharField(max_length=255, default="queueing", null=True, blank=True)
     num_motifs = models.IntegerField(default=1)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     complete = models.BooleanField(default=False)
@@ -65,13 +65,13 @@ class Job(models.Model):
     Motif_Initialization = models.CharField(max_length=255, choices=INIT_CHOICES, default="PEnGmotif")
     Motif_InitFile = models.FileField(upload_to=job_directory_path, null=True, blank=True)
     Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="PWM")
-    num_init_motifs = models.IntegerField(default = 100)
+    num_init_motifs = models.IntegerField(default = 10)
 
     # options
     model_Order =models.PositiveSmallIntegerField(default=4)
     reverse_Complement = models.BooleanField(default=True)
-    extend_1 = models.PositiveSmallIntegerField(default=0)
-    extend_2 = models.PositiveSmallIntegerField(default=0)
+    extend = models.PositiveSmallIntegerField(default=0)
+    #extend_2 = models.PositiveSmallIntegerField(default=0)
 
     # fdr options
     FDR = models.BooleanField(default=True)
@@ -93,8 +93,8 @@ class Job(models.Model):
     #no_Alpha_Optimization = models.BooleanField(default=True)
 
     # scoring options
-    score_Seqset = models.BooleanField(default=False)
-    score_Cutoff = models.FloatField(default=-3.0)
+    score_Seqset = models.BooleanField(default=True)
+    score_Cutoff = models.FloatField(default=0.1)
     bgModel_File = models.FileField( upload_to=job_directory_path, null=True, blank=True)
 
     # advanced options

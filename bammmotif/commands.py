@@ -14,7 +14,9 @@ from .utils import (
     add_motif_evaluation,
     add_motif_motif_matches,
     add_motif_iupac,
-    transfer_motif
+    transfer_motif,
+    get_job_input_folder,
+    add_peng_output
 )
 
 
@@ -40,8 +42,8 @@ def get_core_params(job_pk, useRefined, m=1):
         param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp')
     else:
         # motif Initialization File
-        if str(job.Motif_Init_File_Format) == "BindingSite":
-            param.append("--BindingSiteFile")
+        if str(job.Motif_Init_File_Format) == "BindingSites":
+            param.append("--bindingSiteFile")
             param.append(path.join(root, job.Motif_InitFile.name))
         if str(job.Motif_Init_File_Format) == "PWM":
             param.append("--PWMFile")
@@ -65,8 +67,8 @@ def get_core_params(job_pk, useRefined, m=1):
     param.append("--Order")
     param.append(job.background_Order)
     param.append("--extend")
-    param.append(job.extend_1)
-    param.append(job.extend_2)
+    param.append(job.extend)
+    param.append(job.extend)
     param.append("--maxPWM")
     param.append(job.num_init_motifs)
 
@@ -143,6 +145,18 @@ def get_motif_compress_command(job_pk, motif):
     return command
 
 
+def get_peng_command(job_pk, useRefined):
+    job = get_object_or_404(Job, pk=job_pk)
+    param = []
+    param.append("peng_motif")
+    param.append(path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))
+    param.append("-o")
+    param.append(path.join(get_job_input_folder(job_pk), settings.PENG_INIT))
+    command = " ".join(str(s) for s in param)
+    print(command)
+    return command
+
+
 def get_FDR_command(job_pk, useRefined, m=1):
     # set cvFold to 1
     job = get_object_or_404(Job, pk=job_pk)
@@ -174,8 +188,7 @@ def get_BaMMScan_command(job_pk, useRefined, m=1):
     param.append('BaMMScan')
 
     # adjust extensions
-    job.extend_1 = 0
-    job.extend_2 = 0
+    job.extend = 0
     job.save()
 
     # get params shared between bammmotif bammscan and fdr
@@ -190,9 +203,14 @@ def get_BaMMScan_command(job_pk, useRefined, m=1):
     return command
 
 
-def get_BaMMmotif_command(job_pk, useRefined):
+def get_BaMMmotif_command(job_pk, useRefined, first):
     job = get_object_or_404(Job, pk=job_pk)
     param = []
+
+    # restrict to top 5 motifs from PeNG
+    if job.Motif_Initialization == "PEnGmotif":
+        job.num_init_motifs = 5
+        job.save()
 
     # define executable
     param.append('BaMMmotif')
@@ -234,13 +252,25 @@ def get_MMcompare_command(job_pk, database):
     return command
 
 
+def Peng(job_pk, useRefined):
+    job = get_object_or_404(Job, pk=job_pk)
+    job.status = 'running PEnGmotif'
+    job.save()
+    print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
+    sys.stdout.flush()
+    run_command(get_peng_command(job_pk, useRefined))
+    # add output to the input for further optionals
+    add_peng_output(job_pk)
+    return 0
+
+
 def BaMM(job_pk, first, useRefined):
     job = get_object_or_404(Job, pk=job_pk)
     job.status = 'running BaMMmotif'
     job.save()
     print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
     sys.stdout.flush()
-    run_command(get_BaMMmotif_command(job_pk, useRefined))
+    run_command(get_BaMMmotif_command(job_pk, useRefined, first))
     if first is True:
         # generate motif objects
         initialize_motifs(job_pk, 2, 2)

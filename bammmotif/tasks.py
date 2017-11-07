@@ -6,7 +6,7 @@ from .models import (
     Job
 )
 from .commands import (
-    BaMM, BaMMScan, FDR,
+    BaMM, BaMMScan, FDR, Peng,
     Compress, MMcompare
 )
 from .utils import (
@@ -24,13 +24,13 @@ def run_peng(self, job_pk):
         logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
-
+                
                 # run PeNGmotif
-                # Peng(job_pk,True, False)
+                Peng(job_pk, False)
 
                 # run optionals
                 if job.EM:
-                    BaMM(job_pk, False, True)
+                    BaMM(job_pk, True, False)
                 if job.score_Seqset:
                     BaMMScan(job_pk, False, True)
                 if job.FDR:

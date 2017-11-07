@@ -12,13 +12,14 @@ from .forms import (
     FindForm, DBForm
 )
 from .tasks import (
-    run_bamm, run_bammscan, run_compare
+    run_bamm, run_bammscan,
+    run_compare, run_peng
 )
 from .utils import (
     get_log_file,
     get_user, set_job_name, upload_example_fasta,
     upload_example_motif, get_result_folder,
-    upload_db_input
+    upload_db_input,valid_uuid
 )
 import datetime
 import os
@@ -164,7 +165,14 @@ def run_bamm_view(request, mode='normal'):
             if mode == 'example':
                 upload_example_fasta(job_pk)
                 upload_example_motif(job_pk)
-            run_bamm.delay(job_pk)
+                job.Motif_Initialization = 'CustomFile'
+                job.Motif_Init_File_Format = 'PWM'
+            
+            if job.Motif_Initialization == 'PEnGmotif':
+                run_peng.delay(job_pk)
+            else:
+                run_bamm.delay(job_pk)
+            
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
     if mode == 'example':
@@ -189,10 +197,15 @@ def find_results(request):
         form = FindForm(request.POST)
         if form.is_valid():
             jobid = form.cleaned_data['job_ID']
-            return redirect('result_detail', pk=jobid)
+            if valid_uuid(jobid):
+                job = Job.objects.get(pk=jobid).exists()
+                if job.exists():
+                    return redirect('result_detail', pk=jobid)
+            form = FindForm()
+            return render(request, 'results/results_main.html', {'form': form, 'warning': True})                
     else:
         form = FindForm()
-    return render(request, 'results/results_main.html', {'form': form})
+    return render(request, 'results/results_main.html', {'form': form, 'warning': False})
 
 
 def result_overview(request):
