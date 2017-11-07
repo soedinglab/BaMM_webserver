@@ -53,7 +53,6 @@ RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
 
 # Note: NOT ALL OF MEME-SUITES TOOLS INSTALL CORRECTLY. For now this is fine, since we are only interested in plotting.
-# http://meme-suite.org/meme-software/4.12.0/meme_4.12.0.tar.gz
 RUN mkdir -p /tmp/meme_suite
 RUN cd /tmp/meme_suite && \
     wget http://meme-suite.org/meme-software/${MEME_VERSION}/meme_${MEME_VERSION}.tar.gz && \
