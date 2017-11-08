@@ -78,7 +78,6 @@ def run_peng(self, job_pk):
         # first define log file for redirecting output information
         make_job_folder(job_pk)
         logfile = get_log_file(job_pk)
-        print("logfile: ", logfile)
         peng = ShootPengModule.from_job(peng_job)
         peng.set_log_file(logfile)
         peng.run()

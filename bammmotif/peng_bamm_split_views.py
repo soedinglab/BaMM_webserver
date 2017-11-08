@@ -6,10 +6,10 @@ from .peng_bamm_split_form import get_valid_peng_form, PengExampleForm, PengForm
 from .peng_bamm_split_job import create_job, validate_input_data
 from .peng_bamm_split_tasks import run_peng
 from .peng_bamm_split_utils import upload_example_fasta_for_peng
-from .models import Job, PengJob, DbParameter
+from .models import Job, PengJob
 from .forms import FindForm
 from .peng_bamm_split_job import file_path_peng
-from .peng_utils import get_motif_ids, plot_meme_output
+from .peng_utils import get_motif_ids
 from .utils import get_result_folder, get_log_file
 from .command_line import PlotMeme
 
@@ -19,14 +19,12 @@ def peng_result_detail(request, pk):
 
     if result.complete:
         print("status is successfull")
-        print("now plot result")
         plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], "meme_plots")
         opath = os.path.join(get_result_folder(result.job_ID), "meme_plots").split('/', maxsplit=1)[1]
         if not os.path.exists(plot_output_directory):
             os.makedirs(plot_output_directory)
         motif_ids = get_motif_ids(meme_result_file_path)
         plot_paths = {}
-        meme_options = {'output_file_format': PlotMeme.defaults['output_file_format']}
         meme_plotter = PlotMeme()
         meme_plotter.output_file_format = PlotMeme.defaults['output_file_format']
         for motif in motif_ids:
@@ -36,7 +34,6 @@ def peng_result_detail(request, pk):
             meme_plotter.run()
             plot_paths[motif] = meme_plotter.output_file
 
-        print(plot_paths)
         return render(request, 'results/peng_result_detail.html',
                         {'result': result,
                          'mode': result.mode,
@@ -49,7 +46,6 @@ def peng_result_detail(request, pk):
         log_file = get_log_file(pk)
         command = "tail -20 %r" % log_file
         output = os.popen(command).read()
-        print("log_file", log_file, "command", command, "output: ", output, "END")
         return render(request, 'results/result_status.html',
                       {'result': result, 'output': output})
 
@@ -67,7 +63,6 @@ def run_peng_view(request, mode='normal'):
         peng_job = create_job(form, request)
         print("PENG_JOB finished successfully!")
         ret, valid_input = validate_input_data(peng_job)
-        print("VALID_INPUT: ", valid_input)
         if not valid_input:
             Job.objects.filter(job_ID=peng_job.pk).delete()
             # return render(request, 'job/de_novo_search.html', {'form': PengForm(), 'type': "Fasta", 'message': ret})
@@ -75,7 +70,6 @@ def run_peng_view(request, mode='normal'):
             upload_example_fasta_for_peng(peng_job.job_ID)
         print("Running Peng")
         run_peng.delay(peng_job.job_ID)
-        # run_bamm.delay(peng_job.pk)
         return render(request, 'job/peng_bamm_split_submitted.html', {'pk': peng_job.job_ID})
     if mode == 'example':
         form = PengExampleForm()
