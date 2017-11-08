@@ -10,7 +10,8 @@ from .models import Job, PengJob, DbParameter
 from .forms import FindForm
 from .peng_bamm_split_job import file_path_peng
 from .peng_utils import get_motif_ids, plot_meme_output
-from .utils import get_result_folder
+from .utils import get_result_folder, get_log_file
+from .command_line import PlotMeme
 
 def peng_result_detail(request, pk):
     result = get_object_or_404(PengJob, pk=pk)
@@ -25,10 +26,16 @@ def peng_result_detail(request, pk):
             os.makedirs(plot_output_directory)
         motif_ids = get_motif_ids(meme_result_file_path)
         plot_paths = {}
+        meme_options = {'output_file_format': PlotMeme.defaults['output_file_format']}
+        meme_plotter = PlotMeme()
+        meme_plotter.output_file_format = PlotMeme.defaults['output_file_format']
         for motif in motif_ids:
-            target_file = os.path.join(plot_output_directory, motif + ".png")
-            plot_meme_output(target_file, motif, meme_result_file_path)
-            plot_paths[motif] = target_file
+            meme_plotter.input_file = meme_result_file_path
+            meme_plotter.output_file = os.path.join(plot_output_directory, motif + ".png")
+            meme_plotter.motif_id = motif
+            meme_plotter.run()
+            plot_paths[motif] = meme_plotter.output_file
+
         print(plot_paths)
         return render(request, 'results/peng_result_detail.html',
                         {'result': result,
@@ -39,13 +46,12 @@ def peng_result_detail(request, pk):
                          })
     else:
         print('status not ready yet')
-        #log_file = get_log_file(pk)
-        #command = "tail -20 %r" % log_file
-        #output = os.popen(command).read()
-        output = "12345"
-        opath  = "aklsdklsam"
-        return render(request, 'results/peng_result_status.html',
-                      {'result': result, 'opath': opath, 'output': output})
+        log_file = get_log_file(pk)
+        command = "tail -20 %r" % log_file
+        output = os.popen(command).read()
+        print("log_file", log_file, "command", command, "output: ", output, "END")
+        return render(request, 'results/result_status.html',
+                      {'result': result, 'output': output})
 
 
 def run_peng_view(request, mode='normal'):

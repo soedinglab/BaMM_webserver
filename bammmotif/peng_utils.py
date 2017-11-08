@@ -1,4 +1,3 @@
-import os
 import subprocess
 
 def get_motif_ids(fpath):
