@@ -16,6 +16,8 @@ class CommandlineModule:
         self._command_name = command_name
         self._cmd_flag_templates = cmd_flag_templates
         self._options = options
+        self._with_log_file = None
+        # This should bt the last line in this Method.
         self._initialized = True
 
     def __setattr__(self, name, value):
@@ -62,6 +64,14 @@ class CommandlineModule:
         return cmd_tokens
 
     @property
+    def with_log_file(self):
+        return super().__getattribute__("_with_log_file")
+
+    def set_log_file(self, val):
+        if isinstance(val, (type(None), str)):
+            super().__setattr__("_with_log_file", val)
+
+    @property
     def options(self):
         return self._options
 
@@ -74,10 +84,12 @@ class CommandlineModule:
             'universal_newlines': True
         }
         extra_args.update(kw_args)
-        print("Command line tokens")
-        print(self.command_tokens)
-        print(os.getcwd())
-        return subprocess.run(self.command_tokens, **extra_args)
+        # TODO: Not happy with that formulation.
+        if self.with_log_file is not None:
+            with open(self.with_log_file, "w") as f:
+                return subprocess.run(self.command_tokens, stdout=f, stderr=f, **extra_args)
+        else:
+            return subprocess.run(self.command_tokens, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **extra_args)
 
 
 class OptionError(ValueError):
@@ -152,17 +164,36 @@ class ShootPengModule(CommandlineModule):
         for key, val in peng_job.__dict__.items():
             if key in spm.options and val:
                 spm.options[key] = val
-
-        print("PENG_JOB")
-        print(peng_job.__dict__)
-        print("SPM")
-        print(spm.__dict__)
         return spm
 
     def run(self, **kw_args):
         self.create_temp_directory()
         super().run(**kw_args)
         self.remove_temp_directory()
+
+
+class PlotMeme(CommandlineModule):
+
+    defaults = {
+        'output_file_format': 'PNG',
+    }
+
+    def __init__(self):
+        config = [
+            ('input_file', '-i'),
+            ('output_file_format', '-f'),
+            ('motif_id', '-m'),
+            ('output_file', '-o'),
+        ]
+        super().__init__('ceqlogo', config)
+
+    @classmethod
+    def from_dict(cls, options):
+        pm = cls()
+        for key, val in options.items():
+            if key in pm.options:
+                pm.options[key] = val
+        return pm
 
 class ValidateFasta(CommandlineModule):
     def __init__(self):

@@ -78,10 +78,10 @@ def run_peng(self, job_pk):
         # first define log file for redirecting output information
         make_job_folder(job_pk)
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
-            with redirect_stdout(f):
-                peng = ShootPengModule.from_job(peng_job)
-                peng.run()
-                # Compress(job_pk)
-                peng_job.complete = True
+        print("logfile: ", logfile)
+        peng = ShootPengModule.from_job(peng_job)
+        peng.set_log_file(logfile)
+        peng.run()
+        # Compress(job_pk)
+        peng_job.complete = True
     return 1 if mgr.had_exception else 0
