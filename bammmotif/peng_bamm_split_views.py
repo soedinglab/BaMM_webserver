@@ -61,7 +61,6 @@ def run_peng_view(request, mode='normal'):
             pass
             # return render(request, 'job/de_novo_search.html', args)
         peng_job = create_job(form, request)
-        print("PENG_JOB finished successfully!")
         ret, valid_input = validate_input_data(peng_job)
         if not valid_input:
             Job.objects.filter(job_ID=peng_job.pk).delete()

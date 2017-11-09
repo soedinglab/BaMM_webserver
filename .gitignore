@@ -259,12 +259,3 @@ tramp
 
 .idea
 .idea/
-<<<<<<< HEAD
-.idea
-=======
-.idea/*
-<<<<<<< HEAD
->>>>>>> updated gitignore
-=======
-.idea/workspace.xml
->>>>>>> missed files
