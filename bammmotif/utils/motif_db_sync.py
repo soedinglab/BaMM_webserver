@@ -3,12 +3,14 @@ import os
 from os import path
 
 import yaml
+from ..models import MotifDatabase
 
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 def sync_databases(database_dir):
+    logger.info('syncing all available databases in %s', database_dir)
     loaded_databases = get_loaded_databases()
     available_databases = get_available_databases(database_dir)
 
@@ -31,19 +33,19 @@ def sync_databases(database_dir):
         logger.info('updated motif database %r to version %s', motif_db.db_id, motif_db.version)
 
 
-class MalformattedMotifDatabase:
+class MalformattedMotifDatabase(Exception):
     pass
 
 
 def load_motif_db(database_dir, motif_db):
-    config_file = path.join(database_dir, dir_node, 'database_config.yaml')
+    config_file = path.join(database_dir, motif_db.db_id, 'database_config.yaml')
     with open(config_file) as yaml_config:
         try:
             db_config = yaml.load(yaml_config)
             motif_db_entry = MotifDatabase()
             for field in MotifDatabase._meta.get_fields():
                 if field.name in db_config:
-                    motif_db_entry.__setattr__(field.name, db_config[db_config[field.name]]) 
+                    motif_db_entry.__setattr__(field.name, db_config[field.name])
             motif_db_entry.name = motif_db.db_id
             motif_db_entry.save()
         except yaml.YAMLError as exc:
@@ -80,17 +82,21 @@ def get_available_databases(database_dir):
 
     databases = []
     for dir_node in os.listdir(database_dir):
-        if not path.isdir(dir_node):
+        if not path.isdir(path.join(database_dir, dir_node)):
+            logger.debug('%s does not seem to be a database. Skipping', dir_node)
             continue
         config_file = path.join(database_dir, dir_node, 'database_config.yaml')
         if not path.isfile(config_file):
+            logger.error('database %r is lacking database_config.yaml. Skipping', dir_node)
             continue
 
         with open(config_file) as yaml_config:
             try:
                 db_config = yaml.load(yaml_config)
                 databases.append(MotifDatabaseDescriptor(dir_node, db_config['version']))
+                logger.debug('found %r available in the database', dir_node)
             except yaml.YAMLError as exc:
+                logger.error('error while reading in database %r', dir_node)
                 logger.error(exc)
                 continue
     return databases
