@@ -149,64 +149,7 @@
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div class='container-fluid'>
-                    <center>
-                        <img src="{% static 'img/compare_comingSoon.png' %}" class="responsive-img"
-                             style='max-height:180px;' alt="logo">
-                    </center>
-                    <div class="jumbotron" style="background-color:white"><font color="black">
-
-                        <!-- Button trigger modal -->
-                        <center>
-                            <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal_BETA"
-                               style="background-color:#1f2e2e">
-                                Motif-Motif Comparison
-                            </a>
-                        </center>
-
-                        <!-- Modal -->
-                        <div class="modal fade" id="myModal_BETA" tabindex="-1" role="dialog"
-                             aria-labelledby="myModalLabel_4">
-                            <div class="modal-dialog" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title" id="myModalLabel_BETA"><font color="#0B0719"> Comming
-                                            Soon ! </font></h4>
-                                    </div>
-                                    <div class="modal-body"><font color="#0B0719">
-                                        Dear User,
-                                        <br>
-                                        This functionality is currently under construction and will be available soon.
-                                        In the meantime you are wellcome to test our BaMMmotif de-novo motif discovery.
-                                        <br>
-                                        Your BaMMmotif team.
-
-                                    </font>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <p>
-                                            <a class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" role="button"
-                                               style="background-color:#1f2e2e">
-                                                Try BaMMmotif instead </a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr style="border: 1px solid #1f2e2e">
-                        <p align="justify"><font size=3>Search with your input model through our database of 450 BaMM
-                            models</font></p>
-
-                    </font>
-                    </div>
-                </div>
-            </div>
-
-
+            
             <div class="col-md-6">
                 <div class='container-fluid'>
                     <center>
@@ -310,6 +253,65 @@
                     </div>
                 </div>
             </div>
+
+
+            <div class="col-md-6">
+                <div class='container-fluid'>
+                    <center>
+                        <img src="{% static 'img/compare_comingSoon.png' %}" class="responsive-img"
+                             style='max-height:180px;' alt="logo">
+                    </center>
+                    <div class="jumbotron" style="background-color:white"><font color="black">
+
+                        <!-- Button trigger modal -->
+                        <center>
+                            <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal_BETA"
+                               style="background-color:#1f2e2e">
+                                Motif-Motif Comparison
+                            </a>
+                        </center>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="myModal_BETA" tabindex="-1" role="dialog"
+                             aria-labelledby="myModalLabel_4">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel_BETA"><font color="#0B0719"> Coming
+                                            Soon ! </font></h4>
+                                    </div>
+                                    <div class="modal-body"><font color="#0B0719">
+                                        Dear User,
+                                        <br>
+                                        This functionality is currently under construction and will be available soon.
+                                        In the meantime you are wellcome to test our BaMMmotif de-novo motif discovery.
+                                        <br>
+                                        Your BaMMmotif team.
+
+                                    </font>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <p>
+                                            <a class="btn btn-primary btn-lg" href="{% url 'run_bamm' %}" role="button"
+                                               style="background-color:#1f2e2e">
+                                                Try BaMMmotif instead </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr style="border: 1px solid #1f2e2e">
+                        <p align="justify"><font size=3>Search with your input model through our database of 450 BaMM
+                            models</font></p>
+
+                    </font>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 {% endblock %}
