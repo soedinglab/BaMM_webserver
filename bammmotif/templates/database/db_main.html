@@ -5,6 +5,9 @@
 <div class="jumbotron" style="background-color:white">
      <h2>Welcome to the BaMMmotif Database</h2>
      <hr style="border: 1px solid #1f2e2e">
+     {% if warning %}
+        <p> <font color="#B22222">No database entry found.</font></p>
+      {% endif %}
      <form method="post"  enctype="multipart/form-data">
         {% csrf_token %}
         <p><label for="id_db_ID"><font size=3>Please Enter the Name of your Protein of Interest:</label> <input id="id_db_ID" maxlength="255" name="db_ID" type="text" placeholder="i.e: CTCF ..." required /> </font>&nbsp;

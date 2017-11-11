@@ -25,7 +25,6 @@ urlpatterns = [
     url(r'^results/(?P<pk>.*)/$', views.result_detail, name='result_detail'),
     url(r'^delete/(?P<pk>.*)/$', views.delete, name='delete'),
     url(r'^database/$', views.maindb, name='maindb'),
-    url(r'^database/db_overview/$', views.db_overview, name='db_overview'),
     url(r'^database/(?P<pk>.*)/$', views.db_detail, name='db_detail'),
     url(r'^job/run_peng_view/$', peng_bamm_split_views.run_peng_view, name='peng_predict'),
     url(r'^job/run_peng_view/(?P<mode>\w+)/$', peng_bamm_split_views.run_peng_view, name='peng_predict'),

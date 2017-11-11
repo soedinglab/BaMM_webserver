@@ -269,23 +269,18 @@ def maindb(request):
         if form.is_valid():
             p_name = form.cleaned_data['db_ID']
             db_entries = ChIPseq.objects.filter(target_name__icontains=p_name)
-            sample = db_entries.first()
-            db_location = path.join(sample.parent.base_dir, 'Results')
-            return render(request, 'database/db_overview.html',
-                          {'protein_name': p_name,
-                           'db_entries': db_entries,
-                           'db_location': db_location})
+            if db_entries.exists():
+                sample = db_entries.first()
+                db_location = path.join(sample.parent.base_dir, 'Results')
+                return render(request, 'database/db_overview.html',
+                              {'protein_name': p_name,
+                               'db_entries': db_entries,
+                               'db_location': db_location})
+            form = DBForm()
+            return render(request, 'database/db_main.html', {'form': form, 'warning': True})
     else:
         form = DBForm()
     return render(request, 'database/db_main.html', {'form': form})
-
-
-def db_overview(request, protein_name, db_entries):
-    return render(request, 'database/db_overview.html',
-                  {'protein_name': protein_name,
-                   'db_entries': db_entries,
-                   'db_location': db_location})
-
 
 def db_detail(request, pk):
     entry = get_object_or_404(ChIPseq, db_public_id=pk)
