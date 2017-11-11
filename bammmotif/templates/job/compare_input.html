@@ -6,7 +6,7 @@
 <div class="container-fluid" >
 
 <div class="jumbotron container-fluid" style="background-color:white"><font color="black">
-  <h2> Motif Motif Comaprison </h2>
+  <h2> Motif-motif comaprison </h2>
   <hr style="border: 1px solid #1f2e2e">
   <div class='container-fluid'>
 
@@ -14,28 +14,28 @@
    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
-  <p><label for="id_job_name"><a class "testpup" onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name" style="color:black"></span></a> Job Name:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_job_name" maxlength="50" name="job_name" type="text" placeholder="i.e: My Job #1" /></p>
+  <p><label for="id_job_name"><a class "testpup" onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name" style="color:black"></span></a> Job name:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_job_name" maxlength="50" name="job_name" type="text" placeholder="i.e: My Job #1" /></p>
 
     
     {% if mode == 'example' %}
-      <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile:</label>  <p class="indent" style="padding-left: 1.8em"> Example Motif </p>
+      <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif initializatin file:</label>  <p class="indent" style="padding-left: 1.8em"> Example motif </p>
       
-      <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em">PWM</font></p>
+      <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif init file format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em">PWM</font></p>
         
     {% endif %}    
     {% if mode == 'normal' %}
-      <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif InitFile:</label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
-      <p>  &emsp; <a href="{% url  'run_compare' mode="example" %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> Example Data </span></a> </td>
+      <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif initialization file:</label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
+      <p>  &emsp; <a href="{% url  'run_compare' mode="example" %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> Example data </span></a> </td>
 
-      <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif Init File Format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
+      <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif init file format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
          <option value="PWM" selected="selected">PWM</option>
          <option value="BaMM">BaMM</option>
         </select></font></p>
       
       <p ><label for="id_bgModel_File"><a class "testpup" onmouseover="nhpup.popup($('#bgModel_File_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#bgModel_File" style="color:black">
-      </span> </a>Motif Background File: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_bgModel_File" name="bgModel_File" type="file" /></p>
+      </span> </a>Motif background file: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_bgModel_File" name="bgModel_File" type="file" /></p>
 
-      <p><label for="id_model_Order"><a class "testpup" onmouseover="nhpup.popup($('#ModelOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Model Order:</label><font color="#1f2e2e">
+      <p><label for="id_model_Order"><a class "testpup" onmouseover="nhpup.popup($('#ModelOrder_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Model order:</label><font color="#1f2e2e">
         {% if user.is_authenticated %}
           &nbsp;&nbsp; <input id="id_model_Order" min="0" max="8" name="model_Order" type="number" value="0" required />
         {% else %}
@@ -61,7 +61,7 @@
     <div class="modal-content">
       <div class="modal-body">
         <font color="#0B0719">
-        <p  align="justify">The Model Order describes the maximal higher Order contribution which will be taken into account. The default is 2. A model Order of 0 corresonds to a typical PWM model. </p>
+        <p  align="justify">The model order describes the maximal higher order contribution which will be taken into account. The default is 2. A model order of 0 corresonds to a typical PWM model. </p>
         </font>
       </div>
     </div>
@@ -97,7 +97,7 @@
     <div class="modal-content">
       <div class="modal-body">
         <font color="#0B0719">
-           <p  align="justify">Please select the file format of your provided motif Initialization. This option is only necessary when providing a custom MotifInitialization.</p>
+           <p  align="justify">Please select the file format of your provided motif initialization. This option is only necessary when providing a custom motif initialization.</p>
         </font>
       </div>
     </div>
@@ -109,7 +109,7 @@
     <div class="modal-content">
       <div class="modal-body">
         <font color="#0B0719">
-           <p  align="justify">Please select the background file belonging to the selected BaMM file. This option is only necessary when providing a custom BaMM File Initialization.</p>
+           <p  align="justify">Please select the background file belonging to the selected BaMM file. This option is only necessary when providing a custom BaMM file initialization.</p>
         </font>
       </div>
     </div>
