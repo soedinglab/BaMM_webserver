@@ -267,6 +267,7 @@ def BaMM(job_pk, first, useRefined):
     add_motif_iupac(job_pk)
     # plot logos
     for order in range(min(job.model_Order+1, 4)):
+        print("BaMM command: ", get_logo_command(job_pk, order))
         run_command(get_logo_command(job_pk, order))
     return 0
 

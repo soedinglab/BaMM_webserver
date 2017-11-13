@@ -2,7 +2,7 @@ from django.conf import settings
 from .forms import PredictionExampleForm
 from django import forms
 from .models import PengJob
-from .command_line import ShootPengModule
+
 
 
 class PengForm(forms.ModelForm):
