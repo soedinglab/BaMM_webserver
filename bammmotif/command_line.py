@@ -86,7 +86,7 @@ class CommandlineModule:
         extra_args.update(kw_args)
         # TODO: Not happy with that formulation.
         if self.with_log_file is not None:
-            with open(self.with_log_file, "w") as f:
+            with open(self.with_log_file, "a") as f:
                 return subprocess.run(self.command_tokens, stdout=f, stderr=f, **extra_args)
         else:
             return subprocess.run(self.command_tokens, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **extra_args)
@@ -176,6 +176,7 @@ class PlotMeme(CommandlineModule):
 
     defaults = {
         'output_file_format': 'PNG',
+        'reverse_complement': False
     }
 
     def __init__(self):
@@ -184,6 +185,7 @@ class PlotMeme(CommandlineModule):
             ('output_file_format', '-f'),
             ('motif_id', '-m'),
             ('output_file', '-o'),
+            ('reverse_complement', '-r')
         ]
         super().__init__('ceqlogo', config)
 
@@ -194,6 +196,7 @@ class PlotMeme(CommandlineModule):
             if key in pm.options:
                 pm.options[key] = val
         return pm
+
 
 class ValidateFasta(CommandlineModule):
     def __init__(self):
