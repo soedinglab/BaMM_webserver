@@ -16,6 +16,7 @@ import subprocess
 from shutil import copyfile
 import re
 
+
 def get_result_folder(job_id):
     return path.join(settings.JOB_DIR_PREFIX, str(job_id), 'Output')
 
@@ -259,4 +260,41 @@ def valid_uuid(uuid):
     regex = re.compile('^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\Z', re.I)
     match = regex.match(uuid)
     return bool(match)
-    
+
+
+def get_model_order(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    filename = get_job_input_folder(job_pk) + '/' + basename(job.Motif_InitFile.name)
+    order = -1
+    with open(filename) as fh:
+        for line in fh:
+            tokens = line.split()
+            if len(tokens) == 0:
+                return (order)
+            else:
+                order = order + 1
+    return order
+
+
+def get_bg_model_order(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    filename = get_job_input_folder(job_pk) + '/' + basename(job.bgModel_File.name)
+    order = -1
+    with open(filename) as fh:
+        for line in fh:
+            tokens = line.split()
+            order = tokens[3]
+            break
+    return order
+
+
+def rename_input_files(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    print("infile = " + str(basename(job.Input_Sequences.name)))
+    infile = get_job_input_folder(job_pk) + '/' + basename(job.Input_Sequences.name)
+    print("outfile = " + str(basename(job.Input_Sequences.name).replace("_","-")))
+    out_filename = basename(job.Input_Sequences.name).replace("_","-")
+    with open(infile) as fh:
+        job.Input_Sequences.save(out_filename, File(fh))
+    job.save()
+    os.remove(infile)

@@ -19,7 +19,8 @@ from .utils import (
     get_log_file,
     get_user, set_job_name, upload_example_fasta,
     upload_example_motif, get_result_folder,
-    upload_db_input,valid_uuid
+    upload_db_input,valid_uuid,
+    rename_input_files
 )
 import datetime
 import os
@@ -28,8 +29,7 @@ import sys
 
 
 # #########################
-# ## HOME and GENERAL VIEWS
-# #########################
+# ## HOME and GENERAL VIEWS #########################
 
 
 def home(request):
@@ -84,6 +84,9 @@ def run_compare_view(request, mode='normal'):
                 upload_example_fasta(job_pk)
                 upload_example_motif(job_pk)
 
+            # replace "_" by "-" from input fasta files
+            rename_input_files(job_pk)
+
             run_compare.delay(job_pk)
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
@@ -120,10 +123,17 @@ def run_bammscan_view(request, mode='normal', pk='null'):
             if mode == 'example':
                 upload_example_fasta(job_pk)
                 upload_example_motif(job_pk)
+                job.Motif_Init_File_Format = 'PWM'
 
             # enter db input
             if mode == 'db':
                 upload_db_input(job_pk, pk)
+                job.Motif_Init_File_Format = 'BaMM'
+            
+            job.Motif_Initialization = 'CustomFile'
+
+            # replace "_" by "-" from input fasta files
+            rename_input_files(job_pk)
 
             run_bammscan.delay(job_pk)
             return render(request, 'job/submitted.html', {'pk': job_pk})
@@ -168,6 +178,9 @@ def run_bamm_view(request, mode='normal'):
                 job.Motif_Initialization = 'CustomFile'
                 job.Motif_Init_File_Format = 'PWM'
             
+            # replace "_" by "-" from input fasta files
+            rename_input_files(job_pk)
+
             if job.Motif_Initialization == 'PEnGmotif':
                 run_peng.delay(job_pk)
             else:
@@ -198,8 +211,8 @@ def find_results(request):
         if form.is_valid():
             jobid = form.cleaned_data['job_ID']
             if valid_uuid(jobid):
-                job = Job.objects.get(pk=jobid).exists()
-                if job.exists():
+                if Job.objects.filter(pk=jobid).exists():
+                    job = get_object_or_404(Job, pk=jobid)
                     return redirect('result_detail', pk=jobid)
             form = FindForm()
             return render(request, 'results/results_main.html', {'form': form, 'warning': True})                
