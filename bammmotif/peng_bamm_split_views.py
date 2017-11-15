@@ -7,20 +7,19 @@ from .peng_to_bamm_form import PengToBammForm
 from .peng_bamm_split_form import get_valid_peng_form, PengExampleForm, PengForm
 from .peng_bamm_split_job import create_job, validate_input_data, peng_meme_directory
 from .peng_bamm_split_tasks import run_peng
-from .peng_bamm_split_utils import upload_example_fasta_for_peng, copy_peng_to_bamm, load_meme_ids, zip_motifs
+from .peng_bamm_split_utils import upload_example_fasta_for_peng, copy_peng_to_bamm, load_meme_ids, zip_motifs, check_if_request_from_peng_directly, save_selected_motifs
 from .models import Job, PengJob, DbParameter
 from .forms import FindForm
 from .peng_bamm_split_job import file_path_peng
 from .peng_utils import get_motif_ids
 from .command_line import PlotMeme
-from .utils.meme_reader import Meme
+from .utils.meme_reader import Meme, split_meme_file
 from .utils import (
     get_log_file,
     get_user, set_job_name, valid_uuid,
     get_result_folder,
 )
 import bammmotif.tasks as tasks
-from django.db import models
 
 def peng_result_detail(request, pk):
     result = get_object_or_404(PengJob, pk=pk)
@@ -48,6 +47,9 @@ def peng_result_detail(request, pk):
             meme_plotter.reverse_complement = True
             meme_plotter.run()
             plot_paths[motif] = meme_plotter.output_file
+        # Split one large meme to multiple smaller ones
+        split_meme_file(meme_result_file_path, plot_output_directory)
+        # Zip motifs
         zip_motifs(motif_ids, plot_output_directory, with_reverse=True)
         return render(request, 'results/peng_result_detail.html',
                         {'result': result,
@@ -116,7 +118,14 @@ def peng_load_bamm(request, pk):
     inputfile = str(peng_job.fasta_file).rsplit('/', maxsplit=1)[1]
     print("peng_load_bamm")
     if request.method == "POST":
+        # TODO: Maybe do that differently.
+        if check_if_request_from_peng_directly(request):
+            save_selected_motifs(request.POST, pk)
+            form = PengToBammForm()
+            return render(request, 'job/peng_bamm_split_peng_to_bamm.html',
+                          {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': peng_job.job_name, 'pk': pk})
         form = PengToBammForm(request.POST, request.FILES)
+        print(form.is_valid())
         if form.is_valid():
             # read in data and parameter
             job = form.save(commit=False)
@@ -133,7 +142,7 @@ def peng_load_bamm(request, pk):
             if job.job_name is None:
                 set_job_name(job_pk)
             # Copy necessary files from last peng job.
-            copy_peng_to_bamm(pk, job_pk)
+            copy_peng_to_bamm(pk, job_pk, request.POST)
             # if example is requested, load the sampleData
             #print("peng_load_bamm")
             #from .commands import get_peng_command
