@@ -1,3 +1,5 @@
+import os
+
 class Meme(object):
     def __init__(self, meme_id, logpval, nsites):
         self.meme_id = meme_id
@@ -35,6 +37,41 @@ class Meme(object):
         return meme_list
 
 
+def split_meme_file(fpath, directory):
+    print("now split meme file")
+    with open(fpath) as f:
+        fcont = f.read().split("\n\n")
+        meme_header = "\n\n".join(fcont[:3])
+        for elem in fcont:
+            if not elem.startswith("MOTIF"):
+                continue
+            meme_id = elem.split("\n")[0].split(maxsplit=1)[1]
+            fname = os.path.join(directory, meme_id + ".meme")
+            with open(fname, "w") as d:
+                outstring = meme_header + "\n\n" + elem
+                d.write(outstring)
+                print(meme_id, "now has own file.")
+
+
+def update_and_copy_meme_file(fpath, tpath, motif_directory):
+    print("update and copy meme file")
+    selected_memes = [x.rsplit(".", maxsplit=1)[0] for x in os.listdir(motif_directory) if x.endswith(".meme")]
+    with open(fpath, "r") as f:
+        fcont = f.read().split("\n\n")
+        meme_header = "\n\n".join(fcont[:3])
+        remaining_motifs = meme_header + "\n\n"
+        for elem in fcont:
+            if not elem.startswith("MOTIF"):
+                continue
+            meme_id = elem.split("\n")[0].split(maxsplit=1)[1]
+            if meme_id not in selected_memes:
+                continue
+            remaining_motifs += "\n\n" + elem
+        with open(tpath, "w") as t:
+            t.write(remaining_motifs)
+
+
+
 def load_meme_dict(fpath):
     with open(fpath) as f:
         fcont = f.read().split("\n\n")
@@ -47,7 +84,7 @@ def load_meme_dict(fpath):
             meme_property_dict[meme_id] = {}
             letter_prop_mat = meme_args[1].replace("letter-probability-matrix:", "").split()
             for i in range(0, len(letter_prop_mat), 2):
-                prop = letter_prop_mat[i].replace("=","")
+                prop = letter_prop_mat[i].replace("=", "")
                 meme_property_dict[meme_id][prop] = letter_prop_mat[i+1]
     return meme_property_dict
 
