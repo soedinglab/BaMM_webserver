@@ -13,6 +13,12 @@ def file_path_peng(job_id, filename):
         os.makedirs(path_to_job)
     return os.path.join(path_to_job, str(filename))
 
+def peng_meme_directory(job_id):
+    path_to_plots = os.path.join(settings.MEDIA_ROOT, str(job_id), 'Output')
+    if not os.path.exists(path_to_plots):
+        os.makedirs(path_to_plots)
+    return path_to_plots
+
 def create_anonymuous_user(request):
     ip = get_ip(request)
     if ip is None:
@@ -65,7 +71,6 @@ def create_job(form, request):
         job.job_name = job_id_short[0]
     print("UPLOAD COMPLETE: save job object")
     job.save()
-    print(job.__dict__)
     return job
 
 

@@ -87,14 +87,35 @@
 
                                     <!-- <h3> Model Settings:</h3> -->
 
+                {% comment %}
+                    <p class="indent" style="padding-left: 1.8em"><label
+                            for="id_iupac_optimization_score"><a class "testpup"
+                        onmouseover="nhpup.popup($('#IUPAC_Optimization_Score_Info').html(),{'width':400});" ><span
+                                class="glyphicon glyphicon-info-sign" aria-hidden="true"
+                                style="color:black"></span></a> IUPAC Optimization Score:</label><font
+                            color="#1f2e2e">&nbsp;&nbsp;<select id="id_iupac_optimization_score"
+                                                                name="objective_function"
+                                                                type="string"
+                                                                required>
+                        <option value="LOGPVAL" selected="selected">LOGPVAL</option>
+                        <option value="EXPCOUNTS">EXPCOUNTS</option>
+                        <option value="MUTUAL_INFO">MUTUAL_INFO</option>
+                    </select>
+                    </font>
+                    </p>
+                    {% endcomment %}
                     <p class="indent" style="padding-left: 1.8em"><label for="id_pattern_length"><a
                             class "testpup"
                         onmouseover="nhpup.popup($('#Pattern_Length_Info').html(),{'width':400});" ><span
                                 class="glyphicon glyphicon-info-sign" aria-hidden="true"
                                 style="color:black"></span></a> Pattern Length:</label><font
                             color="#1f2e2e">
-                        <input id="id_pattern_length" min="0" max="50" name="pattern_length"
-                               type="number" value="10" required/>
+                        <select id="id_pattern_length" type="number" name="pattern_length" required>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="8">8</option>
+                            <option value="10" selected="selected">10</option>
+                        </select>
                     </font></p>
 
                     <p class="indent" style="padding-left: 1.8em"><label for="id_bg_sequences"><a class "testpup"
@@ -110,9 +131,15 @@
                         onmouseover="nhpup.popup($('#Z-Score_Threshold_Info').html(),{'width':400});" ><span
                                 class="glyphicon glyphicon-info-sign" aria-hidden="true"
                                 style="color:black"></span></a> Z-Score Threshold:</label><font
-                            color="#1f2e2e">&nbsp;&nbsp;<input id="id_zscore_threshold" min="0" max="25"
-                                                               name="zscore_threshold" type="number"
-                                                               value="10" required/></font></p>
+                            color="#1f2e2e">
+                        <select id="id_zscore_threshold" type="number" name="zscore_threshold" required>
+                            <option value="2">2</option>
+                            <option value="5">5</option>
+                            <option value="10" selected="selected">10</option>
+                            <option value="20">20</option>
+                        </select>
+                    </font>
+                    </p>
 
                     <p class="indent" style="padding-left: 1.8em"><label for="id_count_threshold"><a
                             class "testpup"
@@ -144,9 +171,13 @@
                         onmouseover="nhpup.popup($('#Background_Model_Order_Info').html(),{'width':400});" ><span
                                 class="glyphicon glyphicon-info-sign" aria-hidden="true"
                                 style="color:black"></span></a> Background Model Order:</label><font
-                            color="#1f2e2e">&nbsp;&nbsp;<input id="id_bg_model_order" min="0" max="25"
-                                                               name="bg_model_order" type="number"
-                                                               value="2" required/></font></p>
+                            color="#1f2e2e">&nbsp;
+                        <select id="id_bg_model_order" type="number" name="bg_model_order" required>
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2" selected="selected">2</option>
+                        </select>
+                    </font></p>
 
                     <p class="indent" style="padding-left: 1.8em"><label for="id_strand"><a class
                         "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});"
@@ -155,6 +186,7 @@
                             id="id_strand" name="strand" type="checkbox" checked/></font>
                     </p>
 
+                {% comment %}
                     <p class="indent" style="padding-left: 1.8em"><label
                             for="id_enrich_pseudocount_factor"><a class "testpup"
                         onmouseover="nhpup.popup($('#Enrich_Pseudocount_Factor_Info').html(),{'width':400});" ><span
@@ -164,6 +196,7 @@
                                                                name="enrich_pseudocount_factor" type="number"
                                                                value="0.005"
                                                                required/></font></p>
+                 {% endcomment %}
 
 
                     <p class="indent" style="padding-left: 1.8em"><label for="id_no_em"><a class "testpup"
@@ -174,6 +207,7 @@
                             id="id_no_em" name="no_em" type="checkbox" checked/></font></p>
 
 
+                {% comment %}
                     <p class="indent" style="padding-left: 1.8em"><label for="id_em_threshold"><a class
                         "testpup" onmouseover="nhpup.popup($('#EM_Threshold_Info').html(),{'width':400});"
                         ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"
@@ -235,6 +269,7 @@
                                                                name="em_saturation_threshold"
                                                                type="number" value="10000"
                                                                required/></font></p>
+                                                               {% endcomment %}
                     <br>
             </div>
         </div>
@@ -246,9 +281,11 @@
         <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e">
             <font
                     color="white">Peng</font></button>
+        {% comment %}
         &emsp; <a href="{% url 'peng_result_detail' pk='293aae88-6e1e-48ba-ad87-19e7304e0393' %}"
                   role="button"> <span
             class="glyphicon glyphicon-play-circle" aria-hidden="true"> View Example Result </span></a>
+            {% endcomment %}
     </p>
     </form>
 

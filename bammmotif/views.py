@@ -144,6 +144,8 @@ def run_bammscan_view(request, mode='normal', pk='null'):
 
 
 def run_bamm_view(request, mode='normal'):
+    print("run_bamm_view")
+    print(request.POST, request.FILES)
     if request.method == "POST":
         if mode == 'example':
             form = PredictionExampleForm(request.POST, request.FILES)
