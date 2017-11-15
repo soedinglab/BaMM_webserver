@@ -13,10 +13,7 @@ class PengForm(forms.ModelForm):
         fields = (
             'fasta_file', 'bg_sequences',
             'pattern_length', 'zscore_threshold', 'count_threshold', 'bg_model_order',
-            'strand', 'objective_function', 'enrich_pseudocount_factor', 'no_em',
-            'em_saturation_threshold', 'em_threshold', 'em_max_iterations', 'no_merging',
-            'bit_factor_threshold', 'use_default_pwm', 'pwm_pseudo_counts',
-            'job_name'
+            'strand', 'objective_function', 'no_em', 'job_name'
         )
 
     def __init__(self, *args, **kwargs):
