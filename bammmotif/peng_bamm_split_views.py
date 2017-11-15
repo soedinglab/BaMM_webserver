@@ -32,21 +32,20 @@ def peng_result_detail(request, pk):
         if not os.path.exists(plot_output_directory):
             os.makedirs(plot_output_directory)
         motif_ids = get_motif_ids(meme_result_file_path)
-        plot_paths = {}
         meme_plotter = PlotMeme()
         meme_plotter.output_file_format = PlotMeme.defaults['output_file_format']
         meme_meta_info_list = Meme.fromfile(meme_result_file_path)
-        for motif in motif_ids:
-            #TODO: Clean that up.
-            meme_plotter.input_file = meme_result_file_path
-            meme_plotter.output_file = os.path.join(plot_output_directory, motif + ".png")
-            meme_plotter.motif_id = motif
-            meme_plotter.run()
-            # Now plot reverse complement
-            meme_plotter.output_file = os.path.join(plot_output_directory, motif + "_rev.png")
-            meme_plotter.reverse_complement = True
-            meme_plotter.run()
-            plot_paths[motif] = meme_plotter.output_file
+        PlotMeme.plot_meme_list(motif_ids, meme_result_file_path, plot_output_directory)
+        #for motif in motif_ids:
+        #    #TODO: Clean that up.
+        #    meme_plotter.input_file = meme_result_file_path
+        #    meme_plotter.output_file = os.path.join(plot_output_directory, motif + ".png")
+        #    meme_plotter.motif_id = motif
+        #    meme_plotter.run()
+        #    # Now plot reverse complement
+        #    meme_plotter.output_file = os.path.join(plot_output_directory, motif + "_rev.png")
+        #    meme_plotter.reverse_complement = True
+        #    meme_plotter.run()
         # Split one large meme to multiple smaller ones
         split_meme_file(meme_result_file_path, plot_output_directory)
         # Zip motifs
@@ -143,12 +142,6 @@ def peng_load_bamm(request, pk):
                 set_job_name(job_pk)
             # Copy necessary files from last peng job.
             copy_peng_to_bamm(pk, job_pk, request.POST)
-            # if example is requested, load the sampleData
-            #print("peng_load_bamm")
-            #from .commands import get_peng_command
-            #print(job.Input_Sequences.name)
-            #job2 = get_object_or_404(Job, pk=job.job_ID)
-            #print(get_peng_command(job.job_ID,True))
             if job.Motif_Initialization == 'PEnGmotif':
                 tasks.run_peng.delay(job.job_ID)
             else:
