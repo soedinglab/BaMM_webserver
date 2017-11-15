@@ -37,9 +37,15 @@ MODE_CHOICES = (
 )
 
 
-def job_directory_path(instance, filename):
+def job_directory_path_sequence(instance, filename):
+    f_name = filename.replace("_", "-")
+    return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID),
+                        'Input', str(f_name))
+
+def job_directory_path_motif(instance, filename):
     return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID),
                         'Input', str(filename))
+
 
 def job_directory_path_peng(instance, filename):
     path_to_job = "/code/media"
@@ -57,11 +63,11 @@ class Job(models.Model):
     complete = models.BooleanField(default=False)
         
     # files  
-    Input_Sequences = models.FileField(upload_to=job_directory_path, null=True)
-    Background_Sequences = models.FileField(upload_to=job_directory_path, null=True, blank=True)
+    Input_Sequences = models.FileField(upload_to=job_directory_path_sequence, null=True)
+    Background_Sequences = models.FileField(upload_to=job_directory_path_sequence, null=True, blank=True)
     #Intensity_File = models.FileField(upload_to=job_directory_path , null=True, blank=True)
     Motif_Initialization = models.CharField(max_length=255, choices=INIT_CHOICES, default="PEnGmotif")
-    Motif_InitFile = models.FileField(upload_to=job_directory_path, null=True, blank=True)
+    Motif_InitFile = models.FileField(upload_to=job_directory_path_motif, null=True, blank=True)
     Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="PWM")
     num_init_motifs = models.IntegerField(default = 10)
 
@@ -93,7 +99,7 @@ class Job(models.Model):
     # scoring options
     score_Seqset = models.BooleanField(default=True)
     score_Cutoff = models.FloatField(default=0.1)
-    bgModel_File = models.FileField( upload_to=job_directory_path, null=True, blank=True)
+    bgModel_File = models.FileField( upload_to=job_directory_path_motif, null=True, blank=True)
 
     # advanced options
     #alphabet = models.CharField(max_length=255, choices=ALPHABET_CHOICES, default="STANDARD")

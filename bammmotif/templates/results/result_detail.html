@@ -175,7 +175,7 @@
     <tr>
         <th> # </th>
         <th> IUPAC </th>
-        {% if mode == "Prediction" %}
+        {% if mode == "Prediction" or mode == "Occurrence"  %}
         <th> PWM </th>
         <th> reverse Comp. </th>
         {% endif %}
@@ -193,6 +193,12 @@
         <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
         <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
         {% endif %}
+
+        {% if mode == "Occurrence"  %}
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_init_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_init_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        {% endif %}
+   
        {% if result.FDR %}
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.auc}} </a></th>        
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.occurrence}} </a></th>        
@@ -234,12 +240,25 @@
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
     {% endfor %}
     {% endif %}
+    
+
+    {% if mode == "Occurrence" %}   
+    <hr style="border: 1px solid #1f2e2e">
+    
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_init_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_init_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
+    {% for i in num_logos %}
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_init_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
+    {% endfor %}
+    {% endif %}
+    
+
     {% if result.FDR %}
     <h2> Performance and positional distribution on input sequences </h2>
         <hr style="border: 1px solid #1f2e2e">
-        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
-        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partiacl ROC5 curve">
-        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_PRC.jpeg" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filenameFDR}}_motif_{{m.job_rank}}_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filenameFDR}}_motif_{{m.job_rank}}_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partiacl ROC5 curve">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filenameFDR}}_motif_{{m.job_rank}}_PRC.jpeg" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
     {% endif %}
     {% if result.score_Seqset %}
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Ditsribution"> &emsp;

@@ -249,8 +249,8 @@ def transfer_motif(job_pk):
             dest = get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_1' + input_ending
             copyfile(src, dest)
         if job.Motif_Init_File_Format == 'PWM':
-            offs = split_meme_file(job_pk, src)
-    
+            print("this is not implemented yet!")
+
     if input_ending == '.ihbcp':
         src = get_job_input_folder(job_pk) + '/' + basename(job.bgModel_File.name)
         if job.Input_Sequences is None:
@@ -261,8 +261,6 @@ def transfer_motif(job_pk):
         offs = 2
     return offs
 
-def split_meme_file(job_pk,src):
-    return 3
 
 def valid_uuid(uuid):
     regex = re.compile('^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\Z', re.I)
@@ -294,17 +292,3 @@ def get_bg_model_order(job_pk):
             order = tokens[3]
             break
     return order
-
-
-def rename_input_files(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    infile = get_job_input_folder(job_pk) + '/' + basename(job.Input_Sequences.name)
-    out_filename = basename(job.Input_Sequences.name).replace("_","-")
-    if basename(job.Input_Sequences.name) == out_filename:
-        print("")
-    else:
-        with open(infile) as fh:
-            job.Input_Sequences.save(out_filename, File(fh))
-            job.save()
-        os.remove(infile)
-    sys.stdout.flush()

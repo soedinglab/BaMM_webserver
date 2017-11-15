@@ -195,7 +195,7 @@ def get_FDR_command(job_pk, useRefined, m=1):
     return command
 
 
-def get_BaMMScan_command(job_pk, useRefined, m=1):
+def get_BaMMScan_command(job_pk, first, useRefined, m=1):
     job = get_object_or_404(Job, pk=job_pk)
     param = []
 
@@ -222,6 +222,9 @@ def get_BaMMScan_command(job_pk, useRefined, m=1):
     # add specific params
     param.append("--pvalCutoff")
     param.append(job.score_Cutoff)
+
+    if first is True:
+        param.append("--saveInitialModel")
 
     command = " ".join(str(s) for s in param)
     print(command)
@@ -319,29 +322,22 @@ def BaMMScan(job_pk, first, useRefined):
     sys.stdout.flush()
     if useRefined is True:
         for m in range(1, job.num_motifs+1):
-            run_command(get_BaMMScan_command(job_pk, useRefined, m))
+            run_command(get_BaMMScan_command(job_pk, first, useRefined, m))
     else:
-        run_command(get_BaMMScan_command(job_pk, useRefined))
+        run_command(get_BaMMScan_command(job_pk, first, useRefined))
     sys.stdout.flush()
     if first is True:
         print(" BaMMscan is first")
-        # transfer motifs to outputfolder (not needed with BaMMScan init output option)
-        offs = transfer_motif(job_pk)
         # generate motif objects
-        initialize_motifs(job_pk, offs, 1)
+        initialize_motifs(job_pk, 2, 3)
         print(" motifs are initialized")
-        if job.Motif_Init_File_Format == 'BaMM':
-            # add IUPACs
-            run_command(get_iupac_command(job_pk)) 
-            add_motif_iupac(job_pk)
-            # plot logos
-            for order in range(min(job.model_Order+1, 4)):
-                run_command(get_logo_command(job_pk, order))
-        else:
-            # get IUPAC from meme file
-            # if BaMMScan has an option of write out the input motifs in BaMM format this is not necessary anymore
-            # plot logo
-            print ("this is where is need to insert pwm logo plotting")
+        run_command(get_iupac_command(job_pk))
+        add_motif_iupac(job_pk)
+        # plot logos
+        job = get_object_or_404(Job, pk=job_pk)
+        print("this is the model order= " + str(job.model_Order))
+        for order in range(min(job.model_Order+1, 4)):
+            run_command(get_logo_command(job_pk, order))
     # plot motif distribution
     run_command(get_distribution_command(job_pk))
     return 0
