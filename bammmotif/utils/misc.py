@@ -150,7 +150,7 @@ def add_peng_output(job_pk):
 def upload_db_input(job_pk, db_pk):
     job = get_object_or_404(Job, pk=job_pk)
     db_entry = get_object_or_404(ChIPseq, pk=db_pk)
-    db_dir = path.join(settings.DB_ROOT + '/' + db_entry.parent.base_dir + '/Results/' + db_entry.result_location)
+    db_dir = path.join(settings.BASE_DIR + settings.DB_ROOT + '/' + db_entry.parent.base_dir + '/Results/' + db_entry.result_location)
     # upload motifInitFile
     f = db_dir + '/' + str(db_entry.result_location) + '_motif_1.ihbcp'
     out_f = str(db_entry.result_location) + ".ihbcp"
@@ -233,18 +233,24 @@ def transfer_motif(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     make_job_output_folder(job_pk)
 
+    offs = 1
     src = get_job_input_folder(job_pk) + '/' + basename(job.Motif_InitFile.name)
     input_ending = os.path.splitext(job.Motif_InitFile.name)[1]
     if job.Input_Sequences is None:
         dest = get_job_output_folder(job_pk) + '/' + basename(job.Motif_InitFile.name)
         # add this file also as Input_Sequences File to generate MMcompare command
-        with open(src) as fh:
-            job.Input_Sequences.save(basename(job.Motif_InitFile.name), File(fh))
-            job.save()
+        # Find a different solution for that-->
+        # with open(src) as fh:
+        #    job.Input_Sequences.save(basename(job.Motif_InitFile.name), File(fh))
+        #    job.save()
+        copyfile(src, dest)
     else:
-        dest = get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_1' + input_ending
-    copyfile(src, dest)
-    offs = 1
+        if job.Motif_Init_File_Format == ('BaMM' or 'BindingSites'):
+            dest = get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_1' + input_ending
+            copyfile(src, dest)
+        if job.Motif_Init_File_Format == 'PWM':
+            offs = split_meme_file(job_pk, src)
+    
     if input_ending == '.ihbcp':
         src = get_job_input_folder(job_pk) + '/' + basename(job.bgModel_File.name)
         if job.Input_Sequences is None:
@@ -255,6 +261,8 @@ def transfer_motif(job_pk):
         offs = 2
     return offs
 
+def split_meme_file(job_pk,src):
+    return 3
 
 def valid_uuid(uuid):
     regex = re.compile('^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\Z', re.I)
@@ -290,11 +298,13 @@ def get_bg_model_order(job_pk):
 
 def rename_input_files(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
-    print("infile = " + str(basename(job.Input_Sequences.name)))
     infile = get_job_input_folder(job_pk) + '/' + basename(job.Input_Sequences.name)
-    print("outfile = " + str(basename(job.Input_Sequences.name).replace("_","-")))
     out_filename = basename(job.Input_Sequences.name).replace("_","-")
-    with open(infile) as fh:
-        job.Input_Sequences.save(out_filename, File(fh))
-    job.save()
-    os.remove(infile)
+    if basename(job.Input_Sequences.name) == out_filename:
+        print("")
+    else:
+        with open(infile) as fh:
+            job.Input_Sequences.save(out_filename, File(fh))
+            job.save()
+        os.remove(infile)
+    sys.stdout.flush()
