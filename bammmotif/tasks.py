@@ -11,7 +11,7 @@ from .commands import (
 )
 from .utils import (
     get_log_file, make_job_folder,
-    JobSaveManager
+    JobSaveManager, rename_input_files
 )
 
 
@@ -24,7 +24,8 @@ def run_peng(self, job_pk):
         logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
-                
+                # replace "_" by "-" from input fasta files
+                rename_input_files(job_pk)
                 # run PeNGmotif
                 Peng(job_pk, False)
 
@@ -52,6 +53,8 @@ def run_bamm(self, job_pk):
         logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
+                # replace "_" by "-" from input fasta files
+                rename_input_files(job_pk)
                 # run BaMMmotif
                 BaMM(job_pk, True, False)
                 # run optionals
@@ -76,6 +79,8 @@ def run_bammscan(self, job_pk):
         logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
+                # replace "_" by "-" from input fasta files
+                rename_input_files(job_pk)
                 # run BaMMscore
                 BaMMScan(job_pk, True, False)
                 # run optionals
@@ -98,6 +103,8 @@ def run_compare(self, job_pk):
         logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
+                # replace "_" by "-" from input fasta files
+                rename_input_files(job_pk)
                 # run MMcompare
                 MMcompare(job_pk, True, True)
                 Compress(job_pk)

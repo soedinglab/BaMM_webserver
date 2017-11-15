@@ -19,8 +19,7 @@ from .utils import (
     get_log_file,
     get_user, set_job_name, upload_example_fasta,
     upload_example_motif, get_result_folder,
-    upload_db_input,valid_uuid,
-    rename_input_files
+    upload_db_input,valid_uuid
 )
 import datetime
 import os
@@ -73,6 +72,7 @@ def run_compare_view(request, mode='normal'):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.user = get_user(request)
+            job.mode = "Compare"
             job.save()
             job_pk = job.job_ID
 
@@ -113,6 +113,7 @@ def run_bammscan_view(request, mode='normal', pk='null'):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.user = get_user(request)
+            job.mode = "Occurrence"
             job.save()
             job_pk = job.job_ID
 
@@ -131,9 +132,6 @@ def run_bammscan_view(request, mode='normal', pk='null'):
                 job.Motif_Init_File_Format = 'BaMM'
             
             job.Motif_Initialization = 'CustomFile'
-
-            # replace "_" by "-" from input fasta files
-            rename_input_files(job_pk)
 
             run_bammscan.delay(job_pk)
             return render(request, 'job/submitted.html', {'pk': job_pk})
@@ -165,6 +163,7 @@ def run_bamm_view(request, mode='normal'):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.user = get_user(request)
+            job.mode = "Prediction"
             job.save()
             job_pk = job.job_ID
 
@@ -178,9 +177,6 @@ def run_bamm_view(request, mode='normal'):
                 job.Motif_Initialization = 'CustomFile'
                 job.Motif_Init_File_Format = 'PWM'
             
-            # replace "_" by "-" from input fasta files
-            rename_input_files(job_pk)
-
             if job.Motif_Initialization == 'PEnGmotif':
                 run_peng.delay(job_pk)
             else:
@@ -252,16 +248,12 @@ def result_detail(request, pk):
     if result.complete:
         print("status is successfull")
         num_logos = range(1, (min(2, result.model_Order)+1))
-        if result.mode == "Prediction" or result.mode == "Compare":
-            return render(request, 'results/result_detail.html',
+        return render(request, 'results/result_detail.html',
                           {'result': result, 'opath': opath,
                            'mode': result.mode,
                            'Output_filename': Output_filename,
                            'num_logos': num_logos,
                            'db_dir': db_dir})
-        elif result.mode == "Occurrence":
-            return redirect('result_occurrence', result.mode, pk)
-
     else:
         print('status not ready yet')
         log_file = get_log_file(pk)

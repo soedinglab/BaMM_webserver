@@ -16,7 +16,9 @@ from .utils import (
     add_motif_iupac,
     transfer_motif,
     get_job_input_folder,
-    add_peng_output
+    add_peng_output,
+    get_model_order,
+    get_bg_model_order
 )
 
 
@@ -85,6 +87,8 @@ def get_logo_command(job_pk, order):
     param.append(order)
     param.append('--web 1')
     command = " ".join(str(s) for s in param)
+    print(command)
+    sys.stdout.flush()
     return command
 
 
@@ -95,6 +99,8 @@ def get_distribution_command(job_pk):
     param.append(get_job_output_folder(job_pk) + '/')
     param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
     command = " ".join(str(s) for s in param)
+    print(command)
+    sys.stdout.flush()
     return command
 
 
@@ -108,6 +114,8 @@ def get_evaluation_command(job_pk):
     param.append('--ROC5 1')
     param.append('--PRC 1')
     command = " ".join(str(s) for s in param)
+    print(command)
+    sys.stdout.flush()
     return command
 
 
@@ -118,7 +126,10 @@ def get_iupac_command(job_pk):
     param.append(get_job_output_folder(job_pk) + '/')
     param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
     param.append(job.model_Order)
+
     command = " ".join(str(s) for s in param)
+    print(command)
+    sys.stdout.flush()
     return command
 
 
@@ -130,6 +141,7 @@ def get_compress_command(job_pk):
     param.append(get_job_output_folder(job_pk) + '/*')
     command = " ".join(str(s) for s in param)
     print(command)
+    sys.stdout.flush()
     return command
 
 
@@ -142,6 +154,7 @@ def get_motif_compress_command(job_pk, motif):
     param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hb*')
     command = " ".join(str(s) for s in param)
     print(command)
+    sys.stdout.flush()
     return command
 
 
@@ -154,6 +167,7 @@ def get_peng_command(job_pk, useRefined):
     param.append(path.join(get_job_input_folder(job_pk), settings.PENG_INIT))
     command = " ".join(str(s) for s in param)
     print(command)
+    sys.stdout.flush()
     return command
 
 
@@ -177,6 +191,7 @@ def get_FDR_command(job_pk, useRefined, m=1):
 
     command = " ".join(str(s) for s in param)
     print(command)
+    sys.stdout.flush()
     return command
 
 
@@ -191,6 +206,16 @@ def get_BaMMScan_command(job_pk, useRefined, m=1):
     job.extend = 0
     job.save()
 
+    # adjust model order if run without BaMMmotif
+    if useRefined is False and job.Motif_Init_File_Format == 'BaMM':
+        job.model_Order = get_model_order(job_pk)
+        job.background_Order = get_bg_model_order(job_pk)
+        job.save()
+
+    if useRefined is False and job.Motif_Init_File_Format == 'PWM':
+        job.model_Order = 0
+        job.save()
+
     # get params shared between bammmotif bammscan and fdr
     param.append(get_core_params(job_pk, useRefined, m))
 
@@ -200,16 +225,17 @@ def get_BaMMScan_command(job_pk, useRefined, m=1):
 
     command = " ".join(str(s) for s in param)
     print(command)
+    sys.stdout.flush()
     return command
 
 
-def get_BaMMmotif_command(job_pk, useRefined, first):
+def get_BaMMmotif_command(job_pk, useRefined, first, maxPWMs=5):
     job = get_object_or_404(Job, pk=job_pk)
     param = []
 
     # restrict to top 5 motifs from PeNG
     if job.Motif_Initialization == "PEnGmotif":
-        job.num_init_motifs = 5
+        job.num_init_motifs = maxPWMs
         job.save()
 
     # define executable
@@ -226,6 +252,7 @@ def get_BaMMmotif_command(job_pk, useRefined, first):
 
     command = " ".join(str(s) for s in param)
     print(command)
+    sys.stdout.flush()
     return command
 
 
@@ -257,8 +284,8 @@ def Peng(job_pk, useRefined):
     job.status = 'running PEnGmotif'
     job.save()
     print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
-    sys.stdout.flush()
     run_command(get_peng_command(job_pk, useRefined))
+    sys.stdout.flush()
     # add output to the input for further optionals
     add_peng_output(job_pk)
     return 0
@@ -270,7 +297,8 @@ def BaMM(job_pk, first, useRefined):
     job.save()
     print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
     sys.stdout.flush()
-    run_command(get_BaMMmotif_command(job_pk, useRefined, first))
+    run_command(get_BaMMmotif_command(job_pk, useRefined, first, 5))
+    sys.stdout.flush()
     if first is True:
         # generate motif objects
         initialize_motifs(job_pk, 2, 2)
@@ -294,9 +322,26 @@ def BaMMScan(job_pk, first, useRefined):
             run_command(get_BaMMScan_command(job_pk, useRefined, m))
     else:
         run_command(get_BaMMScan_command(job_pk, useRefined))
+    sys.stdout.flush()
     if first is True:
+        print(" BaMMscan is first")
+        # transfer motifs to outputfolder (not needed with BaMMScan init output option)
+        offs = transfer_motif(job_pk)
         # generate motif objects
-        initialize_motifs(job_pk, 0, 1)
+        initialize_motifs(job_pk, offs, 1)
+        print(" motifs are initialized")
+        if job.Motif_Init_File_Format == 'BaMM':
+            # add IUPACs
+            run_command(get_iupac_command(job_pk)) 
+            add_motif_iupac(job_pk)
+            # plot logos
+            for order in range(min(job.model_Order+1, 4)):
+                run_command(get_logo_command(job_pk, order))
+        else:
+            # get IUPAC from meme file
+            # if BaMMScan has an option of write out the input motifs in BaMM format this is not necessary anymore
+            # plot logo
+            print ("this is where is need to insert pwm logo plotting")
     # plot motif distribution
     run_command(get_distribution_command(job_pk))
     return 0
@@ -313,6 +358,7 @@ def FDR(job_pk, first, useRefined):
             run_command(get_FDR_command(job_pk, useRefined, m))
     else:
         run_command(get_FDR_command(job_pk, useRefined))
+    sys.stdout.flush()
     if first is True:
         # generate motif objects
         initialize_motifs(job_pk, 0, 1)
@@ -333,6 +379,7 @@ def MMcompare(job_pk, first, opt):
         # add init Motif to Outputfolder
         offs = transfer_motif(job_pk)
     run_command(get_MMcompare_command(job_pk, database))
+    sys.stdout.flush()
     if first is True:
         # generate motif objects
         initialize_motifs(job_pk, offs, 1)
