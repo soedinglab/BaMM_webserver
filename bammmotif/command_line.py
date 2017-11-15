@@ -197,6 +197,21 @@ class PlotMeme(CommandlineModule):
                 pm.options[key] = val
         return pm
 
+    @staticmethod
+    def plot_meme_list(motifs, input_file, output_directory):
+        meme_plotter = PlotMeme()
+        meme_plotter.output_file_format = PlotMeme.defaults['output_file_format']
+        for motif in motifs:
+            meme_plotter.input_file = input_file
+            meme_plotter.motif_id = motif
+            meme_plotter.output_file = os.path.join(output_directory, motif + ".png")
+            meme_plotter.reverse_complement = False
+            meme_plotter.run()
+            # Now plot reverse complement
+            meme_plotter.output_file = os.path.join(output_directory, motif + "_rev.png")
+            meme_plotter.reverse_complement = True
+            meme_plotter.run()
+
 
 class ValidateFasta(CommandlineModule):
     def __init__(self):
