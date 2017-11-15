@@ -5,7 +5,7 @@ class PengToBammForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('reverse_Complement',
-                  'model_Order', 'extend', 'bgModel_File',
+                  'model_Order', 'extend',
                   'background_Order',
                   'Background_Sequences', 'score_Seqset',
                   'score_Cutoff', 'FDR',
