@@ -133,12 +133,12 @@ def peng_load_bamm(request, pk):
             job.Input_Sequences = peng_job.fasta_file
             job.num_init_motifs = get_n_motifs(pk)
             job_pk = str(job.job_ID)
+            # print(dir(peng_job.fasta_file))
+            job.Motif_InitFile.name = os.path.join(settings.MEDIA_ROOT, str(job_pk), 'pengoutput', 'out.meme')
             job.save()
             job.Motif_Initialization = "Custom File"
             job.Motif_Init_File_Format = "PWM"
             #TODO: Find a nicer way to write that.
-            job.Motif_InitFile = peng_job.fasta_file
-            job.Motif_InitFile.name = os.path.join(settings.MEDIA_ROOT, str(job_pk), 'pengoutput', 'out.meme')
             if job.job_name is None:
                 set_job_name(job_pk)
             # Copy necessary files from last peng job.
