@@ -7,13 +7,14 @@ from .peng_to_bamm_form import PengToBammForm
 from .peng_bamm_split_form import get_valid_peng_form, PengExampleForm, PengForm
 from .peng_bamm_split_job import create_job, validate_input_data, peng_meme_directory
 from .peng_bamm_split_tasks import run_peng
-from .peng_bamm_split_utils import upload_example_fasta_for_peng, copy_peng_to_bamm, load_meme_ids, zip_motifs, check_if_request_from_peng_directly, save_selected_motifs
+from .peng_bamm_split_utils import upload_example_fasta_for_peng, copy_peng_to_bamm, load_meme_ids, zip_motifs, \
+    check_if_request_from_peng_directly, save_selected_motifs
 from .models import Job, PengJob, DbParameter
 from .forms import FindForm
 from .peng_bamm_split_job import file_path_peng
 from .peng_utils import get_motif_ids
 from .command_line import PlotMeme
-from .utils.meme_reader import Meme, split_meme_file
+from .utils.meme_reader import Meme, split_meme_file, get_n_motifs
 from .utils import (
     get_log_file,
     get_user, set_job_name, valid_uuid,
@@ -124,13 +125,13 @@ def peng_load_bamm(request, pk):
             return render(request, 'job/peng_bamm_split_peng_to_bamm.html',
                           {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': peng_job.job_name, 'pk': pk})
         form = PengToBammForm(request.POST, request.FILES)
-        print(form.is_valid())
         if form.is_valid():
             # read in data and parameter
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.user = get_user(request)
             job.Input_Sequences = peng_job.fasta_file
+            job.num_init_motifs = get_n_motifs(pk)
             job_pk = str(job.job_ID)
             job.save()
             job.Motif_Initialization = "Custom File"
