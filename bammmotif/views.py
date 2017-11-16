@@ -77,12 +77,15 @@ def run_compare_view(request, mode='normal'):
 
             if job.job_name is None:
                 set_job_name(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
 
             # if example is requested, load the sampleData
             if mode == 'example':
                 upload_example_fasta(job_pk)
                 upload_example_motif(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
 
+            job = get_object_or_404(Job, pk = job_pk)
             run_compare.delay(job_pk)
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
@@ -115,19 +118,19 @@ def run_bammscan_view(request, mode='normal', pk='null'):
 
             if job.job_name is None:
                 set_job_name(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
 
             # if example is requested, load the sampleData
             if mode == 'example':
                 upload_example_fasta(job_pk)
                 upload_example_motif(job_pk)
-                #job.Motif_Init_File_Format = 'PWM'
+                job = get_object_or_404(Job, pk = job_pk)
 
             # enter db input
             if mode == 'db':
                 upload_db_input(job_pk, pk)
-                #job.Motif_Init_File_Format = 'BaMM'
+                job = get_object_or_404(Job, pk = job_pk)
 
-            # job.Motif_Initialization = 'CustomFile'
             job = get_object_or_404(Job, pk = job_pk)
 
             run_bammscan.delay(job_pk)
@@ -166,11 +169,13 @@ def run_bamm_view(request, mode='normal'):
 
             if job.job_name is None:
                 set_job_name(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
 
             # if example is requested, load the sampleData
             if mode == 'example':
                 upload_example_fasta(job_pk)
                 upload_example_motif(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
 
             job = get_object_or_404(Job, pk = job_pk)
             if job.Motif_Initialization == 'PEnGmotif':
@@ -242,12 +247,13 @@ def result_detail(request, pk):
 
     if result.complete:
         print("status is successfull")
-        num_logos = range(1, (min(2, result.model_Order)+1))
+        num_logos = range(1, (min(3,result.model_Order+1)))
+        print("model order = " + str(result.model_Order))
+        print("num_logos = "  +  str(num_logos))
         return render(request, 'results/result_detail.html',
                       {'result': result, 'opath': opath,
                        'mode': result.mode,
                        'Output_filename': Output_filename,
-                       'Output_filenameFDR': Output_filenameFDR,
                        'num_logos': num_logos,
                        'db_dir': db_dir})
     else:
@@ -256,7 +262,7 @@ def result_detail(request, pk):
         command = "tail -20 %r" % log_file
         output = os.popen(command).read()
         return render(request, 'results/result_status.html',
-                      {'result': result, 'opath': opath, 'output': output})
+                      {'job_ID': result.job_ID, 'job_name': result.job_name, 'status': result.status, 'output': output})
 
 
 # #########################

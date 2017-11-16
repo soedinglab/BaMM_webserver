@@ -139,7 +139,7 @@ def upload_example_motif(job_pk):
 def add_peng_output(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     out_filename = settings.PENG_INIT
-    infile = path.join(get_job_input_folder(job_pk), settings.PENG_INIT)
+    infile = path.join(get_job_input_folder(job_pk), settings.PENG_OUT)
     with open(infile) as fh:
         job.Motif_InitFile.save(out_filename, File(fh))
     job.Motif_Initialization = 'PEnGmotif'

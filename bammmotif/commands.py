@@ -164,7 +164,7 @@ def get_peng_command(job_pk, useRefined):
     param.append("peng_motif")
     param.append(path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))
     param.append("-o")
-    param.append(path.join(get_job_input_folder(job_pk), settings.PENG_INIT))
+    param.append(path.join(get_job_input_folder(job_pk), settings.PENG_OUT))
     command = " ".join(str(s) for s in param)
     print(command)
     sys.stdout.flush()
@@ -188,6 +188,13 @@ def get_FDR_command(job_pk, useRefined, m=1):
     param.append(job.m_Fold)
     param.append("--sOrder")
     param.append(job.sampling_Order)
+
+    param.append("--basename")
+    if useRefined is True or job.Motif_Init_File_Format == 'BaMM':
+       param.append(str(job.Output_filename()) + '_motif_' + str(m))
+    else:
+        if job.Motif_Init_File_Format == 'PWM':
+            param.append(job.Output_filename())
 
     command = " ".join(str(s) for s in param)
     print(command)
@@ -225,6 +232,13 @@ def get_BaMMScan_command(job_pk, first, useRefined, m=1):
 
     if first is True:
         param.append("--saveInitialModel")
+
+    param.append("--basename")
+    if useRefined is True or job.Motif_Init_File_Format == 'BaMM':
+       param.append(str(job.Output_filename()) + '_motif_' + str(m))
+    else:
+        if job.Motif_Init_File_Format == 'PWM':
+            param.append(job.Output_filename())
 
     command = " ".join(str(s) for s in param)
     print(command)
@@ -309,7 +323,7 @@ def BaMM(job_pk, first, useRefined):
     run_command(get_iupac_command(job_pk))
     add_motif_iupac(job_pk)
     # plot logos
-    for order in range(min(job.model_Order+1, 4)):
+    for order in range(min(job.model_Order, 2)):
         run_command(get_logo_command(job_pk, order))
     return 0
 
@@ -327,16 +341,13 @@ def BaMMScan(job_pk, first, useRefined):
         run_command(get_BaMMScan_command(job_pk, first, useRefined))
     sys.stdout.flush()
     if first is True:
-        print(" BaMMscan is first")
         # generate motif objects
         initialize_motifs(job_pk, 2, 3)
-        print(" motifs are initialized")
         run_command(get_iupac_command(job_pk))
         add_motif_iupac(job_pk)
         # plot logos
         job = get_object_or_404(Job, pk=job_pk)
-        print("this is the model order= " + str(job.model_Order))
-        for order in range(min(job.model_Order+1, 4)):
+        for order in range(min(job.model_Order, 2)):
             run_command(get_logo_command(job_pk, order))
     # plot motif distribution
     run_command(get_distribution_command(job_pk))

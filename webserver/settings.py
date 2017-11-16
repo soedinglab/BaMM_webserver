@@ -198,4 +198,5 @@ JOB_DIR_PREFIX = 'jobs'
 # Settings realted to example data
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
 EXAMPLE_MOTIF = 'example_data/ExampleMotif.meme' 
-PENG_INIT = 'Peng_Initialization.meme'
+PENG_INIT = 'PengInitialization.meme'
+PENG_OUT = 'PengOut.meme'
