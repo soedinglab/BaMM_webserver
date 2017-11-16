@@ -10,3 +10,4 @@ redis
 pandas
 plotly
 matplotlib
+pyyaml

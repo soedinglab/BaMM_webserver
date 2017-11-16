@@ -186,7 +186,14 @@ class PengJob(models.Model):
 #        return os.path.basename(self.Motif_InitFile.name)
 
 
+class MotifDatabase(models.Model):
+    DatabaseID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=100)
+    display_name = models.CharField(max_length=100)
+    version = models.CharField(max_length=100)
 
+    def __str__(self):
+        return str(self.name)
 
 
 class DbParameter(models.Model):

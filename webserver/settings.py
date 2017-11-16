@@ -194,8 +194,61 @@ EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You
 
 # Settings related to file system structure
 JOB_DIR_PREFIX = 'jobs'
+MOTIF_DATABASE_PATH = '/motif_db'
+LOG_DIR = '/logs'
 
 # Settings realted to example data
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
 EXAMPLE_MOTIF = 'example_data/ExampleMotif.meme' 
 PENG_INIT = 'Peng_Initialization.meme'
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s [%(levelname)s] %(module)s: %(message)s',
+        },
+    },
+    'handlers': {
+        'django_logfile': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024*1024*100,
+            'backupCount': 5,
+            'filename': path.join(LOG_DIR, 'django.log'),
+            'formatter': 'verbose'
+        },
+        'django_requests_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024*1024*100,
+            'backupCount': 5,
+            'filename': path.join(LOG_DIR, 'django_requests.log'),
+            'formatter': 'verbose'
+        },
+        'bammmotif_logfile': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024*1024*100,
+            'backupCount': 5,
+            'filename': path.join(LOG_DIR, 'bammmotif.log'),
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['django_logfile'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['django_requests_file'],
+            'level': 'WARN',
+            'propagate': True,
+        },
+        'bammmotif': {
+            'handlers': ['bammmotif_logfile'],
+            'level': 'DEBUG',
+            'propagate': True,
+        }
+    }
+}

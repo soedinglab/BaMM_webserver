@@ -2,8 +2,10 @@
 
 
 # construct empty database
-python manage.py makemigrations
+yes | python manage.py makemigrations
 python manage.py migrate
+
+python manage.py sync_databases
 
 # fill db construct (only use this when setting up webserver on completely new environment!)
 # ./populate.sh
