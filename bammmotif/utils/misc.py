@@ -199,7 +199,11 @@ def add_motif_evaluation(job_pk):
 def add_motif_motif_matches(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     motifs = Motifs.objects.filter(parent_job=job)
-    filename = str(get_job_output_folder(job_pk)) + "/" + str(basename(os.path.splitext(job.Input_Sequences.name)[0])) + ".mmcomp"
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
+    filename = str(get_job_output_folder(job_pk)) + "/" + outname + ".mmcomp"
     with open(filename) as fh:
         for line in fh:
             tokens = line.split()
@@ -220,7 +224,11 @@ def add_motif_motif_matches(job_pk):
 def add_motif_iupac(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     motifs = Motifs.objects.filter(parent_job=job)
-    filename = str(get_job_output_folder(job_pk)) + "/" + str(basename(os.path.splitext(job.Input_Sequences.name)[0])) + ".iupac"
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
+    filename = str(get_job_output_folder(job_pk)) + "/" + outname + ".iupac"
     with open(filename) as fh:
         for line in fh:
             tokens = line.split()
@@ -233,33 +241,27 @@ def add_motif_iupac(job_pk):
 def transfer_motif(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     make_job_output_folder(job_pk)
-
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
     offs = 1
+
     src = get_job_input_folder(job_pk) + '/' + basename(job.Motif_InitFile.name)
     input_ending = os.path.splitext(job.Motif_InitFile.name)[1]
-    if job.Input_Sequences is None:
-        dest = get_job_output_folder(job_pk) + '/' + basename(job.Motif_InitFile.name)
-        # add this file also as Input_Sequences File to generate MMcompare command
-        # Find a different solution for that-->
-        # with open(src) as fh:
-        #    job.Input_Sequences.save(basename(job.Motif_InitFile.name), File(fh))
-        #    job.save()
+    
+    if job.Motif_Init_File_Format == 'PWM':
+        dest = get_job_output_folder(job_pk) + '/' + outname + '_motif_1' + input_ending
         copyfile(src, dest)
-    else:
-        if job.Motif_Init_File_Format == ('BaMM' or 'BindingSites'):
-            dest = get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_1' + input_ending
-            copyfile(src, dest)
-        if job.Motif_Init_File_Format == 'PWM'  or job.Motif_Init_File_Format == 'BindingSites':
-            print("this is not implemented yet!")
-
-    if input_ending == '.ihbcp':
+        
+    if job.Motif_Init_File_Format == 'BaMM':
+        dest = get_job_output_folder(job_pk) + '/' + outname + input_ending
+        copyfile(src, dest)
         src = get_job_input_folder(job_pk) + '/' + basename(job.bgModel_File.name)
-        if job.Input_Sequences is None:
-            dest = get_job_output_folder(job_pk) + '/' + basename(job.bgModel_File.name)
-        else:
-            dest = get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + os.path.splitext(job.bgModel_File.name)[1]
+        dest = get_job_output_folder(job_pk) + '/' + outname + os.path.splitext(job.bgModel_File.name)[1]
         copyfile(src, dest)
         offs = 2
+    
     return offs
 
 

@@ -85,7 +85,7 @@ def run_bammscan(self, job_pk):
                 if job.FDR:
                     FDR(job_pk, False, False)
                 if job.MMcompare:
-                    MMcompare(job_pk, False, True)
+                    MMcompare(job_pk, False, False)
                 Compress(job_pk)
                 job = get_object_or_404(Job, pk=job_pk)
                 job.complete = True
@@ -103,7 +103,7 @@ def run_compare(self, job_pk):
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
                 # run MMcompare
-                MMcompare(job_pk, True, True)
+                MMcompare(job_pk, True)
                 Compress(job_pk)
                 job = get_object_or_404(Job, pk=job_pk)
                 job.complete = True

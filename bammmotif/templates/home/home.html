@@ -222,7 +222,7 @@
                         {% endif %}
                         <hr style="border: 1px solid #1f2e2e">
                         <p align="justify"><font size=3>Scan your input sequence set for matches of an input or database
-                            motif model.</font></p>
+                            motif model</font></p>
 
                     </font>
                     </div>
@@ -258,18 +258,23 @@
             <div class="col-md-6">
                 <div class='container-fluid'>
                     <center>
-                        <img src="{% static 'img/compare_comingSoon.png' %}" class="responsive-img"
+                        <img src="{% static 'img/compare_new2.png' %}" class="responsive-img"
                              style='max-height:180px;' alt="logo">
                     </center>
                     <div class="jumbotron" style="background-color:white"><font color="black">
 
-                        <!-- Button trigger modal -->
+                        {% comment %}
                         <center>
                             <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal_BETA"
                                style="background-color:#1f2e2e">
                                 Motif-motif comparison
                             </a>
                         </center>
+                        {% endcomment %}
+                        <center>
+                        <a class="btn btn-primary btn-lg" href="{% url 'run_compare' %}"
+                               style="background-color:#1f2e2e">Motif-motif comparison
+                        </a></center>
 
                         <!-- Modal -->
                         <div class="modal fade" id="myModal_BETA" tabindex="-1" role="dialog"
@@ -304,8 +309,7 @@
                         </div>
 
                         <hr style="border: 1px solid #1f2e2e">
-                        <p align="justify"><font size=3>Search with your input model through our database of 450 BaMM
-                            models</font></p>
+                        <p align="justify"><font size=3>Search with your input model for matching entries in our database</font></p>
 
                     </font>
                     </div>

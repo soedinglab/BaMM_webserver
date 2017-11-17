@@ -175,10 +175,8 @@
     <tr>
         <th> # </th>
         <th> IUPAC </th>
-        {% if mode == "Prediction" or mode == "Occurrence"  %}
         <th> PWM </th>
         <th> reverse Comp. </th>
-        {% endif %}
         {% if result.FDR %}
           <th> AUSFC </th>        
           <th> % occurrence </th>        
@@ -288,8 +286,9 @@
 
     {% endif %}
     
+    {% comment %}
     {% if result.MMcompare %}
-
+    {% endcomment %}
     <h2> Best matches with our database </h2>
         <hr style="border: 1px solid #1f2e2e">
         
@@ -325,8 +324,10 @@
         </tr>
         {% endfor %}
         </table>
+    {% comment %}
     {% endif %}
-
+    {% endcomment %}
+    
  </div>
 
 </div>

@@ -86,6 +86,8 @@ def run_compare_view(request, mode='normal'):
                 job = get_object_or_404(Job, pk = job_pk)
 
             job = get_object_or_404(Job, pk = job_pk)
+            job.FDR = False
+            job.MMcompare = True
             run_compare.delay(job_pk)
             return render(request, 'job/submitted.html', {'pk': job_pk})
 

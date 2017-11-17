@@ -83,7 +83,10 @@ def get_logo_command(job_pk, order):
     param = []
     param.append('plotBaMMLogo.R')
     param.append(get_job_output_folder(job_pk) + '/')
-    param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
+    else:
+        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
     param.append(order)
     param.append('--web 1')
     command = " ".join(str(s) for s in param)
@@ -97,7 +100,10 @@ def get_distribution_command(job_pk):
     param = []
     param.append('plotMotifDistribution.R')
     param.append(get_job_output_folder(job_pk) + '/')
-    param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
+    else:
+        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
     command = " ".join(str(s) for s in param)
     print(command)
     sys.stdout.flush()
@@ -109,7 +115,10 @@ def get_evaluation_command(job_pk):
     param = []
     param.append('evaluateBaMM.R')
     param.append(get_job_output_folder(job_pk) + '/')
-    param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
+    else:
+        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
     param.append('--SFC 1')
     param.append('--ROC5 1')
     param.append('--PRC 1')
@@ -124,8 +133,15 @@ def get_iupac_command(job_pk):
     param = []
     param.append('IUPAC.py')
     param.append(get_job_output_folder(job_pk) + '/')
-    param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
-    param.append(job.model_Order)
+    print('in get_iupac_command')
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        print('basename seq is empty ->' + basename(os.path.splitext(job.Motif_InitFile.name)[0]))
+        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
+    else:
+        print('basename seq NOT empty ->' + basename(os.path.splitext(job.Input_Sequences.name)[0]))
+        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
+    
+    param.append(get_model_order(job_pk))
 
     command = " ".join(str(s) for s in param)
     print(command)
@@ -137,8 +153,13 @@ def get_compress_command(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     param = []
     param.append('zip -j')
-    param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_BaMMmotif.zip')
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
+    param.append(get_job_output_folder(job_pk) + '/' + outname + '_BaMMmotif.zip')
     param.append(get_job_output_folder(job_pk) + '/*')
+
     command = " ".join(str(s) for s in param)
     print(command)
     sys.stdout.flush()
@@ -149,9 +170,13 @@ def get_motif_compress_command(job_pk, motif):
     job = get_object_or_404(Job, pk=job_pk)
     param = []
     param.append('zip -j')
-    param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_Motif_' + str(motif) + '.zip')
-    param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(motif) + '*')
-    param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hb*')
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
+    param.append(get_job_output_folder(job_pk) + '/' + outname + '_Motif_' + str(motif) + '.zip')
+    param.append(get_job_output_folder(job_pk) + '/' + outname + '_motif_' + str(motif) + '*')
+    param.append(get_job_output_folder(job_pk) + '/' + outname + '.hb*')
     command = " ".join(str(s) for s in param)
     print(command)
     sys.stdout.flush()
@@ -280,13 +305,21 @@ def get_MMcompare_command(job_pk, database):
 
     param.append('MMcompare_PWM.R')
     param.append(get_job_output_folder(job_pk))
-    param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) =='':
+        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
+    else:
+        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
     param.append('--dbDir')
-    param.append(path.join(settings.DB_ROOT, db.base_dir, 'Results'))
+    param.append(path.join(settings.BASE_DIR + settings.DB_ROOT + '/' + db.base_dir + '/Results/'))
     param.append('--dbOrder')
     param.append(db.modelorder)
+    if job.Motif_Init_File_Format == 'BaMM':
+        job.model_Order = get_model_order(job_pk)
+    else:
+        job.model_Order = 0
     param.append('--qOrder')
     param.append(job.model_Order)
+    
     param.append('--pValue')
     param.append(job.p_value_cutoff)
 
@@ -375,14 +408,14 @@ def FDR(job_pk, first, useRefined):
     return 0
 
 
-def MMcompare(job_pk, first, opt):
+def MMcompare(job_pk, first):  # , opt):
     job = get_object_or_404(Job, pk=job_pk)
     job.status = 'running Motif Motif Comparison'
     job.save()
     print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
     sys.stdout.flush()
     database = 100
-    if opt is True:
+    if first is True:
         # add init Motif to Outputfolder
         offs = transfer_motif(job_pk)
     run_command(get_MMcompare_command(job_pk, database))
@@ -390,6 +423,13 @@ def MMcompare(job_pk, first, opt):
     if first is True:
         # generate motif objects
         initialize_motifs(job_pk, offs, 1)
+        job = get_object_or_404(Job, pk=job_pk)
+        run_command(get_iupac_command(job_pk))
+        add_motif_iupac(job_pk)
+        # plot logos
+        job = get_object_or_404(Job, pk=job_pk)
+        #for order in range(min(job.model_Order+1, 3)):
+        #    run_command(get_logo_command(job_pk, order))
     add_motif_motif_matches(job_pk)
     return 0
 
