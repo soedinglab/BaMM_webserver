@@ -190,10 +190,10 @@ def get_FDR_command(job_pk, useRefined, m=1):
     param.append(job.sampling_Order)
 
     param.append("--basename")
-    if useRefined is True or job.Motif_Init_File_Format == 'BaMM':
+    if useRefined is True or job.Motif_Init_File_Format == 'BaMM'or job.Motif_Init_File_Format == 'BindingSites':
        param.append(str(job.Output_filename()) + '_motif_' + str(m))
     else:
-        if job.Motif_Init_File_Format == 'PWM' or job.Motif_Init_File_Format == 'BindingSites':
+        if job.Motif_Init_File_Format == 'PWM':
             param.append(job.Output_filename())
 
     command = " ".join(str(s) for s in param)
@@ -234,11 +234,11 @@ def get_BaMMScan_command(job_pk, first, useRefined, m=1):
         param.append("--saveInitialModel")
 
     param.append("--basename")
-    if useRefined is True or job.Motif_Init_File_Format == 'BaMM':
+    if useRefined is True or job.Motif_Init_File_Format == 'BaMM' or job.Motif_Init_File_Format == 'BindingSites':
        param.append(str(job.Output_filename()) + '_motif_' + str(m))
     else:
-        if job.Motif_Init_File_Format == 'PWM' or job.Motif_Init_File_Format == 'BindingSites':
-            param.append(job.Output_filename())
+        if job.Motif_Init_File_Format == 'PWM':
+            param.append(job.Output_filename()) 
 
     command = " ".join(str(s) for s in param)
     print(command)
