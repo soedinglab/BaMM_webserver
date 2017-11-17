@@ -24,7 +24,7 @@ def run_peng(self, job_pk):
         logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
-                
+
                 # run PeNGmotif
                 Peng(job_pk, False)
 
@@ -38,8 +38,9 @@ def run_peng(self, job_pk):
                 if job.MMcompare:
                     MMcompare(job_pk, False, False)
                 Compress(job_pk)
+                job = get_object_or_404(Job, pk=job_pk)
                 job.complete = True
-
+    job.save()
     return 1 if mgr.had_exception else 0
 
 
@@ -62,8 +63,9 @@ def run_bamm(self, job_pk):
                 if job.MMcompare:
                     MMcompare(job_pk, False, False)
                 Compress(job_pk)
+                job = get_object_or_404(Job, pk=job_pk)
                 job.complete = True
-
+    job.save()
     return 1 if mgr.had_exception else 0
 
 
@@ -76,6 +78,7 @@ def run_bammscan(self, job_pk):
         logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
             with redirect_stdout(f):
+
                 # run BaMMscore
                 BaMMScan(job_pk, True, False)
                 # run optionals
@@ -84,8 +87,9 @@ def run_bammscan(self, job_pk):
                 if job.MMcompare:
                     MMcompare(job_pk, False, True)
                 Compress(job_pk)
+                job = get_object_or_404(Job, pk=job_pk)
                 job.complete = True
-
+    job.save()
     return 1 if mgr.had_exception else 0
 
 
@@ -101,6 +105,7 @@ def run_compare(self, job_pk):
                 # run MMcompare
                 MMcompare(job_pk, True, True)
                 Compress(job_pk)
+                job = get_object_or_404(Job, pk=job_pk)
                 job.complete = True
-
+    job.save()
     return 1 if mgr.had_exception else 0

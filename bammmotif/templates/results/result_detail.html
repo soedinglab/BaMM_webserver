@@ -5,7 +5,7 @@
 {% load bammmotif_extras %}
 
 <div class="jumbotron" style="background-color:white">
-    <h2> Results for  {{result.job_name}} </h2>
+    <h2> Results for  {{result.job_name}}</h2>
     <hr style="border: 1px solid #1f2e2e">
       <div class="well" style="background-color:white">
         <h2>BaMMmotif settings </h2>
@@ -92,7 +92,7 @@
         </table>
         {% endif %}
         
-        {% if result.EM %}
+        {% if mode == "Prediction" %}
         <h3>Expectation maximization optimization:</h3>
         <table>
             <tr>
@@ -113,6 +113,26 @@
             <tr>
                 <td>  &emsp; max iterations: </td>
                 <td>  &emsp; {{result.max_CGS_Iterations}}</td>
+            </tr>
+        </table>
+        {% endif %}
+
+        {% if result.ScoreSeqset %}
+        <h3>Motif Occurrence:</h3>
+        <table>
+            <tr>
+                <td>  &emsp; Occurrence score cutoff: </td>
+                <td>  &emsp; {{result.score_cutoff}}</td>
+            </tr>
+        </table>
+        {% endif %}
+
+        {% if result.FDR %}
+        <h3>Motif Evaluation:</h3>
+        <table>
+            <tr>
+                <td>  &emsp; Evaluate Motifs: </td>
+                <td>  &emsp; {{result.FDR}}</td>
             </tr>
         </table>
         {% endif %}
@@ -155,9 +175,11 @@
     <tr>
         <th> # </th>
         <th> IUPAC </th>
+        {% if mode == "Prediction" or mode == "Occurrence"  %}
         <th> PWM </th>
         <th> reverse Comp. </th>
-        {% if mode == "Prediction" %}
+        {% endif %}
+        {% if result.FDR %}
           <th> AUSFC </th>        
           <th> % occurrence </th>        
         {% endif %}
@@ -167,9 +189,23 @@
     <tr>
         <th> <a href="#{{m.job_rank}}" style="color:black">{{m.job_rank}} </a></th>
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.iupac}} </a></th>
+        {% if mode == "Prediction" %}
         <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
         <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
-       {% if mode == "Prediction" %}
+        {% endif %}
+
+        {% if mode == "Occurrence"  %}
+        {% if result.Motif_Init_File_Format == "PWM" %}
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_init_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_init_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        {% endif %}
+        {% if result.Motif_Init_File_Format == "BaMM" %}
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_init_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_init_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        {% endif %}
+        {% endif %}
+   
+       {% if result.FDR %}
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.auc}} </a></th>        
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.occurrence}} </a></th>        
         {% endif %}
@@ -201,13 +237,33 @@
          </h2>
    
 
-       
+    {% if mode == "Prediction" %}   
     <hr style="border: 1px solid #1f2e2e">
+    
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
     {% for i in num_logos %}
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
     {% endfor %}
+    {% endif %}
+    
+
+    {% if mode == "Occurrence" %}   
+    <hr style="border: 1px solid #1f2e2e">
+    
+    {% if result.Motif_Init_File_Format == "PWM" %}
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_init_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_init_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
+    {% endif %}
+    {% if result.Motif_Init_File_Format == "BaMM" %}
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_init_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_init_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
+    {% for i in num_logos %}
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_init_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
+    {% endfor %}
+    {% endif %}
+    {% endif %}
+    
 
     {% if result.FDR %}
     <h2> Performance and positional distribution on input sequences </h2>

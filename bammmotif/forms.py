@@ -52,25 +52,24 @@ class OccurrenceForm(forms.ModelForm):
         model = Job
         fields = ('job_name', 'Input_Sequences', 'Motif_InitFile',
                   'Motif_Init_File_Format', 'bgModel_File',
-                  'reverse_Complement', 'score_Cutoff', 'FDR',
-                  'm_Fold', 'sampling_Order',
-                  'MMcompare', 'p_value_cutoff')
+                  'reverse_Complement', 'score_Cutoff', 'FDR')
+                  # ,'MMcompare', 'p_value_cutoff')
 
 
 class OccurrenceExampleForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('job_name', 'reverse_Complement', 'score_Cutoff',
-                  'FDR', 'm_Fold', 'sampling_Order',
-                  'MMcompare', 'p_value_cutoff')
+                  'FDR')
+                  # , 'MMcompare', 'p_value_cutoff')
 
 
 class OccurrenceDBForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('job_name', 'Input_Sequences', 'reverse_Complement',
-                  'score_Cutoff', 'FDR', 'm_Fold', 'sampling_Order',
-                  'MMcompare', 'p_value_cutoff')
+                  'score_Cutoff', 'FDR')
+                  # ,'MMcompare', 'p_value_cutoff')
 
 
 class CompareForm(forms.ModelForm):
