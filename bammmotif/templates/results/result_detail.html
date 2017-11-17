@@ -301,7 +301,7 @@
             <th> reverse Comp. </th>      
             <th> DB entry </th>        
         </tr>   
-        {% for match in m.dbmatch_set.all|dictsort:"p_value"   %}
+        {% for match in m.dbmatch_set.all|dictsort:"p_value"|slice:":10"   %}
         <tr>
             <th> {{match.db_entry.target_name}} </th>
             {% if  match.p_value < 0.0000000001 %}
