@@ -132,7 +132,8 @@ def upload_example_motif(job_pk):
     with open(settings.EXAMPLE_MOTIF) as fh:
         job.Motif_InitFile.save(out_filename, File(fh))
     job.Motif_Initialization = 'CustomFile'
-    job.Motif_Init_File_Format = 'PWM'
+    job.Motif_Init_File_Format = 'BindingSites'
+    #job.Motif_Init_File_Format = 'PWM'
     job.save()
 
 
@@ -248,7 +249,7 @@ def transfer_motif(job_pk):
         if job.Motif_Init_File_Format == ('BaMM' or 'BindingSites'):
             dest = get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_1' + input_ending
             copyfile(src, dest)
-        if job.Motif_Init_File_Format == 'PWM':
+        if job.Motif_Init_File_Format == 'PWM'  or job.Motif_Init_File_Format == 'BindingSites':
             print("this is not implemented yet!")
 
     if input_ending == '.ihbcp':

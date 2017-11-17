@@ -193,7 +193,7 @@ def get_FDR_command(job_pk, useRefined, m=1):
     if useRefined is True or job.Motif_Init_File_Format == 'BaMM':
        param.append(str(job.Output_filename()) + '_motif_' + str(m))
     else:
-        if job.Motif_Init_File_Format == 'PWM':
+        if job.Motif_Init_File_Format == 'PWM' or job.Motif_Init_File_Format == 'BindingSites':
             param.append(job.Output_filename())
 
     command = " ".join(str(s) for s in param)
@@ -219,7 +219,7 @@ def get_BaMMScan_command(job_pk, first, useRefined, m=1):
         job.background_Order = get_bg_model_order(job_pk)
         job.save()
 
-    if useRefined is False and job.Motif_Init_File_Format == 'PWM':
+    if useRefined is False and (job.Motif_Init_File_Format == 'PWM' or job.Motif_Init_File_Format == 'BindingSites'):
         job.model_Order = 0
         job.save()
 
@@ -237,7 +237,7 @@ def get_BaMMScan_command(job_pk, first, useRefined, m=1):
     if useRefined is True or job.Motif_Init_File_Format == 'BaMM':
        param.append(str(job.Output_filename()) + '_motif_' + str(m))
     else:
-        if job.Motif_Init_File_Format == 'PWM':
+        if job.Motif_Init_File_Format == 'PWM' or job.Motif_Init_File_Format == 'BindingSites':
             param.append(job.Output_filename())
 
     command = " ".join(str(s) for s in param)
@@ -323,7 +323,7 @@ def BaMM(job_pk, first, useRefined):
     run_command(get_iupac_command(job_pk))
     add_motif_iupac(job_pk)
     # plot logos
-    for order in range(min(job.model_Order, 2)):
+    for order in range(min(job.model_Order+1, 3)):
         run_command(get_logo_command(job_pk, order))
     return 0
 
@@ -347,7 +347,7 @@ def BaMMScan(job_pk, first, useRefined):
         add_motif_iupac(job_pk)
         # plot logos
         job = get_object_or_404(Job, pk=job_pk)
-        for order in range(min(job.model_Order, 2)):
+        for order in range(min(job.model_Order+1, 3)):
             run_command(get_logo_command(job_pk, order))
     # plot motif distribution
     run_command(get_distribution_command(job_pk))
