@@ -24,6 +24,7 @@ from .utils import (
 import datetime
 import os
 from os import path
+from os.path import basename
 
 
 # #########################
@@ -81,13 +82,16 @@ def run_compare_view(request, mode='normal'):
 
             # if example is requested, load the sampleData
             if mode == 'example':
-                upload_example_fasta(job_pk)
+                #upload_example_fasta(job_pk)
+                #job = get_object_or_404(Job, pk = job_pk)
                 upload_example_motif(job_pk)
                 job = get_object_or_404(Job, pk = job_pk)
 
             job = get_object_or_404(Job, pk = job_pk)
             job.FDR = False
+            job.score_Seqset = False
             job.MMcompare = True
+            job.save()
             run_compare.delay(job_pk)
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
@@ -125,6 +129,7 @@ def run_bammscan_view(request, mode='normal', pk='null'):
             # if example is requested, load the sampleData
             if mode == 'example':
                 upload_example_fasta(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
                 upload_example_motif(job_pk)
                 job = get_object_or_404(Job, pk = job_pk)
 
@@ -176,6 +181,7 @@ def run_bamm_view(request, mode='normal'):
             # if example is requested, load the sampleData
             if mode == 'example':
                 upload_example_fasta(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
                 upload_example_motif(job_pk)
                 job = get_object_or_404(Job, pk = job_pk)
 
@@ -241,7 +247,10 @@ def delete(request, pk):
 def result_detail(request, pk):
     result = get_object_or_404(Job, pk=pk)
     opath = get_result_folder(pk)
-    Output_filename = result.Output_filename()
+    if basename(os.path.splitext(result.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(result.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(result.Input_Sequences.name)[0])
 
     database = 100
     db = get_object_or_404(DbParameter, pk=database)
@@ -252,10 +261,13 @@ def result_detail(request, pk):
         num_logos = range(1, (min(3,result.model_Order+1)))
         print("model order = " + str(result.model_Order))
         print("num_logos = "  +  str(num_logos))
+        print("FDR = " + str(result.FDR))
+        print("ScoreSeqSet = " + str(result.score_Seqset))
+        print("MMcompare = " + str(result.MMcompare))
         return render(request, 'results/result_detail.html',
                       {'result': result, 'opath': opath,
                        'mode': result.mode,
-                       'Output_filename': Output_filename,
+                       'Output_filename': outname,
                        'num_logos': num_logos,
                        'db_dir': db_dir})
     else:

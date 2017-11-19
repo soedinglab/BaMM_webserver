@@ -18,7 +18,8 @@ from .utils import (
     get_job_input_folder,
     add_peng_output,
     get_model_order,
-    get_bg_model_order
+    get_bg_model_order,
+    initialize_motifs_compare
 )
 
 
@@ -140,14 +141,38 @@ def get_iupac_command(job_pk):
     else:
         print('basename seq NOT empty ->' + basename(os.path.splitext(job.Input_Sequences.name)[0]))
         param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
-    
+
     param.append(get_model_order(job_pk))
+    param.append(job.Motif_Init_File_Format)
 
     command = " ".join(str(s) for s in param)
     print(command)
     sys.stdout.flush()
     return command
 
+def get_prob_command(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    param = []
+    param.append('getProbfromConProb.R')
+    param.append(get_job_output_folder(job_pk) + '/')
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
+    else:
+        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
+    command = " ".join(str(s) for s in param)
+    print(command)
+    sys.stdout.flush()
+    return command
+
+def make_logos(job_pk):
+    # ! logo order is still 4 here!
+    job = get_object_or_404(Job, pk=job_pk)
+    if job.Motif_Init_File_Format == "PWM":
+        print('this is still missing')
+    if job.Motif_Init_File_Format == "BaMM":
+        run_command(get_prob_command(job_pk))
+        for order in range(min(job.model_Order+1, 3)):
+            run_command(get_logo_command(job_pk, order))
 
 def get_compress_command(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
@@ -216,7 +241,7 @@ def get_FDR_command(job_pk, useRefined, m=1):
 
     param.append("--basename")
     if useRefined is True or job.Motif_Init_File_Format == 'BaMM'or job.Motif_Init_File_Format == 'BindingSites':
-       param.append(str(job.Output_filename()) + '_motif_' + str(m))
+        param.append(str(job.Output_filename()) + '_motif_' + str(m))
     else:
         if job.Motif_Init_File_Format == 'PWM':
             param.append(job.Output_filename())
@@ -260,10 +285,10 @@ def get_BaMMScan_command(job_pk, first, useRefined, m=1):
 
     param.append("--basename")
     if useRefined is True or job.Motif_Init_File_Format == 'BaMM' or job.Motif_Init_File_Format == 'BindingSites':
-       param.append(str(job.Output_filename()) + '_motif_' + str(m))
+        param.append(str(job.Output_filename()) + '_motif_' + str(m))
     else:
         if job.Motif_Init_File_Format == 'PWM':
-            param.append(job.Output_filename()) 
+            param.append(job.Output_filename())
 
     command = " ".join(str(s) for s in param)
     print(command)
@@ -305,7 +330,7 @@ def get_MMcompare_command(job_pk, database):
 
     param.append('MMcompare_PWM.R')
     param.append(get_job_output_folder(job_pk))
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) =='':
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
         param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
     else:
         param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
@@ -317,9 +342,10 @@ def get_MMcompare_command(job_pk, database):
         job.model_Order = get_model_order(job_pk)
     else:
         job.model_Order = 0
+    job.save()
     param.append('--qOrder')
     param.append(job.model_Order)
-    
+
     param.append('--pValue')
     param.append(job.p_value_cutoff)
 
@@ -352,6 +378,7 @@ def BaMM(job_pk, first, useRefined):
     if first is True:
         # generate motif objects
         initialize_motifs(job_pk, 2, 2)
+        job = get_object_or_404(Job, pk=job_pk)
     # add IUPACs
     run_command(get_iupac_command(job_pk))
     add_motif_iupac(job_pk)
@@ -376,6 +403,7 @@ def BaMMScan(job_pk, first, useRefined):
     if first is True:
         # generate motif objects
         initialize_motifs(job_pk, 2, 3)
+        job = get_object_or_404(Job, pk=job_pk)
         run_command(get_iupac_command(job_pk))
         add_motif_iupac(job_pk)
         # plot logos
@@ -402,13 +430,14 @@ def FDR(job_pk, first, useRefined):
     if first is True:
         # generate motif objects
         initialize_motifs(job_pk, 0, 1)
+        job = get_object_or_404(Job, pk=job_pk)
     # plot motif evaluation
     run_command(get_evaluation_command(job_pk))
     add_motif_evaluation(job_pk)
     return 0
 
 
-def MMcompare(job_pk, first):  # , opt):
+def MMcompare(job_pk, first):
     job = get_object_or_404(Job, pk=job_pk)
     job.status = 'running Motif Motif Comparison'
     job.save()
@@ -417,19 +446,18 @@ def MMcompare(job_pk, first):  # , opt):
     database = 100
     if first is True:
         # add init Motif to Outputfolder
-        offs = transfer_motif(job_pk)
+        transfer_motif(job_pk)
     run_command(get_MMcompare_command(job_pk, database))
     sys.stdout.flush()
     if first is True:
         # generate motif objects
-        initialize_motifs(job_pk, offs, 1)
         job = get_object_or_404(Job, pk=job_pk)
         run_command(get_iupac_command(job_pk))
+        initialize_motifs_compare(job_pk)
+        job = get_object_or_404(Job, pk=job_pk)
         add_motif_iupac(job_pk)
         # plot logos
-        job = get_object_or_404(Job, pk=job_pk)
-        #for order in range(min(job.model_Order+1, 3)):
-        #    run_command(get_logo_command(job_pk, order))
+        make_logos(job_pk)
     add_motif_motif_matches(job_pk)
     return 0
 

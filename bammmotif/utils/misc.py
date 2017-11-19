@@ -165,11 +165,11 @@ def upload_db_input(job_pk, db_pk):
     out_f = str(db_entry.result_location) + ".hbcp"
     with open(f) as fh:
         job.bgModel_File.save(out_f, File(fh))
-    job.save()
 
     # adjust model order
     job.model_Order = db_entry.parent.modelorder
     job.background_Order = db_entry.parent.bgmodelorder
+    job.save()
 
 
 def initialize_motifs(job_pk, off, mode):
@@ -181,6 +181,22 @@ def initialize_motifs(job_pk, off, mode):
         motif_obj = Motifs(parent_job=job, job_rank=motif)
         motif_obj.save()
 
+def initialize_motifs_compare(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
+    fname = str(get_job_output_folder(job_pk)) + "/" + outname + ".iupac"
+    with open(fname) as f:
+        for i, l in enumerate(f):
+            pass   
+    job.num_motifs = i+1
+    print("---> THE  JOB HAS " + str(i+1) + " MOTIFS")
+    job.save()
+    for motif in range(1, (int(job.num_motifs) + 1)):
+        motif_obj = Motifs(parent_job=job, job_rank=motif)
+        motif_obj.save()
 
 def add_motif_evaluation(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
@@ -251,7 +267,7 @@ def transfer_motif(job_pk):
     input_ending = os.path.splitext(job.Motif_InitFile.name)[1]
     
     if job.Motif_Init_File_Format == 'PWM':
-        dest = get_job_output_folder(job_pk) + '/' + outname + '_motif_1' + input_ending
+        dest = get_job_output_folder(job_pk) + '/' + outname + ".meme"
         copyfile(src, dest)
         
     if job.Motif_Init_File_Format == 'BaMM':
@@ -261,6 +277,7 @@ def transfer_motif(job_pk):
         dest = get_job_output_folder(job_pk) + '/' + outname + os.path.splitext(job.bgModel_File.name)[1]
         copyfile(src, dest)
         offs = 2
+        # --> calculate probabilities from conditional probabilities
     
     return offs
 
