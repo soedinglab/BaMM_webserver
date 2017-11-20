@@ -13,7 +13,9 @@ class PredictionForm(forms.ModelForm):
                   'Motif_Init_File_Format', 'background_Order',
                   'Background_Sequences', 'score_Seqset',
                   'score_Cutoff', 'FDR', 
-                  'q_value')
+                  'q_value',
+                  'MMcompare', 'p_value_cutoff')
+
 
     def __init__(self, *args, **kwargs):
         super(PredictionForm, self).__init__(*args, **kwargs)
@@ -33,7 +35,8 @@ class PredictionExampleForm(forms.ModelForm):
         fields = ('job_name', 'reverse_Complement', 'model_Order',
                   'extend', 'background_Order',
                   'Background_Sequences', 'score_Seqset', 'score_Cutoff',
-                  'FDR', 'q_value')
+                  'FDR', 'q_value',
+                  'MMcompare', 'p_value_cutoff')
 
     def __init__(self, *args, **kwargs):
         super(PredictionExampleForm, self).__init__(*args, **kwargs)
@@ -52,24 +55,24 @@ class OccurrenceForm(forms.ModelForm):
         model = Job
         fields = ('job_name', 'Input_Sequences', 'Motif_InitFile',
                   'Motif_Init_File_Format', 'bgModel_File',
-                  'reverse_Complement', 'score_Cutoff', 'FDR')
-                  # ,'MMcompare', 'p_value_cutoff')
+                  'reverse_Complement', 'score_Cutoff', 'FDR',
+                  'MMcompare', 'p_value_cutoff')
 
 
 class OccurrenceExampleForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('job_name', 'reverse_Complement', 'score_Cutoff',
-                  'FDR')
-                  # , 'MMcompare', 'p_value_cutoff')
+                  'FDR',
+                  'MMcompare', 'p_value_cutoff')
 
 
 class OccurrenceDBForm(forms.ModelForm):
     class Meta:
         model = Job
         fields = ('job_name', 'Input_Sequences', 'reverse_Complement',
-                  'score_Cutoff', 'FDR')
-                  # ,'MMcompare', 'p_value_cutoff')
+                  'score_Cutoff', 'FDR',
+                  'MMcompare', 'p_value_cutoff')
 
 
 class CompareForm(forms.ModelForm):

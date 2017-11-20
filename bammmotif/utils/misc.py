@@ -192,7 +192,6 @@ def initialize_motifs_compare(job_pk):
         for i, l in enumerate(f):
             pass   
     job.num_motifs = i+1
-    print("---> THE  JOB HAS " + str(i+1) + " MOTIFS")
     job.save()
     for motif in range(1, (int(job.num_motifs) + 1)):
         motif_obj = Motifs(parent_job=job, job_rank=motif)

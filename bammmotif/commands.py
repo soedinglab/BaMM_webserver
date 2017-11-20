@@ -134,21 +134,20 @@ def get_iupac_command(job_pk):
     param = []
     param.append('IUPAC.py')
     param.append(get_job_output_folder(job_pk) + '/')
-    print('in get_iupac_command')
     if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        print('basename seq is empty ->' + basename(os.path.splitext(job.Motif_InitFile.name)[0]))
         param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
     else:
-        print('basename seq NOT empty ->' + basename(os.path.splitext(job.Input_Sequences.name)[0]))
         param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
 
     param.append(get_model_order(job_pk))
-    param.append(job.Motif_Init_File_Format)
+    if job.mode == "Compare":
+        param.append(job.Motif_Init_File_Format)
 
     command = " ".join(str(s) for s in param)
     print(command)
     sys.stdout.flush()
     return command
+
 
 def get_prob_command(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
@@ -164,8 +163,8 @@ def get_prob_command(job_pk):
     sys.stdout.flush()
     return command
 
+
 def make_logos(job_pk):
-    # ! logo order is still 4 here!
     job = get_object_or_404(Job, pk=job_pk)
     if job.Motif_Init_File_Format == "PWM":
         print('this is still missing')
@@ -173,6 +172,7 @@ def make_logos(job_pk):
         run_command(get_prob_command(job_pk))
         for order in range(min(job.model_Order+1, 3)):
             run_command(get_logo_command(job_pk, order))
+
 
 def get_compress_command(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
@@ -338,11 +338,6 @@ def get_MMcompare_command(job_pk, database):
     param.append(path.join(settings.BASE_DIR + settings.DB_ROOT + '/' + db.base_dir + '/Results/'))
     param.append('--dbOrder')
     param.append(db.modelorder)
-    if job.Motif_Init_File_Format == 'BaMM':
-        job.model_Order = get_model_order(job_pk)
-    else:
-        job.model_Order = 0
-    job.save()
     param.append('--qOrder')
     param.append(job.model_Order)
 
@@ -447,6 +442,12 @@ def MMcompare(job_pk, first):
     if first is True:
         # add init Motif to Outputfolder
         transfer_motif(job_pk)
+        if job.Motif_Init_File_Format == 'BaMM':
+            job.model_Order = get_model_order(job_pk)
+        else:
+            job.model_Order = 0
+        job.save()
+    job = get_object_or_404(Job, pk=job_pk)        
     run_command(get_MMcompare_command(job_pk, database))
     sys.stdout.flush()
     if first is True:

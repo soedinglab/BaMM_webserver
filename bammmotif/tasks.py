@@ -36,7 +36,7 @@ def run_peng(self, job_pk):
                 if job.FDR:
                     FDR(job_pk, False, True)
                 if job.MMcompare:
-                    MMcompare(job_pk, False, False)
+                    MMcompare(job_pk, False)
                 Compress(job_pk)
                 job = get_object_or_404(Job, pk=job_pk)
                 job.complete = True
@@ -61,7 +61,7 @@ def run_bamm(self, job_pk):
                 if job.FDR:
                     FDR(job_pk, False, True)
                 if job.MMcompare:
-                    MMcompare(job_pk, False, False)
+                    MMcompare(job_pk, False)
                 Compress(job_pk)
                 job = get_object_or_404(Job, pk=job_pk)
                 job.complete = True
@@ -85,7 +85,7 @@ def run_bammscan(self, job_pk):
                 if job.FDR:
                     FDR(job_pk, False, False)
                 if job.MMcompare:
-                    MMcompare(job_pk, False, False)
+                    MMcompare(job_pk, False)
                 Compress(job_pk)
                 job = get_object_or_404(Job, pk=job_pk)
                 job.complete = True

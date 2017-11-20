@@ -104,8 +104,6 @@ def run_compare_view(request, mode='normal'):
 
 
 def run_bammscan_view(request, mode='normal', pk='null'):
-    print('mode = ' + mode)
-    print('pk = ' + pk)
     if request.method == "POST":
         if mode == 'example':
             form = OccurrenceExampleForm(request.POST, request.FILES)
@@ -259,11 +257,6 @@ def result_detail(request, pk):
     if result.complete:
         print("status is successfull")
         num_logos = range(1, (min(3,result.model_Order+1)))
-        print("model order = " + str(result.model_Order))
-        print("num_logos = "  +  str(num_logos))
-        print("FDR = " + str(result.FDR))
-        print("ScoreSeqSet = " + str(result.score_Seqset))
-        print("MMcompare = " + str(result.MMcompare))
         return render(request, 'results/result_detail.html',
                       {'result': result, 'opath': opath,
                        'mode': result.mode,
