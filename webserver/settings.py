@@ -196,7 +196,7 @@ EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You
 JOB_DIR_PREFIX = 'jobs'
 
 # Settings realted to example data
-EXAMPLE_FASTA = 'example_data/ChIPseqJund.fasta'
-EXAMPLE_MOTIF = 'example_data/BindingSitesJund.txt' 
+EXAMPLE_FASTA = 'example_data/ExampleData2.fasta'
+EXAMPLE_MOTIF = 'example_data/ExampleMotifs.meme' 
 PENG_INIT = 'PengInitialization.meme'
 PENG_OUT = 'PengOut.meme'

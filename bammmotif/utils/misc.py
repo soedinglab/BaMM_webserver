@@ -132,8 +132,7 @@ def upload_example_motif(job_pk):
     with open(settings.EXAMPLE_MOTIF) as fh:
         job.Motif_InitFile.save(out_filename, File(fh))
     job.Motif_Initialization = 'CustomFile'
-    job.Motif_Init_File_Format = 'BindingSites'
-    #job.Motif_Init_File_Format = 'PWM'
+    job.Motif_Init_File_Format = 'PWM'
     job.save()
 
 
@@ -222,18 +221,20 @@ def add_motif_motif_matches(job_pk):
     with open(filename) as fh:
         for line in fh:
             tokens = line.split()
-            motif_query = motifs.filter(job_rank=tokens[1])[0]
-            motif_target = get_object_or_404(ChIPseq, filename=tokens[2])
-            # create relationship
-            rel_obj = DbMatch(
-                motif=motif_query,
-                db_entry=motif_target,
-                p_value=tokens[3],
-                e_value=tokens[4],
-                score=tokens[5],
-                overlap_len=tokens[6]
-            )
-            rel_obj.save()
+            if len(tokens) > 0:
+                if tokens[1] != 'matches!':
+                    motif_query = motifs.filter(job_rank=tokens[1])[0]
+                    motif_target = get_object_or_404(ChIPseq, filename=tokens[2])
+                    # create relationship
+                    rel_obj = DbMatch(
+                        motif=motif_query,
+                        db_entry=motif_target,
+                        p_value=tokens[3],
+                        e_value=tokens[4],
+                        score=tokens[5],
+                        overlap_len=tokens[6]
+                    )
+                    rel_obj.save()
 
 
 def add_motif_iupac(job_pk):

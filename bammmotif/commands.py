@@ -139,10 +139,11 @@ def get_iupac_command(job_pk):
     else:
         param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
 
-    param.append(get_model_order(job_pk))
     if job.mode == "Compare":
+        param.append(get_model_order(job_pk))
         param.append(job.Motif_Init_File_Format)
-
+    else:
+        param.append(job.model_Order)
     command = " ".join(str(s) for s in param)
     print(command)
     sys.stdout.flush()
