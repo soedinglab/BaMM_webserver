@@ -89,25 +89,26 @@ def run_command(command):
 
 
 def get_user(request):
-    # assign user to new job instance
-    if request.user.is_authenticated():
-        return request.user
-    else:
-        ip = get_ip(request)
-        if ip is not None:
-            # check if anonymous user already exists
-            anonymous_users = User.objects.filter(username=ip)
-            if anonymous_users.exists():
-                return get_object_or_404(User, username=ip)
-            else:
-                # create an anonymous user and log them in
-                new_u = User(username=ip, first_name='Anonymous',
-                             last_name='User')
-                new_u.set_unusable_password()
-                new_u.save()
-                return new_u
+    # assign user to new job instance 
+    # login is currently unabled
+    #if request.user.is_authenticated():
+    #    return request.user
+    #else:
+    ip = get_ip(request)
+    if ip is not None:
+        # check if anonymous user already exists
+        anonymous_users = User.objects.filter(username=ip)
+        if anonymous_users.exists():
+            return get_object_or_404(User, username=ip)
         else:
-            print("NO USER SETABLE")
+            # create an anonymous user and log them in
+            new_u = User(username=ip, first_name='Anonymous',
+                         last_name='User')
+            new_u.set_unusable_password()
+            new_u.save()
+            return new_u
+    else:
+        print("NO USER SETABLE")
 
 
 def set_job_name(job_pk):
@@ -277,10 +278,8 @@ def transfer_motif(job_pk):
         dest = get_job_output_folder(job_pk) + '/' + outname + os.path.splitext(job.bgModel_File.name)[1]
         copyfile(src, dest)
         offs = 2
-        # --> calculate probabilities from conditional probabilities
     
     return offs
-
 
 def valid_uuid(uuid):
     regex = re.compile('^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\Z', re.I)

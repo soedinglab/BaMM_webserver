@@ -197,8 +197,15 @@
         <th> <a href="#{{m.job_rank}}" style="color:black">{{m.job_rank}} </a></th>
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.iupac}} </a></th>
         {% if mode == "Compare" %}
+        {% if result.Motif_Init_File_Format == "BaMM" %}
         <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
         <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        {% endif %}
+        {% if result.Motif_Init_File_Format == "PWM" %}
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        {% endif %}
+       
         {% endif %}
 
         {% if mode == "Prediction" %}
@@ -254,12 +261,18 @@
    
     {% if mode == "Compare"%}   
     <hr style="border: 1px solid #1f2e2e">
-    
+    {% if result.Motif_Init_File_Format == "PWM" %}
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
+        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
+    {% endif %}
+
+    {% if result.Motif_Init_File_Format == "BaMM" %}
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
         <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
-    {% for i in num_logos %}
-        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
-    {% endfor %}
+        {% for i in num_logos %}
+            <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
+        {% endfor %}
+    {% endif %}
     {% endif %}
 
     {% if mode == "Prediction"%}   

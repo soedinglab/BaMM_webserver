@@ -21,9 +21,9 @@ class Command(BaseCommand):
             Motif_Initialization='Custom File',
             Motif_Init_File_Format='PWM',
             num_init_motifs=1,
-            model_Order=2,
-            extend=3,
-            num_motifs=1,
+            model_Order=4,
+            extend=4,
+            num_motifs=3,
             complete=True
             )
         u = User(username='Sample_User', first_name='User', last_name='Example')

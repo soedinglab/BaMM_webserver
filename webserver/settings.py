@@ -115,7 +115,7 @@ DATABASES = {
 # 250MB - 214958080
 # 500MB - 429916160
 MAX_UPLOAD_SIZE = "429916160"
-MAX_UPLOAD_SIZE_ANONYMOUS = "2621440"
+MAX_UPLOAD_SIZE_ANONYMOUS = "429916160"
 
 # Redirect after successful authentication
 LOGIN_REDIRECT_URL = 'home'
@@ -196,7 +196,7 @@ EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You
 JOB_DIR_PREFIX = 'jobs'
 
 # Settings realted to example data
-EXAMPLE_FASTA = 'example_data/ExampleData2.fasta'
+EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
 EXAMPLE_MOTIF = 'example_data/ExampleMotifs.meme' 
 PENG_INIT = 'PengInitialization.meme'
 PENG_OUT = 'PengOut.meme'

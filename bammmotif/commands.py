@@ -163,16 +163,36 @@ def get_prob_command(job_pk):
     print(command)
     sys.stdout.flush()
     return command
-
+    
 
 def make_logos(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
+    print("in make logos")
+    print("Motif Init File Format:= " + job.Motif_Init_File_Format)
     if job.Motif_Init_File_Format == "PWM":
-        print('this is still missing')
+        print("run get covert_input_command")
+        run_command(get_convert_input_command(job_pk))
+        print("run get logo_command")
+        run_command(get_logo_command(job_pk, 0))
     if job.Motif_Init_File_Format == "BaMM":
         run_command(get_prob_command(job_pk))
+        print("run get prob command")
         for order in range(min(job.model_Order+1, 3)):
+            print("run get logo for x-th order") 
             run_command(get_logo_command(job_pk, order))
+
+
+def get_convert_input_command(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    param = []
+    param.append('pwm2bamm.py')
+    infilename = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    infile = get_job_output_folder(job_pk) + '/' + infilename + ".meme"
+    param.append(infile)
+    command = " ".join(str(s) for s in param)
+    print(command)
+    sys.stdout.flush()
+    return command
 
 
 def get_compress_command(job_pk):

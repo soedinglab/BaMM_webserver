@@ -258,27 +258,23 @@
             <div class="col-md-6">
                 <div class='container-fluid'>
                     <center>
-                        <img src="{% static 'img/compare_comingSoon.png' %}" class="responsive-img"
-                             style='max-height:180px;' alt="logo">
-                       {% comment %}
                         <img src="{% static 'img/compare_new2.png' %}" class="responsive-img"
                              style='max-height:180px;' alt="logo">               
-                        {% endcomment %}
                     </center>
                     <div class="jumbotron" style="background-color:white"><font color="black">
 
+                        {% comment %}
                         <center>
                             <a class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal_BETA"
                                style="background-color:#1f2e2e">
                                 Motif-motif comparison
                             </a>
                         </center>
-                       {% comment %}
+                        {% endcomment %}
                         <center>
                         <a class="btn btn-primary btn-lg" href="{% url 'run_compare' %}"
                                style="background-color:#1f2e2e">Motif-motif comparison
                         </a></center>
-                        {% endcomment %}
 
                         <!-- Modal -->
                         <div class="modal fade" id="myModal_BETA" tabindex="-1" role="dialog"
