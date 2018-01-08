@@ -1,9 +1,12 @@
 from django.shortcuts import get_object_or_404
-from .models import PengJob
+from bammmotif.models import PengJob
 from django.core.files import File
 from django.conf import settings
-from .peng_bamm_split_job import peng_meme_directory
-from .utils.meme_reader import update_and_copy_meme_file
+from bammmotif.peng.job import peng_meme_directory
+from bammmotif.utils.meme_reader import update_and_copy_meme_file
+from bammmotif.peng.settings import MEME_PLOT_DIRECTORY, MEME_OUTPUT_FILE, PENG_OUTPUT, SELECTED_MOTIFS, PENG_INPUT, \
+    ZIPPED_MOTIFS, MOTIF_SELECT_IDENTIFIER, EXAMPLE_FASTA_FILE
+from webserver.settings import BAMM_INPUT
 
 import os
 import shutil
@@ -11,7 +14,7 @@ import subprocess
 
 def upload_example_fasta_for_peng(job_id):
     peng_job = get_object_or_404(PengJob, pk=job_id)
-    out_filename = "ExampleData.fasta"
+    out_filename = EXAMPLE_FASTA_FILE
     with open(settings.EXAMPLE_FASTA) as fh:
         peng_job.fasta_file.save(out_filename, File(fh))
         peng_job.save()
@@ -19,22 +22,20 @@ def upload_example_fasta_for_peng(job_id):
 def copy_peng_to_bamm(peng_id, bamm_id, post):
     # Copy plots
     # peng_plot_output_directory = os.path.join(peng_meme_directory(peng_id), "meme_plots")
-    peng_save_directory = os.path.join(peng_meme_directory(peng_id), "selected_motifs")
-    bamm_output_dir = os.path.join(settings.MEDIA_ROOT, str(bamm_id), "pengoutput")
-    bamm_plot_output_directory = os.path.join(bamm_output_dir, 'meme_plots')
+    peng_save_directory = os.path.join(peng_meme_directory(peng_id), SELECTED_MOTIFS)
+    bamm_output_dir = os.path.join(settings.MEDIA_ROOT, str(bamm_id), PENG_OUTPUT)
+    bamm_plot_output_directory = os.path.join(bamm_output_dir, MEME_PLOT_DIRECTORY)
     if not os.path.exists(bamm_plot_output_directory):
         os.makedirs(bamm_plot_output_directory)
     for file in os.listdir(peng_save_directory):
         shutil.copy(os.path.join(peng_save_directory, file), bamm_plot_output_directory)
     # copy meme.out
-    meme_path_src = os.path.join(peng_meme_directory(peng_id), "out.meme")
-    meme_path_dst = os.path.join(bamm_output_dir, "out.meme")
+    meme_path_src = os.path.join(peng_meme_directory(peng_id), MEME_OUTPUT_FILE)
+    meme_path_dst = os.path.join(bamm_output_dir, MEME_OUTPUT_FILE)
     update_and_copy_meme_file(meme_path_src, meme_path_dst, peng_save_directory)
-    print("meme_path_src", meme_path_src)
-    # shutil.copy(meme_path_src, bamm_output_dir)
     # copy input file
-    peng_input = os.path.join(settings.MEDIA_ROOT, str(peng_id), "Input")
-    bamm_input = os.path.join(settings.MEDIA_ROOT, str(bamm_id), "Input")
+    peng_input = os.path.join(settings.MEDIA_ROOT, str(peng_id), PENG_INPUT)
+    bamm_input = os.path.join(settings.MEDIA_ROOT, str(bamm_id), BAMM_INPUT)
     if not os.path.exists(bamm_input):
         os.makedirs(bamm_input)
     # TODO: Is this supposed to be multiple files??
@@ -68,7 +69,7 @@ def zip_motifs(motif_ids, directory, with_reverse=True):
         subprocess.run(cmd)
     # Now zip all
     plots = [os.path.join(directory, x) for x in os.listdir(directory) if x.endswith(".png") or x.endswith(".meme")]
-    archive_name = os.path.join(directory, "motif_all.zip")
+    archive_name = os.path.join(directory, ZIPPED_MOTIFS)
     cmd = ['zip', '-j', archive_name] + plots
     # cmd = "zip -j %s %s" % (archive_name, plots)
     # print(cmd)
@@ -84,9 +85,8 @@ def check_if_request_from_peng_directly(request):
 
 def save_selected_motifs(request, pk):
     print("save_selected_motifs")
-    MOTIF_SELECT_IDENTIFIER = "_select"
-    peng_plot_output_directory = os.path.join(peng_meme_directory(pk), "meme_plots")
-    peng_save_directory = os.path.join(peng_meme_directory(pk), "selected_motifs")
+    peng_plot_output_directory = os.path.join(peng_meme_directory(pk), MEME_PLOT_DIRECTORY)
+    peng_save_directory = os.path.join(peng_meme_directory(pk), SELECTED_MOTIFS)
     if not os.path.exists(peng_save_directory):
         os.makedirs(peng_save_directory)
     selected_motifs = [x.replace(MOTIF_SELECT_IDENTIFIER, "") for x in request.keys() if x.endswith(MOTIF_SELECT_IDENTIFIER)]

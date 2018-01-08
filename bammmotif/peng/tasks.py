@@ -1,28 +1,23 @@
 from __future__ import absolute_import
-import os
 
 
-from .utils import JobSaveManager, make_job_folder, get_log_file
-from .commands import Compress
-from celery import task
-from celery import shared_task, task
+from bammmotif.utils import JobSaveManager, make_job_folder, get_log_file
+from celery import task, chain
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from django.core.files import File
-from django.core.mail import send_mail
-from django.contrib.auth.models import User
-from ipware.ip import get_ip
-from .models import Job, PengJob
-from .command_line import ShootPengModule
+from bammmotif.models import Job, PengJob
+from bammmotif.command_line import ShootPengModule
+from bammmotif.peng.settings import FASTA_VALIDATION_SCRIPT
+from bammmotif.peng.job import file_path_peng
+from bammmotif.utils import get_result_folder
+from bammmotif.command_line import PlotMeme
+from bammmotif.peng_utils import get_motif_ids
+from bammmotif.peng.settings import MEME_PLOT_DIRECTORY
+from bammmotif.peng.utils import zip_motifs
+from bammmotif.utils.meme_reader import Meme, split_meme_file
 
-from os.path import basename
-from contextlib import redirect_stdout
-import tempfile
 import subprocess
-import datetime
 import os
-import sys
-import shutil
 
 @task(bind=True)
 def valid_init(self, job_pk):
@@ -54,7 +49,7 @@ def valid_fasta(self, job_pk):
     try:
         job.status = 'Check Input File'
         job.save()
-        check = subprocess.Popen(['/code/bammmotif/static/scripts/valid_fasta',
+        check = subprocess.Popen([FASTA_VALIDATION_SCRIPT,
                                   str(os.path.join(settings.MEDIA_ROOT, job.Input_Sequences.name))],
                                  stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         check.wait()
@@ -84,3 +79,27 @@ def run_peng(self, job_pk):
         # Compress(job_pk)
         peng_job.complete = True
     return 1 if mgr.had_exception else 0
+
+
+@task(bind=True)
+def plot_meme(self, job_pk):
+    result = get_object_or_404(PengJob, pk=job_pk)
+    meme_result_file_path = file_path_peng(result.job_ID, result.meme_output)
+    plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
+    opath = os.path.join(get_result_folder(result.job_ID), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
+    if not os.path.exists(plot_output_directory):
+        os.makedirs(plot_output_directory)
+    motif_ids = get_motif_ids(meme_result_file_path)
+    meme_plotter = PlotMeme()
+    meme_plotter.output_file_format = PlotMeme.defaults['output_file_format']
+    PlotMeme.plot_meme_list(motif_ids, meme_result_file_path, plot_output_directory)
+    # Split one large meme to multiple smaller ones
+    split_meme_file(meme_result_file_path, plot_output_directory)
+    # Zip motifs
+    zip_motifs(motif_ids, plot_output_directory, with_reverse=True)
+
+
+@task(bind=True)
+def peng_chain(self, job_pk):
+    pc = chain(run_peng.si(job_pk) | plot_meme.si(job_pk))()
+    return pc

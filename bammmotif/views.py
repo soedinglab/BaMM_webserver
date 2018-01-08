@@ -169,7 +169,9 @@ def run_bamm_view(request, mode='normal'):
                 upload_example_motif(job_pk)
                 job.Motif_Initialization = 'CustomFile'
                 job.Motif_Init_File_Format = 'PWM'
-            
+
+            print("motif initialization")
+            print(job.Motif_Initialization)
             if job.Motif_Initialization == 'PEnGmotif':
                 run_peng.delay(job_pk)
             else:

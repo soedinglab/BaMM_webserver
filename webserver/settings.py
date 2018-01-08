@@ -194,7 +194,9 @@ EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You
 JOB_DIR_PREFIX = 'jobs'
 JOB_DIR_PREFIX_PENG = '/code/media/jobs'  # TODO: Make this relative, not absolute.
 
-# Settings realted to example data
+# Settings related to example data
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
 EXAMPLE_MOTIF = 'example_data/ExampleMotif.meme' 
 PENG_INIT = 'Peng_Initialization.meme'
+
+BAMM_INPUT = 'Input'
