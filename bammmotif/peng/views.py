@@ -3,56 +3,41 @@ import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
 
-from .peng_to_bamm_form import PengToBammForm
-from .peng_bamm_split_form import get_valid_peng_form, PengExampleForm, PengForm
-from .peng_bamm_split_job import create_job, validate_input_data, peng_meme_directory
-from .peng_bamm_split_tasks import run_peng
-from .peng_bamm_split_utils import upload_example_fasta_for_peng, copy_peng_to_bamm, load_meme_ids, zip_motifs, \
+from bammmotif.peng_to_bamm_form import PengToBammForm
+from bammmotif.peng.form import get_valid_peng_form, PengExampleForm, PengForm
+from bammmotif.peng.job import create_job, validate_input_data
+from bammmotif.peng.tasks import run_peng, plot_meme, peng_chain
+from bammmotif.peng.utils import upload_example_fasta_for_peng, copy_peng_to_bamm, load_meme_ids, zip_motifs, \
     check_if_request_from_peng_directly, save_selected_motifs
-from .models import Job, PengJob, DbParameter
-from .forms import FindForm
-from .peng_bamm_split_job import file_path_peng
-from .peng_utils import get_motif_ids
-from .command_line import PlotMeme
-from .utils.meme_reader import Meme, split_meme_file, get_n_motifs
-from .utils import (
+from bammmotif.models import Job, PengJob, DbParameter
+from bammmotif.forms import FindForm
+from bammmotif.peng.job import file_path_peng
+from bammmotif.peng_utils import get_motif_ids
+from bammmotif.command_line import PlotMeme
+from bammmotif.utils.meme_reader import Meme, split_meme_file, get_n_motifs
+from bammmotif.utils import (
     get_log_file,
     get_user, set_job_name, valid_uuid,
     get_result_folder,
 )
 import bammmotif.tasks as tasks
+from bammmotif.peng.settings import MEME_PLOT_DIRECTORY
 
 def peng_result_detail(request, pk):
     result = get_object_or_404(PengJob, pk=pk)
     meme_result_file_path = file_path_peng(result.job_ID, result.meme_output)
-
     if result.complete:
         print("status is successfull")
-        plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], "meme_plots")
-        opath = os.path.join(get_result_folder(result.job_ID), "meme_plots").split('/', maxsplit=1)[1]
+        plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
+        opath = os.path.join(get_result_folder(result.job_ID), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
         if not os.path.exists(plot_output_directory):
             os.makedirs(plot_output_directory)
         motif_ids = get_motif_ids(meme_result_file_path)
         meme_plotter = PlotMeme()
         meme_plotter.output_file_format = PlotMeme.defaults['output_file_format']
         meme_meta_info_list = Meme.fromfile(meme_result_file_path)
-        PlotMeme.plot_meme_list(motif_ids, meme_result_file_path, plot_output_directory)
-        #for motif in motif_ids:
-        #    #TODO: Clean that up.
-        #    meme_plotter.input_file = meme_result_file_path
-        #    meme_plotter.output_file = os.path.join(plot_output_directory, motif + ".png")
-        #    meme_plotter.motif_id = motif
-        #    meme_plotter.run()
-        #    # Now plot reverse complement
-        #    meme_plotter.output_file = os.path.join(plot_output_directory, motif + "_rev.png")
-        #    meme_plotter.reverse_complement = True
-        #    meme_plotter.run()
-        # Split one large meme to multiple smaller ones
-        split_meme_file(meme_result_file_path, plot_output_directory)
-        # Zip motifs
-        zip_motifs(motif_ids, plot_output_directory, with_reverse=True)
         return render(request, 'results/peng_result_detail.html',
-                        {'result': result,
+                      {'result': result,
                          'mode': result.mode,
                          'motif_ids': motif_ids,
                          'opath': opath,
@@ -84,8 +69,7 @@ def run_peng_view(request, mode='normal'):
             # return render(request, 'job/de_novo_search.html', {'form': PengForm(), 'type': "Fasta", 'message': ret})
         if mode == 'example':
             upload_example_fasta_for_peng(peng_job.job_ID)
-        print("Running Peng")
-        run_peng.delay(peng_job.job_ID)
+        peng_chain.delay(peng_job.job_ID)
         return render(request, 'job/peng_bamm_split_submitted.html', {'pk': peng_job.job_ID})
     if mode == 'example':
         form = PengExampleForm()
@@ -143,11 +127,16 @@ def peng_load_bamm(request, pk):
                 set_job_name(job_pk)
             # Copy necessary files from last peng job.
             copy_peng_to_bamm(pk, job_pk, request.POST)
+            print("Job Motif Initialisation")
+            print(job.Motif_Initialization)
+            print("Job ID", job.job_ID)
             if job.Motif_Initialization == 'PEnGmotif':
                 tasks.run_peng.delay(job.job_ID)
             else:
                 tasks.run_bamm.delay(job.job_ID)
             return render(request, 'job/peng_to_bamm_submitted.html', {'pk': job_pk})
+        else:
+            print("peng_load_bamm: Form is invalid!")
     form = PengToBammForm()
     return render(request, 'job/peng_bamm_split_peng_to_bamm.html',
                   {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': peng_job.job_name, 'pk': pk})

@@ -1,5 +1,5 @@
 import os
-from ..peng_bamm_split_job import peng_meme_directory
+from bammmotif.peng.job import peng_meme_directory
 
 class Meme(object):
     def __init__(self, meme_id, logpval, nsites):

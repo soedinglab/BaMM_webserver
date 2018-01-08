@@ -1,7 +1,7 @@
 from django.conf import settings
-from .forms import PredictionExampleForm
+from bammmotif.forms import PredictionExampleForm
 from django import forms
-from .models import PengJob
+from bammmotif.models import PengJob
 
 
 

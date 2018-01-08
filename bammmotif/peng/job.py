@@ -2,22 +2,24 @@ import datetime
 import subprocess
 import os
 from ipware.ip import get_ip
+
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 
+from bammmotif.peng.settings import file_path_peng, peng_meme_directory, FASTA_VALIDATION_SCRIPT
 
-def file_path_peng(job_id, filename):
-    path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id), 'Output')
-    if not os.path.exists(path_to_job):
-        os.makedirs(path_to_job)
-    return os.path.join(path_to_job, str(filename))
+#def file_path_peng(job_id, filename):
+#    path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id), 'Output')
+#    if not os.path.exists(path_to_job):
+#        os.makedirs(path_to_job)
+#    return os.path.join(path_to_job, str(filename))
 
-def peng_meme_directory(job_id):
-    path_to_plots = os.path.join(settings.MEDIA_ROOT, str(job_id), 'Output')
-    if not os.path.exists(path_to_plots):
-        os.makedirs(path_to_plots)
-    return path_to_plots
+#def peng_meme_directory(job_id):
+#    path_to_plots = os.path.join(settings.MEDIA_ROOT, str(job_id), 'Output')
+#    if not os.path.exists(path_to_plots):
+#        os.makedirs(path_to_plots)
+#    return path_to_plots
 
 def create_anonymuous_user(request):
     ip = get_ip(request)
@@ -75,8 +77,7 @@ def create_job(form, request):
 
 
 def validate_fasta(path):
-    fasta_script = '/code/bammmotif/static/scripts/valid_fasta'
-    ret = subprocess.Popen([fasta_script, path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    ret = subprocess.Popen([FASTA_VALIDATION_SCRIPT, path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     res, err = ret.communicate()
     if res.decode('ascii') == "OK":
         return err, True
