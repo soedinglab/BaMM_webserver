@@ -258,3 +258,5 @@ tramp
 /GetOpt_ppLibrary/
 
 .idea/
+#####=== CLion ===#####
+cmake-build-debug/
