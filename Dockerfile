@@ -64,4 +64,12 @@ RUN cd /tmp/meme_suite && \
 RUN cp /ext/meme/bin/ceqlogo /ext/bin
 RUN rm -rf /tmp/meme_suite
 
+# Add filterpwm to /ext
+ADD tools/bamm/py/filterPWMs /tmp/filterPWMs
+RUN mkdir -p /ext/filterPWMs
+RUN cp /tmp/filterPWMs/* /ext/filterPWMs/
+RUN rm -rf /tmp/filterPWMs
+# RUN cp -a tools/bamm/py/filterPWMs /ext
+ENV PATH="/ext/filterPWMs:${PATH}"
+
 ENV PATH="/ext/bin:${PATH}"

@@ -3,7 +3,8 @@ import subprocess
 import sys
 import os
 import shutil
-from bammmotif.peng.settings import MEME_OUTPUT_FILE, JSON_OUTPUT_FILE
+from bammmotif.peng.settings import MEME_OUTPUT_FILE, JSON_OUTPUT_FILE, PATH_TO_FILTERPWM_SCRIPT, \
+    FILTERPWM_INPUT_FILE, FILTERPWM_OUTPUT_FILE
 
 
 class CommandlineModule:
@@ -171,6 +172,68 @@ class ShootPengModule(CommandlineModule):
         self.create_temp_directory()
         super().run(**kw_args)
         self.remove_temp_directory()
+
+
+class FilterPWM(CommandlineModule):
+
+    defaults = {
+        'input_file': FILTERPWM_INPUT_FILE,
+        'output_file': FILTERPWM_OUTPUT_FILE,
+        'model_db': None,
+        'n_neg_perm': 10,
+        'highscore_fraction': 0.1,
+        'evalue_threshold': 0.1,
+        'seed': 42,
+        'min_overlap': 2,
+        'output_score_file': None
+    }
+
+    #TODO: Make this a little bit more flexible.
+    def __init__(self):
+        config = [
+            ('input_file', None),
+            ('output_file', None),
+            ('model_db', '--model_db'),
+            ('n_neg_perm', '--n_neg_perm'),
+            ('highscore_fraction', '--highscore_fraction'),
+            ('evalue_threshold', '--evalue_threshold'),
+            ('seed', '--seed'),
+            ('min_overlap', '--min_overlap'),
+            ('n_processes', '--n_processes'),
+            ('output_score_file', '--output_score_file')
+        ]
+        super().__init__(PATH_TO_FILTERPWM_SCRIPT, config)
+        self._load_defaults()
+        #self._set_directory(directory)
+
+    def _load_defaults(self):
+        for key, val in self.defaults.items():
+            self.options[key] = val
+
+    #def _set_directory(self, directory):
+    #    self.input_file = os.path.join(directory, self.defaults['input_file'])
+    #    self.output_file = os.path.join(directory, self.defaults['output_file'])
+
+    def run(self, **kw_args):
+        extra_args = {
+            'universal_newlines': True
+        }
+        extra_args.update(kw_args)
+        # TODO: Not happy with that formulation.
+        cmd_toks = ['python'] + self.command_tokens
+        if self.with_log_file is not None:
+            with open(self.with_log_file, "a") as f:
+                return subprocess.run(cmd_toks, stdout=f, stderr=f, **extra_args)
+        else:
+            return subprocess.run(cmd_toks, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **extra_args)
+
+    @classmethod
+    def init_with_extra_directory(cls, directory):
+        obj = cls()
+        obj.input_file = os.path.join(directory, FilterPWM.defaults['input_file'])
+        obj.output_file = os.path.join(directory, FilterPWM.defaults['output_file'])
+        return obj
+
 
 
 class PlotMeme(CommandlineModule):
