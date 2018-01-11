@@ -59,7 +59,7 @@
             </div>
         </form>
         {% endcomment %}
-        <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=result.job_ID %}">
+        <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=result.job_id %}">
             {% csrf_token %}
             <table class="table table-hover">
                 <tr>
@@ -119,7 +119,7 @@
             <!-- Temp Input -->
 
             <div class="jumbotron" style="background-color:white" xmlns="http://www.w3.org/1999/html">
-                <h2> Results for {{ result.job_name }} </h2>
+                <h2> Results for {{ job_info.job_name }} </h2>
                 <hr style="border: 1px solid #1f2e2e">
                 <div class="well" style="background-color:white">
                     <h2>Peng Settings </h2>
@@ -271,7 +271,7 @@
             <div>
                 <input type="hidden" value="from_peng"
                        name="meme_meta_info"/>
-                <input type="hidden" value="{{ result.job_ID }}" name="pk">
+                <input type="hidden" value="{{ result.job_id }}" name="pk">
                 <input type="submit" value="call peng_to_bamm"/>
             </div>
     </div>
