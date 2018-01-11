@@ -207,7 +207,7 @@ def find_results(request):
 
 
 def result_overview(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         user_jobs = Job.objects.filter(user=request.user.id)
         return render(request, 'results/result_overview.html',
                       {'user_jobs': user_jobs})
@@ -217,7 +217,7 @@ def result_overview(request):
 
 def delete(request, pk):
     Job.objects.filter(job_ID=pk).delete()
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         user_jobs = Job.objects.filter(user=request.user.id)
         return render(request, 'results/result_overview.html',
                       {'user_jobs': user_jobs})

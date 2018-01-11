@@ -69,7 +69,7 @@ def create_job_meta(form, request, jobmode):
         job.strand = "BOTH"
     else:
         job.stand = "PLUS"
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         print("user is authenticated")
         job.user = request.user
     else:
@@ -96,7 +96,7 @@ def create_job(form, request):
         job.strand = "BOTH"
     else:
         job.stand = "PLUS"
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         print("user is authenticated")
         job.user = request.user
     else:

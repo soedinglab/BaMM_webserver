@@ -135,7 +135,7 @@ def run_a_job(request, mode, example=False):
             job.created_at = datetime.datetime.now()
             
             # assign user to new job instance
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 job.user = request.user
             else:
                 ip = get_ip(request)
@@ -239,7 +239,7 @@ def find_results(request):
     return render(request, 'results/results_main.html', {'form':form})
     
 def result_overview(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         user_jobs = Job.objects.filter(user = request.user.id)
         return render(request,'results/result_overview.html', { 'user_jobs' : user_jobs })
     else:
@@ -247,7 +247,7 @@ def result_overview(request):
 
 def delete(request, pk ):
     Job.objects.filter(job_ID=pk).delete()
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         user_jobs = Job.objects.filter(user = request.user.id)
         return render(request,'results/result_overview.html', { 'user_jobs' : user_jobs })
     else:
@@ -313,7 +313,7 @@ def OLD_data_predict(request):
             print("FORM IS VALID")
             # Test if data maximum size is not reached
             content = form.cleaned_data['Input_Sequences']
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 if content._size > int(settings.MAX_UPLOAD_SIZE):
                     form = JobForm()
                     return render(request, 'job/de_novo_search.html', {'form':form , 'type' : "FileSize", 'message' : settings.MAX_UPLOAD_SIZE})
@@ -325,7 +325,7 @@ def OLD_data_predict(request):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.status = "data uploaded"
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 print("user is authenticated")
                 job.user = request.user
             else:
@@ -440,7 +440,7 @@ def OLD_denovo_example(request):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.status = "data uploaded"
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 print("user is authenticated")
                 job.user = request.user
             else:
@@ -520,7 +520,7 @@ def OLD_motif_compare(request):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.status = "data uploaded"
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 print("user is authenticated")
                 job.user = request.user
             else:
@@ -589,7 +589,7 @@ def OLD_compare_example(request):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.status = "data uploaded"
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 print("user is authenticated")
                 job.user = request.user
             else:
@@ -666,7 +666,7 @@ def OLD_data_discover(request):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.status = "data uploaded"
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 print("user is authenticated")
                 job.user = request.user
             else:
@@ -737,7 +737,7 @@ def OLD_data_discover_from_db(request, pk):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.status = "data uploaded"
-            if request.user.is_authenticated():
+            if request.user.is_authenticated:
                 print("user is authenticated")
                 job.user = request.user
             else:
