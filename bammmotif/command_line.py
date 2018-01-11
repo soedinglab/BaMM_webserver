@@ -3,6 +3,7 @@ import subprocess
 import sys
 import os
 import shutil
+from bammmotif.peng.settings import MEME_OUTPUT_FILE, JSON_OUTPUT_FILE
 
 
 class CommandlineModule:
@@ -116,8 +117,8 @@ class ShootPengModule(CommandlineModule):
         'n_threads': 1,
         'em_saturation_threshold': 1E4,
         'silent': True,
-        'meme_output': 'out.meme',
-        'json_output': 'out.json',
+        'meme_output': MEME_OUTPUT_FILE,
+        'json_output': JSON_OUTPUT_FILE,
         'temp_dir': 'temp',
         'bg_sequences': None
     }
