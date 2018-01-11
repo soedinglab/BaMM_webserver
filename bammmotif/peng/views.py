@@ -21,7 +21,7 @@ from bammmotif.utils import (
     get_result_folder,
 )
 import bammmotif.tasks as tasks
-from bammmotif.peng.settings import MEME_PLOT_DIRECTORY
+from bammmotif.peng.settings import MEME_PLOT_DIRECTORY, get_job_directory, MEME_PLOT_INPUT, PENG_JOB_RESULT_DIR
 import uuid
 
 def peng_result_detail(request, pk):
@@ -54,10 +54,15 @@ def peng_result_detail(request, pk):
 
 def peng_result_detail_meta(request, pk):
     result = get_object_or_404(PengJobMeta, pk=pk)
-    job_info = get_object_or_404(JobMeta,  pk=pk)
-    meme_result_file_path = file_path_peng(str(result.job_id), result.meme_output)
-    if job_info.complete:
+    if result.job_id.complete:
         print("status is successfull")
+        #print("peng_result_detail:!!!!!!!!!!!!!__!_!_!OP@KEOIQWJEOQ")
+        #from bammmotif.command_line import FilterPWM
+        #from bammmotif.peng.settings import get_job_directory
+        #d = get_job_directory(result.job_id.job_id)
+        #a = FilterPWM.init_with_extra_directory(d)
+        #print(a.command_tokens)
+        meme_result_file_path = os.path.join(get_job_directory(result.job_id.job_id), PENG_JOB_RESULT_DIR, MEME_PLOT_INPUT)
         plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
         opath = os.path.join(get_result_folder(str(result.job_id)), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
         if not os.path.exists(plot_output_directory):
@@ -65,7 +70,7 @@ def peng_result_detail_meta(request, pk):
         meme_meta_info_list = Meme.fromfile(meme_result_file_path)
         return render(request, 'results/peng_result_detail.html',
                       {'result': result,
-                       'job_info': job_info,
+                       'job_info': result.job_id,
                        'mode': result.job_id.mode,
                        'opath': opath,
                        'meme_meta_info': meme_meta_info_list,
@@ -162,7 +167,6 @@ def peng_result_overview(request, pk):
 def peng_load_bamm_meta(request, pk):
     mode = "peng_to_bamm"
     peng_job = get_object_or_404(PengJobMeta, pk=pk)
-    job_info = get_object_or_404(JobMeta, pk=pk)
     inputfile = str(peng_job.fasta_file).rsplit('/', maxsplit=1)[1]
     print("peng_load_bamm")
     if request.method == "POST":
@@ -171,7 +175,7 @@ def peng_load_bamm_meta(request, pk):
             save_selected_motifs(request.POST, pk)
             form = PengToBammForm()
             return render(request, 'job/peng_bamm_split_peng_to_bamm.html',
-                          {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': job_info.job_name, 'pk': pk})
+                          {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': peng_job.job_id.job_name, 'pk': pk})
         form = PengToBammForm(request.POST, request.FILES)
         if form.is_valid():
             # read in data and parameter
