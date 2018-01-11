@@ -89,7 +89,7 @@ def run_command(command):
 
 def get_user(request):
     # assign user to new job instance
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return request.user
     else:
         ip = get_ip(request)

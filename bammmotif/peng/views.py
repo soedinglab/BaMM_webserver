@@ -56,12 +56,6 @@ def peng_result_detail_meta(request, pk):
     result = get_object_or_404(PengJobMeta, pk=pk)
     if result.job_id.complete:
         print("status is successfull")
-        #print("peng_result_detail:!!!!!!!!!!!!!__!_!_!OP@KEOIQWJEOQ")
-        #from bammmotif.command_line import FilterPWM
-        #from bammmotif.peng.settings import get_job_directory
-        #d = get_job_directory(result.job_id.job_id)
-        #a = FilterPWM.init_with_extra_directory(d)
-        #print(a.command_tokens)
         meme_result_file_path = os.path.join(get_job_directory(result.job_id.job_id), PENG_JOB_RESULT_DIR, MEME_PLOT_INPUT)
         plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
         opath = os.path.join(get_result_folder(str(result.job_id)), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
@@ -149,7 +143,7 @@ def find_peng_results(request, pk):
     return render(request, 'results/peng_results_main.html', {'form': form})
 
 def peng_result_overview(request, pk):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         user_jobs = PengJob.objects.filter(user=request.user.id)
         return render(request, 'results/peng_result_overview.html',
                       {'user_jobs': user_jobs})
@@ -157,7 +151,7 @@ def peng_result_overview(request, pk):
         return redirect(request, 'find_peng_results')
 
 def peng_result_overview(request, pk):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         user_jobs = PengJobMeta.objects.filter(user=request.user.id)
         return render(request, 'results/peng_result_overview.html',
                       {'user_jobs': user_jobs})
@@ -271,7 +265,7 @@ def find_peng_to_bamm_results(request, pk):
     return render(request, 'results/peng_to_bamm_result_main.html', {'form': form, 'warning': False})
 
 def peng_to_bamm_result_overview(request, pk):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         user_jobs = Job.objects.filter(user=request.user.id)
         return render(request, 'results/peng_to_bamm_result_overview.html',
                       {'user_jobs': user_jobs})

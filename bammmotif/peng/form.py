@@ -96,7 +96,7 @@ def get_valid_peng_form(post, files, user, mode):
         args['type'] = "OK"
         args['message'] = "OK"
         return form, valid, args
-    max_size = settings.MAX_UPLOAD_SIZE if user.is_authenticated() else settings.MAX_UPLOAD_SIZE_ANONYMOUS
+    max_size = settings.MAX_UPLOAD_SIZE if user.is_authenticated else settings.MAX_UPLOAD_SIZE_ANONYMOUS
     print("FORM IS VALID")
     # Test if data maximum size is not reached
     content = form.cleaned_data['fasta_file']
@@ -128,7 +128,7 @@ def get_valid_peng_form_meta(post, files, user, mode):
         args['type'] = "OK"
         args['message'] = "OK"
         return form, valid, args
-    max_size = settings.MAX_UPLOAD_SIZE if user.is_authenticated() else settings.MAX_UPLOAD_SIZE_ANONYMOUS
+    max_size = settings.MAX_UPLOAD_SIZE if user.is_authenticated else settings.MAX_UPLOAD_SIZE_ANONYMOUS
     print("FORM IS VALID")
     # Test if data maximum size is not reached
     content = form.cleaned_data['fasta_file']
