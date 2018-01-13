@@ -16,7 +16,6 @@ import subprocess
 from shutil import copyfile
 import re
 
-
 def get_result_folder(job_id):
     return path.join(settings.JOB_DIR_PREFIX, str(job_id), 'Output')
 
@@ -89,26 +88,25 @@ def run_command(command):
 
 
 def get_user(request):
-    # assign user to new job instance 
-    # login is currently unabled
-    #if request.user.is_authenticated():
-    #    return request.user
-    #else:
-    ip = get_ip(request)
-    if ip is not None:
-        # check if anonymous user already exists
-        anonymous_users = User.objects.filter(username=ip)
-        if anonymous_users.exists():
-            return get_object_or_404(User, username=ip)
-        else:
-            # create an anonymous user and log them in
-            new_u = User(username=ip, first_name='Anonymous',
-                         last_name='User')
-            new_u.set_unusable_password()
-            new_u.save()
-            return new_u
+    # assign user to new job instance
+    if request.user.is_authenticated:
+        return request.user
     else:
-        print("NO USER SETABLE")
+        ip = get_ip(request)
+        if ip is not None:
+            # check if anonymous user already exists
+            anonymous_users = User.objects.filter(username=ip)
+            if anonymous_users.exists():
+                return get_object_or_404(User, username=ip)
+            else:
+                # create an anonymous user and log them in
+                new_u = User(username=ip, first_name='Anonymous',
+                             last_name='User')
+                new_u.set_unusable_password()
+                new_u.save()
+                return new_u
+        else:
+            print("NO USER SETABLE")
 
 
 def set_job_name(job_pk):
@@ -140,7 +138,7 @@ def upload_example_motif(job_pk):
 def add_peng_output(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     out_filename = settings.PENG_INIT
-    infile = path.join(get_job_input_folder(job_pk), settings.PENG_OUT)
+    infile = path.join(get_job_input_folder(job_pk), settings.PENG_INIT)
     with open(infile) as fh:
         job.Motif_InitFile.save(out_filename, File(fh))
     job.Motif_Initialization = 'PEnGmotif'

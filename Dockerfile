@@ -27,17 +27,6 @@ COPY	install_packages.R /code/
 RUN	Rscript /code/install_packages.R >/dev/null 2>/dev/null
 
 RUN mkdir /code/media/
-# add BaMMmotif Pengmotif and plotFDR_rannk.R to Path variable for PEnGMotif
-ENV PATH="${PATH}:/code/bammmotif/static/scripts/bamm-private/build/BaMMmotif/"
-ENV PATH="${PATH}:/code/bammmotif/static/scripts/bamm-private/R/"
-ENV PATH="${PATH}:/code/bammmotif/static/scripts/PEnG-motif/build/bin/"
-ENV PATH="${PATH}:/code/tools/suite/PEnG-motif/scripts/"
-
-RUN apt-get install -y \
-	cmake\
-	build-essential\
-	libboost-all-dev
-
 RUN mkdir -p /ext/bin
 
 ADD tools/bamm /tmp/bamm

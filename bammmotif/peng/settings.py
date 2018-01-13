@@ -32,6 +32,10 @@ ALLOWED_JOBMODES = [
 
 def get_job_ouput_directory(job_id):
     ptj = get_job_directory(job_id)
+    p = os.path.join(ptj, JOB_OUTPUT_DIRECTORY)
+    if not os.path.exists(p):
+        os.makedirs(p)
+    return p
 
 
 

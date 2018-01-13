@@ -5,17 +5,17 @@
 
 
 <div class="jumbotron" style="background-color:white"><font color="black">
-  <h2> Find your job </h2>
+  <h2> Find your Job </h2>
       <hr style="border: 1px solid #1f2e2e">
       {% if warning %}
-        <p> <font color="#B22222">No job found with the provided job ID, did you enter the correct job ID ? </font></p>
+        <p> <font color="#B22222">No Job found with the provided Job ID, did you enter the correct Job ID ? </font></p>
       {% endif %}
      <form method="post"  enctype="multipart/form-data">
         {% csrf_token %}
         <p>
-            <label for="id_job_ID"><font size=3>Enter job ID: </label> <font color="#1f2e2e">
+            <label for="id_job_ID"><font size=3>Enter Job ID: </label> <font color="#1f2e2e">
             <input id="id_job_ID" maxlength="455" name="job_ID" type="text" placeholder="i.e: fdd1d833-7192-4f20-8832-4857db4ddfb4 " required /></font> &nbsp
-            <button type="submit" class="btn btn-primary btn-sm"  style="border:0px; background-color:#1f2e2e"><font color="white" size=3> Search sesults </font></button>
+            <button type="submit" class="btn btn-primary btn-sm"  style="border:0px; background-color:#1f2e2e"><font color="white" size=3> Search Results </font></button>
         </p>
     </form>    
 

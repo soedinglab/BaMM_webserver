@@ -5,18 +5,18 @@
 
 
 <div class="jumbotron" style="background-color:white"><font color="black">
- <h2> BaMMmotif database details for " {{entry.target_name}} "</h2>
+ <h2> BaMMmotif Database details for " {{entry.target_name}} "</h2>
     <hr style="border: 1px solid #1f2e2e">
       <div class="well" style="background-color:white" id="{{entry.target_name}}">
-        <h2>Database entry information:</h2>
+        <h2>Database Entry Information:</h2>
         <hr style="border: 1px solid #1f2e2e">
         <table>
            <tr>
-                <td> &emsp; Protein / Target name: </td>
+                <td> &emsp; Protein / Target Name: </td>
                 <td> &emsp; {{entry.target_name}} </td>
             </tr>
             <tr>
-                <td> &emsp; Cell type: </td>
+                <td> &emsp; Cell Type: </td>
                 <td> &emsp; {{entry.cell_type}} </td>
             </tr>
             <tr>
@@ -32,7 +32,7 @@
                 <td> &emsp; {{entry.grant }} </td>
             </tr>
             <tr>
-                <td> &emsp; Data source: </td>
+                <td> &emsp; Data Source: </td>
                 <td> &emsp; {{entry.parent.data_source}} </td>
             </tr>
             <tr>
@@ -43,7 +43,7 @@
         </table>
         </font>
         <br>    
-        <td>  &emsp; <a href="{% url 'run_bamm_scan' mode="db" pk=entry.db_public_id %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> USE THIS MODE FOR MOTIF SEARCH  </span></a> </td>
+        <!--<td>  &emsp; <a href="{% url 'run_bamm_scan' mode="db" pk=entry.db_public_id %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> USE THIS MODE FOR MOTIF SEARCH  </span></a> </td>-->
     </div>
     </font>
 </div>
@@ -55,8 +55,8 @@
 
 
 
-    <form action="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_complete.zip" method="get" target="_blank">
-        <h2> Predicted higher order model &emsp;
+    <form action="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motifs.zip" method="get" target="_blank">
+        <h2> Predicted Higher Order Model &emsp;
           <button type="submit" class="btn btn-default" aria-label="Download" >
              <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD MODEL</span> 
            </button>
@@ -66,69 +66,85 @@
 
        
     <hr style="border: 1px solid #1f2e2e">
-    <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo; reverse Complement">
+    <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo; reverse Complement">
     {% for i in "012" %}
-        <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
+        <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-{{i}}-icColumnScale-icLetterScale.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
     {% endfor %}
             <br>
             <br>
-    <h2> Performance and positional distribution on input sequences </h2>
+    <form action="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_logos.zip" method="get" target="_blank">
+        <p align="right">           
+        <button type="submit" class="btn btn-default" aria-label="Download">
+        <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD LOGO PLOTS </span> 
+        </button>
+        </p>
+    </form>
+    <h2> Performance and Positional Distribution on Input Sequences </h2>
         <hr style="border: 1px solid #1f2e2e">
-        <img src="{% get_static_prefix %}/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
-        <img src="{% get_static_prefix %}/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partiacl ROC5 curve">
-        <img src="{% get_static_prefix %}/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_PRC.jpeg" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
-        <img src="{% get_static_prefix %}/{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_distribution.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Ditsribution"> &emsp;
+        <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_FDR.jpeg" class="responsive-img" style='max-height:400px;' alt="ROC Curve Plot">&emsp;
+        <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_Positions.jpeg" class="responsive-img" style='max-height:400px;' alt="LogOdds">
         <br>
         <br>
+       <form action="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1_performance.zip" method="get" target="_blank">
+         <p align="right">           
+           <button type="submit" class="btn btn-default" aria-label="Download">
+             <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD PERFORMANCE PLOTS</span> 
+           </button>
+         </p>
+       </form>
  </div>
 </font>
 
 <div class="well" style="background-color:white">
-    <h2>BaMMmotif settings </h2>
+    <h2>BaMMmotif Settings </h2>
     <hr style="border: 1px solid #1f2e2e">
-        <h3>Model settings</h3>
+        <h3>Model Settings</h3>
         <table>
             <tr>
-                <td>  &emsp; Model order: </td>
+                <td>  &emsp; Model Order: </td>
                 <td>  &emsp; {{entry.parent.modelorder}}</td>
             </tr>
             <tr>
-                <td>  &emsp; Add flanking positions: </td>
-                <td>  &emsp; {% widthratio entry.parent.extend_1 1 2 %} </td>
+                <td>  &emsp; Extend Motif to the Left By: </td>
+                <td>  &emsp; {{entry.parent.extend_1}}</td>
             </tr>
             <tr>
-                <td>  &emsp; Search on both strands: </td>
+                <td>  &emsp; Extend Motif to the Right By: </td>
+                <td>  &emsp; {{entry.parent.extend_2}}</td>
+            </tr>
+            <tr>
+                <td>  &emsp; Reverse Complement: </td>
                 <td>  &emsp; {{entry.parent.reversecomp}}</td>
             </tr>
         </table>
 
-        <h3>Background model</h3>
+        <h3>Background Model</h3>
         <table>
             <tr>
-                <td>  &emsp; Background order: </td>
+                <td>  &emsp; Background Order: </td>
                 <td>  &emsp; {{entry.parent.bgmodelorder}}</td>
             </tr>
         </table>
         
         {% if entry.parent.EM == 1 %}
-        <h3>Expectation maximization optimization</h3>
+        <h3>Expectation Maximization Optimization</h3>
         <table>
             <tr>
-                <td>  &emsp; Motif prior probability: </td>
+                <td>  &emsp; q value: </td>
                 <td>  &emsp; {{entry.parent.q_value}}</td>
             </tr>
         </table>
         {% endif %}
 
         {% if entry.parent.CGS == 1%}
-        <h3>Collapsed Gibbs sampling:</h3>
+        <h3>Collapsed Gibbs Sampling:</h3>
         <table>
             <tr>
-                <td>  &emsp; sampling alphas: </td>
+                <td>  &emsp; sampling Alphas: </td>
                 <td>  &emsp; {{entry.parent.noalphasampling|yesno:"False,True"}}</td>
             </tr>
             <tr>
-                <td>  &emsp; max iterations: </td>
+                <td>  &emsp; max Iterations: </td>
                 <td>  &emsp; {{entry.parent.maxcgsiterations}}</td>
             </tr>
         </table>

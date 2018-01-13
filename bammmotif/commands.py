@@ -124,8 +124,6 @@ def get_evaluation_command(job_pk):
     param.append('--ROC5 1')
     param.append('--PRC 1')
     command = " ".join(str(s) for s in param)
-    print(command)
-    sys.stdout.flush()
     return command
 
 
