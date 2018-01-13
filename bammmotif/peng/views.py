@@ -21,7 +21,7 @@ from bammmotif.utils import (
     get_result_folder,
 )
 import bammmotif.tasks as tasks
-from bammmotif.peng.settings import MEME_PLOT_DIRECTORY, get_job_directory, MEME_PLOT_INPUT, PENG_JOB_RESULT_DIR
+from bammmotif.peng.settings import MEME_PLOT_DIRECTORY, get_job_directory, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY
 import uuid
 
 def peng_result_detail(request, pk):
@@ -56,7 +56,13 @@ def peng_result_detail_meta(request, pk):
     result = get_object_or_404(PengJobMeta, pk=pk)
     if result.job_id.complete:
         print("status is successfull")
-        meme_result_file_path = os.path.join(get_job_directory(result.job_id.job_id), PENG_JOB_RESULT_DIR, MEME_PLOT_INPUT)
+        #print("peng_result_detail:!!!!!!!!!!!!!__!_!_!OP@KEOIQWJEOQ")
+        #from bammmotif.command_line import FilterPWM
+        #from bammmotif.peng.settings import get_job_directory
+        #d = get_job_directory(result.job_id.job_id)
+        #a = FilterPWM.init_with_extra_directory(d)
+        #print(a.command_tokens)
+        meme_result_file_path = os.path.join(get_job_directory(result.job_id.job_id), JOB_OUTPUT_DIRECTORY, MEME_PLOT_INPUT)
         plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
         opath = os.path.join(get_result_folder(str(result.job_id)), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
         if not os.path.exists(plot_output_directory):

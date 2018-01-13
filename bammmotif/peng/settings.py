@@ -2,7 +2,7 @@ import os
 from django.conf import settings
 
 
-PENG_JOB_RESULT_DIR = 'Output'
+JOB_OUTPUT_DIRECTORY = 'Output'
 PENG_OUTPUT = 'pengoutput'
 PENG_INPUT = 'Input'
 SELECTED_MOTIFS = 'selected_motifs'
@@ -30,6 +30,10 @@ ALLOWED_JOBMODES = [
     "peng",
 ]
 
+def get_job_ouput_directory(job_id):
+    ptj = get_job_directory(job_id)
+
+
 
 def get_job_directory(job_id):
     path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id))
@@ -45,13 +49,13 @@ def file_path_peng(job_id, filename):
     return os.path.join(path_to_job, str(filename))
 
 def file_path_peng_meta(job_id, filename):
-    path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id), PENG_JOB_RESULT_DIR)
+    path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id), JOB_OUTPUT_DIRECTORY)
     if not os.path.exists(path_to_job):
         os.makedirs(path_to_job)
     return os.path.join(path_to_job, str(filename))
 
 def peng_meme_directory(job_id):
-    path_to_plots = os.path.join(settings.MEDIA_ROOT, str(job_id), PENG_JOB_RESULT_DIR)
+    path_to_plots = os.path.join(settings.MEDIA_ROOT, str(job_id), JOB_OUTPUT_DIRECTORY)
     if not os.path.exists(path_to_plots):
         os.makedirs(path_to_plots)
     return path_to_plots

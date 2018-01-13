@@ -6,7 +6,7 @@ from celery import task, chain
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from bammmotif.models import Job, PengJob, PengJobMeta, JobMeta
-from bammmotif.peng.settings import FASTA_VALIDATION_SCRIPT, get_job_directory, MEME_PLOT_INPUT, PENG_JOB_RESULT_DIR
+from bammmotif.peng.settings import FASTA_VALIDATION_SCRIPT, get_job_directory, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY
 from bammmotif.peng.job import file_path_peng
 from bammmotif.utils import get_result_folder
 from bammmotif.command_line import PlotMeme, FilterPWM, ShootPengModule
@@ -83,7 +83,7 @@ def run_peng(self, job_pk):
 def run_filter_pwm(self, job_pk):
     peng_job = get_object_or_404(PengJobMeta, pk=job_pk)
     with JobSaveManager(peng_job) as mgr:
-        directory = os.path.join(get_job_directory(peng_job.job_id.job_id), PENG_JOB_RESULT_DIR)
+        directory = os.path.join(get_job_directory(peng_job.job_id.job_id), JOB_OUTPUT_DIRECTORY)
         fpwm = FilterPWM.init_with_extra_directory(directory)
         logfile = get_log_file(job_pk)
         fpwm.set_log_file(logfile)
@@ -129,8 +129,8 @@ def plot_meme(self, job_pk):
 
 @task(bind=True)
 def plot_meme_meta(self, job_pk):
-    result = get_object_or_404(PengJobMeta, pk=str(job_pk))
-    meme_result_file_path = os.path.join(get_job_directory(str(result.job_id)), PENG_JOB_RESULT_DIR, MEME_PLOT_INPUT)
+    result = get_object_or_404(PengJobMeta, pk=job_pk)
+    meme_result_file_path = os.path.join(get_job_directory(str(result.job_id)), JOB_OUTPUT_DIRECTORY, MEME_PLOT_INPUT)
     plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
     if not os.path.exists(plot_output_directory):
         os.makedirs(plot_output_directory)
