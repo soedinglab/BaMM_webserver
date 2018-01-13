@@ -44,6 +44,11 @@ def job_directory_path(instance, filename):
     return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID),
                         'Input', str(filename))
 
+
+def job_directory_path_motif(instance, filename):
+    return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID),
+                        'Input', str(filename))
+
 def job_directory_path_peng(instance, filename, intermediate_dir="Input"):
     path = os.path.join(settings.MEDIA_ROOT, str(instance.job_ID), intermediate_dir)
     if not os.path.exists(path):

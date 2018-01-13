@@ -19,17 +19,16 @@ from .utils import (
     get_log_file,
     get_user, set_job_name, upload_example_fasta,
     upload_example_motif, get_result_folder,
-    upload_db_input
+    upload_db_input, valid_uuid
 )
 import datetime
 import os
 from os import path
-import sys
+from os.path import basename
 
 
 # #########################
-# ## HOME and GENERAL VIEWS
-# #########################
+# ## HOME and GENERAL VIEWS #########################
 
 
 def home(request):
@@ -73,17 +72,26 @@ def run_compare_view(request, mode='normal'):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.user = get_user(request)
+            job.mode = "Compare"
             job.save()
             job_pk = job.job_ID
 
             if job.job_name is None:
                 set_job_name(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
 
             # if example is requested, load the sampleData
             if mode == 'example':
-                upload_example_fasta(job_pk)
+                #upload_example_fasta(job_pk)
+                #job = get_object_or_404(Job, pk = job_pk)
                 upload_example_motif(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
 
+            job = get_object_or_404(Job, pk = job_pk)
+            job.FDR = False
+            job.score_Seqset = False
+            job.MMcompare = True
+            job.save()
             run_compare.delay(job_pk)
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
@@ -96,8 +104,6 @@ def run_compare_view(request, mode='normal'):
 
 
 def run_bammscan_view(request, mode='normal', pk='null'):
-    print('mode = ' + mode)
-    print('pk = ' + pk)
     if request.method == "POST":
         if mode == 'example':
             form = OccurrenceExampleForm(request.POST, request.FILES)
@@ -110,20 +116,27 @@ def run_bammscan_view(request, mode='normal', pk='null'):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.user = get_user(request)
+            job.mode = "Occurrence"
             job.save()
             job_pk = job.job_ID
 
             if job.job_name is None:
                 set_job_name(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
 
             # if example is requested, load the sampleData
             if mode == 'example':
                 upload_example_fasta(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
                 upload_example_motif(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
 
             # enter db input
             if mode == 'db':
                 upload_db_input(job_pk, pk)
+                job = get_object_or_404(Job, pk = job_pk)
+
+            job = get_object_or_404(Job, pk = job_pk)
 
             run_bammscan.delay(job_pk)
             return render(request, 'job/submitted.html', {'pk': job_pk})
@@ -144,8 +157,6 @@ def run_bammscan_view(request, mode='normal', pk='null'):
 
 
 def run_bamm_view(request, mode='normal'):
-    print("run_bamm_view")
-    print(request.POST, request.FILES)
     if request.method == "POST":
         if mode == 'example':
             form = PredictionExampleForm(request.POST, request.FILES)
@@ -157,25 +168,27 @@ def run_bamm_view(request, mode='normal'):
             job = form.save(commit=False)
             job.created_at = datetime.datetime.now()
             job.user = get_user(request)
+            job.mode = "Prediction"
             job.save()
             job_pk = job.job_ID
 
             if job.job_name is None:
                 set_job_name(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
 
             # if example is requested, load the sampleData
             if mode == 'example':
                 upload_example_fasta(job_pk)
+                job = get_object_or_404(Job, pk = job_pk)
                 upload_example_motif(job_pk)
-                job.Motif_Initialization = 'CustomFile'
-                job.Motif_Init_File_Format = 'PWM'
+                job = get_object_or_404(Job, pk = job_pk)
 
-            print("motif initialization")
-            print(job.Motif_Initialization)
+            job = get_object_or_404(Job, pk = job_pk)
             if job.Motif_Initialization == 'PEnGmotif':
                 run_peng.delay(job_pk)
             else:
                 run_bamm.delay(job_pk)
+
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
     if mode == 'example':
@@ -200,14 +213,18 @@ def find_results(request):
         form = FindForm(request.POST)
         if form.is_valid():
             jobid = form.cleaned_data['job_ID']
-            return redirect('result_detail', pk=jobid)
+            if valid_uuid(jobid):
+                if Job.objects.filter(pk=jobid).exists():
+                    return redirect('result_detail', pk=jobid)
+            form = FindForm()
+            return render(request, 'results/results_main.html', {'form': form, 'warning': True})
     else:
         form = FindForm()
-    return render(request, 'results/results_main.html', {'form': form})
+    return render(request, 'results/results_main.html', {'form': form, 'warning': False})
 
 
 def result_overview(request):
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         user_jobs = Job.objects.filter(user=request.user.id)
         return render(request, 'results/result_overview.html',
                       {'user_jobs': user_jobs})
@@ -217,7 +234,7 @@ def result_overview(request):
 
 def delete(request, pk):
     Job.objects.filter(job_ID=pk).delete()
-    if request.user.is_authenticated:
+    if request.user.is_authenticated():
         user_jobs = Job.objects.filter(user=request.user.id)
         return render(request, 'results/result_overview.html',
                       {'user_jobs': user_jobs})
@@ -228,7 +245,10 @@ def delete(request, pk):
 def result_detail(request, pk):
     result = get_object_or_404(Job, pk=pk)
     opath = get_result_folder(pk)
-    Output_filename = result.Output_filename()
+    if basename(os.path.splitext(result.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(result.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(result.Input_Sequences.name)[0])
 
     database = 100
     db = get_object_or_404(DbParameter, pk=database)
@@ -236,24 +256,20 @@ def result_detail(request, pk):
 
     if result.complete:
         print("status is successfull")
-        num_logos = range(1, (min(2, result.model_Order)+1))
-        if result.mode == "Prediction" or result.mode == "Compare":
-            return render(request, 'results/result_detail.html',
-                          {'result': result, 'opath': opath,
-                           'mode': result.mode,
-                           'Output_filename': Output_filename,
-                           'num_logos': num_logos,
-                           'db_dir': db_dir})
-        elif result.mode == "Occurrence":
-            return redirect('result_occurrence', result.mode, pk)
-
+        num_logos = range(1, (min(3,result.model_Order+1)))
+        return render(request, 'results/result_detail.html',
+                      {'result': result, 'opath': opath,
+                       'mode': result.mode,
+                       'Output_filename': outname,
+                       'num_logos': num_logos,
+                       'db_dir': db_dir})
     else:
         print('status not ready yet')
         log_file = get_log_file(pk)
         command = "tail -20 %r" % log_file
         output = os.popen(command).read()
         return render(request, 'results/result_status.html',
-                      {'result': result, 'opath': opath, 'output': output})
+                      {'job_ID': result.job_ID, 'job_name': result.job_name, 'status': result.status, 'output': output})
 
 
 # #########################
@@ -267,22 +283,18 @@ def maindb(request):
         if form.is_valid():
             p_name = form.cleaned_data['db_ID']
             db_entries = ChIPseq.objects.filter(target_name__icontains=p_name)
-            sample = db_entries.first()
-            db_location = path.join(sample.parent.base_dir, 'Results')
-            return render(request, 'database/db_overview.html',
-                          {'protein_name': p_name,
-                           'db_entries': db_entries,
-                           'db_location': db_location})
+            if db_entries.exists():
+                sample = db_entries.first()
+                db_location = path.join(sample.parent.base_dir, 'Results')
+                return render(request, 'database/db_overview.html',
+                              {'protein_name': p_name,
+                               'db_entries': db_entries,
+                               'db_location': db_location})
+            form = DBForm()
+            return render(request, 'database/db_main.html', {'form': form, 'warning': True})
     else:
         form = DBForm()
     return render(request, 'database/db_main.html', {'form': form})
-
-
-def db_overview(request, protein_name, db_entries):
-    return render(request, 'database/db_overview.html',
-                  {'protein_name': protein_name,
-                   'db_entries': db_entries,
-                   'db_location': db_location})
 
 
 def db_detail(request, pk):
@@ -290,3 +302,10 @@ def db_detail(request, pk):
     db_location = path.join(entry.parent.base_dir, 'Results')
     return render(request, 'database/db_detail.html',
                   {'entry': entry, 'db_location': db_location})
+
+def db_overview(request, protein_name, db_entries):
+    return render(request, 'database/db_overview.html',
+                  {'protein_name': protein_name,
+                   'db_entries': db_entries,
+                   'db_location': db_location})
+
