@@ -89,7 +89,7 @@ def run_command(command):
 
 def get_user(request):
     # assign user to new job instance
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return request.user
     else:
         ip = get_ip(request)
@@ -149,7 +149,7 @@ def add_peng_output(job_pk):
 def upload_db_input(job_pk, db_pk):
     job = get_object_or_404(Job, pk=job_pk)
     db_entry = get_object_or_404(ChIPseq, pk=db_pk)
-    db_dir = path.join(settings.DB_ROOT + '/' + db_entry.parent.base_dir + '/Results/' + db_entry.result_location)
+    db_dir = path.join(settings.BASE_DIR + settings.DB_ROOT + '/' + db_entry.parent.base_dir + '/Results/' + db_entry.result_location)
     # upload motifInitFile
     f = db_dir + '/' + str(db_entry.result_location) + '_motif_1.ihbcp'
     out_f = str(db_entry.result_location) + ".ihbcp"
@@ -163,11 +163,11 @@ def upload_db_input(job_pk, db_pk):
     out_f = str(db_entry.result_location) + ".hbcp"
     with open(f) as fh:
         job.bgModel_File.save(out_f, File(fh))
-    job.save()
 
     # adjust model order
     job.model_Order = db_entry.parent.modelorder
     job.background_Order = db_entry.parent.bgmodelorder
+    job.save()
 
 
 def initialize_motifs(job_pk, off, mode):
@@ -179,6 +179,21 @@ def initialize_motifs(job_pk, off, mode):
         motif_obj = Motifs(parent_job=job, job_rank=motif)
         motif_obj.save()
 
+def initialize_motifs_compare(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
+    fname = str(get_job_output_folder(job_pk)) + "/" + outname + ".iupac"
+    with open(fname) as f:
+        for i, l in enumerate(f):
+            pass   
+    job.num_motifs = i+1
+    job.save()
+    for motif in range(1, (int(job.num_motifs) + 1)):
+        motif_obj = Motifs(parent_job=job, job_rank=motif)
+        motif_obj.save()
 
 def add_motif_evaluation(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
@@ -197,28 +212,38 @@ def add_motif_evaluation(job_pk):
 def add_motif_motif_matches(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     motifs = Motifs.objects.filter(parent_job=job)
-    filename = str(get_job_output_folder(job_pk)) + "/" + str(basename(os.path.splitext(job.Input_Sequences.name)[0])) + ".mmcomp"
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
+    filename = str(get_job_output_folder(job_pk)) + "/" + outname + ".mmcomp"
     with open(filename) as fh:
         for line in fh:
             tokens = line.split()
-            motif_query = motifs.filter(job_rank=tokens[1])[0]
-            motif_target = get_object_or_404(ChIPseq, filename=tokens[2])
-            # create relationship
-            rel_obj = DbMatch(
-                motif=motif_query,
-                db_entry=motif_target,
-                p_value=tokens[3],
-                e_value=tokens[4],
-                score=tokens[5],
-                overlap_len=tokens[6]
-            )
-            rel_obj.save()
+            if len(tokens) > 0:
+                if tokens[1] != 'matches!':
+                    motif_query = motifs.filter(job_rank=tokens[1])[0]
+                    motif_target = get_object_or_404(ChIPseq, filename=tokens[2])
+                    # create relationship
+                    rel_obj = DbMatch(
+                        motif=motif_query,
+                        db_entry=motif_target,
+                        p_value=tokens[3],
+                        e_value=tokens[4],
+                        score=tokens[5],
+                        overlap_len=tokens[6]
+                    )
+                    rel_obj.save()
 
 
 def add_motif_iupac(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     motifs = Motifs.objects.filter(parent_job=job)
-    filename = str(get_job_output_folder(job_pk)) + "/" + str(basename(os.path.splitext(job.Input_Sequences.name)[0])) + ".iupac"
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
+    filename = str(get_job_output_folder(job_pk)) + "/" + outname + ".iupac"
     with open(filename) as fh:
         for line in fh:
             tokens = line.split()
@@ -231,32 +256,56 @@ def add_motif_iupac(job_pk):
 def transfer_motif(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     make_job_output_folder(job_pk)
+    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
+        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
+    else:
+        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
+    offs = 1
 
     src = get_job_input_folder(job_pk) + '/' + basename(job.Motif_InitFile.name)
     input_ending = os.path.splitext(job.Motif_InitFile.name)[1]
-    if job.Input_Sequences is None:
-        dest = get_job_output_folder(job_pk) + '/' + basename(job.Motif_InitFile.name)
-        # add this file also as Input_Sequences File to generate MMcompare command
-        with open(src) as fh:
-            job.Input_Sequences.save(basename(job.Motif_InitFile.name), File(fh))
-            job.save()
-    else:
-        dest = get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_1' + input_ending
-    copyfile(src, dest)
-    offs = 1
-    if input_ending == '.ihbcp':
+    
+    if job.Motif_Init_File_Format == 'PWM':
+        dest = get_job_output_folder(job_pk) + '/' + outname + ".meme"
+        copyfile(src, dest)
+        
+    if job.Motif_Init_File_Format == 'BaMM':
+        dest = get_job_output_folder(job_pk) + '/' + outname + input_ending
+        copyfile(src, dest)
         src = get_job_input_folder(job_pk) + '/' + basename(job.bgModel_File.name)
-        if job.Input_Sequences is None:
-            dest = get_job_output_folder(job_pk) + '/' + basename(job.bgModel_File.name)
-        else:
-            dest = get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + os.path.splitext(job.bgModel_File.name)[1]
+        dest = get_job_output_folder(job_pk) + '/' + outname + os.path.splitext(job.bgModel_File.name)[1]
         copyfile(src, dest)
         offs = 2
+    
     return offs
-
 
 def valid_uuid(uuid):
     regex = re.compile('^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\Z', re.I)
     match = regex.match(uuid)
     return bool(match)
-    
+
+
+def get_model_order(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    filename = get_job_input_folder(job_pk) + '/' + basename(job.Motif_InitFile.name)
+    order = -1
+    with open(filename) as fh:
+        for line in fh:
+            tokens = line.split()
+            if len(tokens) == 0:
+                return (order)
+            else:
+                order = order + 1
+    return order
+
+
+def get_bg_model_order(job_pk):
+    job = get_object_or_404(Job, pk=job_pk)
+    filename = get_job_input_folder(job_pk) + '/' + basename(job.bgModel_File.name)
+    order = -1
+    with open(filename) as fh:
+        for line in fh:
+            tokens = line.split()
+            order = tokens[3]
+            break
+    return order

@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views
-from . import peng_bamm_split_views
+from bammmotif.peng import views as peng_views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -27,9 +27,19 @@ urlpatterns = [
     url(r'^database/$', views.maindb, name='maindb'),
     url(r'^database/db_overview/$', views.db_overview, name='db_overview'),
     url(r'^database/(?P<pk>.*)/$', views.db_detail, name='db_detail'),
-    url(r'^job/run_peng_view/$', peng_bamm_split_views.run_peng_view, name='peng_predict'),
-    url(r'^job/run_peng_view/(?P<mode>\w+)/$', peng_bamm_split_views.run_peng_view, name='peng_predict'),
-    url(r'^peng_results/$', peng_bamm_split_views.find_peng_results, name='find_peng_result'),
-    url(r'^peng_results/result_overview/(?P<pk>.*)/$', peng_bamm_split_views.peng_result_overview, name='peng_result_overview'),
-    url(r'^peng_results/(?P<pk>.*)/$', peng_bamm_split_views.peng_result_detail, name='peng_result_detail'),
+    #url(r'^job/run_peng_view/$', peng_views.run_peng_view, name='peng_predict'),
+    #url(r'^job/run_peng_view/(?P<mode>\w+)/$', peng_views.run_peng_view, name='peng_predict'),
+    url(r'^job/run_peng_view/$', peng_views.run_peng_view_meta, name='peng_predict'),
+    url(r'^job/run_peng_view/(?P<mode>\w+)/$', peng_views.run_peng_view_meta, name='peng_predict'),
+    url(r'^peng_results/$', peng_views.find_peng_results, name='find_peng_result'),
+    url(r'^peng_results/result_overview/(?P<pk>.*)/$', peng_views.peng_result_overview, name='peng_result_overview'),
+    #url(r'^peng_results/(?P<pk>.*)/$', peng_views.peng_result_detail, name='peng_result_detail'),
+    url(r'^peng_results/(?P<pk>.*)/$', peng_views.peng_result_detail_meta, name='peng_result_detail'),
+    url(r'^job/peng_to_bamm/(?P<pk>.*)/$', peng_views.peng_load_bamm_meta, name='peng_to_bamm'),
+    url(r'^job/peng_to_bamm/$', peng_views.peng_load_bamm_meta, name='peng_to_bamm'),
+    #url(r'^job/peng_to_bamm/(?P<pk>.*)/$', peng_views.peng_load_bamm, name='peng_to_bamm'),
+    #url(r'^job/peng_to_bamm/$', peng_views.peng_load_bamm, name='peng_to_bamm'),
+    url(r'^peng_to_bamm_results/$', peng_views.find_peng_to_bamm_results, name='find_peng_to_bamm_result'),
+    url(r'^peng_to_bamm_results/result_overview/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_overview, name='peng_to_bamm_result_overview'),
+    url(r'^peng_to_bamm_results/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_detail, name='peng_to_bamm_result_detail'),
  ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

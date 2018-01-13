@@ -11,6 +11,8 @@ from .command_line import ShootPengModule
 
 from .command_line import ShootPengModule
 
+from .command_line import ShootPengModule
+
 FORMAT_CHOICES = (
     ('BindingSites', 'BindingSites'),
     ('PWM', 'PWM'), 
@@ -37,7 +39,16 @@ MODE_CHOICES = (
 )
 
 
+JOB_INFO_MODE_CHOICES = (
+    ('peng', 'peng'),
+)
+
 def job_directory_path(instance, filename):
+    return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID),
+                        'Input', str(filename))
+
+
+def job_directory_path_motif(instance, filename):
     return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID),
                         'Input', str(filename))
 
@@ -47,12 +58,78 @@ def job_directory_path_peng(instance, filename, intermediate_dir="Input"):
         os.makedirs(path)
     return os.path.join(path, str(filename))
 
+def job_directory_path_peng_meta(instance, filename, intermediate_dir="Input"):
+    path = os.path.join(settings.MEDIA_ROOT, str(instance.job_id), intermediate_dir)
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return os.path.join(path, str(filename))
+
+class JobMeta(models.Model):
+    # General information about each job is stored here.
+    job_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    job_name = models.CharField(max_length=50, null=True, blank=True)
+    created_at = models.DateTimeField(default=datetime.datetime.now)
+    mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES)
+    status = models.CharField(max_length=255, default="queueing", null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    complete = models.BooleanField(default=False)
+    job_type = models.CharField(max_length=30, null=True, blank=True, choices=JOB_INFO_MODE_CHOICES)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return str(self.job_id)
+
+class PengJobMeta(models.Model):
+    # Peng specific
+    #job_id = models.ForeignKey(JobMeta, on_delete=models.CASCADE, editable=False, primary_key=True)
+    job_id = models.OneToOneField(JobMeta, on_delete=models.CASCADE, editable=False, primary_key=True)
+    num_motifs = models.IntegerField(default=1)
+    fasta_file = models.FileField(upload_to=job_directory_path_peng_meta, null=True)
+    meme_output = models.CharField(default=ShootPengModule.defaults['meme_output'], max_length=150)
+    json_output = models.CharField(default=ShootPengModule.defaults['json_output'], max_length=150)
+    temp_dir = models.CharField(max_length=100, null=True, default=ShootPengModule.defaults['temp_dir'])
+    bg_sequences = models.FileField(upload_to=job_directory_path_peng, null=True, blank=True)
+    pattern_length = models.IntegerField(default=ShootPengModule.defaults['pattern_length'])
+    zscore_threshold = models.FloatField(default=ShootPengModule.defaults['zscore_threshold'])
+    count_threshold = models.IntegerField(default=ShootPengModule.defaults['count_threshold'])
+    bg_model_order = models.IntegerField(default=ShootPengModule.defaults['bg_model_order'])
+    strand = models.CharField(max_length=5, default="BOTH")
+    objective_function = models.CharField(max_length=50, default=ShootPengModule.defaults['iupac_optimization_score'])
+    enrich_pseudocount_factor = models.FloatField(default=ShootPengModule.defaults['enrich_pseudocount_factor'])
+    no_em = models.BooleanField(default=ShootPengModule.defaults['no_em'])
+    em_saturation_threshold = models.FloatField(default=ShootPengModule.defaults['em_saturation_threshold'])
+    em_threshold = models.FloatField(default=ShootPengModule.defaults['em_threshold'])
+    em_max_iterations = models.IntegerField(default=ShootPengModule.defaults['em_max_iterations'])
+    no_merging = models.BooleanField(default=ShootPengModule.defaults['no-merging'])
+    bit_factor_threshold = models.FloatField(default=ShootPengModule.defaults['bit_factor_threshold'])
+    use_default_pwm = models.BooleanField(default=ShootPengModule.defaults['use_default_pwm'])
+    pwm_pseudo_counts = models.IntegerField(default=ShootPengModule.defaults['pwm_pseudo_counts'])
+    n_threads = models.IntegerField(default=ShootPengModule.defaults['n_threads'])
+    silent = models.BooleanField(default=ShootPengModule.defaults['silent'])
+
+
+    class Meta:
+        pass
+
+    def __str__(self):
+        return "peng_" + str(self.job_id)
+
+    def __eq__(self, obj):
+        if isinstance(obj, PengJobMeta):
+            return str(obj) == self.__str__()
+        elif (obj, str):
+            return obj == self.__str__()
+        return False
+
+
 class Job(models.Model):
     # general info
     job_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    job_name=models.CharField(max_length=50, null=True, blank=True)
+    job_name = models.CharField(max_length=50, null=True, blank=True)
     created_at = models.DateTimeField( default=datetime.datetime.now)
-    mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES) 
+    mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES)
     status = models.CharField(max_length=255, default="queueing", null=True, blank=True)
     num_motifs = models.IntegerField(default=1)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -86,7 +163,7 @@ class Job(models.Model):
     #no_Alpha_Sampling = models.BooleanField( default=True)
 
     # EM options
-    EM = models.BooleanField(default=True)    
+    EM = models.BooleanField(default=True)
     #epsilon = models.DecimalField(default=0.001, max_digits=5, decimal_places=4)
     q_value = models.DecimalField(default=0.9, max_digits=3, decimal_places=2)
     #max_EM_Iterations = models.BigIntegerField(default=10e5)

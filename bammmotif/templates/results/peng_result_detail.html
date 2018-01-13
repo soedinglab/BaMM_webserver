@@ -4,188 +4,97 @@
     {% load static %}
     {% load bammmotif_extras %}
 
-    <div class="jumbotron" style="background-color:white" xmlns="http://www.w3.org/1999/html">
-        <h2> Results for  {{result.job_name}} </h2>
-        <hr style="border: 1px solid #1f2e2e">
-        <div class="well" style="background-color:white">
-            <h2>Peng Settings </h2>
-            <hr style="border: 1px solid #1f2e2e">
-            <table>
-                {% if mode == "Prediction" or mode == "Occurrence" %}
-                    <tr>
-                        <td>  &emsp; Input Sequence: </td>
-                        <td>  &emsp; {{result.fasta_file}}</td>
-                    </tr>
-                {% endif %}
-            {% comment %}
-                <tr>
-                    <td>  &emsp; Mofti File: </td>
-                    <td>  &emsp; {{result.MotifInit_filename}}</td>
-                </tr>
-                {% if mode == "Prediction" or mode == "Occurrence" %}
-                    <tr>
-                        <td>  &emsp; Search on Both Strands: </td>
-                        <td>  &emsp; {{result.reverse_Complement}}</td>
-                    </tr>
-                {% endif %}
-            {% endcomment %}
-            </table>
-
-            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white; border:0px">
-
-                {% if mode == "Prediction" or mode == "Occurrrence" %}
-                    <div class="panel-heading" role="tab" id="headingOne" style="background-color:white; border:0px">
-                        <h2 class="panel-title">
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color:white; border:0px">
-                                <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"style="color:black"></span> Advanced Settings </h3>
-                            </a>
-                        </h2>
-                    </div>
-                    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white">
-                        <div class="panel-body">
-
-                            {% if mode == "Prediction" %}
-                                <h3>Model Settings</h3>
-                                <table>
-                                    <tr>
-                                        <td>  &emsp; Z-Score Threshold: </td>
-                                        <td>  &emsp; {{result.zscore_threshold}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>  &emsp; Count Threshold: </td>
-                                        <td>  &emsp; {{result.count_threshold}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>  &emsp; Background Model Order: </td>
-                                        <td>  &emsp; {{result.bg_model_order}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>  &emsp; Strand: </td>
-                                        <td>  &emsp; {{result.strand}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>  &emsp; IUPAC Optimization Score: </td>
-                                        <td>  &emsp; {{result.objective_function}} </td>
-                                    </tr>
-                                    {% if result.no_em %}
-                                        <tr>
-                                            <td>  &emsp; No EM </td>
-                                        </tr>
-                                    {% endif %}
-                                    <tr>
-                                        <td>  &emsp; EM Saturation Threshold: </td>
-                                        <td>  &emsp; {{result.em_saturation_threshold}} </td>
-                                    </tr>
-                                    <tr>
-                                        <td>  &emsp; EM Threshold: </td>
-                                        <td>  &emsp; {{result.em_threshold}} </td>
-                                    </tr>
-                                    <tr>
-                                        <td>  &emsp; EM Maximum Iterations: </td>
-                                        <td>  &emsp; {{result.em_max_iterations}} </td>
-                                    </tr>
-                                    {% if result.no_merging %}
-                                        <tr>
-                                            <td>  &emsp; No Merging </td>
-                                        </tr>
-                                    {% endif %}
-                                    <tr>
-                                        <td>  &emsp; Bit Factor Threshold: </td>
-                                        <td>  &emsp; {{result.bit_factor_threshold}} </td>
-                                    </tr>
-                                    {% if result.use_default_pwm %}
-                                        <tr>
-                                            <td>  &emsp; Use Default PWM </td>
-                                        </tr>
-                                    {% endif %}
-                                    <tr>
-                                        <td>  &emsp; PWM Pseudocounts: </td>
-                                        <td>  &emsp; {{result.pwm_pseudo_counts}} </td>
-                                    </tr>
-                                </table>
-                            {% endif %}
-
-
-                            {% if result.EM %}
-                                <h3>Expectation Maximization Optimization:</h3>
-                                <table>
-                                    <tr>
-                                        <td>  &emsp; q value: </td>
-                                        <td>  &emsp; {{result.q_value}}</td>
-                                    </tr>
-                                    <tr>
-                                </table>
-                            {% endif %}
-
-                            {% if result.CGS %}
-                                <h3>Collapsed Gibbs Sampling:</h3>
-                                <table>
-                                    <tr>
-                                        <td>  &emsp; sampling Alphas: </td>
-                                        <td>  &emsp; {{result.no_Alpha_Sampling|yesno:"False,True"}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>  &emsp; max Iterations: </td>
-                                        <td>  &emsp; {{result.max_CGS_Iterations}}</td>
-                                    </tr>
-                                </table>
-                            {% endif %}
-
-                            {% if result.MMcompare %}
-                                <h3>Database Model Comparison:</h3>
-                                <table>
-                                    <tr>
-                                        <td>  &emsp; P-value cutoff: </td>
-                                        <td>  &emsp; {{result.p_value_cutoff}}</td>
-                                    </tr>
-                                </table>
-                            {% endif %}
-
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
     <div class="jumbotron" style="background-color:white"><font color="black">
-        <form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_BaMMmotif.zip" method="get" target="_blank">
+        <form action="{% get_media_prefix %}/{{ opath }}/motif_all.zip" method="get" target="_blank">
             <p align="right">
                 <button type="submit" class="btn btn-default" aria-label="Download">
-                    <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD ALL </span>
+                    <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD ALL</span>
                 </button>
             </p>
         </form>
 
+
+
+
+
         {% if mode == "Prediction" %}
             <h2> Predicted Motifs </h2>
         {% endif %}
+        {% comment %}
         <table class="table table-hover">
             {% for motif in motif_ids %}
                 <tr>
                     <div>
                         <div> <br>Motif: {{ motif }} </br></div>
                         <div>
-                            <img src="{% get_media_prefix %}{{ opath }}/{{ motif }}.png" class="responsive-img" style='max-height:400px;' alt="{% get_media_prefix %}{{ opath }}/{{ motif }}.png">
+                            <img src="{% get_media_prefix %}{{ opath }}/{{ motif }}.png"
+                                 class="responsive-img"
+                                 style='max-height:400px;'
+                                 alt="{% get_media_prefix %}{{ opath }}/{{ motif }}.png">
+                        </div>
+                        <div>
+                        class="indent" style="padding-left: 1.8em"><label for="id_strand">
+                            <a class "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});">
+                                <span class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span>
+                            </a>
+                            Keep Plot:</label><font color="#1f2e2e">&nbsp;&nbsp;
+                            <input name="{keep_dict.motif}" type="checkbox" unchecked/></font>
                         </div>
                     </div>
                 </tr>
             {% endfor %}
 
         </table>
+                            {% endcomment %}
 
-        <table class="table table-hover">
-            <tr>
-                <th> # </th>
-                <th> IUPAC </th>
-                <th> PWM </th>
-                <th> reverse Comp. </th>
-                {% if mode == "Prediction" %}
-                    <th> AUSFC </th>
-                    <th> % occurrence </th>
-                {% endif %}
-                <th> Download </th>
-            </tr>
+
+        {% comment %}
+        <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=result.job_ID %}">
+            {% csrf_token %}
+            <div>
+                <input type="hidden" value="{% for motif in meme_meta_info %} {{ motif.select }} {% endfor %}"
+                       name="meme_meta_info"/>
+                <input type="hidden" value="{{ result.job_ID }}" name="pk">
+                <input type="submit" value="call peng_to_bamm"/>
+            </div>
+        </form>
+        {% endcomment %}
+        <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=result.job_id %}">
+            {% csrf_token %}
+            <table class="table table-hover">
+                <tr>
+                    <th> Selected Motifs</th>
+                    <th> IUPAC</th>
+                    <th> PWM</th>
+                    <th> reverse Comp.</th>
+                    <th> log(pval)</th>
+                    <th> # sites</th>
+                    <th> Download</th>
+                </tr>
+                {% for motif in meme_meta_info %}
+                    <tr>
+                        <th><input id="id_{{ motif.meme_id }}" name="{{ motif.meme_id }}_select" type="checkbox"/></th>
+                        <th>{{ motif.meme_id }}</th>
+                        <th><img src="{% get_media_prefix %}{{ opath }}/{{ motif.meme_id }}.png" class="responsive-img"
+                                 style='max-height:400px;' width="100" height="50" alt={{ motif }}></th>
+                        <th><img src="{% get_media_prefix %}{{ opath }}/{{ motif.meme_id }}_rev.png"
+                                 class="responsive-img"
+                                 style='max-height:400px;' width="100" height="50" alt={{ motif }}_rev></th>
+                        <th> {{ motif.logpval }} </th>
+                        <th> {{ motif.nsites }}</th>
+                        <th>
+                            <form action="{% get_media_prefix %}/{{ opath }}/{{ motif.meme_id }}.zip" method="get"
+                                  target="_blank">
+                                <p align="right">
+                                    <button type="submit" class="btn btn-default" aria-label="Download">
+                                        <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD </span>
+                                    </button>
+                                </p>
+                            </form>
+                        </th>
+                    </tr>
+                {% endfor %}
+                {% comment %}
             {% for m in result.motifs_set.all|dictsort:"job_rank" %}
                 <tr>
                     <th> <a href="#{{m.job_rank}}" style="color:black">{{m.job_rank}} </a></th>
@@ -205,107 +114,207 @@
                     </a></th>
                 </tr>
             {% endfor %}
-        </table>
-    </div>
+            {% endcomment %}
+            </table>
+            <!-- Temp Input -->
 
-    {% for m in result.motifs_set.all|dictsort:"job_rank" %}
-        <a id="{{m.job_rank}}">  </a>
-        <div class="jumbotron" style="background-color:white"><font color="black">
-
-            <div class="well" style="background-color:white">
-
-
-
-                <form action="{% get_media_prefix %}/{{opath}}{{Output_filename}}_motif_{{m.job_rank}}.zip" method="get" target="_blank">
-                    <h2> Motif # {{m.job_rank}} &emsp;
-                        <button type="submit" class="btn btn-default" aria-label="Download" >
-                            <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD MODEL</span>
-                        </button>
-
-                    </h2>
-                </form>
-
-
+            <div class="jumbotron" style="background-color:white" xmlns="http://www.w3.org/1999/html">
+                <h2> Results for {{ job_info.job_name }} </h2>
                 <hr style="border: 1px solid #1f2e2e">
-                <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
-                <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
-                {% for i in num_logos %}
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
-                {% endfor %}
-
-                {% if mode == "Prediction" %}
-                    <h2> Performance and Positional Distribution on Input Sequences </h2>
+                <div class="well" style="background-color:white">
+                    <h2>Peng Settings </h2>
                     <hr style="border: 1px solid #1f2e2e">
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partiacl ROC5 curve">
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_PRC.jpeg" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Ditsribution"> &emsp;
-
-                {% elif mode == "Occurrence" %}
-                    <h2> Positional Distribution and Motif Occurrence on Input Sequences </h2>
-
-                    <h3> Feature disabled because bamm-search is not integrated into bamm-private yet (will be done in GOE) </h3>
-                    <hr style="border: 1px solid #1f2e2e">
-                    <!--{% with index=m.job_rank %}
-        {% for idx, p in plot.items %}
-            {% if idx == index %}
-                {{p|safe}}
-            {% endif %}
-        {% endfor %}
-        {% endwith %}
-        !-->
-
-                {% endif %}
-
-                {% if result.MMcompare %}
-
-                    <h2> Best Matches with our Database </h2>
-                    <hr style="border: 1px solid #1f2e2e">
-
-                    <table class="table table-hover">
-                        <tr>
-                            <th> Name </th>
-                            <th> p_value </th>
-                            <th> e_value </th>
-                            <th> PWM </th>
-                            <th> reverse Comp. </th>
-                            <th> DB Entry </th>
-                        </tr>
-                        {% for match in m.dbmatch_set.all|dictsort:"p_value"   %}
+                    <table>
+                        {% if mode == "Prediction" or mode == "Occurrence" %}
                             <tr>
-                                <th> {{match.db_entry.target_name}} </th>
-                                {% if  match.p_value < 0.0000000001 %}
-                                    <th> < 1e-10 </th>
-                                {% else %}
-                                    <th> {{match.p_value|floatformat:10}} </th>
-                                {% endif %}
-                                {% if  match.e_value < 0.0000000001 %}
-                                    <th> < 1e-10 </th>
-                                {% else %}
-                                    <th> {{match.e_value|floatformat:10}} </th>
-                                {% endif %}
-                                <th> <img src="{% get_static_prefix %}{{db_dir}}/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </th>
-                                <th> <img src="{% get_static_prefix %}{{db_dir}}/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></th>
-                                <th> <a href="{% url 'db_detail' match.db_entry.db_public_id %}" style="color:black">
-                                    <button type="submit" class="btn btn-default" aria-label="Database" >
-                                        <span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span>
-                                    </button>
-                                </a></th>
+                                <td> &emsp; Input Sequence:</td>
+                                <td> &emsp; {{ result.fasta_file }}</td>
                             </tr>
-                        {% endfor %}
-                    </table>
+                        {% endif %}
+                        {% comment %}
+                <tr>
+                    <td>  &emsp; Mofti File: </td>
+                    <td>  &emsp; {{result.MotifInit_filename}}</td>
+                </tr>
+                {% if mode == "Prediction" or mode == "Occurrence" %}
+                    <tr>
+                        <td>  &emsp; Search on Both Strands: </td>
+                        <td>  &emsp; {{result.reverse_Complement}}</td>
+                    </tr>
                 {% endif %}
+            {% endcomment %}
+                    </table>
 
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
+                         style="background-color:white; border:0px">
+
+                        {% if mode == "Prediction" or mode == "Occurrrence" %}
+                            <div class="panel-heading" role="tab" id="headingOne"
+                                 style="background-color:white; border:0px">
+                                <h2 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                                       aria-expanded="true" aria-controls="collapseOne"
+                                       style="background-color:white; border:0px">
+                                        <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"
+                                                  style="color:black"></span> Advanced Settings </h3>
+                                    </a>
+                                </h2>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingOne"
+                                 style="background-color:white">
+                                <div class="panel-body">
+
+                                    {% if mode == "Prediction" %}
+                                        <h3>Model Settings</h3>
+                                        <table>
+                                            <tr>
+                                                <td> &emsp; Z-Score Threshold:</td>
+                                                <td> &emsp; {{ result.zscore_threshold }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td> &emsp; Count Threshold:</td>
+                                                <td> &emsp; {{ result.count_threshold }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td> &emsp; Background Model Order:</td>
+                                                <td> &emsp; {{ result.bg_model_order }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td> &emsp; Strand:</td>
+                                                <td> &emsp; {{ result.strand }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td> &emsp; IUPAC Optimization Score:</td>
+                                                <td> &emsp; {{ result.objective_function }} </td>
+                                            </tr>
+                                            {% if result.no_em %}
+                                                <tr>
+                                                    <td> &emsp; No EM</td>
+                                                </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <td> &emsp; EM Saturation Threshold:</td>
+                                                <td> &emsp; {{ result.em_saturation_threshold }} </td>
+                                            </tr>
+                                            <tr>
+                                                <td> &emsp; EM Threshold:</td>
+                                                <td> &emsp; {{ result.em_threshold }} </td>
+                                            </tr>
+                                            <tr>
+                                                <td> &emsp; EM Maximum Iterations:</td>
+                                                <td> &emsp; {{ result.em_max_iterations }} </td>
+                                            </tr>
+                                            {% if result.no_merging %}
+                                                <tr>
+                                                    <td> &emsp; No Merging</td>
+                                                </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <td> &emsp; Bit Factor Threshold:</td>
+                                                <td> &emsp; {{ result.bit_factor_threshold }} </td>
+                                            </tr>
+                                            {% if result.use_default_pwm %}
+                                                <tr>
+                                                    <td> &emsp; Use Default PWM</td>
+                                                </tr>
+                                            {% endif %}
+                                            <tr>
+                                                <td> &emsp; PWM Pseudocounts:</td>
+                                                <td> &emsp; {{ result.pwm_pseudo_counts }} </td>
+                                            </tr>
+                                        </table>
+                                    {% endif %}
+
+
+                                    {% if result.EM %}
+                                        <h3>Expectation Maximization Optimization:</h3>
+                                        <table>
+                                            <tr>
+                                                <td> &emsp; q value:</td>
+                                                <td> &emsp; {{ result.q_value }}</td>
+                                            </tr>
+                                            <tr>
+                                        </table>
+                                    {% endif %}
+
+                                    {% if result.CGS %}
+                                        <h3>Collapsed Gibbs Sampling:</h3>
+                                        <table>
+                                            <tr>
+                                                <td> &emsp; sampling Alphas:</td>
+                                                <td> &emsp; {{ result.no_Alpha_Sampling|yesno:"False,True" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td> &emsp; max Iterations:</td>
+                                                <td> &emsp; {{ result.max_CGS_Iterations }}</td>
+                                            </tr>
+                                        </table>
+                                    {% endif %}
+
+                                    {% if result.MMcompare %}
+                                        <h3>Database Model Comparison:</h3>
+                                        <table>
+                                            <tr>
+                                                <td> &emsp; P-value cutoff:</td>
+                                                <td> &emsp; {{ result.p_value_cutoff }}</td>
+                                            </tr>
+                                        </table>
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
+            <div>
+                <input type="hidden" value="from_peng"
+                       name="meme_meta_info"/>
+                <input type="hidden" value="{{ result.job_id }}" name="pk">
+                <input type="submit" value="call peng_to_bamm"/>
+            </div>
+    </div>
+    </form>
+    </div>
 
+
+
+    {% comment %}
+            <a class="btn btn-primary btn-lg" href="{% url 'peng_to_bamm' pk=result.job_ID %}" {% filter_motifs keep_dict outpath %}
+               style="background-color:#1f2e2e">Continue to Bamm
+            </a>
+        <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e">
+            {% filter_motifs keep_dict outpath %}
+            &emsp; <a href="{% url 'peng_to_bamm' pk=result.job_ID%}" role="button">
+                   <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> View Example Result </span>
+                   </a>
+                   <font color="white">Peng</font>
+        </button>
+    <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=result.job_ID %}">
+        {% csrf_token %}
+        <div>
+            <input type="hidden" value="{% for motif in meme_meta_info %} {{ motif.select }} {% endfor %}"
+                   name="meme_meta_info"/>
+            <input type="hidden" value="{{ result.job_ID }}" name="pk">
+            <input type="submit" value="call peng_to_bamm"/>
         </div>
-    {% endfor %}
-    </div>
-    </div>
+    </form>
+            {% endcomment %}
+    {% comment %}
+        <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font color="white">BaMM!</font></button>
+        <p>
+            <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font
+                    color="white">BaMM!</font></button>
+            &emsp; <a href="{% url 'result_detail' pk='293aae88-6e1e-48ba-ad87-19e7304e0393' %}"  role="button"> <span
+                class="glyphicon glyphicon-play-circle" aria-hidden="true"> View Example Result </span></a>
+        </p>
+            <a class="btn btn-primary btn-lg" href="{% url 'peng_to_bamm' pk=result.job_ID %}" {% filter_motifs keep_dict outpath %}
+               style="background-color:#1f2e2e">Continue to Bamm
+            </a>
+            {% endcomment %}
 
 {% endblock %}
-
-
 
 
 
