@@ -258,3 +258,7 @@ tramp
 /GetOpt_ppLibrary/
 
 .idea/
+.idea
+
+# Database initialization
+POPULATED
