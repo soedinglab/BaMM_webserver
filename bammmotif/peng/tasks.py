@@ -145,5 +145,3 @@ def plot_meme_meta(self, job_pk):
 def peng_chain(self, job_pk):
     ret = chain(run_peng_meta.si(job_pk) | run_filter_pwm.si(job_pk) | plot_meme_meta.si(job_pk) | finish_up_peng.si(job_pk))()
     return ret
-
-

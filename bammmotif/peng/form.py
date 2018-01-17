@@ -4,9 +4,6 @@ from django import forms
 from bammmotif.models import PengJob_deprecated, Peng
 
 
-
-
-
 class PengFormMeta(forms.ModelForm):
 
     class Meta:
