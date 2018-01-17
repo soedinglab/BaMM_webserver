@@ -5,7 +5,7 @@ from bammmotif.utils import JobSaveManager, make_job_folder, get_log_file
 from celery import task, chain
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from bammmotif.models import Job, PengJob, PengJobMeta, JobMeta
+from bammmotif.models import Job, PengJob_deprecated, Peng, JobInfo
 from bammmotif.peng.settings import FASTA_VALIDATION_SCRIPT, get_job_directory, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY
 from bammmotif.peng.job import file_path_peng
 from bammmotif.utils import get_result_folder
@@ -67,7 +67,7 @@ def valid_fasta(self, job_pk):
 
 @task(bind=True)
 def run_peng(self, job_pk):
-    peng_job = get_object_or_404(PengJob, pk=job_pk)
+    peng_job = get_object_or_404(PengJob_deprecated, pk=job_pk)
     with JobSaveManager(peng_job) as mgr:
         # first define log file for redirecting output information
         make_job_folder(job_pk)
@@ -81,7 +81,7 @@ def run_peng(self, job_pk):
 
 @task(bind=True)
 def run_filter_pwm(self, job_pk):
-    peng_job = get_object_or_404(PengJobMeta, pk=job_pk)
+    peng_job = get_object_or_404(Peng, pk=job_pk)
     with JobSaveManager(peng_job) as mgr:
         directory = os.path.join(get_job_directory(peng_job.job_id.job_id), JOB_OUTPUT_DIRECTORY)
         fpwm = FilterPWM.init_with_extra_directory(directory)
@@ -92,7 +92,7 @@ def run_filter_pwm(self, job_pk):
 
 @task(bind=True)
 def run_peng_meta(self, job_pk):
-    peng_job = get_object_or_404(PengJobMeta, pk=str(job_pk))
+    peng_job = get_object_or_404(Peng, pk=str(job_pk))
     with JobSaveManager(peng_job) as mgr:
         # first define log file for redirecting output information
         make_job_folder(job_pk)
@@ -104,7 +104,7 @@ def run_peng_meta(self, job_pk):
 
 @task(bind=True)
 def finish_up_peng(self, job_pk):
-    job_info = get_object_or_404(JobMeta, pk=str(job_pk))
+    job_info = get_object_or_404(JobInfo, pk=str(job_pk))
     with JobSaveManager(job_info) as mgr:
         job_info.complete = True
     return 1 if mgr.had_exception else 0
@@ -112,7 +112,7 @@ def finish_up_peng(self, job_pk):
 
 @task(bind=True)
 def plot_meme(self, job_pk):
-    result = get_object_or_404(PengJob, pk=job_pk)
+    result = get_object_or_404(PengJob_deprecated, pk=job_pk)
     meme_result_file_path = file_path_peng(result.job_ID, result.meme_output)
     plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
     opath = os.path.join(get_result_folder(result.job_ID), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
@@ -129,7 +129,7 @@ def plot_meme(self, job_pk):
 
 @task(bind=True)
 def plot_meme_meta(self, job_pk):
-    result = get_object_or_404(PengJobMeta, pk=job_pk)
+    result = get_object_or_404(Peng, pk=job_pk)
     meme_result_file_path = os.path.join(get_job_directory(str(result.job_id)), JOB_OUTPUT_DIRECTORY, MEME_PLOT_INPUT)
     plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
     if not os.path.exists(plot_output_directory):

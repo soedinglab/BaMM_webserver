@@ -9,7 +9,7 @@ from bammmotif.peng.job import create_job, validate_input_data, init_job, create
 from bammmotif.peng.tasks import run_peng, plot_meme, peng_chain
 from bammmotif.peng.utils import upload_example_fasta_for_peng, copy_peng_to_bamm, load_meme_ids, zip_motifs, \
     check_if_request_from_peng_directly, save_selected_motifs
-from bammmotif.models import Job, PengJob, DbParameter, PengJobMeta, JobMeta
+from bammmotif.models import Job, PengJob_deprecated, DbParameter, Peng, JobInfo
 from bammmotif.forms import FindForm
 from bammmotif.peng.job import file_path_peng
 from bammmotif.peng_utils import get_motif_ids
@@ -24,8 +24,8 @@ import bammmotif.tasks as tasks
 from bammmotif.peng.settings import MEME_PLOT_DIRECTORY, get_job_directory, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY
 import uuid
 
-def peng_result_detail(request, pk):
-    result = get_object_or_404(PengJob, pk=pk)
+def peng_result_detail_deprecated(request, pk):
+    result = get_object_or_404(PengJob_deprecated, pk=pk)
     meme_result_file_path = file_path_peng(result.job_ID, result.meme_output)
     if result.complete:
         print("status is successfull")
@@ -52,8 +52,8 @@ def peng_result_detail(request, pk):
         return render(request, 'results/result_status.html',
                       {'result': result, 'output': output})
 
-def peng_result_detail_meta(request, pk):
-    result = get_object_or_404(PengJobMeta, pk=pk)
+def peng_result_detail(request, pk):
+    result = get_object_or_404(Peng, pk=pk)
     if result.job_id.complete:
         print("status is successfull")
         #print("peng_result_detail:!!!!!!!!!!!!!__!_!_!OP@KEOIQWJEOQ")
@@ -83,7 +83,7 @@ def peng_result_detail_meta(request, pk):
         return render(request, 'results/result_status.html',
                       {'result': result, 'output': output})
 
-def run_peng_view_meta(request, mode='normal'):
+def run_peng_view(request, mode='normal'):
     print("ENTERING Data PREDICT VIEW data_peng_changed: ", request.method, mode)
     if request.method == "POST":
         form, valid, args = get_valid_peng_form_meta(request.POST, request.FILES, request.user, mode)
@@ -111,7 +111,7 @@ def run_peng_view_meta(request, mode='normal'):
     return render(request, 'job/peng_bamm_split_peng_input.html',
                   {'form': form, 'mode': mode})
 
-def run_peng_view(request, mode='normal'):
+def run_peng_view_deprecated(request, mode='normal'):
     print("ENTERING Data PREDICT VIEW data_peng_changed: ", request.method, mode)
     if request.method == "POST":
         print("run_peng_view: Request IS POST")
@@ -150,7 +150,7 @@ def find_peng_results(request, pk):
 
 def peng_result_overview(request, pk):
     if request.user.is_authenticated:
-        user_jobs = PengJob.objects.filter(user=request.user.id)
+        user_jobs = PengJob_deprecated.objects.filter(user=request.user.id)
         return render(request, 'results/peng_result_overview.html',
                       {'user_jobs': user_jobs})
     else:
@@ -158,15 +158,15 @@ def peng_result_overview(request, pk):
 
 def peng_result_overview(request, pk):
     if request.user.is_authenticated:
-        user_jobs = PengJobMeta.objects.filter(user=request.user.id)
+        user_jobs = Peng.objects.filter(user=request.user.id)
         return render(request, 'results/peng_result_overview.html',
                       {'user_jobs': user_jobs})
     else:
         return redirect(request, 'find_peng_results')
 
-def peng_load_bamm_meta(request, pk):
+def peng_load_bamm(request, pk):
     mode = "peng_to_bamm"
-    peng_job = get_object_or_404(PengJobMeta, pk=pk)
+    peng_job = get_object_or_404(Peng, pk=pk)
     inputfile = str(peng_job.fasta_file).rsplit('/', maxsplit=1)[1]
     print("peng_load_bamm")
     if request.method == "POST":
@@ -209,9 +209,9 @@ def peng_load_bamm_meta(request, pk):
     return render(request, 'job/peng_bamm_split_peng_to_bamm.html',
                   {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': peng_job.job_name, 'pk': pk})
 
-def peng_load_bamm(request, pk):
+def peng_load_bamm_deprecated(request, pk):
     mode = "peng_to_bamm"
-    peng_job = get_object_or_404(PengJob, pk=pk)
+    peng_job = get_object_or_404(PengJob_deprecated, pk=pk)
     inputfile = str(peng_job.fasta_file).rsplit('/', maxsplit=1)[1]
     print("peng_load_bamm")
     if request.method == "POST":
