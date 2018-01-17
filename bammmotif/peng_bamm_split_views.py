@@ -6,12 +6,12 @@ from .peng_bamm_split_form import get_valid_peng_form, PengExampleForm, PengForm
 from .peng_bamm_split_job import create_job, validate_input_data
 from .peng_bamm_split_tasks import run_peng
 from .peng_bamm_split_utils import upload_example_fasta_for_peng
-from .models import Job, PengJob, DbParameter
+from .models import Job, PengJob_deprecated, DbParameter
 from .utils import get_result_folder, get_log_file
 
 
 def peng_result_detail(request, pk):
-    result = get_object_or_404(PengJob, pk=pk)
+    result = get_object_or_404(PengJob_deprecated, pk=pk)
     opath = get_result_folder(pk)
     Output_filename = result.Output_filename()
 

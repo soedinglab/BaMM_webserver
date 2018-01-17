@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 from bammmotif.peng.settings import file_path_peng, peng_meme_directory, FASTA_VALIDATION_SCRIPT
-from bammmotif.models import JobMeta
+from bammmotif.models import JobInfo
 from bammmotif.peng.settings import ALLOWED_JOBMODES, file_path_peng_meta
 
 #def file_path_peng(job_id, filename):
@@ -24,7 +24,7 @@ from bammmotif.peng.settings import ALLOWED_JOBMODES, file_path_peng_meta
 #    return path_to_plots
 
 def init_job(job_mode):
-    job = JobMeta.objects.create()
+    job = JobInfo.objects.create()
     job.created_at = datetime.datetime.now()
     job.status = "data uploaded"
     job.mode = job_mode

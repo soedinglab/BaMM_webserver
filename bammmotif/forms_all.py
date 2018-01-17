@@ -1,5 +1,5 @@
 from django import forms
-from .models import Job, PengJob
+from .models import Job, PengJob_deprecated
 from .command_line import ShootPengModule
 
 

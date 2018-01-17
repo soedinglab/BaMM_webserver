@@ -1,14 +1,14 @@
 from django.conf import settings
 from .forms import PredictionExampleForm
 from django import forms
-from .models import PengJob
+from .models import PengJob_deprecated
 from .command_line import ShootPengModule
 
 
 class PengForm(forms.ModelForm):
 
     class Meta:
-        model = PengJob
+        model = PengJob_deprecated
         # fields = tuple(ShootPengModule().options.keys()) + ('job_name',)
         fields = (
             'fasta_file', 'bg_sequences',
@@ -33,7 +33,7 @@ class PengForm(forms.ModelForm):
 class PengExampleForm(forms.ModelForm):
 
     class Meta:
-        model = PengJob
+        model = PengJob_deprecated
         fields = (
             'bg_sequences',
             'pattern_length', 'zscore_threshold', 'count_threshold', 'bg_model_order',

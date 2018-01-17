@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from bammmotif.models import PengJob
+from bammmotif.models import PengJob_deprecated
 from django.core.files import File
 from django.conf import settings
 from bammmotif.peng.job import peng_meme_directory
@@ -13,7 +13,7 @@ import shutil
 import subprocess
 
 def upload_example_fasta_for_peng(job_id):
-    peng_job = get_object_or_404(PengJob, pk=job_id)
+    peng_job = get_object_or_404(PengJob_deprecated, pk=job_id)
     out_filename = EXAMPLE_FASTA_FILE
     with open(settings.EXAMPLE_FASTA) as fh:
         peng_job.fasta_file.save(out_filename, File(fh))

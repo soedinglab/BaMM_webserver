@@ -1,7 +1,7 @@
 from django.conf import settings
 from bammmotif.forms import PredictionExampleForm
 from django import forms
-from bammmotif.models import PengJob, PengJobMeta
+from bammmotif.models import PengJob_deprecated, Peng
 
 
 
@@ -10,7 +10,7 @@ from bammmotif.models import PengJob, PengJobMeta
 class PengFormMeta(forms.ModelForm):
 
     class Meta:
-        model = PengJobMeta
+        model = Peng
         fields = (
             'fasta_file', 'bg_sequences',
             'pattern_length', 'zscore_threshold', 'count_threshold', 'bg_model_order',
@@ -33,7 +33,7 @@ class PengFormMeta(forms.ModelForm):
 class PengForm(forms.ModelForm):
 
     class Meta:
-        model = PengJob
+        model = PengJob_deprecated
         # fields = tuple(ShootPengModule().options.keys()) + ('job_name',)
         fields = (
             'fasta_file', 'bg_sequences',
@@ -55,7 +55,7 @@ class PengForm(forms.ModelForm):
 class PengExampleForm(forms.ModelForm):
 
     class Meta:
-        model = PengJob
+        model = PengJob_deprecated
         fields = (
             'bg_sequences',
             'pattern_length', 'zscore_threshold', 'count_threshold', 'bg_model_order',
