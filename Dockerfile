@@ -3,6 +3,8 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 
+ENV MEME_VERSION=4.12.0
+
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	r-base          \
 	libxml2-dev     \
@@ -11,6 +13,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	libssl-dev      \ 
     libboost-all-dev\
     cmake           \
+    imagemagick     \
+    ghostscript     \
     build-essential 
 
 # install python dependencies
@@ -37,5 +41,24 @@ RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make ins
 RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
 
+# Note: NOT ALL OF MEME-SUITES TOOLS INSTALL CORRECTLY. For now this is fine, since we are only interested in plotting.
+RUN mkdir -p /tmp/meme_suite
+RUN cd /tmp/meme_suite && \
+    wget http://meme-suite.org/meme-software/${MEME_VERSION}/meme_${MEME_VERSION}.tar.gz && \
+    tar xfvz meme_${MEME_VERSION}.tar.gz && \
+    cd meme_${MEME_VERSION} && \
+    ./configure --prefix=/ext/meme --with-url=http://meme-suite.org --enable-build-libxml2 --enable-build-libxslt --enable-serial  && \
+    make && \
+    make install
+RUN cp /ext/meme/bin/ceqlogo /ext/bin
+RUN rm -rf /tmp/meme_suite
+
+# Add filterpwm to /ext
+ADD tools/bamm/py/filterPWMs /tmp/filterPWMs
+RUN mkdir -p /ext/filterPWMs
+RUN cp /tmp/filterPWMs/* /ext/filterPWMs/
+RUN rm -rf /tmp/filterPWMs
+# RUN cp -a tools/bamm/py/filterPWMs /ext
+ENV PATH="/ext/filterPWMs:${PATH}"
 
 ENV PATH="/ext/bin:${PATH}"
