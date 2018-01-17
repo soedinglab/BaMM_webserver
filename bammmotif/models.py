@@ -37,7 +37,6 @@ MODE_CHOICES = (
 JOB_INFO_MODE_CHOICES = (
     ('peng', 'peng'),
     ('bamm', 'bamm'), 
-
 )
 
 def job_directory_path(instance, filename):
