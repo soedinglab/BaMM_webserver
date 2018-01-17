@@ -36,6 +36,10 @@ MODE_CHOICES = (
     ('Compare','Compare')
 )
 
+def job_directory_path(instance, filename):
+    return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID),
+                        'Input', str(filename))
+
 
 def job_directory_path_sequence(instance, filename):
     f_name = filename.replace("_", "-")
