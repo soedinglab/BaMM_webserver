@@ -9,8 +9,6 @@ import uuid
 import os
 from .command_line import ShootPengModule
 
-from .command_line import ShootPengModule
-
 FORMAT_CHOICES = (
     ('BindingSites', 'BindingSites'),
     ('PWM', 'PWM'), 
