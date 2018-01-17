@@ -6,7 +6,7 @@ python manage.py makemigrations
 python manage.py migrate
 
 # fill db construct (only use this when setting up webserver on completely new environment!)
-if [ -f ! POPULATED ]
+if [ ! -f POPULATED ]
 then
     ./populate.sh
     touch POPULATED
