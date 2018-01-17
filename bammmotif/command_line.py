@@ -3,6 +3,8 @@ import subprocess
 import sys
 import os
 import shutil
+from bammmotif.peng.settings import MEME_OUTPUT_FILE, JSON_OUTPUT_FILE, PATH_TO_FILTERPWM_SCRIPT, \
+    FILTERPWM_INPUT_FILE, FILTERPWM_OUTPUT_FILE
 
 
 class CommandlineModule:
@@ -16,6 +18,8 @@ class CommandlineModule:
         self._command_name = command_name
         self._cmd_flag_templates = cmd_flag_templates
         self._options = options
+        self._with_log_file = None
+        # This should bt the last line in this Method.
         self._initialized = True
 
     def __setattr__(self, name, value):
@@ -62,6 +66,14 @@ class CommandlineModule:
         return cmd_tokens
 
     @property
+    def with_log_file(self):
+        return super().__getattribute__("_with_log_file")
+
+    def set_log_file(self, val):
+        if isinstance(val, (type(None), str)):
+            super().__setattr__("_with_log_file", val)
+
+    @property
     def options(self):
         return self._options
 
@@ -74,10 +86,12 @@ class CommandlineModule:
             'universal_newlines': True
         }
         extra_args.update(kw_args)
-        print("Command line tokens")
-        print(self.command_tokens)
-        print(os.getcwd())
-        return subprocess.run(self.command_tokens, **extra_args)
+        # TODO: Not happy with that formulation.
+        if self.with_log_file is not None:
+            with open(self.with_log_file, "a") as f:
+                return subprocess.run(self.command_tokens, stdout=f, stderr=f, **extra_args)
+        else:
+            return subprocess.run(self.command_tokens, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **extra_args)
 
 
 class OptionError(ValueError):
@@ -104,8 +118,8 @@ class ShootPengModule(CommandlineModule):
         'n_threads': 1,
         'em_saturation_threshold': 1E4,
         'silent': True,
-        'meme_output': 'out.meme',
-        'json_output': 'out.json',
+        'meme_output': MEME_OUTPUT_FILE,
+        'json_output': JSON_OUTPUT_FILE,
         'temp_dir': 'temp',
         'bg_sequences': None
     }
@@ -152,17 +166,116 @@ class ShootPengModule(CommandlineModule):
         for key, val in peng_job.__dict__.items():
             if key in spm.options and val:
                 spm.options[key] = val
-
-        print("PENG_JOB")
-        print(peng_job.__dict__)
-        print("SPM")
-        print(spm.__dict__)
         return spm
 
     def run(self, **kw_args):
         self.create_temp_directory()
         super().run(**kw_args)
         self.remove_temp_directory()
+
+
+class FilterPWM(CommandlineModule):
+
+    defaults = {
+        'input_file': FILTERPWM_INPUT_FILE,
+        'output_file': FILTERPWM_OUTPUT_FILE,
+        'model_db': None,
+        'n_neg_perm': 10,
+        'highscore_fraction': 0.1,
+        'evalue_threshold': 0.1,
+        'seed': 42,
+        'min_overlap': 2,
+        'output_score_file': None
+    }
+
+    #TODO: Make this a little bit more flexible.
+    def __init__(self):
+        config = [
+            ('input_file', None),
+            ('output_file', None),
+            ('model_db', '--model_db'),
+            ('n_neg_perm', '--n_neg_perm'),
+            ('highscore_fraction', '--highscore_fraction'),
+            ('evalue_threshold', '--evalue_threshold'),
+            ('seed', '--seed'),
+            ('min_overlap', '--min_overlap'),
+            ('n_processes', '--n_processes'),
+            ('output_score_file', '--output_score_file')
+        ]
+        super().__init__(PATH_TO_FILTERPWM_SCRIPT, config)
+        self._load_defaults()
+        #self._set_directory(directory)
+
+    def _load_defaults(self):
+        for key, val in self.defaults.items():
+            self.options[key] = val
+
+    #def _set_directory(self, directory):
+    #    self.input_file = os.path.join(directory, self.defaults['input_file'])
+    #    self.output_file = os.path.join(directory, self.defaults['output_file'])
+
+    def run(self, **kw_args):
+        extra_args = {
+            'universal_newlines': True
+        }
+        extra_args.update(kw_args)
+        # TODO: Not happy with that formulation.
+        cmd_toks = ['python'] + self.command_tokens
+        if self.with_log_file is not None:
+            with open(self.with_log_file, "a") as f:
+                return subprocess.run(cmd_toks, stdout=f, stderr=f, **extra_args)
+        else:
+            return subprocess.run(cmd_toks, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **extra_args)
+
+    @classmethod
+    def init_with_extra_directory(cls, directory):
+        obj = cls()
+        obj.input_file = os.path.join(directory, FilterPWM.defaults['input_file'])
+        obj.output_file = os.path.join(directory, FilterPWM.defaults['output_file'])
+        return obj
+
+
+
+class PlotMeme(CommandlineModule):
+
+    defaults = {
+        'output_file_format': 'PNG',
+        'reverse_complement': False
+    }
+
+    def __init__(self):
+        config = [
+            ('input_file', '-i'),
+            ('output_file_format', '-f'),
+            ('motif_id', '-m'),
+            ('output_file', '-o'),
+            ('reverse_complement', '-r')
+        ]
+        super().__init__('ceqlogo', config)
+
+    @classmethod
+    def from_dict(cls, options):
+        pm = cls()
+        for key, val in options.items():
+            if key in pm.options:
+                pm.options[key] = val
+        return pm
+
+    @staticmethod
+    def plot_meme_list(motifs, input_file, output_directory):
+        meme_plotter = PlotMeme()
+        meme_plotter.output_file_format = PlotMeme.defaults['output_file_format']
+        for motif in motifs:
+            meme_plotter.input_file = input_file
+            meme_plotter.motif_id = motif
+            meme_plotter.output_file = os.path.join(output_directory, motif + ".png")
+            meme_plotter.reverse_complement = False
+            meme_plotter.run()
+            # Now plot reverse complement
+            meme_plotter.output_file = os.path.join(output_directory, motif + "_rev.png")
+            meme_plotter.reverse_complement = True
+            meme_plotter.run()
+
 
 class ValidateFasta(CommandlineModule):
     def __init__(self):
@@ -206,3 +319,4 @@ def execute_command_get_bg_model_order(params, job):
         sys.stdout.flush()
     process.wait()
     return job
+
