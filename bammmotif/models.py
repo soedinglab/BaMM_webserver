@@ -282,7 +282,11 @@ class DbMatch(models.Model):
         return self.match_ID
 
 
+<<<<<<< HEAD
 class JobInfo(models.Model):
+=======
+class JobMeta(models.Model):
+>>>>>>> updated dabatabse model for jobinfo/peng separation, webserver not
     # General information about each job is stored here.
     job_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     job_name = models.CharField(max_length=50, null=True, blank=True)
@@ -299,10 +303,17 @@ class JobInfo(models.Model):
     def __str__(self):
         return str(self.job_id)
 
+<<<<<<< HEAD
 class Peng(models.Model):
     # Peng specific
     #job_id = models.ForeignKey(JobMeta, on_delete=models.CASCADE, editable=False, primary_key=True)
     job_id = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False, primary_key=True)
+=======
+class PengJobMeta(models.Model):
+    # Peng specific
+    #job_id = models.ForeignKey(JobMeta, on_delete=models.CASCADE, editable=False, primary_key=True)
+    job_id = models.OneToOneField(JobMeta, on_delete=models.CASCADE, editable=False, primary_key=True)
+>>>>>>> updated dabatabse model for jobinfo/peng separation, webserver not
     num_motifs = models.IntegerField(default=1)
     fasta_file = models.FileField(upload_to=job_directory_path_peng_meta, null=True)
     meme_output = models.CharField(default=ShootPengModule.defaults['meme_output'], max_length=150)
@@ -335,7 +346,11 @@ class Peng(models.Model):
         return "peng_" + str(self.job_id)
 
     def __eq__(self, obj):
+<<<<<<< HEAD
         if isinstance(obj, Peng):
+=======
+        if isinstance(obj, PengJobMeta):
+>>>>>>> updated dabatabse model for jobinfo/peng separation, webserver not
             return str(obj) == self.__str__()
         elif (obj, str):
             return obj == self.__str__()
