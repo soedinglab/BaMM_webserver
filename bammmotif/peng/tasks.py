@@ -127,6 +127,7 @@ def plot_meme(self, job_pk):
     # Zip motifs
     zip_motifs(motif_ids, plot_output_directory, with_reverse=True)
 
+
 @task(bind=True)
 def plot_meme_meta(self, job_pk):
     result = get_object_or_404(Peng, pk=job_pk)
@@ -140,6 +141,7 @@ def plot_meme_meta(self, job_pk):
     split_meme_file(meme_result_file_path, plot_output_directory)
     # Zip motifs
     zip_motifs(motif_ids, plot_output_directory, with_reverse=True)
+
 
 @task(bind=True)
 def peng_chain(self, job_pk):
