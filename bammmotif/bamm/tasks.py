@@ -39,8 +39,8 @@ def run_peng(self, job_pk):
                     MMcompare(job_pk, False)
                 Compress(job_pk)
                 job = get_object_or_404(Bamm, pk=job_pk)
-                job.complete = True
-    job.save()
+                job.job_id.complete = True
+                job.save()
     return 1 if mgr.had_exception else 0
 
 
@@ -64,7 +64,7 @@ def run_bamm(self, job_pk):
                     MMcompare(job_pk, False)
                 Compress(job_pk)
                 job = get_object_or_404(Bamm, pk=job_pk)
-                job.complete = True
+                job.job_id.complete = True
     job.save()
     return 1 if mgr.had_exception else 0
 
@@ -88,7 +88,7 @@ def run_bammscan(self, job_pk):
                     MMcompare(job_pk, False)
                 Compress(job_pk)
                 job = get_object_or_404(Bamm, pk=job_pk)
-                job.complete = True
+                job.job_id.complete = True
     job.save()
     return 1 if mgr.had_exception else 0
 
@@ -106,6 +106,6 @@ def run_compare(self, job_pk):
                 MMcompare(job_pk, True)
                 Compress(job_pk)
                 job = get_object_or_404(Bamm, pk=job_pk)
-                job.complete = True
+                job.job_id.complete = True
     job.save()
     return 1 if mgr.had_exception else 0
