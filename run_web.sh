@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Wait for mysql to start
+sleep 60
+
 # construct empty database
 python manage.py makemigrations
 python manage.py migrate
