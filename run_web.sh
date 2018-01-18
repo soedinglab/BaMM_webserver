@@ -12,6 +12,7 @@ sleep $MYSQL_STARTUP_WAIT_TIME
 # construct empty database
 python manage.py makemigrations
 python manage.py migrate
+python manage.py sync_databases
 
 # fill db construct (only use this when setting up webserver on completely new environment!)
 if [ ! -f POPULATED ]

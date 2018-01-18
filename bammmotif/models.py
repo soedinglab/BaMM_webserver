@@ -83,6 +83,17 @@ def job_directory_path_peng_meta(instance, filename, intermediate_dir="Input"):
         os.makedirs(path)
     return os.path.join(path, str(filename))
 
+
+class MotifDatabase(models.Model):
+    db_id = models.CharField(max_length=100, primary_key=True)
+    version = models.CharField(max_length=50)
+    organism = models.CharField(max_length=100)
+    display_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return str(self.db_id)
+
+
 class Job(models.Model):
     # general info
     job_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -143,6 +154,7 @@ class Job(models.Model):
     # MMcompare
     MMcompare = models.BooleanField(default=False)
     p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
+    motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
     
     class Meta:
         ordering = ['-created_at']
@@ -269,7 +281,7 @@ class ChIPseq(models.Model):
     motif_init_file = models.CharField(max_length=255)
     result_location = models.CharField(max_length=80)
     parent = models.ForeignKey(DbParameter, blank=True, null=True, on_delete=models.CASCADE)
-
+    db_id = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.db_public_id
