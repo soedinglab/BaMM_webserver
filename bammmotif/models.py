@@ -39,6 +39,25 @@ JOB_INFO_MODE_CHOICES = (
     ('bamm', 'bamm'), 
 )
 
+def job_directory_path_new(instance, filename):
+    return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_id),
+                        'Input', str(filename))
+
+
+def job_directory_path_sequence_new(instance, filename):
+    f_name = filename.replace("_", "-")
+    return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_id),
+                        'Input', str(f_name))
+
+def job_directory_path_motif_new(instance, filename):
+    return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_id),
+                        'Input', str(filename))
+
+def job_directory_path_peng_new(instance, filename):
+    path_to_job = "/code/media"
+    return os.path.join(path_to_job, settings.JOB_DIR_PREFIX, str(instance.job_id), 'Input', str(filename))
+
+
 def job_directory_path(instance, filename):
     return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_ID),
                         'Input', str(filename))
@@ -341,3 +360,104 @@ class Peng(models.Model):
             return obj == self.__str__()
         return False
 
+class Bamm(models.Model):
+    job_id = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False, primary_key=True)
+    num_motifs = models.IntegerField(default=1)
+
+    # files
+    Input_Sequences = models.FileField(upload_to=job_directory_path_new, null=True)
+    Background_Sequences = models.FileField(upload_to=job_directory_path_new, null=True, blank=True)
+    #Intensity_File = models.FileField(upload_to=job_directory_path , null=True, blank=True)
+    Motif_Initialization = models.CharField(max_length=255, choices=INIT_CHOICES, default="PEnGmotif")
+    Motif_InitFile = models.FileField(upload_to=job_directory_path_new, null=True, blank=True)
+    Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="PWM")
+    num_init_motifs = models.IntegerField(default = 10)
+
+    # options
+    model_Order =models.PositiveSmallIntegerField(default=4)
+    reverse_Complement = models.BooleanField(default=True)
+    extend = models.PositiveSmallIntegerField(default=0)
+    #extend_2 = models.PositiveSmallIntegerField(default=0)
+
+    # fdr options
+    FDR = models.BooleanField(default=True)
+    m_Fold = models.IntegerField(default=5)
+    #cv_Fold = models.IntegerField(default=5)
+    sampling_Order = models.PositiveSmallIntegerField(default=2)
+    #save_LogOdds = models.BooleanField(default=False)
+
+    # CGS options
+    #CGS = models.BooleanField(default=False)
+    #max_CGS_Iterations = models.BigIntegerField(default=10e5)
+    #no_Alpha_Sampling = models.BooleanField( default=True)
+
+    # EM options
+    EM = models.BooleanField(default=True)
+    #epsilon = models.DecimalField(default=0.001, max_digits=5, decimal_places=4)
+    q_value = models.DecimalField(default=0.9, max_digits=3, decimal_places=2)
+    #max_EM_Iterations = models.BigIntegerField(default=10e5)
+    #no_Alpha_Optimization = models.BooleanField(default=True)
+
+    # scoring options
+    score_Seqset = models.BooleanField(default=True)
+    score_Cutoff = models.FloatField(default=0.1)
+    bgModel_File = models.FileField( upload_to=job_directory_path_new, null=True, blank=True)
+
+    # advanced options
+    #alphabet = models.CharField(max_length=255, choices=ALPHABET_CHOICES, default="STANDARD")
+    background_Order = models.PositiveSmallIntegerField(default=2)
+    verbose = models.BooleanField(default=True)
+    #save_BaMMs = models.BooleanField(default=True)
+    #save_BgModel = models.BooleanField(default=True)
+
+    # MMcompare
+    MMcompare = models.BooleanField(default=False)
+    p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
+
+    #class Meta:
+    #    ordering = ['-created_at']
+
+    def __str__(self):
+        return str(self.job_id)
+
+    def Output_filename(self):
+        return os.path.splitext(os.path.basename(self.Input_Sequences.name))[0]
+
+    def Inputseq_filename(self):
+        return os.path.basename(self.Input_Sequences.name)
+
+    def Background_filename(self):
+        return os.path.basename(self.Background_Sequences.name)
+
+    def Intensity_filename(self):
+        return os.path.basename(self.Intensity_File.name)
+
+    def MotifInit_filename(self):
+        return os.path.basename(self.Motif_InitFile.name)
+
+
+class Motifs_new(models.Model):
+    motif_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    parent_job = models.ForeignKey(Bamm, on_delete=models.CASCADE, null=False)
+    iupac = models.CharField(max_length=50, null=True, blank=True)
+    job_rank = models.PositiveSmallIntegerField(null=True, blank=True)
+    length = models.PositiveSmallIntegerField(null=True, blank=True)
+    auc = models.FloatField(blank=True, null=True)
+    occurrence = models.FloatField(blank=True, null=True)
+    db_match = models.ManyToManyField('ChIPseq', through='DbMatch_new', blank=True)
+
+
+    def __str__(self):
+        return self.motif_ID
+
+class DbMatch_new(models.Model):
+    match_ID     = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    motif        = models.ForeignKey('Motifs_new', on_delete=models.CASCADE)
+    db_entry     = models.ForeignKey('ChIPseq', on_delete=models.CASCADE)
+    p_value      = models.FloatField(default=0.0)
+    e_value      = models.FloatField(default=0.0)
+    score        = models.FloatField(default=0.0)
+    overlap_len  = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.match_ID
