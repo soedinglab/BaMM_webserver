@@ -258,7 +258,7 @@ def result_detail(request, pk):
     db = get_object_or_404(DbParameter, pk=database)
     db_dir = path.join(db.base_dir, 'Results')
 
-    if result.complete:
+    if result.job_id.complete:
         print("status is successfull")
         num_logos = range(1, (min(3,result.model_Order+1)))
         return render(request, 'results/result_detail.html',
@@ -273,7 +273,7 @@ def result_detail(request, pk):
         command = "tail -20 %r" % log_file
         output = os.popen(command).read()
         return render(request, 'results/result_status.html',
-                      {'job_ID': result.job_id.job_id, 'job_name': result.job_id.job_name, 'status': result.status, 'output': output})
+                      {'job_ID': result.job_id.job_id, 'job_name': result.job_id.job_name, 'status': result.job_id.status, 'output': output})
 
 
 # #########################
