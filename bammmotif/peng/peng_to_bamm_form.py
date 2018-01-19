@@ -1,15 +1,13 @@
 from django import forms
-from .models import Job
+from bammmotif.models import Job, Bamm
 
 class PengToBammForm(forms.ModelForm):
     class Meta:
-        model = Job
-        fields = ('reverse_Complement',
-                  'model_Order', 'extend',
-                  'background_Order',
-                  'Background_Sequences', 'score_Seqset',
-                  'score_Cutoff', 'FDR',
-                  'q_value')
+        model = Bamm
+        fields = ('reverse_Complement', 'model_Order',
+                  'extend', 'background_Order',
+                  'Background_Sequences', 'score_Seqset', 'score_Cutoff',
+                  'FDR', 'q_value',)
 
     def __init__(self, *args, **kwargs):
         super(PengToBammForm, self).__init__(*args, **kwargs)
