@@ -226,4 +226,5 @@ def build_and_exec_mmcompare_chain(self, job_pk):
     ret = chain(*task_list)()
     return ret
 
+# Maybe write a context manager for chain building
 
