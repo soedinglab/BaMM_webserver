@@ -15,6 +15,35 @@ from bammmotif.bamm.utils import (
 )
 
 
+# Don't use that yet.
+class ChainBuilder:
+
+    def __init__(self, job_pk, initializer, finalizer):
+        self._job_pk = job_pk
+        self._initializer = initializer
+        self._finalizer = finalizer
+        self._task_list = []
+
+    @property
+    def next(self):
+        return None
+
+    @next.setter
+    def next(self, _task):
+        self._task_list.append(_task.si(self._job_pk))
+
+    def pop(self):
+        self._task_list.pop()
+
+    def __enter__(self):
+        self._task_list.append(self._initializer.si(self._job_pk))
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self._task_list.append(self._finalizer.si(self._job_pk))
+        ret = chain(*self._task_list)()
+        return True
+
+
 @task(bind=True)
 def run_peng(self, job_pk):
     job = get_object_or_404(Bamm, pk=job_pk)
@@ -225,6 +254,3 @@ def build_and_exec_mmcompare_chain(self, job_pk):
     task_list = [prepare_job.si(job_pk), mmcompare.si(job_pk), complete_job.si(job_pk)]
     ret = chain(*task_list)()
     return ret
-
-# Maybe write a context manager for chain building
-
