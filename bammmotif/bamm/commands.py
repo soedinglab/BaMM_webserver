@@ -440,7 +440,7 @@ def FDR(job_pk, first, useRefined):
     if first is True:
         # generate motif objects
         initialize_motifs(job_pk, 0, 1)
-        job = get_object_or_404(Job, pk=job_pk)
+        job = get_object_or_404(Bamm, pk=job_pk)
     # plot motif evaluation
     run_command(get_evaluation_command(job_pk))
     add_motif_evaluation(job_pk)

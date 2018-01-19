@@ -13,7 +13,7 @@ from bammmotif.bamm.forms import (
 )
 from bammmotif.bamm.tasks import (
     run_bamm, run_bammscan,
-    run_compare, run_peng
+    run_compare, run_peng, build_and_exec_chain
 )
 from bammmotif.utils import (
     get_log_file,
@@ -188,10 +188,11 @@ def run_bamm_view(request, mode='normal'):
                 bamm_job = get_object_or_404(Bamm, pk=job_pk)
 
             bamm_job = get_object_or_404(Bamm, pk = job_pk)
-            if bamm_job.Motif_Initialization == 'PEnGmotif':
-                run_peng.delay(job_pk)
-            else:
-                run_bamm.delay(job_pk)
+            build_and_exec_chain.delay(job_pk)
+            #if bamm_job.Motif_Initialization == 'PEnGmotif':
+            #    run_peng.delay(job_pk)
+            #else:
+            #    run_bamm.delay(job_pk)
 
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
@@ -237,7 +238,7 @@ def result_overview(request):
 
 
 def delete(request, pk):
-    Job.objects.filter(job_ID=pk).delete()
+    JobInfo.objects.filter(job_id=pk).delete()
     if request.user.is_authenticated():
         user_jobs = Job.objects.filter(user=request.user.id)
         return render(request, 'results/result_overview.html',
