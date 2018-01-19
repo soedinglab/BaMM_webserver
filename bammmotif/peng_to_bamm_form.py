@@ -16,8 +16,8 @@ class PengToBammForm(forms.ModelForm):
                   'score_Cutoff', 'FDR',
                   'q_value', 'motif_db')
         
-        motif_dbs = None
-        motif_db = DBChoiceField(queryset=motif_dbs, empty_label=None)
+    motif_dbs = None
+    motif_db = DBChoiceField(queryset=motif_dbs, empty_label=None)
 
     def __init__(self, *args, **kwargs):
         super(PengToBammForm, self).__init__(*args, **kwargs)

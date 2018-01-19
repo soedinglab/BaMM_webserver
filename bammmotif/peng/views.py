@@ -218,7 +218,7 @@ def peng_load_bamm(request, pk):
             print("peng_load_bamm: Form is invalid!")
     form = PengToBammForm()
     return render(request, 'job/peng_bamm_split_peng_to_bamm.html',
-                  {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': peng_job.job_name, 'pk': pk})
+                  {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': peng_job.job_id.job_name, 'pk': pk})
 
 def peng_load_bamm_deprecated(request, pk):
     mode = "peng_to_bamm"
