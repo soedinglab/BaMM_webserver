@@ -35,7 +35,7 @@ def get_core_params(job_pk, useRefined, m=1):
         param.append("--negSeqFile")
         param.append(path.join(root, job.Background_Sequences.name))
 
-    if useRefined is True:
+    if useRefined:
         # Initialize with refined Model
         job.Motif_Init_File_Format == "BaMM"
         job.save()
@@ -255,7 +255,7 @@ def get_FDR_command(job_pk, useRefined, m=1):
     param.append(job.sampling_Order)
 
     param.append("--basename")
-    if useRefined is True or job.Motif_Init_File_Format == 'BaMM'or job.Motif_Init_File_Format == 'BindingSites':
+    if useRefined or job.Motif_Init_File_Format == 'BaMM'or job.Motif_Init_File_Format == 'BindingSites':
         param.append(str(job.Output_filename()) + '_motif_' + str(m))
     else:
         if job.Motif_Init_File_Format == 'PWM':
@@ -295,7 +295,7 @@ def get_BaMMScan_command(job_pk, first_task_in_pipeline, useRefined, m=1):
     param.append("--pvalCutoff")
     param.append(job.score_Cutoff)
 
-    if first_task_in_pipeline is True:
+    if first_task_in_pipeline:
         param.append("--saveInitialModel")
 
     param.append("--basename")
