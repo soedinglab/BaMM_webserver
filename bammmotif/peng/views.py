@@ -3,13 +3,14 @@ import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
 
-from bammmotif.peng_to_bamm_form import PengToBammForm
+from bammmotif.peng.peng_to_bamm_form import PengToBammForm
 from bammmotif.peng.form import get_valid_peng_form, get_valid_peng_form_meta, PengExampleForm, PengForm, PengFormMeta
-from bammmotif.peng.job import create_job, validate_input_data, init_job, create_job_meta
+from bammmotif.peng.job import create_job, validate_input_data, init_job, create_job_meta, create_bamm_job
 from bammmotif.peng.tasks import run_peng, plot_meme, peng_chain
+import bammmotif.bamm.tasks as bamm_tasks
 from bammmotif.peng.utils import upload_example_fasta_for_peng, copy_peng_to_bamm, load_meme_ids, zip_motifs, \
     check_if_request_from_peng_directly, save_selected_motifs
-from bammmotif.models import Job, PengJob_deprecated, DbParameter, Peng, JobInfo
+from bammmotif.models import Job, PengJob_deprecated, DbParameter, Peng, JobInfo, Bamm
 from bammmotif.forms import FindForm
 from bammmotif.peng.job import file_path_peng
 from bammmotif.peng_utils import get_motif_ids
@@ -174,35 +175,19 @@ def peng_load_bamm(request, pk):
         if check_if_request_from_peng_directly(request):
             save_selected_motifs(request.POST, pk)
             form = PengToBammForm()
+            print("request from peng directly")
             return render(request, 'job/peng_bamm_split_peng_to_bamm.html',
-                          {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': peng_job.job_id.job_name, 'pk': pk})
+                          {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': peng_job.job_id.job_name, 'pk': peng_job.job_id.pk})
         form = PengToBammForm(request.POST, request.FILES)
         if form.is_valid():
-            # read in data and parameter
-            job = form.save(commit=False)
-            job.created_at = datetime.datetime.now()
-            job.user = get_user(request)
-            job.Input_Sequences = peng_job.fasta_file
-            job.num_init_motifs = get_n_motifs(pk)
-            job_pk = str(job.job_ID)
-            # print(dir(peng_job.fasta_file))
-            job.Motif_InitFile.name = os.path.join(settings.MEDIA_ROOT, str(job_pk), 'pengoutput', 'out.meme')
-            job.save()
-            job.Motif_Initialization = "Custom File"
-            job.Motif_Init_File_Format = "PWM"
-            #TODO: Find a nicer way to write that.
-            if job.job_name is None:
-                set_job_name(job_pk)
-            # Copy necessary files from last peng job.
-            copy_peng_to_bamm(pk, job_pk, request.POST)
+            bamm_job = create_bamm_job('bamm', request, form, peng_job)
+            ## Copy necessary files from last peng job.
+            copy_peng_to_bamm(peng_job.job_id.job_id, bamm_job.job_id.job_id, request.POST)
             print("Job Motif Initialisation")
-            print(job.Motif_Initialization)
-            print("Job ID", job.job_ID)
-            if job.Motif_Initialization == 'PEnGmotif':
-                tasks.run_peng.delay(job.job_ID)
-            else:
-                tasks.run_bamm.delay(job.job_ID)
-            return render(request, 'job/peng_to_bamm_submitted.html', {'pk': job_pk})
+            print(bamm_job.Motif_Initialization)
+            print("Job ID", bamm_job.job_id.job_id)
+            bamm_tasks.build_and_exec_chain.delay(bamm_job.job_id.job_id)
+            return render(request, 'job/peng_to_bamm_submitted.html', {'pk': bamm_job.job_id.job_id})
         else:
             print("peng_load_bamm: Form is invalid!")
     form = PengToBammForm()
@@ -279,7 +264,7 @@ def peng_to_bamm_result_overview(request, pk):
         return redirect(request, 'find_peng_to_bamm_results')
 
 def peng_to_bamm_result_detail(request, pk):
-    result = get_object_or_404(Job, pk=pk)
+    result = get_object_or_404(Bamm, pk=pk)
     opath = get_result_folder(pk)
     Output_filename = result.Output_filename()
     # meme_logo_path = peng_meme_directory(pk)
@@ -293,13 +278,14 @@ def peng_to_bamm_result_detail(request, pk):
     db_dir = os.path.join(db.base_dir, 'Results')
 
     print(meme_plots)
-    if result.complete:
+    if result.job_id.complete:
         print("status is successfull")
         num_logos = range(1, (min(2, result.model_Order)+1))
-        if result.mode == "Prediction" or result.mode == "Compare":
+        print(result.job_id.mode)
+        if result.job_id.mode == "Prediction" or result.job_id.mode == "Compare":
             return render(request, 'results/peng_to_bamm_result_detail.html',
                           {'result': result, 'opath': opath,
-                           'mode': result.mode,
+                           'mode': result.job_id.mode,
                            'Output_filename': Output_filename,
                            'num_logos': num_logos,
                            'db_dir': db_dir,
@@ -307,8 +293,8 @@ def peng_to_bamm_result_detail(request, pk):
                            'meme_motifs': meme_motifs,
                            'meme_meta_info': meme_meta_info_list,
                            })
-        elif result.mode == "Occurrence":
-            return redirect('result_occurrence', result.mode, pk)
+        elif result.job_id.mode == "Occurrence":
+            return redirect('result_occurrence', result.job_id.mode, pk)
 
     else:
         print('status not ready yet')

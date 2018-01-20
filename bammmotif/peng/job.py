@@ -10,6 +10,8 @@ from django.conf import settings
 from bammmotif.peng.settings import file_path_peng, peng_meme_directory, FASTA_VALIDATION_SCRIPT
 from bammmotif.models import JobInfo
 from bammmotif.peng.settings import ALLOWED_JOBMODES, file_path_peng_meta
+from bammmotif.utils import get_user
+from bammmotif.utils.meme_reader import get_n_motifs
 
 #def file_path_peng(job_id, filename):
 #    path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id), 'Output')
@@ -23,17 +25,36 @@ from bammmotif.peng.settings import ALLOWED_JOBMODES, file_path_peng_meta
 #        os.makedirs(path_to_plots)
 #    return path_to_plots
 
-def init_job(job_mode):
+def init_job(job_type):
     job = JobInfo.objects.create()
     job.created_at = datetime.datetime.now()
     job.status = "data uploaded"
-    job.mode = job_mode
+    job.job_type = job_type
     if job.job_name is None:
         # truncate job_id
         job_id_short = str(job.job_id).split("-", 1)
         job.job_name = job_id_short[0]
     job.save()
     return job
+
+def create_bamm_job(job_mode, request, form, peng_job=None):
+    if peng_job is None:
+        return
+    job_info = init_job('bamm')
+    job_info.user = get_user(request)
+    # bamm_job = create_job_bamm(form, request, "bamm")
+    # read in data and parameter
+    bamm_job = form.save(commit=False)
+    bamm_job.job_id = job_info
+    # job.created_at = datetime.datetime.now()
+    bamm_job.Input_Sequences = peng_job.fasta_file
+    bamm_job.num_init_motifs = get_n_motifs(peng_job.job_id.job_id)
+    # print(dir(peng_job.fasta_file))
+    bamm_job.Motif_InitFile.name = os.path.join(settings.MEDIA_ROOT, str(bamm_job.job_id.job_id), 'pengoutput', 'out.meme')
+    bamm_job.Motif_Initialization = "Custom File"
+    bamm_job.Motif_Init_File_Format = "PWM"
+    bamm_job.save()
+    return bamm_job
 
 def create_anonymuous_user(request):
     ip = get_ip(request)
@@ -54,6 +75,7 @@ def create_anonymuous_user(request):
         user.set_unusable_password()
         user.save()
         return user
+
 
 def create_job_meta(form, request, jobmode):
     job_info = init_job(jobmode)

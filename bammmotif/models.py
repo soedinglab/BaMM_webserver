@@ -365,11 +365,11 @@ class Bamm(models.Model):
     num_motifs = models.IntegerField(default=1)
 
     # files
-    Input_Sequences = models.FileField(upload_to=job_directory_path_new, null=True)
-    Background_Sequences = models.FileField(upload_to=job_directory_path_new, null=True, blank=True)
+    Input_Sequences = models.FileField(upload_to=job_directory_path_sequence_new, null=True)
+    Background_Sequences = models.FileField(upload_to=job_directory_path_sequence_new, null=True, blank=True)
     #Intensity_File = models.FileField(upload_to=job_directory_path , null=True, blank=True)
     Motif_Initialization = models.CharField(max_length=255, choices=INIT_CHOICES, default="PEnGmotif")
-    Motif_InitFile = models.FileField(upload_to=job_directory_path_new, null=True, blank=True)
+    Motif_InitFile = models.FileField(upload_to=job_directory_path_motif_new, null=True, blank=True)
     Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="PWM")
     num_init_motifs = models.IntegerField(default = 10)
 
@@ -401,7 +401,7 @@ class Bamm(models.Model):
     # scoring options
     score_Seqset = models.BooleanField(default=True)
     score_Cutoff = models.FloatField(default=0.1)
-    bgModel_File = models.FileField( upload_to=job_directory_path_new, null=True, blank=True)
+    bgModel_File = models.FileField( upload_to=job_directory_path_motif_new, null=True, blank=True)
 
     # advanced options
     #alphabet = models.CharField(max_length=255, choices=ALPHABET_CHOICES, default="STANDARD")
