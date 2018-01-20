@@ -51,7 +51,7 @@ def run_peng(self, job_pk):
         # first define log file for redirecting output information
         make_job_folder(job_pk)
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
+        with open(logfile, 'a') as f:
             with redirect_stdout(f):
 
                 # run PeNGmotif
@@ -80,7 +80,7 @@ def run_bamm(self, job_pk):
         # first define log file for redirecting output information
         make_job_folder(job_pk)
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
+        with open(logfile, 'a') as f:
             with redirect_stdout(f):
                 # run BaMMmotif
                 BaMM(job_pk, True, False)
@@ -105,7 +105,7 @@ def run_bammscan(self, job_pk):
         # first define log file for redirecting output information
         make_job_folder(job_pk)
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
+        with open(logfile, 'a') as f:
             with redirect_stdout(f):
 
                 # run BaMMscore
@@ -129,7 +129,7 @@ def run_compare(self, job_pk):
         # first define log file for redirecting output information
         make_job_folder(job_pk)
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
+        with open(logfile, 'a') as f:
             with redirect_stdout(f):
                 # run MMcompare
                 MMcompare(job_pk, True)
@@ -153,7 +153,7 @@ def peng(self, job_pk):
     with JobSaveManager(job) as mgr:
         # first define log file for redirecting output information
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
+        with open(logfile, 'a') as f:
             with redirect_stdout(f):
 
                 # run PeNGmotif
@@ -165,7 +165,7 @@ def bamm(self, job_pk):
     job = get_object_or_404(Bamm, pk=job_pk)
     with JobSaveManager(job) as mgr:
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
+        with open(logfile, 'a') as f:
             with redirect_stdout(f):
                     BaMM(job_pk, True, False)
     return 1 if mgr.had_exception else 0
@@ -175,7 +175,7 @@ def bamm_scan(self, job_pk):
     job = get_object_or_404(Bamm, pk=job_pk)
     with JobSaveManager(job) as mgr:
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
+        with open(logfile, 'a') as f:
             with redirect_stdout(f):
                 BaMMScan(job_pk, False, True)
     return 1 if mgr.had_exception else 0
@@ -185,7 +185,7 @@ def fdr(self, job_pk):
     job = get_object_or_404(Bamm, pk=job_pk)
     with JobSaveManager(job) as mgr:
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
+        with open(logfile, 'a') as f:
             with redirect_stdout(f):
                 FDR(job_pk, False, True)
     return 1 if mgr.had_exception else 0
@@ -195,7 +195,7 @@ def mmcompare(self, job_pk):
     job = get_object_or_404(Bamm, pk=job_pk)
     with JobSaveManager(job) as mgr:
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
+        with open(logfile, 'a') as f:
             with redirect_stdout(f):
                 MMcompare(job_pk, False)
     return 1 if mgr.had_exception else 0
@@ -206,7 +206,7 @@ def complete_job(self, job_pk):
     job = get_object_or_404(JobInfo, pk=job_pk)
     with JobSaveManager(job) as mgr:
         logfile = get_log_file(job_pk)
-        with open(logfile, 'w') as f:
+        with open(logfile, 'a') as f:
             with redirect_stdout(f):
                 Compress(job_pk)
                 job.complete = True
