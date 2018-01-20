@@ -262,3 +262,6 @@ tramp
 
 # Database initialization
 POPULATED
+
+#Mysql start time
+MYSQL_STARTUP_TIME
