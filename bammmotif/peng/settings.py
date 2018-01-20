@@ -25,10 +25,21 @@ FASTA_VALIDATION_SCRIPT = '/code/bammmotif/static/scripts/valid_fasta'
 ZIPPED_MOTIFS = 'motif_all.zip'
 EXAMPLE_FASTA_FILE = 'ExampleData.fasta'
 
+#ERROR MESSAGES
+NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT = "Please select at least one motif to start refinement!"
+
 # models related variables
 ALLOWED_JOBMODES = [
     "peng",
 ]
+
+
+def get_meme_result_file_path(job_id):
+    return os.path.join(get_job_directory(job_id), JOB_OUTPUT_DIRECTORY, MEME_PLOT_INPUT)
+
+def get_plot_output_directory(job_id):
+    meme_path = get_meme_result_file_path(job_id)
+    return os.path.join(meme_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
 
 def get_job_ouput_directory(job_id):
     ptj = get_job_directory(job_id)

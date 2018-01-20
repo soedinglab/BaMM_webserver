@@ -3,7 +3,6 @@ from bammmotif.models import JobInfo, Bamm
 
 
 
-
 class PredictionForm(forms.ModelForm):
     class Meta:
         model = Bamm

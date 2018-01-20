@@ -31,14 +31,14 @@
                     {% csrf_token %}
 
 
+                    {% comment%}
                     <p><label for="id_job_name"><a class "testpup"
                         onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span
                                 class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name"
                                 style="color:black"></span></a> Job Name: {{ job_name }}</label></p>
-                {% comment%}
+                                                                         {% endcomment %}
                     <p class="indent" style="padding-left: 1.8em"><input id="id_job_name" maxlength="50" name="job_name"
                                                                          type="text" placeholder="i.e: My Job #1"/></p>
-                                                                         {% endcomment %}
 
                     {% if mode == 'example' %}
                         <p><label for="id_Input_Sequences"><a class "testpup"

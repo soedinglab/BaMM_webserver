@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404
-from bammmotif.models import PengJob_deprecated
+from bammmotif.models import PengJob_deprecated, Peng
 from django.core.files import File
 from django.conf import settings
 from bammmotif.peng.job import peng_meme_directory
@@ -13,7 +13,7 @@ import shutil
 import subprocess
 
 def upload_example_fasta_for_peng(job_id):
-    peng_job = get_object_or_404(PengJob_deprecated, pk=job_id)
+    peng_job = get_object_or_404(Peng, pk=job_id)
     out_filename = EXAMPLE_FASTA_FILE
     with open(settings.EXAMPLE_FASTA) as fh:
         peng_job.fasta_file.save(out_filename, File(fh))
@@ -95,9 +95,19 @@ def save_selected_motifs(request, pk):
         os.makedirs(peng_save_directory)
     selected_motifs = [x.replace(MOTIF_SELECT_IDENTIFIER, "") for x in request.keys() if x.endswith(MOTIF_SELECT_IDENTIFIER)]
     print(selected_motifs)
+    min_requirement_for_refinement = False
     for file in os.listdir(peng_plot_output_directory):
         if any([file.startswith(x) for x in selected_motifs]):
+            min_requirement_for_refinement = True
             print("copying: ", file)
             shutil.copy(os.path.join(peng_plot_output_directory, file), os.path.join(peng_save_directory, file))
+    return min_requirement_for_refinement
 
 
+def upload_example_fasta(job_pk):
+    job = get_object_or_404(Peng, pk=job_pk)
+    out_filename = "ExampleData.fasta"
+    with open(settings.EXAMPLE_FASTA) as fh:
+        job.fasta_file.save(out_filename, File(fh))
+        job.save()
+    print(job.fasta_file.name)

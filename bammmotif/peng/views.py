@@ -9,7 +9,7 @@ from bammmotif.peng.job import create_job, validate_input_data, init_job, create
 from bammmotif.peng.tasks import run_peng, plot_meme, peng_chain
 import bammmotif.bamm.tasks as bamm_tasks
 from bammmotif.peng.utils import upload_example_fasta_for_peng, copy_peng_to_bamm, load_meme_ids, zip_motifs, \
-    check_if_request_from_peng_directly, save_selected_motifs
+    check_if_request_from_peng_directly, save_selected_motifs, upload_example_fasta
 from bammmotif.models import Job, PengJob_deprecated, DbParameter, Peng, JobInfo, Bamm
 from bammmotif.forms import FindForm
 from bammmotif.peng.job import file_path_peng
@@ -22,7 +22,11 @@ from bammmotif.utils import (
     get_result_folder,
 )
 import bammmotif.tasks as tasks
-from bammmotif.peng.settings import MEME_PLOT_DIRECTORY, get_job_directory, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY
+from bammmotif.peng.settings import (
+    MEME_PLOT_DIRECTORY, get_job_directory, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY,
+    NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT, get_meme_result_file_path, get_plot_output_directory,
+
+)
 import uuid
 
 def peng_result_detail_deprecated(request, pk):
@@ -63,8 +67,10 @@ def peng_result_detail(request, pk):
         #d = get_job_directory(result.job_id.job_id)
         #a = FilterPWM.init_with_extra_directory(d)
         #print(a.command_tokens)
-        meme_result_file_path = os.path.join(get_job_directory(result.job_id.job_id), JOB_OUTPUT_DIRECTORY, MEME_PLOT_INPUT)
-        plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
+        meme_result_file_path = get_meme_result_file_path(result.job_id.job_id)
+        plot_output_directory = get_plot_output_directory(result.job_id.job_id)
+        #meme_result_file_path = os.path.join(get_job_directory(result.job_id.job_id), JOB_OUTPUT_DIRECTORY, MEME_PLOT_INPUT)
+        #plot_output_directory = os.path.join(meme_result_file_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
         opath = os.path.join(get_result_folder(str(result.job_id)), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
         if not os.path.exists(plot_output_directory):
             os.makedirs(plot_output_directory)
@@ -93,7 +99,11 @@ def run_peng_view(request, mode='normal'):
             # TODO: Reload page here.
             pass
             # return render(request, 'job/de_novo_search.html', args)
-        peng_job = create_job_meta(form, request, "peng")
+        peng_job = create_job_meta(form, request, "peng", True)
+        if mode == "example":
+            upload_example_fasta(peng_job.job_id.job_id)
+            peng_job = get_object_or_404(Peng, pk=peng_job.job_id.job_id)
+            print("Example uploaded")
         ret, valid_input = validate_input_data(peng_job)
         # TODO: Adjust this part.
         if not valid_input:
@@ -173,7 +183,26 @@ def peng_load_bamm(request, pk):
     if request.method == "POST":
         # TODO: Maybe do that differently.
         if check_if_request_from_peng_directly(request):
-            save_selected_motifs(request.POST, pk)
+            at_least_one_motif_selected = save_selected_motifs(request.POST, pk)
+            if not at_least_one_motif_selected:
+                opath = os.path.join(get_result_folder(str(peng_job.job_id)), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
+                meme_result_file_path = get_meme_result_file_path(peng_job.job_id.job_id)
+                meme_meta_info_list = Meme.fromfile(meme_result_file_path)
+                return render(request, 'results/peng_result_detail.html',
+                      {'result': peng_job,
+                       'job_info': peng_job.job_id,
+                       'mode': peng_job.job_id.mode,
+                       'opath': opath,
+                       'meme_meta_info': meme_meta_info_list,
+                       'err_msg': NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT
+                       })
+                #return render(request, 'results/peng_bamm_split_peng_results_detail.html',
+                #              {#'form': PengToBammForm(),
+                #               #'mode': mode,
+                #               #'inputfile': inputfile,
+                #               #'job_name': peng_job.job_id.job_name,
+                #               'pk': peng_job.job_id.pk,
+                #               'err_msg': NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT})
             form = PengToBammForm()
             print("request from peng directly")
             return render(request, 'job/peng_bamm_split_peng_to_bamm.html',
@@ -183,9 +212,6 @@ def peng_load_bamm(request, pk):
             bamm_job = create_bamm_job('bamm', request, form, peng_job)
             ## Copy necessary files from last peng job.
             copy_peng_to_bamm(peng_job.job_id.job_id, bamm_job.job_id.job_id, request.POST)
-            print("Job Motif Initialisation")
-            print(bamm_job.Motif_Initialization)
-            print("Job ID", bamm_job.job_id.job_id)
             bamm_tasks.build_and_exec_chain.delay(bamm_job.job_id.job_id)
             return render(request, 'job/peng_to_bamm_submitted.html', {'pk': bamm_job.job_id.job_id})
         else:
