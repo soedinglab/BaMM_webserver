@@ -82,4 +82,4 @@ class Command(BaseCommand):
         upload_example_fasta(new_bamm.job_id)
         upload_example_motif(new_bamm.job_id)
 
-        run_bamm.delay(new_bamm.job_id)
+        run_bamm.delay(new_bamm.job_id.job_id)

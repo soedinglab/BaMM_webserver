@@ -267,7 +267,7 @@ def get_FDR_command(job_pk, useRefined, m=1):
     return command
 
 
-def get_BaMMScan_command(job_pk, first, useRefined, m=1):
+def get_BaMMScan_command(job_pk, first_task_in_pipeline, useRefined, m=1):
     job = get_object_or_404(Bamm, pk=job_pk)
     param = []
 
@@ -279,12 +279,12 @@ def get_BaMMScan_command(job_pk, first, useRefined, m=1):
     job.save()
 
     # adjust model order if run without BaMMmotif
-    if useRefined is False and job.Motif_Init_File_Format == 'BaMM':
+    if not useRefined and job.Motif_Init_File_Format == 'BaMM':
         job.model_Order = get_model_order(job_pk)
         job.background_Order = get_bg_model_order(job_pk)
         job.save()
 
-    if useRefined is False and (job.Motif_Init_File_Format == 'PWM' or job.Motif_Init_File_Format == 'BindingSites'):
+    if not useRefined and (job.Motif_Init_File_Format == 'PWM' or job.Motif_Init_File_Format == 'BindingSites'):
         job.model_Order = 0
         job.save()
 
@@ -295,11 +295,11 @@ def get_BaMMScan_command(job_pk, first, useRefined, m=1):
     param.append("--pvalCutoff")
     param.append(job.score_Cutoff)
 
-    if first is True:
+    if first_task_in_pipeline is True:
         param.append("--saveInitialModel")
 
     param.append("--basename")
-    if useRefined is True or job.Motif_Init_File_Format == 'BaMM' or job.Motif_Init_File_Format == 'BindingSites':
+    if useRefined or job.Motif_Init_File_Format == 'BaMM' or job.Motif_Init_File_Format == 'BindingSites':
         param.append(str(job.Output_filename()) + '_motif_' + str(m))
     else:
         if job.Motif_Init_File_Format == 'PWM':
@@ -377,15 +377,15 @@ def Peng(job_pk, useRefined):
     return 0
 
 
-def BaMM(job_pk, first, useRefined):
+def BaMM(job_pk, first_task_in_pipeline, useRefined):
     job = get_object_or_404(Bamm, pk=job_pk)
     job.status = 'running BaMMmotif'
     job.save()
     print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
     sys.stdout.flush()
-    run_command(get_BaMMmotif_command(job_pk, useRefined, first, 5))
+    run_command(get_BaMMmotif_command(job_pk, useRefined, first_task_in_pipeline, 5))
     sys.stdout.flush()
-    if first is True:
+    if first_task_in_pipeline:
         # generate motif objects
         initialize_motifs(job_pk, 2, 2)
         job = get_object_or_404(Bamm, pk=job_pk)
@@ -398,19 +398,19 @@ def BaMM(job_pk, first, useRefined):
     return 0
 
 
-def BaMMScan(job_pk, first, useRefined):
+def BaMMScan(job_pk, first_task_in_pipeline, useRefined):
     job = get_object_or_404(Bamm, pk=job_pk)
     job.status = 'running BaMMScan'
     job.save()
     print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
     sys.stdout.flush()
-    if useRefined is True:
+    if useRefined:
         for m in range(1, job.num_motifs+1):
-            run_command(get_BaMMScan_command(job_pk, first, useRefined, m))
+            run_command(get_BaMMScan_command(job_pk, first_task_in_pipeline, useRefined, m))
     else:
-        run_command(get_BaMMScan_command(job_pk, first, useRefined))
+        run_command(get_BaMMScan_command(job_pk, first_task_in_pipeline, useRefined))
     sys.stdout.flush()
-    if first is True:
+    if first_task_in_pipeline:
         # generate motif objects
         initialize_motifs(job_pk, 2, 3)
         job = get_object_or_404(Bamm, pk=job_pk)
@@ -425,19 +425,19 @@ def BaMMScan(job_pk, first, useRefined):
     return 0
 
 
-def FDR(job_pk, first, useRefined):
+def FDR(job_pk, first_task_in_pipeline, useRefined):
     job = get_object_or_404(Bamm, pk=job_pk)
     job.status = 'running Motif Evaluation'
     job.save()
     print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
     sys.stdout.flush()
-    if useRefined is True:
+    if useRefined:
         for m in range(1, job.num_motifs+1):
             run_command(get_FDR_command(job_pk, useRefined, m))
     else:
         run_command(get_FDR_command(job_pk, useRefined))
     sys.stdout.flush()
-    if first is True:
+    if first_task_in_pipeline:
         # generate motif objects
         initialize_motifs(job_pk, 0, 1)
         job = get_object_or_404(Bamm, pk=job_pk)
@@ -447,14 +447,14 @@ def FDR(job_pk, first, useRefined):
     return 0
 
 
-def MMcompare(job_pk, first):
+def MMcompare(job_pk, first_task_in_pipeline):
     job = get_object_or_404(Bamm, pk=job_pk)
     job.status = 'running Motif Motif Comparison'
     job.save()
     print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
     sys.stdout.flush()
     database = 100
-    if first is True:
+    if first_task_in_pipeline:
         # add init Motif to Outputfolder
         transfer_motif(job_pk)
         if job.Motif_Init_File_Format == 'BaMM':
@@ -465,7 +465,7 @@ def MMcompare(job_pk, first):
     job = get_object_or_404(Bamm, pk=job_pk)
     run_command(get_MMcompare_command(job_pk, database))
     sys.stdout.flush()
-    if first is True:
+    if first_task_in_pipeline:
         # generate motif objects
         job = get_object_or_404(Bamm, pk=job_pk)
         run_command(get_iupac_command(job_pk))
