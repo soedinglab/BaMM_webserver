@@ -97,9 +97,9 @@
                             </form>
                             {%  endcomment %}
                             {% comment %}
-                            <a href="{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip" >Download</a>
-                            {%  endcomment %}
                             <button type="submit" onclick="window.open('{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip')">Download!</button>
+                            {%  endcomment %}
+                            <a href="{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip" >Download</a>
                         </th>
                     </tr>
                 {% endfor %}
@@ -137,7 +137,7 @@
                         {% if mode == "Prediction" or mode == "Occurrence" %}
                             <tr>
                                 <td> &emsp; Input Sequence:</td>
-                                <td> &emsp; {{ result.fasta_file }}</td>
+                                <td> {{ result.fasta_file }} </td>
                             </tr>
                         {% endif %}
                         {% comment %}

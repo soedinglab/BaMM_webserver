@@ -253,7 +253,7 @@
                 {% endif %}
                 <th> Download </th>
             </tr>
-            {% for m in result.motifs_set.all|dictsort:"job_rank" %}
+            {% for m in result.motifs_new_set.all|dictsort:"job_rank" %}
                 <tr>
                     <th> <a href="#{{m.job_rank}}" style="color:black">{{m.job_rank}} </a></th>
                     <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.iupac}} </a></th>

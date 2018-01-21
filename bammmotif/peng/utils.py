@@ -73,6 +73,8 @@ def zip_motifs(motif_ids, directory, with_reverse=True):
         subprocess.run(cmd)
     # Now zip all
     plots = [os.path.join(directory, x) for x in os.listdir(directory) if x.endswith(".png") or x.endswith(".meme")]
+    # Add meme file
+    plots += os.path.join(directory.rsplit('/', maxsplit=1)[0], FILTERPWM_OUTPUT_FILE)
     archive_name = os.path.join(directory, ZIPPED_MOTIFS)
     cmd = ['zip', '-j', archive_name] + plots
     # cmd = "zip -j %s %s" % (archive_name, plots)
