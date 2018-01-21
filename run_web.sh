@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Wait for mysql to start
+MYSQL_STARTUP_WAIT_TIME=5
+if [ -f MYSQL_STARTUP_TIME ]
+then
+    MYSQL_STARTUP_WAIT_TIME=`cat MYSQL_STARTUP_TIME`
+fi
+
+sleep $MYSQL_STARTUP_WAIT_TIME
+
 # construct empty database
 python manage.py makemigrations
 python manage.py migrate

@@ -7,9 +7,13 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 
-from bammmotif.peng.settings import file_path_peng, peng_meme_directory, FASTA_VALIDATION_SCRIPT
+from bammmotif.peng.settings import file_path_peng, peng_meme_directory, FASTA_VALIDATION_SCRIPT, PENG_OUTPUT, MEME_PLOT_INPUT, FILTERPWM_OUTPUT_FILE
+from webserver.settings import BAMM_INPUT
 from bammmotif.models import JobInfo
 from bammmotif.peng.settings import ALLOWED_JOBMODES, file_path_peng_meta
+from bammmotif.utils import get_user
+from bammmotif.utils.meme_reader import get_n_motifs
+from bammmotif.peng.form import JobInfoForm
 
 #def file_path_peng(job_id, filename):
 #    path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id), 'Output')
@@ -23,17 +27,49 @@ from bammmotif.peng.settings import ALLOWED_JOBMODES, file_path_peng_meta
 #        os.makedirs(path_to_plots)
 #    return path_to_plots
 
-def init_job(job_mode):
+def init_job(job_type):
     job = JobInfo.objects.create()
     job.created_at = datetime.datetime.now()
     job.status = "data uploaded"
-    job.mode = job_mode
+    job.job_type = job_type
     if job.job_name is None:
         # truncate job_id
         job_id_short = str(job.job_id).split("-", 1)
         job.job_name = job_id_short[0]
     job.save()
     return job
+
+def init_job_from_form(job_type, request):
+    form = JobInfoForm(request.POST, request.FILES)
+    job = form.save(commit=False)
+    job.created_at = datetime.datetime.now()
+    job.status = "data uploaded"
+    job.job_type = job_type
+    if job.job_name is None:
+        # truncate job_id
+        job_id_short = str(job.job_id).split("-", 1)
+        job.job_name = job_id_short[0]
+    job.save()
+    return job
+
+
+def create_bamm_job(job_type, request, form, peng_job):
+    #job_info = init_job('bamm')
+    job_info = init_job_from_form(job_type, request)
+    job_info.user = get_user(request)
+    # bamm_job = create_job_bamm(form, request, "bamm")
+    # read in data and parameter
+    bamm_job = form.save(commit=False)
+    bamm_job.job_id = job_info
+    # job.created_at = datetime.datetime.now()
+    bamm_job.Input_Sequences = peng_job.fasta_file
+    bamm_job.num_init_motifs = get_n_motifs(peng_job.job_id.job_id)
+    # print(dir(peng_job.fasta_file))
+    bamm_job.Motif_InitFile.name = os.path.join(settings.MEDIA_ROOT, str(bamm_job.job_id.job_id), PENG_OUTPUT, FILTERPWM_OUTPUT_FILE)
+    bamm_job.Motif_Initialization = "Custom File"
+    bamm_job.Motif_Init_File_Format = "PWM"
+    bamm_job.save()
+    return bamm_job
 
 def create_anonymuous_user(request):
     ip = get_ip(request)
@@ -55,8 +91,12 @@ def create_anonymuous_user(request):
         user.save()
         return user
 
-def create_job_meta(form, request, jobmode):
-    job_info = init_job(jobmode)
+
+def create_job_meta(form, request, job_type, from_jobinfo_form=False):
+    if from_jobinfo_form:
+        job_info = init_job_from_form(job_type, request)
+    else:
+        job_info = init_job(job_type)
     job = form.save(commit=False)
     job.job_id = job_info
     # Invert Default boolean values beginning with "no"
@@ -125,6 +165,8 @@ def validate_fasta(path):
 def validate_input_data(job):
     print("VALIDATE_INPUT_DATA")
     success = "Validation succeeded!"
+    print(settings.MEDIA_ROOT)
+    print(job.fasta_file.name)
     msg_seq, valid_seq = validate_fasta(os.path.join(settings.MEDIA_ROOT, job.fasta_file.name))
     if not valid_seq:
         return msg_seq, False

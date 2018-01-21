@@ -13,7 +13,7 @@ from bammmotif.bamm.forms import (
 )
 from bammmotif.bamm.tasks import (
     run_bamm, run_bammscan,
-    run_compare, run_peng
+    run_compare, run_peng, build_and_exec_chain
 )
 from bammmotif.utils import (
     get_log_file,
@@ -188,10 +188,11 @@ def run_bamm_view(request, mode='normal'):
                 bamm_job = get_object_or_404(Bamm, pk=job_pk)
 
             bamm_job = get_object_or_404(Bamm, pk = job_pk)
-            if bamm_job.Motif_Initialization == 'PEnGmotif':
-                run_peng.delay(job_pk)
-            else:
-                run_bamm.delay(job_pk)
+            build_and_exec_chain.delay(job_pk)
+            #if bamm_job.Motif_Initialization == 'PEnGmotif':
+            #    run_peng.delay(job_pk)
+            #else:
+            #    run_bamm.delay(job_pk)
 
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
@@ -237,7 +238,7 @@ def result_overview(request):
 
 
 def delete(request, pk):
-    Job.objects.filter(job_ID=pk).delete()
+    JobInfo.objects.filter(job_id=pk).delete()
     if request.user.is_authenticated():
         user_jobs = Job.objects.filter(user=request.user.id)
         return render(request, 'results/result_overview.html',
@@ -258,7 +259,7 @@ def result_detail(request, pk):
     db = get_object_or_404(DbParameter, pk=database)
     db_dir = path.join(db.base_dir, 'Results')
 
-    if result.complete:
+    if result.job_id.complete:
         print("status is successfull")
         num_logos = range(1, (min(3,result.model_Order+1)))
         return render(request, 'results/result_detail.html',
@@ -273,7 +274,7 @@ def result_detail(request, pk):
         command = "tail -20 %r" % log_file
         output = os.popen(command).read()
         return render(request, 'results/result_status.html',
-                      {'job_ID': result.job_id.job_id, 'job_name': result.job_id.job_name, 'status': result.status, 'output': output})
+                      {'job_ID': result.job_id.job_id, 'job_name': result.job_id.job_name, 'status': result.job_id.status, 'output': output})
 
 
 # #########################

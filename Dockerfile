@@ -54,9 +54,9 @@ RUN cp /ext/meme/bin/ceqlogo /ext/bin
 RUN rm -rf /tmp/meme_suite
 
 # Add filterpwm to /ext
-ADD tools/bamm/py/filterPWMs /tmp/filterPWMs
+ADD tools/bamm/py /tmp/py
 RUN mkdir -p /ext/filterPWMs
-RUN cp /tmp/filterPWMs/* /ext/filterPWMs/
+RUN cp /tmp/py/* /ext/filterPWMs/
 RUN rm -rf /tmp/filterPWMs
 # RUN cp -a tools/bamm/py/filterPWMs /ext
 ENV PATH="/ext/filterPWMs:${PATH}"

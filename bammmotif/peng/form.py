@@ -1,7 +1,7 @@
 from django.conf import settings
 from bammmotif.forms import PredictionExampleForm
 from django import forms
-from bammmotif.models import PengJob_deprecated, Peng
+from bammmotif.models import PengJob_deprecated, Peng, JobInfo
 
 
 class PengFormMeta(forms.ModelForm):
@@ -17,6 +17,27 @@ class PengFormMeta(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PengFormMeta, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            help_text = self.fields[field].help_text
+            self.fields[field].help_text = None
+            if help_text != '':
+                self.fields[field].widget.attrs.update({'class': 'has-popover',
+                                                        'data-content': help_text,
+                                                        'data-placement': 'right',
+                                                        'data-container': 'body'})
+
+class PengExampleFormMeta(forms.ModelForm):
+
+    class Meta:
+        model = Peng
+        fields = (
+            'bg_sequences',
+            'pattern_length', 'zscore_threshold', 'count_threshold', 'bg_model_order',
+            'strand', 'objective_function', 'no_em'
+        )
+
+    def __init__(self, *args, **kwargs):
+        super(PengExampleFormMeta, self).__init__(*args, **kwargs)
         for field in self.fields:
             help_text = self.fields[field].help_text
             self.fields[field].help_text = None
@@ -73,6 +94,23 @@ class PengExampleForm(forms.ModelForm):
                                                         'data-placement': 'right',
                                                         'data-container': 'body'})
 
+class JobInfoForm(forms.ModelForm):
+    class Meta:
+        model = JobInfo
+        fields = ('job_name',)
+
+    def __init__(self, *args, **kwargs):
+        super(JobInfoForm, self).__init__(*args, **kwargs)
+        for field in self.fields:
+            help_text = self.fields[field].help_text
+            self.fields[field].help_text = None
+            if help_text != '':
+                self.fields[field].widget.attrs.update({'class': 'has-popover',
+                                                        'data-content': help_text,
+                                                        'data-placement': 'right',
+                                                        'data-container': 'body'})
+
+
 
 def get_valid_peng_form(post, files, user, mode):
     print("post", post, "files", files)
@@ -80,8 +118,8 @@ def get_valid_peng_form(post, files, user, mode):
     valid = False
     if mode == 'example':
         valid = True
-        args['form'] = PengExampleForm()
-        return PredictionExampleForm(post, files), valid, args
+        args['form'] = PengExampleFormMeta()
+        return PengExampleFormMeta(post, files), valid, args
     #print("get valid peng form")
     #print(post.__dir__())
     #print("files:")
@@ -112,12 +150,8 @@ def get_valid_peng_form_meta(post, files, user, mode):
     valid = False
     if mode == 'example':
         valid = True
-        args['form'] = PengExampleForm()
-        return PredictionExampleForm(post, files), valid, args
-    #print("get valid peng form")
-    #print(post.__dir__())
-    #print("files:")
-    #print(files)
+        args['form'] = PengExampleFormMeta()
+        return PengExampleFormMeta(post, files), valid, args
     form = PengFormMeta(post, files)
     if not form.is_valid():
         print("get_valid_peng_form_meta second if")
