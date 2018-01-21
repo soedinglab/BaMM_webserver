@@ -197,13 +197,18 @@ def initialize_motifs_compare(job_pk):
         motif_obj = Motifs(parent_job=job, job_rank=motif)
         motif_obj.save()
 
+
 def add_motif_evaluation(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     motifs = Motifs.objects.filter(parent_job=job)
-    filename = str(get_job_output_folder(job_pk)) + "/" + str(basename(os.path.splitext(job.Input_Sequences.name)[0])) + ".bmscore"
-    with open(filename) as fh:
-        next(fh)
-        for line in fh:
+
+    file_basename = basename(job.Input_Sequences.name)
+    prefix, _ = path.splitext(file_basename)
+    benchmark_file = path.join(get_job_output_folder(job_pk), prefix + ".bmscore")
+
+    with open(benchmark_file) as bm_handle:
+        next(bm_handle)  # skip header
+        for line in bm_handle:
             tokens = line.split()
             motif_obj = motifs.filter(job_rank=tokens[1])[0]
             motif_obj.auc = tokens[2]
@@ -245,13 +250,13 @@ def add_motif_iupac(job_pk):
         outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
     else:
         outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
-    filename = str(get_job_output_folder(job_pk)) + "/" + outname + ".iupac"
-    with open(filename) as fh:
+    iupac_file = path.join(get_job_output_folder(job_pk), outname + ".iupac")
+    with open(iupac_file) as fh:
         for line in fh:
-            tokens = line.split()
-            motif_obj = motifs.filter(job_rank=tokens[1])[0]
-            motif_obj.iupac = tokens[2]
-            motif_obj.length = tokens[3]
+            _, motif_id, iupac_representation, motif_length = line.split()
+            motif_obj = motifs.filter(job_rank=motif_id)[0]
+            motif_obj.iupac = iupac_representation
+            motif_obj.length = motif_length
             motif_obj.save()
 
 

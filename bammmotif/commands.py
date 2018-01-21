@@ -21,6 +21,8 @@ from .utils import (
     get_bg_model_order,
     initialize_motifs_compare
 )
+from logging import getLogger
+logger = getLogger(__name__)
 
 
 def get_core_params(job_pk, useRefined, m=1):
@@ -389,8 +391,12 @@ def BaMM(job_pk, first, useRefined):
         # generate motif objects
         initialize_motifs(job_pk, 2, 2)
         job = get_object_or_404(Job, pk=job_pk)
+
     # add IUPACs
-    run_command(get_iupac_command(job_pk))
+    iupac_cmd = get_iupac_command(job_pk)
+    logger.debug("executing: %r" % iupac_cmd)
+    run_command(iupac_cmd)
+
     add_motif_iupac(job_pk)
     # plot logos
     for order in range(min(job.model_Order+1, 3)):

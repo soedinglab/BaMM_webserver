@@ -72,7 +72,6 @@ class JobSaveManager:
             self.had_exception = False
             print(datetime.datetime.now(), "\t | END: \t %s " % job.status)
         job.save()
-        return True
 
 
 def run_command(command):
