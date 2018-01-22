@@ -4,9 +4,15 @@
     {% load static %}
     {% load bammmotif_extras %}
 
-    <div class="jumbotron container-fluid" style="background-color:white"><font color="red">
-
-        <h>{{ err_msg }}</h>
+    {% if err_msg is defined %}
+        <div class="jumbotron container-fluid" style="background-color:white"><font color="red">
+            <h>{{ err_msg }}</h>
+            </font>
+        </div>
+    {% endif %}
+    <div class="jumbotron container-fluid" style="background-color:white"><font color="black">
+        <h2>Select Motifs for Higher Order Refinement</h2>
+    </font>
     </div>
     <div class="jumbotron" style="background-color:white"><font color="black">
         <form action="{% get_media_prefix %}/{{ opath }}/motif_all.zip" method="get" target="_blank">
@@ -72,7 +78,7 @@
                     <th> PWM</th>
                     <th> reverse Comp.</th>
                     <th> log(pval)</th>
-                    <th> # sites</th>
+                    <th> ausfc</th>
                     <th> Download</th>
                 </tr>
                 {% for motif in meme_meta_info %}
@@ -85,7 +91,7 @@
                                  class="responsive-img"
                                  style='max-height:400px;' width="100" height="50" alt={{ motif }}_rev></th>
                         <th> {{ motif.logpval }} </th>
-                        <th> {{ motif.nsites }}</th>
+                        <th> {{ motif.ausfc }}</th>
                         <th>
                             {% comment %}
                             <form action="{% get_media_prefix %}/{{ opath }}/{{ motif.meme_id }}.zip" method="get" target="_blank">

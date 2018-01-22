@@ -68,6 +68,7 @@ def create_bamm_job(job_type, request, form, peng_job):
     bamm_job.Motif_InitFile.name = os.path.join(settings.MEDIA_ROOT, str(bamm_job.job_id.job_id), PENG_OUTPUT, FILTERPWM_OUTPUT_FILE)
     bamm_job.Motif_Initialization = "Custom File"
     bamm_job.Motif_Init_File_Format = "PWM"
+    bamm_job.peng = peng_job
     bamm_job.save()
     return bamm_job
 

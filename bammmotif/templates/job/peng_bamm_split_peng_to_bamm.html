@@ -31,12 +31,10 @@
                     {% csrf_token %}
 
 
-                    {% comment%}
                     <p><label for="id_job_name"><a class "testpup"
                         onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span
                                 class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name"
-                                style="color:black"></span></a> Job Name: {{ job_name }}</label></p>
-                                                                         {% endcomment %}
+                                style="color:black"></span></a> Job Name:</label></p>
                     <p class="indent" style="padding-left: 1.8em"><input id="id_job_name" maxlength="50" name="job_name"
                                                                          type="text" placeholder="i.e: My Job #1"/></p>
 
@@ -62,12 +60,13 @@
                     {% endif %}
 
 
+                    {% comment %}
                     <p><label for="id_reverse_Complement"><a class "testpup"
                         onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" ><span
                                 class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a>
                         Search on both strands:</label><font color="#1f2e2e"> &nbsp;&nbsp;<input
                             id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font></p>
-
+                    {% endcomment %}
 
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
                          style="background-color:white"><font color="black">

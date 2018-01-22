@@ -1,10 +1,12 @@
-import os
 from django.conf import settings
+from django.shortcuts import get_object_or_404
+import os
 
 
 JOB_OUTPUT_DIRECTORY = 'Output'
 PENG_OUTPUT = 'pengoutput'
 PENG_INPUT = 'Input'
+PENG_TEMP_DIRECTORY = "temp"
 SELECTED_MOTIFS = 'selected_motifs'
 MEME_PLOT_DIRECTORY = 'meme_plots'
 MEME_OUTPUT_FILE = 'out.meme'
@@ -80,4 +82,13 @@ def job_directory_path_peng(instance, filename, intermediate_dir="Input"):
     if not os.path.exists(path):
         os.makedirs(path)
     return os.path.join(path, str(filename))
+
+def get_temporary_job_dir(job_pk):
+    return os.path.join(get_job_directory(job_pk), PENG_TEMP_DIRECTORY)
+
+
+def get_bmscore_filename(job_pk, job_type):
+    job = get_object_or_404(job_type, pk=job_pk)
+    fname = job.fasta_file.name.split('/')[-1]
+    return fname.rsplit('.', maxsplit=1)[0] + ".bmscore"
 

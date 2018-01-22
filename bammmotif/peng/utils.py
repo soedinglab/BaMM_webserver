@@ -5,12 +5,14 @@ from django.conf import settings
 from bammmotif.peng.job import peng_meme_directory
 from bammmotif.utils.meme_reader import update_and_copy_meme_file
 from bammmotif.peng.settings import MEME_PLOT_DIRECTORY, MEME_OUTPUT_FILE, PENG_OUTPUT, SELECTED_MOTIFS, PENG_INPUT, \
-    ZIPPED_MOTIFS, MOTIF_SELECT_IDENTIFIER, EXAMPLE_FASTA_FILE, FILTERPWM_OUTPUT_FILE, JOB_OUTPUT_DIRECTORY
+    ZIPPED_MOTIFS, MOTIF_SELECT_IDENTIFIER, EXAMPLE_FASTA_FILE, FILTERPWM_OUTPUT_FILE, JOB_OUTPUT_DIRECTORY, \
+    get_bmscore_filename, get_temporary_job_dir
 from webserver.settings import BAMM_INPUT
 
 import os
 import shutil
 import subprocess
+import csv
 
 def upload_example_fasta_for_peng(job_id):
     peng_job = get_object_or_404(Peng, pk=job_id)
@@ -46,6 +48,12 @@ def copy_peng_to_bamm(peng_id, bamm_id, post):
     for file in os.listdir(peng_input):
         shutil.copy(os.path.join(peng_input, file), bamm_input)
 
+def copy_bmscores(peng_id, bamm_id):
+    bamm_input = os.path.join(settings.MEDIA_ROOT, str(bamm_id), BAMM_INPUT)
+    bmf_path = os.path.join( get_temporary_job_dir(peng_id), get_bmscore_filename(peng_id))
+    shutil.copy(bmf_path, bamm_input)
+
+
 def load_meme_ids(path, filetype='.png'):
     for _, _, files in os.walk(path):
         filelist = [x.rsplit('.', maxsplit=1)[0] for x in files if x.endswith(filetype)]
@@ -65,16 +73,18 @@ def zip_motifs(motif_ids, directory, with_reverse=True):
         meme_file = os.path.join(directory, motif + ".meme")
         cmd.append(meme_file)
         if with_reverse:
-            additional_args = " %s_rev.png" % os.path.join(directory, motif)
+            additional_args = os.path.join(directory, motif + "_rev.png")
             cmd.append(additional_args)
             # Use -j option to prune directory prefixes
         #cmd = "zip -j %s %s" % (archive_name, args)
         # print(cmd)
+        #print(os.path.join(directory, motif + ".png"))
+        #print(" %s_rev.png" % os.path.join(directory, motif))
         subprocess.run(cmd)
     # Now zip all
     plots = [os.path.join(directory, x) for x in os.listdir(directory) if x.endswith(".png") or x.endswith(".meme")]
     # Add meme file
-    plots += os.path.join(directory.rsplit('/', maxsplit=1)[0], FILTERPWM_OUTPUT_FILE)
+    plots.append(os.path.join(directory.rsplit('/', maxsplit=1)[0], MEME_OUTPUT_FILE))
     archive_name = os.path.join(directory, ZIPPED_MOTIFS)
     cmd = ['zip', '-j', archive_name] + plots
     # cmd = "zip -j %s %s" % (archive_name, plots)
@@ -113,3 +123,22 @@ def upload_example_fasta(job_pk):
         job.fasta_file.save(out_filename, File(fh))
         job.save()
     print(job.fasta_file.name)
+
+
+def read_bmscore(fname):
+    scores = {}
+    with open(fname, newline='') as f:
+        reader = csv.DictReader(f, dialect=csv.excel_tab)
+        for row in reader:
+            scores[row['motif_number']] = row
+    return scores
+
+def merge_meme_and_bmscore(meme_list, meme_list_old, bm_scores):
+    # first we need to match ausfc scores with the memes from peng
+    for i in range(1, len(meme_list_old) + 1):
+        meme_list_old[i-1].ausfc = float(bm_scores[str(i)]['ausfc'])
+    meme_dict = {meme_list_old[i].meme_id: meme_list_old[i] for i in range(len(meme_list_old))}
+    # now we need to macth the peng memes with the filterpwm meme
+    for meme in meme_list:
+        meme.ausfc = meme_dict[meme.meme_id].ausfc
+    return meme_list

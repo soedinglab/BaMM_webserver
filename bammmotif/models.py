@@ -363,6 +363,7 @@ class Peng(models.Model):
 class Bamm(models.Model):
     job_id = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False, primary_key=True)
     num_motifs = models.IntegerField(default=1)
+    peng = models.OneToOneField(Peng, editable=False, on_delete=models.CASCADE)
 
     # files
     Input_Sequences = models.FileField(upload_to=job_directory_path_sequence_new, null=True)
