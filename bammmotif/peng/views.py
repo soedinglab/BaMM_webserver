@@ -2,14 +2,22 @@ import os
 import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
-
+from utils import deprecated
 from bammmotif.peng.peng_to_bamm_form import PengToBammForm
 from bammmotif.peng.form import get_valid_peng_form, get_valid_peng_form_meta, PengExampleForm, PengForm, PengFormMeta
 from bammmotif.peng.job import create_job, validate_input_data, init_job, create_job_meta, create_bamm_job
 from bammmotif.peng.tasks import run_peng, plot_meme, peng_chain
 import bammmotif.bamm.tasks as bamm_tasks
-from bammmotif.peng.utils import upload_example_fasta_for_peng, copy_peng_to_bamm, load_meme_ids, zip_motifs, \
-    check_if_request_from_peng_directly, save_selected_motifs, upload_example_fasta, read_bmscore, merge_meme_and_bmscore
+from bammmotif.peng.utils import (
+    upload_example_fasta_for_peng,
+    copy_peng_to_bamm,
+    load_meme_ids,
+    check_if_request_from_peng_directly,
+    save_selected_motifs,
+    upload_example_fasta,
+    read_bmscore,
+    merge_meme_and_bmscore
+)
 from bammmotif.models import Job, PengJob_deprecated, DbParameter, Peng, JobInfo, Bamm
 from bammmotif.forms import FindForm
 from bammmotif.peng.job import file_path_peng
@@ -23,13 +31,22 @@ from bammmotif.utils import (
 )
 import bammmotif.tasks as tasks
 from bammmotif.peng.settings import (
-    MEME_PLOT_DIRECTORY, get_job_directory, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY,
-    NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT, get_meme_result_file_path, get_plot_output_directory,
-    get_temporary_job_dir, get_bmscore_filename, FILTERPWM_INPUT_FILE, peng_meme_directory
-
+    MEME_PLOT_DIRECTORY,
+    NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT,
+    get_meme_result_file_path,
+    get_plot_output_directory,
+    get_temporary_job_dir,
+    get_bmscore_filename,
+    FILTERPWM_INPUT_FILE,
+    peng_meme_directory,
+    get_peng_output_in_bamm_directory,
+    get_memeplot_directory_in_bamm,
+    get_bmscore_path,
+    get_memeplot_directory_without_prefix,
 )
 import uuid
 
+@deprecated
 def peng_result_detail_deprecated(request, pk):
     result = get_object_or_404(PengJob_deprecated, pk=pk)
     meme_result_file_path = file_path_peng(result.job_ID, result.meme_output)
@@ -122,6 +139,7 @@ def run_peng_view(request, mode='normal'):
     return render(request, 'job/peng_bamm_split_peng_input.html',
                   {'form': form, 'mode': mode})
 
+@deprecated
 def run_peng_view_deprecated(request, mode='normal'):
     print("ENTERING Data PREDICT VIEW data_peng_changed: ", request.method, mode)
     if request.method == "POST":
@@ -213,6 +231,7 @@ def peng_load_bamm(request, pk):
     return render(request, 'job/peng_bamm_split_peng_to_bamm.html',
                   {'form': form, 'mode': mode, 'inputfile': inputfile, 'job_name': peng_job.job_name, 'pk': pk})
 
+@deprecated
 def peng_load_bamm_deprecated(request, pk):
     mode = "peng_to_bamm"
     peng_job = get_object_or_404(PengJob_deprecated, pk=pk)
@@ -287,15 +306,12 @@ def peng_to_bamm_result_detail(request, pk):
     print(result.job_id.job_name)
     opath = get_result_folder(pk)
     Output_filename = result.Output_filename()
-    # meme_logo_path = peng_meme_directory(pk)
     if result.job_id.complete:
-        peng_path = os.path.join(settings.MEDIA_ROOT, pk, "pengoutput")
-        meme_plots = os.path.join(pk, "pengoutput", "meme_plots")
+        peng_path = get_peng_output_in_bamm_directory(result.job_id.job_id)
+        meme_plots = get_memeplot_directory_without_prefix(result.job_id.job_id)
         meme_motifs = load_meme_ids(peng_path)
-        # meme_meta_info_list = Meme.fromfile(os.path.join(peng_meme_directory(pk), "out.meme"))
         meme_meta_info_list = Meme.fromfile(os.path.join(peng_path, "out.meme"))
-        bmf_name = os.path.join( get_temporary_job_dir(result.peng.job_id.job_id), get_bmscore_filename(result.peng.job_id.job_id, Peng))
-        bm_scores = read_bmscore(bmf_name)
+        bm_scores = read_bmscore(get_bmscore_path(result.peng))
         meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(result.peng.job_id.job_id), FILTERPWM_INPUT_FILE))
         # add ausfc data to motifs
         meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)

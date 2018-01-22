@@ -38,6 +38,7 @@
                     <p class="indent" style="padding-left: 1.8em"><input id="id_job_name" maxlength="50" name="job_name"
                                                                          type="text" placeholder="i.e: My Job #1"/></p>
 
+                {% comment %}
                     {% if mode == 'example' %}
                         <p><label for="id_Input_Sequences"><a class "testpup"
                             onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span
@@ -49,6 +50,8 @@
                             onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span
                                     class="glyphicon glyphicon-info-sign" aria-hidden="true"
                                     style="color:black"></span></a> Input Sequences: {{ inputfile }}</label></p>
+                    {% endif %}
+                 {% endcomment %}
                         {% comment %}
                         <p class="indent" style="padding-left: 1.8em"><input id="id_Input_Sequences"
                                                                              name="Input_Sequences" type="file"
@@ -57,7 +60,6 @@
                             class="glyphicon glyphicon-play-circle" aria-hidden="true"> Load Example Data </span></a>
                         </td>
                                                                              {% endcomment %}
-                    {% endif %}
 
 
                     {% comment %}

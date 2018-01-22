@@ -12,6 +12,8 @@ def deprecated(reason):
     This is a decorator which can be used to mark functions
     as deprecated. It will result in a warning being emitted
     when the function is used.
+
+    Copied from stackoverflow: https://stackoverflow.com/questions/2536307/decorators-in-the-python-standard-lib-deprecated-specifically
     """
 
     if isinstance(reason, string_types):

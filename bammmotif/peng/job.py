@@ -7,7 +7,14 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 
-from bammmotif.peng.settings import file_path_peng, peng_meme_directory, FASTA_VALIDATION_SCRIPT, PENG_OUTPUT, MEME_PLOT_INPUT, FILTERPWM_OUTPUT_FILE
+from bammmotif.peng.settings import (
+    file_path_peng,
+    peng_meme_directory,
+    FASTA_VALIDATION_SCRIPT,
+    PENG_OUTPUT,
+    MEME_PLOT_INPUT,
+    FILTERPWM_OUTPUT_FILE,
+)
 from webserver.settings import BAMM_INPUT
 from bammmotif.models import JobInfo
 from bammmotif.peng.settings import ALLOWED_JOBMODES, file_path_peng_meta

@@ -140,12 +140,14 @@
                     <h2>Peng Settings </h2>
                     <hr style="border: 1px solid #1f2e2e">
                     <table>
+                    {% comment %}
                         {% if mode == "Prediction" or mode == "Occurrence" %}
                             <tr>
                                 <td> &emsp; Input Sequence:</td>
                                 <td> {{ result.fasta_file }} </td>
                             </tr>
                         {% endif %}
+                        {% endcomment %}
                         {% comment %}
                 <tr>
                     <td>  &emsp; Mofti File: </td>

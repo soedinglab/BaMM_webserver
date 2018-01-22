@@ -360,6 +360,12 @@ class Peng(models.Model):
             return obj == self.__str__()
         return False
 
+    @property
+    def bmscore_filename(self):
+        path = self.fasta_file.name.rsplit('.', maxsplit=1)[0] + ".bmscore"
+        return path.split('/')[-1]
+
+
 class Bamm(models.Model):
     job_id = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False, primary_key=True)
     num_motifs = models.IntegerField(default=1)
