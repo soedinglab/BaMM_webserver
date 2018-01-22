@@ -6,6 +6,7 @@ from ipware.ip import get_ip
 from ..models import (
     ChIPseq, Bamm, JobInfo, Motifs_new, DbMatch_new
 )
+import collections
 import sys
 import os
 from os import path
@@ -15,6 +16,9 @@ import traceback
 import subprocess
 from shutil import copyfile
 import re
+
+from logging import getLogger
+logger = getLogger(__name__)
 
 
 def get_result_folder(job_id):
@@ -74,7 +78,17 @@ class JobSaveManager:
         job.save()
 
 
-def run_command(command):
+class CommandFailureException(Exception):
+    pass
+
+
+def run_command(command, enforce_exit_zero=True):
+    if isinstance(command, str):
+        command_str = command
+    elif isinstance(command, collections.Iterable):
+        command_str = ' '.join(command)
+    logger.debug("executing: %s", command_str)
+
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
     while True:
@@ -84,6 +98,10 @@ def run_command(command):
         print(nextline.decode('utf-8'), file=sys.stdout, end='')
         sys.stdout.flush()
     process.wait()
+
+    if enforce_exit_zero:
+        if process.returncode != 0:
+            raise CommandFailureException(command_str)
     return process.returncode
 
 

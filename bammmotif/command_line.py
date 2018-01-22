@@ -6,9 +6,16 @@ import shutil
 from bammmotif.peng.settings import MEME_OUTPUT_FILE, JSON_OUTPUT_FILE, PATH_TO_FILTERPWM_SCRIPT, \
     FILTERPWM_INPUT_FILE, FILTERPWM_OUTPUT_FILE
 
+import logging
+logger = logging.getLogger(__name__)
+
+
+class CommandFailureException(Exception):
+    pass
+
 
 class CommandlineModule:
-    def __init__(self, command_name, config):
+    def __init__(self, command_name, config, enforce_exit_zero=True):
         cmd_flag_templates = OrderedDict()
         options = OrderedDict()
         for option_name, flag_template in config:
@@ -20,6 +27,7 @@ class CommandlineModule:
         self._options = options
         self._with_log_file = None
         # This should bt the last line in this Method.
+        self._enforce_exit_zero = enforce_exit_zero
         self._initialized = True
 
     def __setattr__(self, name, value):
@@ -35,7 +43,7 @@ class CommandlineModule:
             return super().__getattr__(name)
         elif name in self._options:
             return self._options[name]
-        elif name in self.__dict__:
+        elif name.startswith('_') or name in self.__dict__:
             return super().__getattr__(name)
         else:
             raise OptionError('unknown option %r' % name)
@@ -87,11 +95,21 @@ class CommandlineModule:
         }
         extra_args.update(kw_args)
         # TODO: Not happy with that formulation.
+
+        logger.debug("executing: %s",  ' '.join(self.command_tokens))
         if self.with_log_file is not None:
             with open(self.with_log_file, "a") as f:
-                return subprocess.run(self.command_tokens, stdout=f, stderr=f, **extra_args)
+                proc = subprocess.run(self.command_tokens, stdout=f, stderr=f, **extra_args)
         else:
-            return subprocess.run(self.command_tokens, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **extra_args)
+            proc = subprocess.run(self.command_tokens, stdout=subprocess.PIPE,
+                                  stderr=subprocess.STDOUT, **extra_args)
+
+        if proc.returncode != 0:
+            logger.error("non-zero exit code for: %s" % ' '.join(self.command_tokens))
+            if self._enforce_exit_zero:
+                raise CommandFailureException(' '.join(self.command_tokens))
+
+        return proc
 
 
 class OptionError(ValueError):

@@ -387,15 +387,13 @@ def BaMM(job_pk, first, useRefined):
     sys.stdout.flush()
     run_command(get_BaMMmotif_command(job_pk, useRefined, first, 5))
     sys.stdout.flush()
-    if first is True:
+    if first:
         # generate motif objects
         initialize_motifs(job_pk, 2, 2)
         job = get_object_or_404(Job, pk=job_pk)
 
     # add IUPACs
-    iupac_cmd = get_iupac_command(job_pk)
-    logger.debug("executing: %r" % iupac_cmd)
-    run_command(iupac_cmd)
+    run_command(get_iupac_command(job_pk))
 
     add_motif_iupac(job_pk)
     # plot logos

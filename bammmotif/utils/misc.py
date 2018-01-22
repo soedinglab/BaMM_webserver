@@ -8,6 +8,7 @@ from ..models import (
 )
 import sys
 import os
+import collections
 from os import path
 from os.path import basename
 import datetime
@@ -15,6 +16,9 @@ import traceback
 import subprocess
 from shutil import copyfile
 import re
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 def get_result_folder(job_id):
@@ -72,10 +76,21 @@ class JobSaveManager:
             self.had_exception = False
             print(datetime.datetime.now(), "\t | END: \t %s " % job.status)
         job.save()
-        return True
 
 
-def run_command(command):
+class CommandFailureException(Exception):
+    pass
+
+
+def run_command(command, enforce_exit_zero=True):
+    raise CommandFailureException()
+
+    if isinstance(command, str):
+        command_str = command
+    elif isinstance(command, collections.Iterable):
+        command_str = ' '.join(command)
+    logger.debug("executing: %s", command_str)
+
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
                                stderr=subprocess.STDOUT)
     while True:
@@ -85,6 +100,11 @@ def run_command(command):
         print(nextline.decode('utf-8'), file=sys.stdout, end='')
         sys.stdout.flush()
     process.wait()
+
+    if enforce_exit_zero:
+        if process.returncode != 0:
+            raise CommandFailureException(command_str)
+
     return process.returncode
 
 
