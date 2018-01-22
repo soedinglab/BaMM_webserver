@@ -4,7 +4,6 @@
     <div class="container-fluid">
         <div class="row">
 
-            {% comment %}
             <div class="col-md-6">
                 <div class='container-fluid'>
                     <center>
@@ -15,7 +14,7 @@
 
                         <center>
                             <a class="btn btn-primary btn-lg" href="{% url 'peng_predict' %}"
-                               style="background-color:#1f2e2e">PEnGmotif
+                               style="background-color:#1f2e2e">Peng
                             </a></center>
 
                         <!-- Modal -->
@@ -27,16 +26,16 @@
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span></button>
                                         <h4 class="modal-title" id="myModalLabel_1"><font color="#0B0719">Profit from
-                                            logged in mode </font></h4>
+                                            Logged in Mode </font></h4>
                                     </div>
                                     <div class="modal-body"><font color="#0B0719">
-                                        Dear user,
+                                        Dear User,
                                         <br>
                                         you are currently not logged in. As anonymous user you can test BaMMmotif, and
                                         view your results. On behalf of security and stability of our system we only
                                         allow limited functionality for unregistered users.
                                         Registering at BaMMmotif onyl requires a username and an email address.
-                                        As registered user you will be able to profit from:
+                                        As registered User you will be able to profit from:
                                         <ul>
                                             <li> higher computing capacity for your job</li>
                                             <li> higher model order calculations ( 8th order models instead of max. 3rd
@@ -58,10 +57,11 @@
                                             <a class="btn btn-primary btn-lg"
                                                href="{% url 'login' %}?next={% url 'peng_predict' %}" role="button"
                                                style="background-color:#1f2e2e">
-                                                Login for more comfort</a>
-                                            <a class="btn btn-primary btn-lg" href="{% url 'peng_predict' %}" role="button"
+                                                Login for more Comfort</a>
+                                            <a class="btn btn-primary btn-lg" href="{% url 'peng_predict' %}"
+                                               role="button"
                                                style="background-color:#1f2e2e">
-                                                Continue anonymous</a>
+                                                Continue Anonymous</a>
                                         </p>
                                     </div>
                                 </div>
@@ -76,7 +76,6 @@
                     </div>
                 </div>
             </div>
-            {% endcomment %}
             <div class="col-md-6">
                 <div class='container-fluid'>
                     <center>

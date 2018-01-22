@@ -10,3 +10,6 @@ redis
 pandas
 plotly
 matplotlib
+numpy
+scipy
+sklearn

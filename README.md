@@ -64,7 +64,7 @@ ENCODE_ChIPseq/Results/
 Now use `docker-compose build` to download and build all docker images.
 
 ## Populating the database
-When starting the webserver for the very first time comment in `populate.sh` (line 9) in the file `run_web.sh`. This will fill the mysql database updon running `docker-compose up`. NOTE: this should only be done the very first time when you start your webserver, because a repeated call of populate.sh will lead to redundancies in the database. AFTER having started t he webserver for the first time please comment out `populate.sh`(line 9) in the file `run_web.sh`again.
+When starting the webserver for the first time the script `populate.sh` has to be executed. This is done automatically and a file POPULATED is generated. Should the webserver be resetted and the population needs to be executed again, delete the file `POPULATED`.
 
 ## Starting the webserver
 After successfully building the webserver, use `docker-compose up` to start the webserver. In case you see errors related to mysql stop the server by `ctrl-C` and let is shut down gracefully and restart with `docker-compose up`. The error should be gone.

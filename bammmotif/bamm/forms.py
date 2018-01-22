@@ -1,15 +1,12 @@
 from django import forms
-from .models import Job
-from utils import deprecated
+from bammmotif.models import JobInfo, Bamm
 
 
 
-
-@deprecated("outdated")
 class PredictionForm(forms.ModelForm):
     class Meta:
-        model = Job
-        fields = ('job_name', 'Input_Sequences', 'reverse_Complement',
+        model = Bamm
+        fields = ('Input_Sequences', 'reverse_Complement',
                   'model_Order', 'extend', 'bgModel_File',
                   'Motif_Initialization', 'Motif_InitFile',
                   'Motif_Init_File_Format', 'background_Order',
@@ -31,11 +28,10 @@ class PredictionForm(forms.ModelForm):
                                                         'data-container': 'body'})
 
 
-@deprecated("outdated")
 class PredictionExampleForm(forms.ModelForm):
     class Meta:
-        model = Job
-        fields = ('job_name', 'reverse_Complement', 'model_Order',
+        model = Bamm
+        fields = ('reverse_Complement', 'model_Order',
                   'extend', 'background_Order',
                   'Background_Sequences', 'score_Seqset', 'score_Cutoff',
                   'FDR', 'q_value',
@@ -53,47 +49,42 @@ class PredictionExampleForm(forms.ModelForm):
                                                         'data-container': 'body'})
 
 
-@deprecated("outdated")
 class OccurrenceForm(forms.ModelForm):
     class Meta:
-        model = Job
-        fields = ('job_name', 'Input_Sequences', 'Motif_InitFile',
+        model = Bamm
+        fields = ('Input_Sequences', 'Motif_InitFile',
                   'Motif_Init_File_Format', 'bgModel_File',
                   'reverse_Complement', 'score_Cutoff', 'FDR',
                   'MMcompare', 'p_value_cutoff')
 
 
-@deprecated("outdated")
 class OccurrenceExampleForm(forms.ModelForm):
     class Meta:
-        model = Job
-        fields = ('job_name', 'reverse_Complement', 'score_Cutoff',
+        model = Bamm
+        fields = ('reverse_Complement', 'score_Cutoff',
                   'FDR',
                   'MMcompare', 'p_value_cutoff')
 
 
-@deprecated("outdated")
 class OccurrenceDBForm(forms.ModelForm):
     class Meta:
-        model = Job
-        fields = ('job_name', 'Input_Sequences', 'reverse_Complement',
+        model = Bamm
+        fields = ('Input_Sequences', 'reverse_Complement',
                   'score_Cutoff', 'FDR',
                   'MMcompare', 'p_value_cutoff')
 
 
-@deprecated("outdated")
 class CompareForm(forms.ModelForm):
     class Meta:
-        model = Job
-        fields = ('job_name', 'Motif_InitFile', 'Motif_Init_File_Format',
+        model = Bamm
+        fields = ('Motif_InitFile', 'Motif_Init_File_Format',
                   'bgModel_File', 'p_value_cutoff')
 
 
-@deprecated("outdated")
 class CompareExampleForm(forms.ModelForm):
     class Meta:
-        model = Job
-        fields = ('job_name', 'p_value_cutoff')
+        model = Bamm
+        fields = ('p_value_cutoff',)
 
 
 class FindForm(forms.Form):

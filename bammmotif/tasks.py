@@ -13,8 +13,10 @@ from .utils import (
     get_log_file, make_job_folder,
     JobSaveManager
 )
+from utils import deprecated
 
 
+@deprecated("outdated")
 @task(bind=True)
 def run_peng(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
@@ -44,6 +46,7 @@ def run_peng(self, job_pk):
     return 1 if mgr.had_exception else 0
 
 
+@deprecated("outdated")
 @task(bind=True)
 def run_bamm(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
@@ -69,6 +72,7 @@ def run_bamm(self, job_pk):
     return 1 if mgr.had_exception else 0
 
 
+@deprecated("outdated")
 @task(bind=True)
 def run_bammscan(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
@@ -93,6 +97,7 @@ def run_bammscan(self, job_pk):
     return 1 if mgr.had_exception else 0
 
 
+@deprecated("outdated")
 @task(bind=True)
 def run_compare(self, job_pk):
     job = get_object_or_404(Job, pk=job_pk)
