@@ -25,6 +25,7 @@ import datetime
 import os
 from os import path
 from os.path import basename
+from utils import deprecated
 
 
 # #########################
@@ -59,7 +60,7 @@ def imprint(request):
 # ## JOB RELATED VIEWS
 # #########################
 
-
+@deprecated("outdated")
 def run_compare_view(request, mode='normal'):
     if request.method == "POST":
         if mode == 'example':
@@ -102,7 +103,7 @@ def run_compare_view(request, mode='normal'):
     return render(request, 'job/compare_input.html',
                   {'form': form, 'mode': mode})
 
-
+@deprecated("outdated")
 def run_bammscan_view(request, mode='normal', pk='null'):
     if request.method == "POST":
         if mode == 'example':
@@ -156,6 +157,7 @@ def run_bammscan_view(request, mode='normal', pk='null'):
                   {'form': form, 'mode': mode})
 
 
+@deprecated("outdated")
 def run_bamm_view(request, mode='normal'):
     if request.method == "POST":
         if mode == 'example':
@@ -242,6 +244,7 @@ def delete(request, pk):
         return redirect(request, 'find_results')
 
 
+@deprecated("outdated")
 def result_detail(request, pk):
     result = get_object_or_404(Job, pk=pk)
     opath = get_result_folder(pk)
