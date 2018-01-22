@@ -6,6 +6,7 @@ class DBChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return obj.display_name
 
+
 class PengToBammForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -15,7 +16,7 @@ class PengToBammForm(forms.ModelForm):
                   'Background_Sequences', 'score_Seqset',
                   'score_Cutoff', 'FDR',
                   'q_value', 'motif_db')
-        
+
     motif_dbs = None
     motif_db = DBChoiceField(queryset=motif_dbs, empty_label=None)
 
