@@ -192,7 +192,7 @@ EMAIL_SUBJECT_SUCCESS = str("BaMM!motif: Your Job has finished!")
 EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You can view its results following this link: xcxdxx\n\n Greetings from the BaMM!team\n")
 
 # Settings related to file system structure
-JOB_DIR_PREFIX = 'jobs'
+JOB_DIR_PREFIX = ''
 MOTIF_DATABASE_PATH = '/motif_db'
 LOG_DIR = '/logs'
 

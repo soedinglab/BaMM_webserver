@@ -83,7 +83,6 @@ class CommandFailureException(Exception):
 
 
 def run_command(command, enforce_exit_zero=True):
-    raise CommandFailureException()
 
     if isinstance(command, str):
         command_str = command

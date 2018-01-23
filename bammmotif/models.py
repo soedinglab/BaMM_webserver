@@ -84,11 +84,41 @@ def job_directory_path_peng_meta(instance, filename, intermediate_dir="Input"):
     return os.path.join(path, str(filename))
 
 
+class DbParameter(models.Model):
+    param_id = models.SmallIntegerField(db_column='param_ID', primary_key=True)  # Field name made lowercase.
+    data_source = models.CharField(max_length=12)
+    species = models.CharField(max_length=12)
+    experiment = models.CharField(max_length=20)
+    base_dir = models.CharField(max_length=50)
+    motif_init_file_format = models.CharField(max_length=255)
+    #alphabet = models.CharField(max_length=12)
+    reversecomp = models.IntegerField(db_column='reverseComp')  # Field name made lowercase.
+    modelorder = models.IntegerField(db_column='modelOrder')  # Field name made lowercase.
+    extend_1 = models.IntegerField()
+    extend_2 = models.IntegerField()
+    bgmodelorder = models.IntegerField(db_column='bgModelOrder')  # Field name made lowercase.
+    em = models.IntegerField(db_column='EM')  # Field name made lowercase.
+    #maxemiterations = models.BigIntegerField(db_column='maxEMIterations')  # Field name made lowercase.
+    #epsilon = models.FloatField()
+    fdr = models.IntegerField(db_column='FDR')  # Field name made lowercase.
+    mfold = models.IntegerField(db_column='mFold')  # Field name made lowercase.
+    #cvfold = models.IntegerField(db_column='cvFold')  # Field name made lowercase.
+    samplingorder = models.IntegerField(db_column='samplingOrder')  # Field name made lowercase.
+    #savelogodds = models.IntegerField(db_column='saveLogOdds')  # Field name made lowercase.
+    #cgs = models.IntegerField(db_column='CGS')  # Field name made lowercase.
+    #maxcgsiterations = models.BigIntegerField(db_column='maxCGSIterations')  # Field name made lowercase.
+    #noalphasampling = models.IntegerField(db_column='noAlphaSampling')  # Field name made lowercase.
+    
+    def __str__(self):
+        return self.param_id
+
+
 class MotifDatabase(models.Model):
     db_id = models.CharField(max_length=100, primary_key=True)
     version = models.CharField(max_length=50)
     organism = models.CharField(max_length=100)
     display_name = models.CharField(max_length=100)
+    model_parameters = models.ForeignKey(DbParameter, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return str(self.db_id)
@@ -154,7 +184,6 @@ class Job(models.Model):
     # MMcompare
     MMcompare = models.BooleanField(default=False)
     p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
-    motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
     
     class Meta:
         ordering = ['-created_at']
@@ -236,37 +265,6 @@ class PengJob_deprecated(models.Model):
 #        return os.path.basename(self.Motif_InitFile.name)
 
 
-
-
-
-class DbParameter(models.Model):
-    param_id = models.SmallIntegerField(db_column='param_ID', primary_key=True)  # Field name made lowercase.
-    data_source = models.CharField(max_length=12)
-    species = models.CharField(max_length=12)
-    experiment = models.CharField(max_length=20)
-    base_dir = models.CharField(max_length=50)
-    motif_init_file_format = models.CharField(max_length=255)
-    #alphabet = models.CharField(max_length=12)
-    reversecomp = models.IntegerField(db_column='reverseComp')  # Field name made lowercase.
-    modelorder = models.IntegerField(db_column='modelOrder')  # Field name made lowercase.
-    extend_1 = models.IntegerField()
-    extend_2 = models.IntegerField()
-    bgmodelorder = models.IntegerField(db_column='bgModelOrder')  # Field name made lowercase.
-    em = models.IntegerField(db_column='EM')  # Field name made lowercase.
-    #maxemiterations = models.BigIntegerField(db_column='maxEMIterations')  # Field name made lowercase.
-    #epsilon = models.FloatField()
-    fdr = models.IntegerField(db_column='FDR')  # Field name made lowercase.
-    mfold = models.IntegerField(db_column='mFold')  # Field name made lowercase.
-    #cvfold = models.IntegerField(db_column='cvFold')  # Field name made lowercase.
-    samplingorder = models.IntegerField(db_column='samplingOrder')  # Field name made lowercase.
-    #savelogodds = models.IntegerField(db_column='saveLogOdds')  # Field name made lowercase.
-    #cgs = models.IntegerField(db_column='CGS')  # Field name made lowercase.
-    #maxcgsiterations = models.BigIntegerField(db_column='maxCGSIterations')  # Field name made lowercase.
-    #noalphasampling = models.IntegerField(db_column='noAlphaSampling')  # Field name made lowercase.
-    
-    def __str__(self):
-        return self.param_id
-
 class ChIPseq(models.Model):
     db_public_id = models.UUIDField(db_column='db_public_ID', primary_key=True, default=uuid.uuid4, editable=False)  # Field name made lowercase.
     filename = models.CharField(max_length=255)
@@ -281,7 +279,7 @@ class ChIPseq(models.Model):
     motif_init_file = models.CharField(max_length=255)
     result_location = models.CharField(max_length=80)
     parent = models.ForeignKey(DbParameter, blank=True, null=True, on_delete=models.CASCADE)
-    db_id = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
+    motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
     
     def __str__(self):
         return self.db_public_id
@@ -425,6 +423,7 @@ class Bamm(models.Model):
     # MMcompare
     MMcompare = models.BooleanField(default=False)
     p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
+    motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
     #class Meta:
     #    ordering = ['-created_at']

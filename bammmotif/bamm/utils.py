@@ -20,38 +20,15 @@ import re
 from logging import getLogger
 logger = getLogger(__name__)
 
-
-def get_result_folder(job_id):
-    return path.join(settings.JOB_DIR_PREFIX, str(job_id), 'Output')
-
-
-def get_job_folder(job_id):
-    return path.join(settings.MEDIA_ROOT, settings.JOB_DIR_PREFIX, str(job_id))
-
-
-def make_job_folder(job_id):
-    job_folder = get_job_folder(job_id)
-    if not path.isdir(job_folder):
-        os.makedirs(job_folder)
-    return job_folder
-
-
-def make_job_output_folder(job_id):
-    job_output_folder = get_job_output_folder(job_id)
-    if not path.isdir(job_output_folder):
-        os.makedirs(job_output_folder)
-
-
-def get_job_output_folder(job_id):
-    return path.join(get_job_folder(job_id), 'Output')
-
-
-def get_job_input_folder(job_id):
-    return path.join(get_job_folder(job_id), 'Input')
-
-
-def get_log_file(job_id):
-    return path.join(get_job_folder(job_id), 'job.log')
+from ..utils.misc import (
+    get_result_folder,
+    get_job_folder,
+    make_job_folder,
+    make_job_output_folder,
+    get_job_output_folder,
+    get_job_input_folder,
+    get_log_file,
+)
 
 
 class JobSaveManager:
@@ -70,7 +47,7 @@ class JobSaveManager:
             job.status = self.error_status
             self.had_exception = True
             traceback.print_exception(error_type, error, tb, file=sys.stdout)
-            print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status)
+            logger.exception(error)
         else:
             job.status = self.success_status
             self.had_exception = False
@@ -228,7 +205,7 @@ def add_motif_evaluation(job_pk):
             motif_obj.save()
 
 
-def add_motif_motif_matches(job_pk):
+def add_motif_motif_matches(job_pk, database_id):
     job = get_object_or_404(Bamm, pk=job_pk)
     motifs = Motifs_new.objects.filter(parent_job=job)
     if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
@@ -240,13 +217,20 @@ def add_motif_motif_matches(job_pk):
         for line in fh:
             tokens = line.split()
             if len(tokens) > 0:
+                # first line is "no matches!" when no hit is found.
+                # in this case we want to skip the line
                 if tokens[1] != 'matches!':
                     motif_query = motifs.filter(job_rank=tokens[1])[0]
-                    motif_target = get_object_or_404(ChIPseq, filename=tokens[2])
+                    matching_models = ChIPseq.objects.filter(
+                        motif_db__db_id=database_id, filename=tokens[2]
+                    )
+                    assert len(matching_models) == 1
+                    target_motif, = matching_models 
+
                     # create relationship
                     rel_obj = DbMatch_new(
                         motif=motif_query,
-                        db_entry=motif_target,
+                        db_entry=target_motif,
                         p_value=tokens[3],
                         e_value=tokens[4],
                         score=tokens[5],

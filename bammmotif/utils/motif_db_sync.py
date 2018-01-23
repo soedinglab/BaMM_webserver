@@ -39,6 +39,18 @@ class MalformattedMotifDatabase(Exception):
 
 def load_motif_db(database_dir, motif_db):
 
+    # read in parameters
+    param_file = path.join(database_dir, motif_db.db_id, 'model_specifications.yaml')
+    with open(param_file) as param_config:
+        try:
+            param_config = yaml.load(param_config)['model_specification']
+            db_params = DbParameter()
+            for field in DbParameter._meta.get_fields():
+                if field.name in param_config:
+                    db_params.__setattr__(field.name, param_config[field.name])
+        except (yaml.YAMLError, KeyError) as exc:
+            raise MalformattedMotifDatabase(exc)
+
     # register database
     config_file = path.join(database_dir, motif_db.db_id, 'database_config.yaml')
     with open(config_file) as yaml_config:
@@ -49,19 +61,8 @@ def load_motif_db(database_dir, motif_db):
                 if field.name in db_config:
                     motif_db_entry.__setattr__(field.name, db_config[field.name])
             motif_db_entry.db_id = motif_db.db_id
+            motif_db_entry.model_parameters = db_params
         except yaml.YAMLError as exc:
-            raise MalformattedMotifDatabase(exc)
-
-    # store database models
-    param_file = path.join(database_dir, motif_db.db_id, 'model_specifications.yaml')
-    with open(param_file) as param_config:
-        try:
-            param_config = yaml.load(param_config)['model_specification']
-            db_params = DbParameter()
-            for field in DbParameter._meta.get_fields():
-                if field.name in param_config:
-                    db_params.__setattr__(field.name, param_config[field.name])
-        except (yaml.YAMLError, KeyError) as exc:
             raise MalformattedMotifDatabase(exc)
 
     motif_file = path.join(database_dir, motif_db.db_id, 'motifs.yaml')
@@ -81,6 +82,7 @@ def load_motif_db(database_dir, motif_db):
     motif_db_entry.save()
     db_params.save()
     motif_entry.save()
+
 
 def unload_motif_db(motif_db):
     MotifDatabase.objects.get(db_id=motif_db.db_id).delete()
@@ -134,7 +136,7 @@ def get_available_databases(database_dir):
 
 def check_db_status(current_databases, available_databases):
     current_set = {db.db_id: db.version for db in current_databases}
-    available_set = {db.db_id: db.version for db in current_databases}
+    available_set = {db.db_id: db.version for db in available_databases}
 
     up_to_date_dbs = []
     update_dbs = []
@@ -149,7 +151,7 @@ def check_db_status(current_databases, available_databases):
         else:
             load_dbs.append(motif_db)
 
-    for motif_db in current_set:
+    for motif_db in current_databases:
         if motif_db not in available_set:
             unload_dbs.append(motif_db)
 

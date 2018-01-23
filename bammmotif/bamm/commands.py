@@ -6,16 +6,20 @@ from os import path
 from os.path import basename
 import datetime
 from bammmotif.models import (
-    Job, DbParameter, Bamm
+    Bamm, MotifDatabase
 )
-from bammmotif.bamm.utils import (
+
+from bammmotif.utils.misc import (
     get_job_output_folder,
+    get_job_input_folder,
+)
+
+from bammmotif.bamm.utils import (
     run_command, initialize_motifs,
     add_motif_evaluation,
     add_motif_motif_matches,
     add_motif_iupac,
     transfer_motif,
-    get_job_input_folder,
     add_peng_output,
     get_model_order,
     get_bg_model_order,
@@ -338,11 +342,11 @@ def get_BaMMmotif_command(job_pk, useRefined, first, maxPWMs=5):
     return command
 
 
-def get_MMcompare_command(job_pk, database):
-    db = get_object_or_404(DbParameter, pk=database)
+def get_MMcompare_command(job_pk, db_id):
     job = get_object_or_404(Bamm, pk=job_pk)
-    param = []
+    motif_db = get_object_or_404(MotifDatabase, pk=db_id)
 
+    param = []
     param.append('MMcompare_PWM.R')
     param.append(get_job_output_folder(job_pk))
     if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
@@ -350,9 +354,9 @@ def get_MMcompare_command(job_pk, database):
     else:
         param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
     param.append('--dbDir')
-    param.append(path.join(settings.BASE_DIR + settings.DB_ROOT + '/' + db.base_dir + '/Results/'))
+    param.append(path.join(settings.MOTIF_DATABASE_PATH, motif_db.db_id, 'models'))
     param.append('--dbOrder')
-    param.append(db.modelorder)
+    param.append(motif_db.model_parameters.modelorder)
     param.append('--qOrder')
     param.append(job.model_Order)
 
@@ -453,7 +457,7 @@ def MMcompare(job_pk, first_task_in_pipeline):
     job.save()
     print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
     sys.stdout.flush()
-    database = 100
+
     if first_task_in_pipeline:
         # add init Motif to Outputfolder
         transfer_motif(job_pk)
@@ -463,7 +467,10 @@ def MMcompare(job_pk, first_task_in_pipeline):
             job.model_Order = 0
         job.save()
     job = get_object_or_404(Bamm, pk=job_pk)
+
+    database = job.motif_db.db_id
     run_command(get_MMcompare_command(job_pk, database))
+
     sys.stdout.flush()
     if first_task_in_pipeline:
         # generate motif objects
@@ -474,7 +481,7 @@ def MMcompare(job_pk, first_task_in_pipeline):
         add_motif_iupac(job_pk)
         # plot logos
         make_logos(job_pk)
-    add_motif_motif_matches(job_pk)
+    add_motif_motif_matches(job_pk, database)
     return 0
 
 

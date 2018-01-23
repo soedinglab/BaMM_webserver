@@ -13,6 +13,8 @@ from bammmotif.bamm.utils import (
     get_log_file, make_job_folder,
     JobSaveManager
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 # Don't use that yet.

@@ -210,6 +210,8 @@ def peng_load_bamm(request, pk):
         form = PengToBammForm(request.POST, request.FILES)
         if form.is_valid():
             bamm_job = create_bamm_job('bamm', request, form, peng_job)
+            bamm_job.MMcompare = True
+            bamm_job.save()
             ## Copy necessary files from last peng job.
             copy_peng_to_bamm(peng_job.job_id.job_id, bamm_job.job_id.job_id, request.POST)
             bamm_tasks.build_and_exec_chain.delay(bamm_job.job_id.job_id)
@@ -246,6 +248,7 @@ def peng_load_bamm_deprecated(request, pk):
             job.save()
             job.Motif_Initialization = "Custom File"
             job.Motif_Init_File_Format = "PWM"
+
             #TODO: Find a nicer way to write that.
             if job.job_name is None:
                 set_job_name(job_pk)
