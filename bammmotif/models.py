@@ -2,17 +2,16 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 import datetime
 import uuid
 import os
+from os import path
 from .command_line import ShootPengModule
 
 FORMAT_CHOICES = (
     ('BindingSites', 'BindingSites'),
-    ('PWM', 'PWM'), 
-    ('BaMM','BaMM'),
+    ('PWM', 'PWM'),
+    ('BaMM', 'BaMM'),
 )
 
 INIT_CHOICES = (
@@ -119,6 +118,10 @@ class MotifDatabase(models.Model):
     organism = models.CharField(max_length=100)
     display_name = models.CharField(max_length=100)
     model_parameters = models.ForeignKey(DbParameter, on_delete=models.CASCADE, null=True)
+
+    @property
+    def db_directory(self):
+        return path.join(settings.MOTIF_DATABASE_PATH, str(self.db_id))
 
     def __str__(self):
         return str(self.db_id)

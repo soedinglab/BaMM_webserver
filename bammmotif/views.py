@@ -281,17 +281,21 @@ def maindb(request):
     if request.method == "POST":
         form = DBForm(request.POST)
         if form.is_valid():
-            p_name = form.cleaned_data['db_ID']
-            db_entries = ChIPseq.objects.filter(target_name__icontains=p_name)
+            search_term = form.cleaned_data['search_term']
+            motif_db = form.cleaned_data['database']
+            db_entries = ChIPseq.objects.filter(target_name__icontains=search_term, motif_db=motif_db)
             if db_entries.exists():
-                sample = db_entries.first()
-                db_location = path.join(sample.parent.base_dir, 'Results')
-                return render(request, 'database/db_overview.html',
-                              {'protein_name': p_name,
-                               'db_entries': db_entries,
-                               'db_location': db_location})
-            form = DBForm()
-            return render(request, 'database/db_main.html', {'form': form, 'warning': True})
+                db_location = path.join(str(motif_db), 'models')
+                return render(
+                    request, 'database/db_overview.html',
+                    {
+                        'protein_name': search_term,
+                        'db_entries': db_entries,
+                        'db_location': db_location
+                    })
+            else:
+                form = DBForm()
+                return render(request, 'database/db_main.html', {'form': form, 'warning': True})
     else:
         form = DBForm()
     return render(request, 'database/db_main.html', {'form': form})
@@ -299,6 +303,6 @@ def maindb(request):
 
 def db_detail(request, pk):
     entry = get_object_or_404(ChIPseq, db_public_id=pk)
-    db_location = path.join(entry.parent.base_dir, 'Results')
+    db_location = path.join(str(entry.motif_db), 'models')
     return render(request, 'database/db_detail.html',
                   {'entry': entry, 'db_location': db_location})

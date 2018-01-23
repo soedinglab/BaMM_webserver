@@ -1,7 +1,6 @@
 from django import forms
-from .models import Job
-
-
+from .models import Job, MotifDatabase
+from .utils.ui import DBChoiceField
 
 
 class PredictionForm(forms.ModelForm):
@@ -93,5 +92,5 @@ class FindForm(forms.Form):
 
 
 class DBForm(forms.Form):
-    db_ID = forms.CharField(max_length=255)
-
+    search_term = forms.CharField(max_length=255)
+    database = DBChoiceField()

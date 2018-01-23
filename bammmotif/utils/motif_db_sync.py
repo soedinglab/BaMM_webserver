@@ -4,6 +4,7 @@ from os import path
 
 import yaml
 from ..models import MotifDatabase, DbParameter, ChIPseq
+from django.db import transaction
 
 
 logger = logging.getLogger(__name__)
@@ -39,49 +40,50 @@ class MalformattedMotifDatabase(Exception):
 
 def load_motif_db(database_dir, motif_db):
 
-    # read in parameters
-    param_file = path.join(database_dir, motif_db.db_id, 'model_specifications.yaml')
-    with open(param_file) as param_config:
-        try:
-            param_config = yaml.load(param_config)['model_specification']
-            db_params = DbParameter()
-            for field in DbParameter._meta.get_fields():
-                if field.name in param_config:
-                    db_params.__setattr__(field.name, param_config[field.name])
-        except (yaml.YAMLError, KeyError) as exc:
-            raise MalformattedMotifDatabase(exc)
+    with transaction.atomic():
 
-    # register database
-    config_file = path.join(database_dir, motif_db.db_id, 'database_config.yaml')
-    with open(config_file) as yaml_config:
-        try:
-            db_config = yaml.load(yaml_config)
-            motif_db_entry = MotifDatabase()
-            for field in MotifDatabase._meta.get_fields():
-                if field.name in db_config:
-                    motif_db_entry.__setattr__(field.name, db_config[field.name])
-            motif_db_entry.db_id = motif_db.db_id
-            motif_db_entry.model_parameters = db_params
-        except yaml.YAMLError as exc:
-            raise MalformattedMotifDatabase(exc)
+        # read in parameters
+        param_file = path.join(database_dir, motif_db.db_id, 'model_specifications.yaml')
+        with open(param_file) as param_config:
+            try:
+                db_params = DbParameter()
+                param_config = yaml.load(param_config)['model_specification']
+                for field in DbParameter._meta.get_fields():
+                    if field.name in param_config:
+                        db_params.__setattr__(field.name, param_config[field.name])
+                db_params.save()
+            except (yaml.YAMLError, KeyError) as exc:
+                raise MalformattedMotifDatabase(exc)
 
-    motif_file = path.join(database_dir, motif_db.db_id, 'motifs.yaml')
-    with open(motif_file) as motif_handle:
-        try:
-            motifs = yaml.load(motif_handle)['models']
-            for motif in motifs:
-                motif_entry = ChIPseq()
-                for field in ChIPseq._meta.get_fields():
-                    if field.name in motif:
-                        motif_entry.__setattr__(field.name, motif[field.name])
-                motif_entry.parent = db_params
-                motif_entry.db_id = motif_db_entry
-        except (yaml.YAMLError, KeyError) as exc:
-            raise MalformattedMotifDatabase(exc)
+        # register database
+        config_file = path.join(database_dir, motif_db.db_id, 'database_config.yaml')
+        with open(config_file) as yaml_config:
+            try:
+                motif_db_entry = MotifDatabase()
+                db_config = yaml.load(yaml_config)
+                for field in MotifDatabase._meta.get_fields():
+                    if field.name in db_config:
+                        motif_db_entry.__setattr__(field.name, db_config[field.name])
+                motif_db_entry.db_id = motif_db.db_id
+                motif_db_entry.model_parameters = db_params
+            except yaml.YAMLError as exc:
+                raise MalformattedMotifDatabase(exc)
+            motif_db_entry.save()
 
-    motif_db_entry.save()
-    db_params.save()
-    motif_entry.save()
+        motif_file = path.join(database_dir, motif_db.db_id, 'motifs.yaml')
+        with open(motif_file) as motif_handle:
+            try:
+                motifs = yaml.load(motif_handle)['models']
+                for motif in motifs:
+                    motif_entry = ChIPseq()
+                    for field in ChIPseq._meta.get_fields():
+                        if field.name in motif:
+                            motif_entry.__setattr__(field.name, motif[field.name])
+                    motif_entry.parent = db_params
+                    motif_entry.motif_db = motif_db_entry
+                    motif_entry.save()
+            except (yaml.YAMLError, KeyError) as exc:
+                raise MalformattedMotifDatabase(exc)
 
 
 def unload_motif_db(motif_db):
@@ -152,7 +154,7 @@ def check_db_status(current_databases, available_databases):
             load_dbs.append(motif_db)
 
     for motif_db in current_databases:
-        if motif_db not in available_set:
+        if motif_db.db_id not in available_set:
             unload_dbs.append(motif_db)
 
     return load_dbs, unload_dbs, update_dbs, up_to_date_dbs
