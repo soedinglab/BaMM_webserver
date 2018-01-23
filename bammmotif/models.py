@@ -361,9 +361,13 @@ class Peng(models.Model):
         return False
 
     @property
-    def bmscore_filename(self):
-        path = self.fasta_file.name.rsplit('.', maxsplit=1)[0] + ".bmscore"
-        return path.split('/')[-1]
+    def filepath_prefix(self):
+        return os.path.dirname(self.fasta_file.name)
+
+    @property
+    def filename_prefix(self):
+        path, _ = os.path.splitext(self.fasta_file.name)
+        return os.path.basename(path)
 
 
 class Bamm(models.Model):

@@ -98,11 +98,8 @@ def get_peng_output_in_bamm_directory(job_pk):
 def get_memeplot_directory_in_bamm(job_pk):
     return os.path.join(get_peng_output_in_bamm_directory(job_pk), MEME_PLOT_DIRECTORY)
 
-def get_memeplot_directory_without_prefix(job_pk):
-    path = get_memeplot_directory_in_bamm(job_pk)
-    return path.split('/', maxsplit=3)[-1]
-
-
 def get_bmscore_path(job):
-    return os.path.join(get_temporary_job_dir(job.job_id.job_id), job.bmscore_filename)
+    return os.path.join(get_temporary_job_dir(job.job_id.job_id), job.filename_prefix)
 
+def media_memeplot_directory_html(job_pk):
+    return os.path.join(str(job_pk), JOB_OUTPUT_DIRECTORY, MEME_PLOT_DIRECTORY)

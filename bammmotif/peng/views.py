@@ -40,9 +40,8 @@ from bammmotif.peng.settings import (
     FILTERPWM_INPUT_FILE,
     peng_meme_directory,
     get_peng_output_in_bamm_directory,
-    get_memeplot_directory_in_bamm,
     get_bmscore_path,
-    get_memeplot_directory_without_prefix,
+    media_memeplot_directory_html,
 )
 import uuid
 
@@ -81,7 +80,7 @@ def peng_result_detail(request, pk):
         print("status is successfull")
         meme_result_file_path = get_meme_result_file_path(result.job_id.job_id)
         plot_output_directory = get_plot_output_directory(result.job_id.job_id)
-        opath = os.path.join(get_result_folder(str(result.job_id)), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
+        # opath = os.path.join(get_result_folder(str(result.job_id)), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
         bmf_name = os.path.join( get_temporary_job_dir(result.job_id.job_id), get_bmscore_filename(result.job_id.job_id, Peng))
         bm_scores = read_bmscore(bmf_name)
         if not os.path.exists(plot_output_directory):
@@ -94,7 +93,7 @@ def peng_result_detail(request, pk):
                       {'result': result,
                        'job_info': result.job_id,
                        'mode': result.job_id.mode,
-                       'opath': opath,
+                       'opath' : media_memeplot_directory_html(result.job_id.job_id),
                        'meme_meta_info': meme_meta_info_list_new,
                        })
     else:
