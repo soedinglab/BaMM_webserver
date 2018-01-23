@@ -35,15 +35,13 @@ from bammmotif.peng.settings import (
     NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT,
     get_meme_result_file_path,
     get_plot_output_directory,
-    get_temporary_job_dir,
-    get_bmscore_filename,
     FILTERPWM_INPUT_FILE,
     peng_meme_directory,
     get_peng_output_in_bamm_directory,
-    get_bmscore_path,
     media_memeplot_directory_html,
+    peng_bmscore_file_old,
+    get_peng_meme_output_in_bamm,
 )
-import uuid
 
 @deprecated
 def peng_result_detail_deprecated(request, pk):
@@ -80,9 +78,8 @@ def peng_result_detail(request, pk):
         print("status is successfull")
         meme_result_file_path = get_meme_result_file_path(result.job_id.job_id)
         plot_output_directory = get_plot_output_directory(result.job_id.job_id)
-        # opath = os.path.join(get_result_folder(str(result.job_id)), MEME_PLOT_DIRECTORY).split('/', maxsplit=1)[1]
-        bmf_name = os.path.join( get_temporary_job_dir(result.job_id.job_id), get_bmscore_filename(result.job_id.job_id, Peng))
-        bm_scores = read_bmscore(bmf_name)
+        # bmf_name = os.path.join( get_temporary_job_dir(result.job_id.job_id), get_bmscore_filename(result.job_id.job_id, Peng))
+        bm_scores = read_bmscore(peng_bmscore_file_old(str(result.job_id.job_id), result.filename_prefix))
         if not os.path.exists(plot_output_directory):
             os.makedirs(plot_output_directory)
         meme_meta_info_list = Meme.fromfile(meme_result_file_path)
@@ -126,8 +123,6 @@ def run_peng_view(request, mode='normal'):
             # return render(request, 'job/de_novo_search.html', {'form': PengForm(), 'type': "Fasta", 'message': ret})
         if mode == 'example':
             upload_example_fasta_for_peng(peng_job.job_id)
-        from bammmotif.peng.settings import get_temporary_job_dir
-        print(get_temporary_job_dir(peng_job.job_id.job_id))
         peng_chain.delay(peng_job.job_id.job_id)
         return render(request, 'job/peng_bamm_split_submitted.html', {'pk': peng_job.job_id.job_id})
     if mode == 'example':
@@ -307,10 +302,9 @@ def peng_to_bamm_result_detail(request, pk):
     Output_filename = result.Output_filename()
     if result.job_id.complete:
         peng_path = get_peng_output_in_bamm_directory(result.job_id.job_id)
-        meme_plots = get_memeplot_directory_without_prefix(result.job_id.job_id)
         meme_motifs = load_meme_ids(peng_path)
-        meme_meta_info_list = Meme.fromfile(os.path.join(peng_path, "out.meme"))
-        bm_scores = read_bmscore(get_bmscore_path(result.peng))
+        meme_meta_info_list = Meme.fromfile(get_peng_meme_output_in_bamm(result.job_id.job_id))
+        bm_scores = read_bmscore(peng_bmscore_file_old(str(result.peng.job_id.job_id), result.peng.filename_prefix))
         meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(result.peng.job_id.job_id), FILTERPWM_INPUT_FILE))
         # add ausfc data to motifs
         meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
@@ -318,7 +312,6 @@ def peng_to_bamm_result_detail(request, pk):
         db = get_object_or_404(DbParameter, pk=database)
         db_dir = os.path.join(db.base_dir, 'Results')
 
-        print(meme_plots)
         print("status is successfull")
         num_logos = range(1, (min(2, result.model_Order)+1))
         print(result.job_id.mode)
@@ -329,7 +322,7 @@ def peng_to_bamm_result_detail(request, pk):
                            'Output_filename': Output_filename,
                            'num_logos': num_logos,
                            'db_dir': db_dir,
-                           'meme_logo_path': meme_plots,
+                           'meme_logo_path': media_memeplot_directory_html(result.peng.job_id.job_id),
                            'meme_motifs': meme_motifs,
                            'meme_meta_info': meme_meta_info_list_new,
                            })

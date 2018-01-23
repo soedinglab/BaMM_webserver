@@ -2,7 +2,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 import os
 
-
+JOB_INPUT_DIRECTORY = 'Input'
 JOB_OUTPUT_DIRECTORY = 'Output'
 PENG_OUTPUT = 'pengoutput'
 PENG_INPUT = 'Input'
@@ -12,6 +12,10 @@ MEME_PLOT_DIRECTORY = 'meme_plots'
 MEME_OUTPUT_FILE = 'out.meme'
 MOTIF_SELECT_IDENTIFIER = "_select"
 JSON_OUTPUT_FILE = "out.json"
+BMSCORE_SUFFIX = ".bmscore"
+
+PENG_OUTPUT_MEME = 'out.meme' # replace MEME_OUTPUT_FILE
+PENG_OUTPUT_JSON = 'out.json' # replace JSON_OUTPUT_FILE
 
 
 #Filter PWM
@@ -35,6 +39,35 @@ ALLOWED_JOBMODES = [
     "peng",
 ]
 
+# Use this from now on. These should replace the over functions over time.
+def job_directory(job_pk):
+    return os.path.join(settings.JOB_DIRECTORY, job_pk)
+
+def job_output_directory(job_pk):
+    return os.path.join(job_directory(job_pk), JOB_OUTPUT_DIRECTORY)
+
+def job_input_directory(job_pk):
+    return os.path.join(job_directory(job_pk), JOB_INPUT_DIRECTORY)
+
+def meme_plot_directory(job_pk):
+    return os.path.join(job_output_directory(job_pk), MEME_PLOT_DIRECTORY)
+
+def peng_output_meme_file(job_pk):
+    return os.path.join(job_output_directory(job_pk), PENG_OUTPUT_MEME)
+
+def peng_temp_directory(job_pk):
+    return os.path.join(job_directory(job_pk), PENG_TEMP_DIRECTORY)
+
+def peng_bmscore_file(job_pk, filename_prefix):
+    return os.path.join(peng_temp_directory(job_pk), filename_prefix + BMSCORE_SUFFIX)
+
+# Only use the following functions temporary.
+def peng_bmscore_file_old(job_pk, filename_prefix):
+    return os.path.join(get_temporary_job_dir(job_pk), filename_prefix + BMSCORE_SUFFIX)
+
+def peng_output_meme_file_old(job_pk):
+    return os.path.join(get_job_ouput_directory(job_pk), PENG_OUTPUT_MEME)
+# END
 
 def get_meme_result_file_path(job_id):
     return os.path.join(get_job_directory(job_id), JOB_OUTPUT_DIRECTORY, MEME_PLOT_INPUT)
@@ -95,6 +128,9 @@ def get_bmscore_filename(job_pk, job_type):
 def get_peng_output_in_bamm_directory(job_pk):
     return os.path.join(get_job_directory(job_pk), PENG_OUTPUT)
 
+def get_peng_meme_output_in_bamm(job_pk):
+    return os.path.join(get_peng_output_in_bamm_directory(job_pk), MEME_OUTPUT_FILE)
+
 def get_memeplot_directory_in_bamm(job_pk):
     return os.path.join(get_peng_output_in_bamm_directory(job_pk), MEME_PLOT_DIRECTORY)
 
@@ -103,3 +139,7 @@ def get_bmscore_path(job):
 
 def media_memeplot_directory_html(job_pk):
     return os.path.join(str(job_pk), JOB_OUTPUT_DIRECTORY, MEME_PLOT_DIRECTORY)
+
+def media_memeplot_directory_html_bamm():
+    return os.path.join(str(job_))
+    pass

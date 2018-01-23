@@ -195,6 +195,8 @@ EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You
 # Settings related to file system structure
 JOB_DIR_PREFIX = 'jobs'
 
+JOB_DIRECTORY = os.path.join(MEDIA_ROOT, JOB_DIR_PREFIX)
+
 # Settings realted to example data
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
 EXAMPLE_MOTIF = 'example_data/ExampleMotifs.meme' 
