@@ -129,6 +129,11 @@ class MotifDatabase(models.Model):
     def db_model_directory(self):
         return path.join(self.db_directory, 'models')
 
+    @property
+    def relative_db_model_dir(self):
+        return path.join(str(self.db_id), 'models')
+
+
     def __str__(self):
         return str(self.db_id)
 

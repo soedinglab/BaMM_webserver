@@ -5,6 +5,7 @@ from . import views
 from bammmotif.peng import views as peng_views
 from bammmotif.bamm import views as bamm_views
 from .mmcompare import views as compare_views
+from .database import views as db_views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -34,8 +35,8 @@ urlpatterns = [
     #url(r'^results/result_overview/$', views.result_overview, name='result_overview'),
     #url(r'^results/(?P<pk>.*)/$', views.result_detail, name='result_detail'),
     url(r'^delete/(?P<pk>.*)/$', views.delete, name='delete'),
-    url(r'^database/$', views.maindb, name='maindb'),
-    url(r'^database/(?P<pk>.*)/$', views.db_detail, name='db_detail'),
+    url(r'^database/$', db_views.maindb, name='maindb'),
+    url(r'^database/(?P<pk>.*)/$', db_views.db_detail, name='db_detail'),
     url(r'^job/run_peng_view/$', peng_views.run_peng_view, name='peng_predict'),
     url(r'^job/run_peng_view/(?P<mode>\w+)/$', peng_views.run_peng_view, name='peng_predict'),
     url(r'^peng_results/(?P<pk>.*)/$', peng_views.peng_result_detail, name='peng_result_detail'),

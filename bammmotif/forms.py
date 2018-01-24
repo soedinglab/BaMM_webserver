@@ -89,8 +89,3 @@ class CompareExampleForm(forms.ModelForm):
 
 class FindForm(forms.Form):
     job_ID = forms.CharField(max_length=255)
-
-
-class DBForm(forms.Form):
-    search_term = forms.CharField(max_length=255)
-    database = DBChoiceField()

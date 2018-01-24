@@ -9,7 +9,7 @@ from .forms import (
     OccurrenceForm, OccurrenceExampleForm,
     OccurrenceDBForm,
     CompareForm, CompareExampleForm,
-    FindForm, DBForm
+    FindForm
 )
 from .tasks import (
     run_bamm, run_bammscan,
@@ -270,39 +270,3 @@ def result_detail(request, pk):
         output = os.popen(command).read()
         return render(request, 'results/result_status.html',
                       {'job_ID': result.job_ID, 'job_name': result.job_name, 'status': result.status, 'output': output})
-
-
-# #########################
-# ## DATABASE RELATED VIEWS
-# #########################
-
-
-def maindb(request):
-    if request.method == "POST":
-        form = DBForm(request.POST)
-        if form.is_valid():
-            search_term = form.cleaned_data['search_term']
-            motif_db = form.cleaned_data['database']
-            db_entries = ChIPseq.objects.filter(target_name__icontains=search_term, motif_db=motif_db)
-            if db_entries.exists():
-                db_location = path.join(str(motif_db), 'models')
-                return render(
-                    request, 'database/db_overview.html',
-                    {
-                        'protein_name': search_term,
-                        'db_entries': db_entries,
-                        'db_location': db_location
-                    })
-            else:
-                form = DBForm()
-                return render(request, 'database/db_main.html', {'form': form, 'warning': True})
-    else:
-        form = DBForm()
-    return render(request, 'database/db_main.html', {'form': form})
-
-
-def db_detail(request, pk):
-    entry = get_object_or_404(ChIPseq, db_public_id=pk)
-    db_location = path.join(str(entry.motif_db), 'models')
-    return render(request, 'database/db_detail.html',
-                  {'entry': entry, 'db_location': db_location})
