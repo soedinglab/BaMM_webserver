@@ -6,7 +6,9 @@ import datetime
 import uuid
 import os
 from os import path
-from .command_line import ShootPengModule
+from ..command_line import ShootPengModule
+
+
 
 FORMAT_CHOICES = (
     ('BindingSites', 'BindingSites'),
@@ -122,6 +124,10 @@ class MotifDatabase(models.Model):
     @property
     def db_directory(self):
         return path.join(settings.MOTIF_DATABASE_PATH, str(self.db_id))
+
+    @property
+    def db_model_directory(self):
+        return path.join(self.db_directory, 'models')
 
     def __str__(self):
         return str(self.db_id)
@@ -287,32 +293,6 @@ class ChIPseq(models.Model):
     def __str__(self):
         return self.db_public_id
 
-class Motifs(models.Model):
-    motif_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    parent_job = models.ForeignKey(Job, on_delete=models.CASCADE, null=False)
-    iupac = models.CharField(max_length=50, null=True, blank=True)
-    job_rank = models.PositiveSmallIntegerField(null=True, blank=True)
-    length = models.PositiveSmallIntegerField(null=True, blank=True)
-    auc = models.FloatField(blank=True, null=True)
-    occurrence = models.FloatField(blank=True, null=True)
-    db_match = models.ManyToManyField('ChIPseq', through='DbMatch', blank=True)
-
-    
-    def __str__(self):
-        return self.motif_ID
-
-class DbMatch(models.Model):
-    match_ID     = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    motif        = models.ForeignKey('Motifs', on_delete=models.CASCADE)
-    db_entry     = models.ForeignKey('ChIPseq', on_delete=models.CASCADE)
-    p_value      = models.FloatField(default=0.0)
-    e_value      = models.FloatField(default=0.0)
-    score        = models.FloatField(default=0.0)
-    overlap_len  = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.match_ID
-
 
 class JobInfo(models.Model):
     # General information about each job is stored here.
@@ -450,28 +430,28 @@ class Bamm(models.Model):
         return os.path.basename(self.Motif_InitFile.name)
 
 
-class Motifs_new(models.Model):
+class Motifs(models.Model):
     motif_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    parent_job = models.ForeignKey(Bamm, on_delete=models.CASCADE, null=False)
+    parent_job = models.ForeignKey(JobInfo, on_delete=models.CASCADE, null=False)
     iupac = models.CharField(max_length=50, null=True, blank=True)
     job_rank = models.PositiveSmallIntegerField(null=True, blank=True)
     length = models.PositiveSmallIntegerField(null=True, blank=True)
     auc = models.FloatField(blank=True, null=True)
     occurrence = models.FloatField(blank=True, null=True)
-    db_match = models.ManyToManyField('ChIPseq', through='DbMatch_new', blank=True)
-
+    db_match = models.ManyToManyField('ChIPseq', through='DbMatch', blank=True)
 
     def __str__(self):
         return self.motif_ID
 
-class DbMatch_new(models.Model):
-    match_ID     = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    motif        = models.ForeignKey('Motifs_new', on_delete=models.CASCADE)
-    db_entry     = models.ForeignKey('ChIPseq', on_delete=models.CASCADE)
-    p_value      = models.FloatField(default=0.0)
-    e_value      = models.FloatField(default=0.0)
-    score        = models.FloatField(default=0.0)
-    overlap_len  = models.IntegerField(default=0)
+
+class DbMatch(models.Model):
+    match_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    motif = models.ForeignKey('Motifs', on_delete=models.CASCADE)
+    db_entry = models.ForeignKey('ChIPseq', on_delete=models.CASCADE)
+    p_value = models.FloatField(default=0.0)
+    e_value = models.FloatField(default=0.0)
+    score = models.FloatField(default=0.0)
+    overlap_len = models.IntegerField(default=0)
 
     def __str__(self):
         return self.match_ID

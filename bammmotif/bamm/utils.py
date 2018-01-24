@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.core.files import File
 from ipware.ip import get_ip
 from ..models import (
-    ChIPseq, Bamm, JobInfo, Motifs_new, DbMatch_new
+    ChIPseq, Bamm, JobInfo, Motifs, DbMatch
 )
 import collections
 import sys
@@ -172,7 +172,7 @@ def initialize_motifs(job_pk, off, mode):
                            get_job_output_folder(job_pk))) - off)/mode
     job.save()
     for motif in range(1, (int(job.num_motifs) + 1)):
-        motif_obj = Motifs_new(parent_job=job, job_rank=motif)
+        motif_obj = Motifs(parent_job=job, job_rank=motif)
         motif_obj.save()
 
 def initialize_motifs_compare(job_pk):
@@ -188,12 +188,12 @@ def initialize_motifs_compare(job_pk):
     job.num_motifs = i+1
     job.save()
     for motif in range(1, (int(job.num_motifs) + 1)):
-        motif_obj = Motifs_new(parent_job=job, job_rank=motif)
+        motif_obj = Motifs(parent_job=job, job_rank=motif)
         motif_obj.save()
 
 def add_motif_evaluation(job_pk):
     job = get_object_or_404(Bamm, pk=job_pk)
-    motifs = Motifs_new.objects.filter(parent_job=job)
+    motifs = Motifs.objects.filter(parent_job=job)
     filename = str(get_job_output_folder(job_pk)) + "/" + str(basename(os.path.splitext(job.Input_Sequences.name)[0])) + ".bmscore"
     with open(filename) as fh:
         next(fh)
@@ -207,7 +207,7 @@ def add_motif_evaluation(job_pk):
 
 def add_motif_motif_matches(job_pk, database_id):
     job = get_object_or_404(Bamm, pk=job_pk)
-    motifs = Motifs_new.objects.filter(parent_job=job)
+    motifs = Motifs.objects.filter(parent_job=job)
     if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
         outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
     else:
@@ -228,7 +228,7 @@ def add_motif_motif_matches(job_pk, database_id):
                     target_motif, = matching_models 
 
                     # create relationship
-                    rel_obj = DbMatch_new(
+                    rel_obj = DbMatch(
                         motif=motif_query,
                         db_entry=target_motif,
                         p_value=tokens[3],
@@ -241,7 +241,7 @@ def add_motif_motif_matches(job_pk, database_id):
 
 def add_motif_iupac(job_pk):
     job = get_object_or_404(Bamm, pk=job_pk)
-    motifs = Motifs_new.objects.filter(parent_job=job)
+    motifs = Motifs.objects.filter(parent_job=job)
     if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
         outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
     else:

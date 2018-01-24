@@ -4,6 +4,7 @@ from django.conf import settings
 from . import views
 from bammmotif.peng import views as peng_views
 from bammmotif.bamm import views as bamm_views
+from .mmcompare import views as compare_views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -21,8 +22,8 @@ urlpatterns = [
     url(r'^job/bamm_scan/$', views.run_bammscan_view, name='run_bamm_scan'),
     url(r'^job/bamm_scan/(?P<mode>\w+)/$', views.run_bammscan_view, name='run_bamm_scan'),
     url(r'^job/bamm_scan/(?P<mode>\w+)/(?P<pk>.*)/$', views.run_bammscan_view, name='run_bamm_scan'),
-    url(r'^job/bamm_compare/$', views.run_compare_view, name='run_compare'),
-    url(r'^job/bamm_compare/(?P<mode>\w+)/$', views.run_compare_view, name='run_compare'),
+    url(r'^job/bamm_compare/$', compare_views.run_compare_view, name='run_compare'),
+    url(r'^job/bamm_compare/(?P<mode>\w+)/$', compare_views.run_compare_view, name='run_compare'),
     url(r'^results/$', bamm_views.find_results, name='find_results'),
     url(r'^results/result_overview/$', bamm_views.result_overview, name='result_overview'),
     url(r'^results/(?P<pk>.*)/$', bamm_views.result_detail, name='result_detail'),

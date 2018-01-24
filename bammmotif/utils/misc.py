@@ -311,15 +311,15 @@ def valid_uuid(uuid):
     return bool(match)
 
 
-def get_model_order(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    filename = get_job_input_folder(job_pk) + '/' + basename(job.Motif_InitFile.name)
+def get_model_order(job):
+    job_pk = job.meta_job.pk
+    filename = path.join(get_job_input_folder(job_pk), basename(job.Motif_InitFile.name))
     order = -1
     with open(filename) as fh:
         for line in fh:
             tokens = line.split()
             if len(tokens) == 0:
-                return (order)
+                return order
             else:
                 order = order + 1
     return order

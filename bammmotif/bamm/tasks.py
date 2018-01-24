@@ -193,14 +193,24 @@ def fdr(self, job_pk):
     return 1 if mgr.had_exception else 0
 
 @task(bind=True)
-def mmcompare(self, job_pk):
-    job = get_object_or_404(Bamm, pk=job_pk)
+def mmcompare(self, model_class, job_pk):
+    job = get_object_or_404(model_class, pk=job_pk)
     with JobSaveManager(job) as mgr:
         logfile = get_log_file(job_pk)
         with open(logfile, 'a') as f:
             with redirect_stdout(f):
                 MMcompare(job_pk, False)
     return 1 if mgr.had_exception else 0
+
+def mmcompare_generic(job_pk):
+    job = get_object_or_404(model_class, pk=job_pk)
+    with JobSaveManager(job) as mgr:
+        logfile = get_log_file(job_pk)
+        with open(logfile, 'a') as f:
+            with redirect_stdout(f):
+                MMcompare(job_pk, False)
+    return 1 if mgr.had_exception else 0
+
 
 
 @task(bind=True)
@@ -245,7 +255,7 @@ def build_and_exec_bammscan_chain(self, job_pk):
     if job.FDR:
         task_list.append(fdr.si(job_pk))
     if job.MMcompare:
-        task_list.append(mmcompare.si(job_pk))
+        task_list.append(mmcompare.si(Bamm, job_pk))
     task_list.append(complete_job.si(job_pk))
     ret = chain(*task_list)()
     return ret
@@ -253,6 +263,6 @@ def build_and_exec_bammscan_chain(self, job_pk):
 @task(bind=True)
 def build_and_exec_mmcompare_chain(self, job_pk):
     job = get_object_or_404(Bamm, pk=job_pk)
-    task_list = [prepare_job.si(job_pk), mmcompare.si(job_pk), complete_job.si(job_pk)]
+    task_list = [prepare_job.si(job_pk), mmcompare.si(Bamm, job_pk), complete_job.si(job_pk)]
     ret = chain(*task_list)()
     return ret
