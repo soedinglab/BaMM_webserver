@@ -5,14 +5,16 @@ from ..models import (
     DbMatch,
     ChIPseq
 )
-from ..utils.misc import (
+from ..utils import (
     get_job_output_folder,
     run_command
 )
 
+from ..commands import (
+    get_logo_command,
+)
 from .commands import (
     get_pwm2bamm_command,
-    get_logo_command,
     get_jointprob_command,
 )
 
@@ -29,20 +31,6 @@ def initialize_motifs_compare(job):
     for motif in range(1, (int(job.num_motifs) + 1)):
         motif_obj = Motifs(parent_job=meta_job, job_rank=motif)
         motif_obj.save()
-
-
-def add_motif_iupac(job):
-    job_pk = job.meta_job.pk
-    motifs = Motifs.objects.filter(parent_job=job.meta_job)
-    prefix = job.filename_prefix
-    iupac_file = path.join(get_job_output_folder(job_pk), prefix + '.iupac')
-    with open(iupac_file) as handle:
-        for line in handle:
-            tokens = line.split()
-            motif_obj = motifs.filter(job_rank=tokens[1])[0]
-            motif_obj.iupac = tokens[2]
-            motif_obj.length = tokens[3]
-            motif_obj.save()
 
 
 def make_logos(job):

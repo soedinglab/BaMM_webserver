@@ -15,10 +15,13 @@ from bammmotif.bamm.tasks import (
     run_bamm, run_bammscan,
     run_compare, run_peng, build_and_exec_chain
 )
-from bammmotif.utils import (
+from ..utils.path_helpers import (
     get_log_file,
+    get_result_folder,
+)
+from bammmotif.utils import (
     get_user, set_job_name, upload_example_fasta,
-    upload_example_motif, get_result_folder,
+    upload_example_motif,
     upload_db_input, valid_uuid
 )
 from bammmotif.peng.job import init_job

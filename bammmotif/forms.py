@@ -1,6 +1,12 @@
 from django import forms
-from .models import Job, MotifDatabase
+from .models import Job, MotifDatabase, JobInfo
 from .utils.ui import DBChoiceField
+
+
+class MetaJobNameForm(forms.ModelForm):
+    class Meta:
+        model = JobInfo
+        fields = ('job_name',)
 
 
 class PredictionForm(forms.ModelForm):

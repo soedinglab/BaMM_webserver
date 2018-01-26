@@ -2,6 +2,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.core.files import File
+from django.utils import timezone
 from ipware.ip import get_ip
 from ..models import (
     Job, Motifs, ChIPseq, DbMatch
@@ -21,39 +22,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def get_result_folder(job_id):
-    return path.join(settings.JOB_DIR_PREFIX, str(job_id), 'Output')
-
-
-def get_job_folder(job_id):
-    return path.join(settings.MEDIA_ROOT, settings.JOB_DIR_PREFIX, str(job_id))
-
-
-def make_job_folder(job_id):
-    job_folder = get_job_folder(job_id)
-    if not path.isdir(job_folder):
-        os.makedirs(job_folder)
-    return job_folder
-
-
-def make_job_output_folder(job_id):
-    job_output_folder = get_job_output_folder(job_id)
-    if not path.isdir(job_output_folder):
-        os.makedirs(job_output_folder)
-
-
-def get_job_output_folder(job_id):
-    return path.join(get_job_folder(job_id), 'Output')
-
-
-def get_job_input_folder(job_id):
-    return path.join(get_job_folder(job_id), 'Input')
-
-
-def get_log_file(job_id):
-    return path.join(get_job_folder(job_id), 'job.log')
-
-
 class JobSaveManager:
 
     def __init__(self, job, success_status='Success', error_status='Error'):
@@ -67,14 +35,14 @@ class JobSaveManager:
     def __exit__(self, error_type, error, tb):
         job = self.job
         if error_type is not None:
-            job.status = self.error_status
+            job.meta_job.status = self.error_status
             self.had_exception = True
             traceback.print_exception(error_type, error, tb, file=sys.stdout)
-            print(datetime.datetime.now(), "\t | WARNING: \t %s " % job.status)
+            print(timezone.now(), "\t | WARNING: \t %s " % job.meta_job.status)
         else:
-            job.status = self.success_status
+            job.meta_job.status = self.success_status
             self.had_exception = False
-            print(datetime.datetime.now(), "\t | END: \t %s " % job.status)
+            print(timezone.now(), "\t | END: \t %s " % job.meta_job.status)
         job.save()
 
 
@@ -135,24 +103,6 @@ def set_job_name(job_pk):
     # truncate job_id
     job_id_short = str(job.job_ID).split("-", 1)
     job.job_name = job_id_short[0]
-    job.save()
-
-
-def upload_example_fasta(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    out_filename = "ExampleData.fasta"
-    with open(settings.EXAMPLE_FASTA) as fh:
-        job.Input_Sequences.save(out_filename, File(fh))
-        job.save()
-
-
-def upload_example_motif(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    out_filename = "ExampleMotif.meme"
-    with open(settings.EXAMPLE_MOTIF) as fh:
-        job.Motif_InitFile.save(out_filename, File(fh))
-    job.Motif_Initialization = 'CustomFile'
-    job.Motif_Init_File_Format = 'PWM'
     job.save()
 
 
@@ -311,27 +261,10 @@ def valid_uuid(uuid):
     return bool(match)
 
 
-def get_model_order(job):
-    job_pk = job.meta_job.pk
-    filename = path.join(get_job_input_folder(job_pk), basename(job.Motif_InitFile.name))
-    order = -1
-    with open(filename) as fh:
-        for line in fh:
-            tokens = line.split()
-            if len(tokens) == 0:
-                return order
-            else:
-                order = order + 1
-    return order
-
-
-def get_bg_model_order(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    filename = get_job_input_folder(job_pk) + '/' + basename(job.bgModel_File.name)
-    order = -1
-    with open(filename) as fh:
-        for line in fh:
-            tokens = line.split()
-            order = tokens[3]
-            break
-    return order
+def meme_count_motifs(meme_file):
+    n_motifs = 0
+    with open(meme_file) as handle:
+        for line in handle:
+            if line.startswith('MOTIF'):
+                n_motifs += 1
+    return n_motifs

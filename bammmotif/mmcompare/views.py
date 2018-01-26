@@ -16,16 +16,18 @@ from ..utils import (
 )
 
 from .tasks import mmcompare_pipeline
+from ..forms import MetaJobNameForm
 
 
 def run_compare_view(request, mode='normal'):
     if request.method == 'POST':
+        meta_job_form = MetaJobNameForm(request.POST)
         if mode == 'example':
             form = MMCompareExampleForm(request.POST, request.FILES)
         else:
             form = MMCompareForm(request.POST, request.FILES)
-        if form.is_valid():
-            meta_job = JobInfo()
+        if form.is_valid() and meta_job_form.is_valid():
+            meta_job = meta_job_form.save(commit=False)
             meta_job.created_at = datetime.now()
             meta_job.user = get_user(request)
             meta_job.mode = "Compare"
@@ -36,8 +38,9 @@ def run_compare_view(request, mode='normal'):
             job.meta_job = meta_job
 
             job_pk = meta_job.job_id
+
             if meta_job.job_name is None:
-                job_id_short = str(meta_job).split("-", 1)
+                job_id_short = str(meta_job).split("-", maxsplit=1)
                 meta_job.job_name = job_id_short[0]
 
             # if example is requested, load the sampleData
@@ -55,9 +58,10 @@ def run_compare_view(request, mode='normal'):
             mmcompare_pipeline.delay(job_pk)
             return render(request, 'job/submitted.html', {'pk': job_pk})
 
+    meta_job_form = MetaJobNameForm()
     if mode == 'example':
         form = MMCompareExampleForm()
     else:
         form = MMCompareForm()
     return render(request, 'compare/compare_input.html',
-                  {'form': form, 'mode': mode})
+                  {'form': form, 'meta_job_form': meta_job_form, 'mode': mode})

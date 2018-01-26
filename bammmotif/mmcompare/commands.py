@@ -3,10 +3,14 @@ import sys
 
 from django.utils import timezone
 
-from ..utils.misc import (
+from ..utils.path_helpers import (
     get_job_output_folder,
-    run_command,
+)
+from ..utils.job_helpers import (
     get_model_order,
+)
+from ..utils.misc import (
+    run_command,
 )
 
 
@@ -48,20 +52,6 @@ def get_pwm2bamm_command(job):
     meme_file = path.join(get_job_output_folder(job_pk), prefix + '.meme')
     param.append(meme_file)
     command = ' '.join(str(s) for s in param)
-    return command
-
-
-def get_logo_command(job, order):
-    job_pk = job.meta_job.pk
-    prefix = job.filename_prefix
-    params = [
-        'plotBaMMLogo.R',
-        get_job_output_folder(job_pk) + '/',
-        prefix,
-        order,
-        '--web 1'
-    ]
-    command = " ".join(str(s) for s in params)
     return command
 
 

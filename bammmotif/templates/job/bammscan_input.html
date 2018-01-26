@@ -48,9 +48,14 @@
     
       <p><label for="id_bgModel_File"><a class "testpup" onmouseover="nhpup.popup($('#bgModel_File_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#bgModel_File" style="color:black"></span> </a>Motif background file: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_bgModel_File" name="bgModel_File" type="file" /></p>
        
-
     {% endif %}
 
+	 <p><label for="db_selector"><a class "testpup"
+		     onmouseover="nhpup.popup($('#DBselectorInfo').html(),{'width':400});"><span
+		     class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a>
+		 MMcompare Motif Database:</label>
+	 	<p><font color="#1f2e2e"> &nbsp;&nbsp; {{ form.motif_db }} </font></p>
+	</p>
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white"><font color="black">
       <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="headingOne" style="background-color:white"><font color="black">

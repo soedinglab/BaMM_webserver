@@ -16,10 +16,15 @@ from bammmotif.peng.job import file_path_peng
 from bammmotif.peng_utils import get_motif_ids
 from bammmotif.command_line import PlotMeme
 from bammmotif.utils.meme_reader import Meme, split_meme_file, get_n_motifs
-from bammmotif.utils import (
-    get_log_file,
-    get_user, set_job_name, valid_uuid,
+
+from ..utils.misc import (
+    get_user,
+    set_job_name,
+    valid_uuid,
+)
+from ..utils.path_helpers import (
     get_result_folder,
+    get_log_file,
 )
 import bammmotif.tasks as tasks
 from bammmotif.peng.settings import (

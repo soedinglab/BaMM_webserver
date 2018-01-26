@@ -13,13 +13,16 @@ from .forms import (
 )
 from .tasks import (
     run_bamm, run_bammscan,
-    run_compare, run_peng
+    run_peng
 )
 from .utils import (
-    get_log_file,
     get_user, set_job_name, upload_example_fasta,
-    upload_example_motif, get_result_folder,
+    upload_example_motif, 
     upload_db_input, valid_uuid
+)
+from .utils.path_helpers import (
+    get_log_file,
+    get_result_folder,
 )
 import datetime
 import os
@@ -58,49 +61,6 @@ def imprint(request):
 # #########################
 # ## JOB RELATED VIEWS
 # #########################
-
-
-def run_compare_view(request, mode='normal'):
-    if request.method == "POST":
-        if mode == 'example':
-            form = CompareExampleForm(request.POST, request.FILES)
-        else:
-            print('store normal form')
-            form = CompareForm(request.POST, request.FILES)
-        if form.is_valid():
-            # read in data and parameter
-            job = form.save(commit=False)
-            job.created_at = datetime.datetime.now()
-            job.user = get_user(request)
-            job.mode = "Compare"
-            job.save()
-            job_pk = job.job_ID
-
-            if job.job_name is None:
-                set_job_name(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            # if example is requested, load the sampleData
-            if mode == 'example':
-                #upload_example_fasta(job_pk)
-                #job = get_object_or_404(Job, pk = job_pk)
-                upload_example_motif(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            job = get_object_or_404(Job, pk = job_pk)
-            job.FDR = False
-            job.score_Seqset = False
-            job.MMcompare = True
-            job.save()
-            run_compare.delay(job_pk)
-            return render(request, 'job/submitted.html', {'pk': job_pk})
-
-    if mode == 'example':
-        form = CompareExampleForm()
-    else:
-        form = CompareForm()
-    return render(request, 'job/compare_input.html',
-                  {'form': form, 'mode': mode})
 
 
 def run_bammscan_view(request, mode='normal', pk='null'):

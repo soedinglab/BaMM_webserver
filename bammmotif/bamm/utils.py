@@ -20,7 +20,7 @@ import re
 from logging import getLogger
 logger = getLogger(__name__)
 
-from ..utils.misc import (
+from ..utils.path_helpers import (
     get_result_folder,
     get_job_folder,
     make_job_folder,
@@ -29,57 +29,6 @@ from ..utils.misc import (
     get_job_input_folder,
     get_log_file,
 )
-
-
-class JobSaveManager:
-
-    def __init__(self, job, success_status='Success', error_status='Error'):
-        self.error_status = error_status
-        self.success_status = success_status
-        self.job = job
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, error_type, error, tb):
-        job = self.job
-        if error_type is not None:
-            job.status = self.error_status
-            self.had_exception = True
-            traceback.print_exception(error_type, error, tb, file=sys.stdout)
-            logger.exception(error)
-        else:
-            job.status = self.success_status
-            self.had_exception = False
-            print(datetime.datetime.now(), "\t | END: \t %s " % job.status)
-        job.save()
-
-
-class CommandFailureException(Exception):
-    pass
-
-
-def run_command(command, enforce_exit_zero=True):
-    if isinstance(command, str):
-        command_str = command
-    elif isinstance(command, collections.Iterable):
-        command_str = ' '.join(command)
-    logger.debug("executing: %s", command_str)
-
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    while True:
-        nextline = process.stdout.readline()
-        if nextline == b'' and process.poll() is not None:
-            break
-        print(nextline.decode('utf-8'), file=sys.stdout, end='')
-        sys.stdout.flush()
-    process.wait()
-
-    if enforce_exit_zero:
-        if process.returncode != 0:
-            raise CommandFailureException(command_str)
-    return process.returncode
 
 
 def get_user(request):
@@ -191,13 +140,14 @@ def initialize_motifs_compare(job_pk):
         motif_obj = Motifs(parent_job=job, job_rank=motif)
         motif_obj.save()
 
-def add_motif_evaluation(job_pk):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    motifs = Motifs.objects.filter(parent_job=job)
-    filename = str(get_job_output_folder(job_pk)) + "/" + str(basename(os.path.splitext(job.Input_Sequences.name)[0])) + ".bmscore"
-    with open(filename) as fh:
-        next(fh)
-        for line in fh:
+
+def add_motif_evaluation(job):
+    job_pk = job.meta_job.pk
+    motifs = Motifs.objects.filter(parent_job=job.meta_job)
+    bmscore_file = path.join(get_job_output_folder(job_pk), job.filename_prefix + '.bmscore')
+    with open(bmscore_file) as handle:
+        next(handle)
+        for line in handle:
             tokens = line.split()
             motif_obj = motifs.filter(job_rank=tokens[1])[0]
             motif_obj.auc = tokens[2]
@@ -286,29 +236,3 @@ def valid_uuid(uuid):
     regex = re.compile('^[a-f0-9]{8}-?[a-f0-9]{4}-?4[a-f0-9]{3}-?[89ab][a-f0-9]{3}-?[a-f0-9]{12}\Z', re.I)
     match = regex.match(uuid)
     return bool(match)
-
-
-def get_model_order(job_pk):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    filename = get_job_input_folder(job_pk) + '/' + basename(job.Motif_InitFile.name)
-    order = -1
-    with open(filename) as fh:
-        for line in fh:
-            tokens = line.split()
-            if len(tokens) == 0:
-                return (order)
-            else:
-                order = order + 1
-    return order
-
-
-def get_bg_model_order(job_pk):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    filename = get_job_input_folder(job_pk) + '/' + basename(job.bgModel_File.name)
-    order = -1
-    with open(filename) as fh:
-        for line in fh:
-            tokens = line.split()
-            order = tokens[3]
-            break
-    return order

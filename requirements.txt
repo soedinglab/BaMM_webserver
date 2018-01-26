@@ -2,6 +2,7 @@ Django
 django-secure
 django-registration
 django-ipware
+django-widget-tweaks
 mysqlclient
 psycopg2
 Celery

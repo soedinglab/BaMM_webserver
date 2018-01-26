@@ -1,22 +1,34 @@
 from __future__ import absolute_import
 
 
-from bammmotif.utils import JobSaveManager, make_job_folder, get_log_file
 from celery import task, chain
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from bammmotif.models import Job, PengJob_deprecated, Peng, JobInfo
-from bammmotif.peng.settings import FASTA_VALIDATION_SCRIPT, get_job_directory, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY
+from bammmotif.peng.settings import FASTA_VALIDATION_SCRIPT, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY
 from bammmotif.peng.job import file_path_peng
-from bammmotif.utils import get_result_folder
 from bammmotif.command_line import PlotMeme, FilterPWM, ShootPengModule
 from bammmotif.peng_utils import get_motif_ids
-from bammmotif.peng.settings import MEME_PLOT_DIRECTORY, get_job_directory
+from bammmotif.peng.settings import MEME_PLOT_DIRECTORY
 from bammmotif.peng.utils import zip_motifs
 from bammmotif.utils.meme_reader import Meme, split_meme_file
 
 import subprocess
 import os
+
+
+from ..utils.misc import (
+    JobSaveManager
+)
+from ..utils.path_helpers import (
+    get_result_folder,
+    get_job_folder,
+    make_job_folder,
+    get_log_file,
+
+
+)
+
 
 @task(bind=True)
 def valid_init(self, job_pk):

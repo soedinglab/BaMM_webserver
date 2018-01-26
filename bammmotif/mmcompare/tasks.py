@@ -6,19 +6,21 @@ from django.shortcuts import get_object_or_404
 import celery
 from celery import task
 
-from ..models import MMcompareJob
-from ..utils.misc import (
+from ..utils import (
     JobSaveManager,
-    get_log_file,
+    run_command,
     make_job_output_folder,
+    make_job_folder,
     get_job_input_folder,
     get_job_output_folder,
+    get_log_file,
     get_model_order,
-    run_command
+    add_motif_iupac,
 )
+
+from ..models import MMcompareJob
 from .utils import (
     initialize_motifs_compare,
-    add_motif_iupac,
     make_logos,
     add_motif_motif_matches,
 )
@@ -30,7 +32,7 @@ from .commands import (
 
 
 def generic_mmcompare_task(job):
-    with JobSaveManager(job.meta_job) as mgr:
+    with JobSaveManager(job) as mgr:
         job_pk = job.meta_job.pk
         logfile = get_log_file(job_pk)
         with open(logfile, 'a') as f:
@@ -80,6 +82,8 @@ def generic_mmcompare_import_matches(job):
 
 @task(bind=True)
 def mmcompare_pipeline(self, job_pk):
+    job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
+    make_job_folder(job_pk)
     pipeline = celery.chain([
         mmcompare_motif_transfer_task.si(job_pk),
         mmcompare_task.si(job_pk),
@@ -87,6 +91,8 @@ def mmcompare_pipeline(self, job_pk):
         mmcompare_import_matches.si(job_pk),
     ])
     pipeline()
+    job.meta_job.complete = True
+    job.save()
 
 
 @task(bind=True)

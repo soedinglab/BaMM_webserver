@@ -1,5 +1,6 @@
 {% extends "home/header.html" %}
 
+{% load widget_tweaks %}
 {% block content %}
 
 
@@ -14,7 +15,10 @@
    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
-  <p><label for="id_job_name"><a class "testpup" onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name" style="color:black"></span></a> Job name:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_job_name" maxlength="50" name="job_name" type="text" placeholder="i.e: My Job #1" /></p>
+    <p><label for={{ meta_job_form.job_name.id_for_label }}><a class "testpup" onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name" style="color:black"></span></a> Job name:</label> </p> 
+	<p class="indent" style="padding-left: 1.8em">
+	{{ meta_job_form.job_name|attr:"max_length:50"|attr:"placeholder:i.e: My Job #1" }} 
+	</p>
 
     
     {% if mode == 'example' %}

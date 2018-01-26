@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.utils import timezone
 import sys
 import os
 from os import path
@@ -9,17 +10,19 @@ from .models import (
     Job, DbParameter
 )
 from .utils import (
-    get_job_output_folder,
     run_command, initialize_motifs,
     add_motif_evaluation,
     add_motif_motif_matches,
     add_motif_iupac,
     transfer_motif,
-    get_job_input_folder,
     add_peng_output,
     get_model_order,
     get_bg_model_order,
     initialize_motifs_compare
+)
+from .utils.path_helpers import (
+    get_job_output_folder,
+    get_job_input_folder,
 )
 from logging import getLogger
 logger = getLogger(__name__)
@@ -81,35 +84,28 @@ def get_core_params(job_pk, useRefined, m=1):
     return command
 
 
-def get_logo_command(job_pk, order):
-    job = get_object_or_404(Job, pk=job_pk)
-    param = []
-    param.append('plotBaMMLogo.R')
-    param.append(get_job_output_folder(job_pk) + '/')
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
-    else:
-        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
-    param.append(order)
-    param.append('--web 1')
-    command = " ".join(str(s) for s in param)
-    print(command)
-    sys.stdout.flush()
+def get_logo_command(job, order):
+    job_pk = job.meta_job.pk
+    prefix = job.filename_prefix
+    params = [
+        'plotBaMMLogo.R',
+        get_job_output_folder(job_pk) + '/',
+        prefix,
+        order,
+        '--web 1'
+    ]
+    command = " ".join(str(s) for s in params)
     return command
 
 
-def get_distribution_command(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    param = []
-    param.append('plotMotifDistribution.R')
-    param.append(get_job_output_folder(job_pk) + '/')
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
-    else:
-        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
-    command = " ".join(str(s) for s in param)
-    print(command)
-    sys.stdout.flush()
+def get_distribution_command(job):
+    job_pk = job.meta_job.pk
+    params = [
+        'plotMotifDistribution.R',
+        get_job_output_folder(job_pk) + '/',
+        job.filename_prefix,
+    ]
+    command = ' '.join(str(s) for s in params)
     return command
 
 
@@ -131,24 +127,15 @@ def get_evaluation_command(job_pk):
     return command
 
 
-def get_iupac_command(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    param = []
-    param.append('IUPAC.py')
-    param.append(get_job_output_folder(job_pk) + '/')
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
-    else:
-        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
-
-    if job.mode == "Compare":
-        param.append(get_model_order(job_pk))
-        param.append(job.Motif_Init_File_Format)
-    else:
-        param.append(job.model_Order)
-    command = " ".join(str(s) for s in param)
-    print(command)
-    sys.stdout.flush()
+def get_iupac_command(job):
+    job_pk = job.meta_job.pk
+    params = [
+        'IUPAC.py',
+        get_job_output_folder(job_pk) + '/',
+        job.filename_prefix,
+        job.model_order,
+    ]
+    command = ' '.join(str(s) for s in params)
     return command
 
 
@@ -208,20 +195,19 @@ def get_compress_command(job_pk):
     return command
 
 
-def get_motif_compress_command(job_pk, motif):
-    job = get_object_or_404(Job, pk=job_pk)
-    param = []
-    param.append('zip -j')
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
-    else:
-        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
-    param.append(get_job_output_folder(job_pk) + '/' + outname + '_Motif_' + str(motif) + '.zip')
-    param.append(get_job_output_folder(job_pk) + '/' + outname + '_motif_' + str(motif) + '*')
-    param.append(get_job_output_folder(job_pk) + '/' + outname + '.hb*')
-    command = " ".join(str(s) for s in param)
-    print(command)
-    sys.stdout.flush()
+def get_motif_compress_command(job, motif):
+    job_pk = job.meta_job.pk
+    output_folder = get_job_output_folder(job_pk)
+
+    zip_file_name = '%s_Motif_%s.zip' % (job.filename_prefix, motif)
+    model_file_glob = '%s_motif_%s*' % (job.filename_prefix, motif)
+    params = [
+        'zip',  '-j',
+        path.join(output_folder, zip_file_name),
+        path.join(output_folder, model_file_glob),
+        path.join(output_folder, job.filename_prefix + '.hb*')
+    ]
+    command = ' '.join(str(s) for s in params)
     return command
 
 
@@ -451,44 +437,12 @@ def FDR(job_pk, first, useRefined):
     return 0
 
 
-def MMcompare(job_pk, first):
-    job = get_object_or_404(Job, pk=job_pk)
-    job.status = 'running Motif Motif Comparison'
+def Compress(job):
+    job.meta_job.status = 'compressing results'
     job.save()
-    print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
+    print(timezone.now(), "\t | update: \t %s " % job.meta_job.status)
     sys.stdout.flush()
-    database = 100
-    if first is True:
-        # add init Motif to Outputfolder
-        transfer_motif(job_pk)
-        if job.Motif_Init_File_Format == 'BaMM':
-            job.model_Order = get_model_order(job_pk)
-        else:
-            job.model_Order = 0
-        job.save()
-    job = get_object_or_404(Job, pk=job_pk)        
-    run_command(get_MMcompare_command(job_pk, database))
-    sys.stdout.flush()
-    if first is True:
-        # generate motif objects
-        job = get_object_or_404(Job, pk=job_pk)
-        run_command(get_iupac_command(job_pk))
-        initialize_motifs_compare(job_pk)
-        job = get_object_or_404(Job, pk=job_pk)
-        add_motif_iupac(job_pk)
-        # plot logos
-        make_logos(job_pk)
-    add_motif_motif_matches(job_pk)
-    return 0
 
-
-def Compress(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    job.status = 'compressing results'
-    job.save()
-    print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
-    sys.stdout.flush()
-    run_command(get_compress_command(job_pk))
-    for motif in range(1, (int(job.num_motifs) + 1)):
-        run_command(get_motif_compress_command(job_pk, motif))
-    return 0
+    run_command(get_compress_command(job))
+    for motif_no in range(job.num_motifs):
+        run_command(get_motif_compress_command(job, motif_no + 1))

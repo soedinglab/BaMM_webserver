@@ -1,17 +1,20 @@
 from __future__ import absolute_import
 from celery import task, chain
-from contextlib import redirect_stdout
+from contextlib import redirect_stdout, redirect_stderr
 from django.shortcuts import get_object_or_404
-from bammmotif.models import (
+from ..models import (
     Bamm, JobInfo
 )
 from bammmotif.bamm.commands import (
-    BaMM, BaMMScan, FDR, Peng,
-    Compress, MMcompare
+    BaMM, FDR, Peng,
+    Compress,
 )
-from bammmotif.bamm.utils import (
-    get_log_file, make_job_folder,
-    JobSaveManager
+from ..utils.misc import (
+    JobSaveManager,
+)
+from ..utils.path_helpers import (
+    get_log_file,
+    make_job_folder,
 )
 import logging
 logger = logging.getLogger(__name__)
@@ -266,3 +269,13 @@ def build_and_exec_mmcompare_chain(self, job_pk):
     task_list = [prepare_job.si(job_pk), mmcompare.si(Bamm, job_pk), complete_job.si(job_pk)]
     ret = chain(*task_list)()
     return ret
+
+
+def generic_fdr_task(job, first_in_pipeline, is_refined):
+    job_pk = job.meta_job.pk
+    with JobSaveManager(job):
+        # first define log file for redirecting output information
+        logfile = get_log_file(job_pk)
+        with open(logfile, 'a') as f:
+            with redirect_stdout(f), redirect_stderr(f):
+                FDR(job, first_in_pipeline, is_refined)
