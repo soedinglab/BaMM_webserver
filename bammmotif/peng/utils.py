@@ -17,7 +17,10 @@ from bammmotif.peng.settings import (
     FILTERPWM_OUTPUT_FILE,
     JOB_OUTPUT_DIRECTORY,
     BAMMPLOT_SUFFIX_REV_STAMP,
-    BAMMPLOT_SUFFIX_STAMP)
+    BAMMPLOT_SUFFIX_STAMP,
+    BAMMPLOT_SUFFIX,
+    BAMMPLOT_SUFFIX_REV,
+)
 from webserver.settings import BAMM_INPUT
 import os
 import shutil
@@ -204,6 +207,10 @@ def rename_and_move_plots(directory, new_dir):
             new_file = plot.replace(BAMMPLOT_SUFFIX_REV_STAMP, '') + '_revComp.png'
         elif plot.endswith(BAMMPLOT_SUFFIX_STAMP):
             new_file = plot.replace(BAMMPLOT_SUFFIX_STAMP, '') + '.png'
+        elif plot.endswith(BAMMPLOT_SUFFIX):
+            new_file = plot.replace(BAMMPLOT_SUFFIX, '_zip') + '.png'
+        elif plot.endswith(BAMMPLOT_SUFFIX_REV):
+            new_file = plot.replace(BAMMPLOT_SUFFIX_REV, '_revComp_zip') + '.png'
         else:
             continue
         old_name = os.path.join(directory, plot)
@@ -221,13 +228,13 @@ def zip_bamm_motifs(motif_ids, directory, with_reverse=True):
         if os.path.exists(archive_name):
             os.remove(archive_name)
         cmd.append(archive_name)
-        args = os.path.join(directory, motif + ".png")
+        args = os.path.join(directory, motif + "_zip.png")
         cmd.append(args)
         # Now add meme file
         meme_file = os.path.join(directory, motif + ".meme")
         cmd.append(meme_file)
         if with_reverse:
-            additional_args = os.path.join(directory, motif + "_revComp.png")
+            additional_args = os.path.join(directory, motif + "_revComp_zip.png")
             cmd.append(additional_args)
             # Use -j option to prune directory prefixes
         subprocess.run(cmd)
