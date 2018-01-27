@@ -16,8 +16,8 @@ from bammmotif.peng.settings import (
     EXAMPLE_FASTA_FILE,
     FILTERPWM_OUTPUT_FILE,
     JOB_OUTPUT_DIRECTORY,
-    BAMMPLOT_SUFFIX_REV,
-    BAMMPLOT_SUFFIX)
+    BAMMPLOT_SUFFIX_REV_STAMP,
+    BAMMPLOT_SUFFIX_STAMP)
 from webserver.settings import BAMM_INPUT
 import os
 import shutil
@@ -129,10 +129,10 @@ def save_selected_motifs_old(request, pk):
 def rename_plots(meme_list, directory, prefix_name):
     # Utility function to not break too much of the current functions.
     for meme in meme_list:
-        plot_name = os.path.join(directory, prefix_name + "_motif_" + str(meme.motif_number) + BAMMPLOT_SUFFIX)
+        plot_name = os.path.join(directory, prefix_name + "_motif_" + str(meme.motif_number) + BAMMPLOT_SUFFIX_STAMP)
         new_plot_name = meme.meme_id + ".png"
         os.rename(plot_name, new_plot_name)
-        plot_name_rev = os.path.join(directory, prefix_name + "_motif_" + str(meme.motif_number) + BAMMPLOT_SUFFIX_REV)
+        plot_name_rev = os.path.join(directory, prefix_name + "_motif_" + str(meme.motif_number) + BAMMPLOT_SUFFIX_REV_STAMP)
         new_plot_name_rev = meme.meme_id + "_rev.png"
         os.rename(plot_name_rev, new_plot_name_rev)
 
@@ -200,10 +200,10 @@ def rename_and_move_plots(directory, new_dir):
     plots = [x for x in os.listdir(directory) if x.endswith(".png")]
     for plot in plots:
         print('plot', plot)
-        if plot.endswith(BAMMPLOT_SUFFIX_REV):
-            new_file = plot.replace(BAMMPLOT_SUFFIX_REV, '') + '_revComp.png'
-        elif plot.endswith(BAMMPLOT_SUFFIX):
-            new_file = plot.replace(BAMMPLOT_SUFFIX, '') + '.png'
+        if plot.endswith(BAMMPLOT_SUFFIX_REV_STAMP):
+            new_file = plot.replace(BAMMPLOT_SUFFIX_REV_STAMP, '') + '_revComp.png'
+        elif plot.endswith(BAMMPLOT_SUFFIX_STAMP):
+            new_file = plot.replace(BAMMPLOT_SUFFIX_STAMP, '') + '.png'
         else:
             continue
         old_name = os.path.join(directory, plot)

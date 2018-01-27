@@ -8,16 +8,15 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 from bammmotif.peng.settings import (
-    file_path_peng,
-    peng_meme_directory,
     FASTA_VALIDATION_SCRIPT,
     PENG_OUTPUT,
     MEME_PLOT_INPUT,
     FILTERPWM_OUTPUT_FILE,
 )
+from bammmotif.peng.io import file_path_peng, file_path_peng_meta, peng_meme_directory
 from webserver.settings import BAMM_INPUT
 from bammmotif.models import JobInfo
-from bammmotif.peng.settings import ALLOWED_JOBMODES, file_path_peng_meta
+from bammmotif.peng.settings import ALLOWED_JOBMODES
 from bammmotif.utils import get_user
 from bammmotif.utils.meme_reader import get_n_motifs
 from bammmotif.peng.form import JobInfoForm
