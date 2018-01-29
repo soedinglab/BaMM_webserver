@@ -14,8 +14,9 @@ def get_job_folder(job_id):
 
 def make_job_folder(job_id):
     job_folder = get_job_folder(job_id)
-    if not path.isdir(job_folder):
-        os.makedirs(job_folder)
+    output_dir = path.join(job_folder, 'Output')
+    if not path.isdir(output_dir):
+        os.makedirs(output_dir)
     return job_folder
 
 

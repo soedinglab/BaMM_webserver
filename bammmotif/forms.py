@@ -1,5 +1,5 @@
 from django import forms
-from .models import Job, MotifDatabase, JobInfo
+from .models import MotifDatabase, JobInfo
 from .utils.ui import DBChoiceField
 
 
@@ -8,7 +8,7 @@ class MetaJobNameForm(forms.ModelForm):
         model = JobInfo
         fields = ('job_name',)
 
-
+"""
 class PredictionForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -92,6 +92,6 @@ class CompareExampleForm(forms.ModelForm):
         model = Job
         fields = ('job_name', 'p_value_cutoff')
 
-
+"""
 class FindForm(forms.Form):
     job_ID = forms.CharField(max_length=255)

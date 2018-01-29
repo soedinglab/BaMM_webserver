@@ -1,3 +1,15 @@
+import sys
+import os
+import collections
+from os import path
+from os.path import basename
+import traceback
+import subprocess
+from shutil import copyfile
+import re
+from collections import OrderedDict
+
+from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
@@ -5,18 +17,8 @@ from django.core.files import File
 from django.utils import timezone
 from ipware.ip import get_ip
 from ..models import (
-    Job, Motifs, ChIPseq, DbMatch
+    JobInfo, Motifs, ChIPseq, DbMatch
 )
-import sys
-import os
-import collections
-from os import path
-from os.path import basename
-import datetime
-import traceback
-import subprocess
-from shutil import copyfile
-import re
 
 import logging
 logger = logging.getLogger(__name__)
@@ -268,3 +270,10 @@ def meme_count_motifs(meme_file):
             if line.startswith('MOTIF'):
                 n_motifs += 1
     return n_motifs
+
+
+job_dir_storage = FileSystemStorage(location=settings.JOB_DIR)
+
+
+def job_upload_to_input(job, filename):
+    return path.join(str(job.meta_job.pk), 'Input', filename)

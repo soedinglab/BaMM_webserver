@@ -1,5 +1,7 @@
 import os
-from bammmotif.peng.job import peng_meme_directory
+
+from ..peng.settings import peng_meme_directory
+
 
 class Meme(object):
     def __init__(self, meme_id, logpval, nsites):
@@ -98,7 +100,7 @@ def load_nsites_from_dict(meme_dict):
     nsites_dict = {key: meme_dict[key]['nsites'] for key in meme_dict}
     return nsites_dict
 
+
 def get_n_motifs(pk):
     meme_directory = os.path.join(peng_meme_directory(pk), "selected_motifs")
     return len([x for x in os.listdir(meme_directory) if x.endswith(".meme")])
-

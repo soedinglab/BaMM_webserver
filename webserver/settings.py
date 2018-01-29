@@ -193,6 +193,7 @@ EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You
 
 # Settings related to file system structure
 JOB_DIR_PREFIX = ''
+JOB_DIR = path.join(MEDIA_ROOT, JOB_DIR_PREFIX)
 MOTIF_DATABASE_PATH = '/motif_db'
 STATICFILES_DIRS.append(MOTIF_DATABASE_PATH)
 LOG_DIR = '/logs'

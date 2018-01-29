@@ -7,7 +7,7 @@ from os import path
 from os.path import basename
 import datetime
 from .models import (
-    Job, DbParameter
+    DbParameter
 )
 from .utils import (
     run_command, initialize_motifs,

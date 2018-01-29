@@ -13,14 +13,13 @@ from .models import (
 from .models import (
     DbParameter,
     MotifDatabase,
-    Job,
-    PengJob_deprecated,
     ChIPseq,
     Motifs,
     DbMatch,
     JobInfo,
-    Peng,
-    Bamm,
 )
 
 from ..mmcompare.models import MMcompareJob
+from ..bammscan.models import BaMMScanJob
+from ..peng.models import PengJob
+from ..bamm.models import BaMMJob

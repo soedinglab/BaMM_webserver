@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.core.files import File
 from ipware.ip import get_ip
 from ..models import (
-    ChIPseq, Bamm, JobInfo, Motifs, DbMatch
+    ChIPseq, BaMMJob, JobInfo, Motifs, DbMatch
 )
 import collections
 import sys

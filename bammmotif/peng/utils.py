@@ -1,23 +1,35 @@
-from django.shortcuts import get_object_or_404
-from bammmotif.models import PengJob_deprecated, Peng
-from django.core.files import File
-from django.conf import settings
-from bammmotif.peng.job import peng_meme_directory
-from bammmotif.utils.meme_reader import update_and_copy_meme_file
-from bammmotif.peng.settings import MEME_PLOT_DIRECTORY, MEME_OUTPUT_FILE, PENG_OUTPUT, SELECTED_MOTIFS, PENG_INPUT, \
-    ZIPPED_MOTIFS, MOTIF_SELECT_IDENTIFIER, EXAMPLE_FASTA_FILE, FILTERPWM_OUTPUT_FILE, JOB_OUTPUT_DIRECTORY
-from webserver.settings import BAMM_INPUT
-
 import os
+from os import path
 import shutil
 import subprocess
 
-def upload_example_fasta_for_peng(job_id):
-    peng_job = get_object_or_404(Peng, pk=job_id)
+from django.shortcuts import get_object_or_404
+from django.core.files import File
+from django.conf import settings
+
+from ..utils.meme_reader import update_and_copy_meme_file
+
+from .settings import (
+    MEME_PLOT_DIRECTORY,
+    MEME_OUTPUT_FILE,
+    PENG_OUTPUT,
+    SELECTED_MOTIFS,
+    PENG_INPUT,
+    ZIPPED_MOTIFS,
+    MOTIF_SELECT_IDENTIFIER,
+    EXAMPLE_FASTA_FILE,
+    FILTERPWM_OUTPUT_FILE,
+    JOB_OUTPUT_DIRECTORY,
+    peng_meme_directory,
+)
+
+
+
+def upload_example_fasta_for_peng(job):
     out_filename = EXAMPLE_FASTA_FILE
     with open(settings.EXAMPLE_FASTA) as fh:
-        peng_job.fasta_file.save(out_filename, File(fh))
-        peng_job.save()
+        job.fasta_file.save(out_filename, File(fh))
+
 
 def copy_peng_to_bamm(peng_id, bamm_id, post):
     # Copy plots
@@ -88,18 +100,15 @@ def check_if_request_from_peng_directly(request):
     return False
 
 def save_selected_motifs(request, pk):
-    print("save_selected_motifs")
-    peng_plot_output_directory = os.path.join(peng_meme_directory(pk), MEME_PLOT_DIRECTORY)
+    peng_plot_output_directory = path.join(peng_meme_directory(pk), MEME_PLOT_DIRECTORY)
     peng_save_directory = os.path.join(peng_meme_directory(pk), SELECTED_MOTIFS)
     if not os.path.exists(peng_save_directory):
         os.makedirs(peng_save_directory)
     selected_motifs = [x.replace(MOTIF_SELECT_IDENTIFIER, "") for x in request.keys() if x.endswith(MOTIF_SELECT_IDENTIFIER)]
-    print(selected_motifs)
     min_requirement_for_refinement = False
     for file in os.listdir(peng_plot_output_directory):
         if any([file.startswith(x) for x in selected_motifs]):
             min_requirement_for_refinement = True
-            print("copying: ", file)
             shutil.copy(os.path.join(peng_plot_output_directory, file), os.path.join(peng_save_directory, file))
     return min_requirement_for_refinement
 

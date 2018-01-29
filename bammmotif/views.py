@@ -2,8 +2,9 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from .models import (
-    Job, ChIPseq, DbParameter
+    ChIPseq, DbParameter
 )
+"""
 from .forms import (
     PredictionForm, PredictionExampleForm,
     OccurrenceForm, OccurrenceExampleForm,
@@ -11,6 +12,7 @@ from .forms import (
     CompareForm, CompareExampleForm,
     FindForm
 )
+"""
 from .tasks import (
     run_bamm, run_bammscan,
     run_peng

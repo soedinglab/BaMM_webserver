@@ -63,7 +63,7 @@
             </div>
         </form>
         {% endcomment %}
-        <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=result.job_id %}">
+        <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=pk %}">
             {% csrf_token %}
             <table class="table table-hover">
                 <tr>

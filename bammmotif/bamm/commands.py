@@ -1,27 +1,25 @@
-from django.shortcuts import get_object_or_404
-from django.conf import settings
-from django.utils import timezone
 import sys
 import os
 from os import path
 from os.path import basename
 import datetime
-from bammmotif.models import (
-    Bamm, MotifDatabase
-)
 
-from ..utils.path_helpers import (
+from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.utils import timezone
+
+
+from ..models import MotifDatabase
+from ..utils import (
+    run_command,
     get_job_output_folder,
     get_job_input_folder,
     get_job_folder,
-)
-from ..utils.misc import (
-    run_command
-)
-from ..utils.job_helpers import (
     get_model_order,
     get_bg_model_order,
 )
+
+from .models import BaMMJob
 from .utils import (
     add_motif_evaluation,
     add_motif_motif_matches,

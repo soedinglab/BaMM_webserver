@@ -6,8 +6,6 @@ import datetime
 import uuid
 import os
 from os import path
-from ..command_line import ShootPengModule
-
 
 
 FORMAT_CHOICES = (
@@ -17,9 +15,9 @@ FORMAT_CHOICES = (
 )
 
 INIT_CHOICES = (
-    ('CustomFile','CustomFile'),
-    ('PEnGmotif','PEnGmotif'),
-    ('DBFile','DBFile'),
+    ('CustomFile', 'CustomFile'),
+    ('PEnGmotif', 'PEnGmotif'),
+    ('DBFile', 'DBFile'),
 )
 
 ALPHABET_CHOICES = (
@@ -138,147 +136,6 @@ class MotifDatabase(models.Model):
         return str(self.db_id)
 
 
-class Job(models.Model):
-    # general info
-    job_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    job_name=models.CharField(max_length=50, null=True, blank=True)
-    created_at = models.DateTimeField( default=datetime.datetime.now)
-    mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES) 
-    status = models.CharField(max_length=255, default="queueing", null=True, blank=True)
-    num_motifs = models.IntegerField(default=1)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    complete = models.BooleanField(default=False)
-        
-    # files  
-    Input_Sequences = models.FileField(upload_to=job_directory_path_sequence, null=True)
-    Background_Sequences = models.FileField(upload_to=job_directory_path_sequence, null=True, blank=True)
-    #Intensity_File = models.FileField(upload_to=job_directory_path , null=True, blank=True)
-    Motif_Initialization = models.CharField(max_length=255, choices=INIT_CHOICES, default="PEnGmotif")
-    Motif_InitFile = models.FileField(upload_to=job_directory_path_motif, null=True, blank=True)
-    Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="PWM")
-    num_init_motifs = models.IntegerField(default = 10)
-
-    # options
-    model_Order =models.PositiveSmallIntegerField(default=4)
-    reverse_Complement = models.BooleanField(default=True)
-    extend = models.PositiveSmallIntegerField(default=0)
-    #extend_2 = models.PositiveSmallIntegerField(default=0)
-
-    # fdr options
-    FDR = models.BooleanField(default=True)
-    m_Fold = models.IntegerField(default=5)
-    #cv_Fold = models.IntegerField(default=5)
-    sampling_Order = models.PositiveSmallIntegerField(default=2)
-    #save_LogOdds = models.BooleanField(default=False)
-
-    # CGS options
-    #CGS = models.BooleanField(default=False)
-    #max_CGS_Iterations = models.BigIntegerField(default=10e5)
-    #no_Alpha_Sampling = models.BooleanField( default=True)
-
-    # EM options
-    EM = models.BooleanField(default=True)    
-    #epsilon = models.DecimalField(default=0.001, max_digits=5, decimal_places=4)
-    q_value = models.DecimalField(default=0.9, max_digits=3, decimal_places=2)
-    #max_EM_Iterations = models.BigIntegerField(default=10e5)
-    #no_Alpha_Optimization = models.BooleanField(default=True)
-
-    # scoring options
-    score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.1)
-    bgModel_File = models.FileField( upload_to=job_directory_path_motif, null=True, blank=True)
-
-    # advanced options
-    #alphabet = models.CharField(max_length=255, choices=ALPHABET_CHOICES, default="STANDARD")
-    background_Order = models.PositiveSmallIntegerField(default=2)
-    verbose = models.BooleanField(default=True)
-    #save_BaMMs = models.BooleanField(default=True)
-    #save_BgModel = models.BooleanField(default=True)
-
-    # MMcompare
-    MMcompare = models.BooleanField(default=False)
-    p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
-    
-    class Meta:
-        ordering = ['-created_at']
-    
-    def __str__(self):
-        return self.job_ID
-
-    def Output_filename(self):
-        return os.path.splitext(os.path.basename(self.Input_Sequences.name))[0]
-        
-    def Inputseq_filename(self):
-        return os.path.basename(self.Input_Sequences.name)
-        
-    def Background_filename(self):
-        return os.path.basename(self.Background_Sequences.name)
-
-    def Intensity_filename(self):
-        return os.path.basename(self.Intensity_File.name)
-
-    def MotifInit_filename(self):
-        return os.path.basename(self.Motif_InitFile.name)
-
-
-class PengJob_deprecated(models.Model):
-    # general info
-    job_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    job_name = models.CharField(max_length=50, null=True, blank=True)
-    created_at = models.DateTimeField( default=datetime.datetime.now)
-    mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES)
-    status = models.CharField(max_length=255, default="not initialized", null=True, blank=True)
-    num_motifs = models.IntegerField(default=1)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    complete = models.BooleanField(default=False)
-
-    # Peng specific
-    fasta_file = models.FileField(upload_to=job_directory_path_peng, null=True)
-    meme_output = models.CharField(default=ShootPengModule.defaults['meme_output'], max_length=150)
-    json_output = models.CharField(default=ShootPengModule.defaults['json_output'], max_length=150)
-    temp_dir = models.CharField(max_length=100, null=True, default=ShootPengModule.defaults['temp_dir'])
-    bg_sequences = models.FileField(upload_to=job_directory_path_peng, null=True, blank=True)
-    pattern_length = models.IntegerField(default=ShootPengModule.defaults['pattern_length'])
-    zscore_threshold = models.FloatField(default=ShootPengModule.defaults['zscore_threshold'])
-    count_threshold = models.IntegerField(default=ShootPengModule.defaults['count_threshold'])
-    bg_model_order = models.IntegerField(default=ShootPengModule.defaults['bg_model_order'])
-    strand = models.CharField(max_length=5, default="BOTH")
-    objective_function = models.CharField(max_length=50, default=ShootPengModule.defaults['iupac_optimization_score'])
-    enrich_pseudocount_factor = models.FloatField(default=ShootPengModule.defaults['enrich_pseudocount_factor'])
-    no_em = models.BooleanField(default=ShootPengModule.defaults['no_em'])
-    em_saturation_threshold = models.FloatField(default=ShootPengModule.defaults['em_saturation_threshold'])
-    em_threshold = models.FloatField(default=ShootPengModule.defaults['em_threshold'])
-    em_max_iterations = models.IntegerField(default=ShootPengModule.defaults['em_max_iterations'])
-    no_merging = models.BooleanField(default=ShootPengModule.defaults['no-merging'])
-    bit_factor_threshold = models.FloatField(default=ShootPengModule.defaults['bit_factor_threshold'])
-    use_default_pwm = models.BooleanField(default=ShootPengModule.defaults['use_default_pwm'])
-    pwm_pseudo_counts = models.IntegerField(default=ShootPengModule.defaults['pwm_pseudo_counts'])
-    n_threads = models.IntegerField(default=ShootPengModule.defaults['n_threads'])
-    silent = models.BooleanField(default=ShootPengModule.defaults['silent'])
-
-
-    class Meta:
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return str(self.job_ID)
-
-#    def Output_filename(self):
-#        return os.path.splitext(os.path.basename(self.Input_Sequences.name))[0]
-#
-#    def Inputseq_filename(self):
-#        return os.path.basename(self.Input_Sequences.name)
-#
-#    def Background_filename(self):
-#        return os.path.basename(self.Background_Sequences.name)
-#
-#    def Intensity_filename(self):
-#        return os.path.basename(self.Intensity_File.name)
-#
-#    def MotifInit_filename(self):
-#        return os.path.basename(self.Motif_InitFile.name)
-
-
 class ChIPseq(models.Model):
     db_public_id = models.UUIDField(db_column='db_public_ID', primary_key=True, default=uuid.uuid4, editable=False)  # Field name made lowercase.
     filename = models.CharField(max_length=255)
@@ -315,124 +172,6 @@ class JobInfo(models.Model):
 
     def __str__(self):
         return str(self.job_id)
-
-class Peng(models.Model):
-    # Peng specific
-    #job_id = models.ForeignKey(JobMeta, on_delete=models.CASCADE, editable=False, primary_key=True)
-    job_id = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False, primary_key=True)
-    num_motifs = models.IntegerField(default=1)
-    fasta_file = models.FileField(upload_to=job_directory_path_peng_meta, null=True)
-    meme_output = models.CharField(default=ShootPengModule.defaults['meme_output'], max_length=150)
-    json_output = models.CharField(default=ShootPengModule.defaults['json_output'], max_length=150)
-    temp_dir = models.CharField(max_length=100, null=True, default=ShootPengModule.defaults['temp_dir'])
-    bg_sequences = models.FileField(upload_to=job_directory_path_peng, null=True, blank=True)
-    pattern_length = models.IntegerField(default=ShootPengModule.defaults['pattern_length'])
-    zscore_threshold = models.FloatField(default=ShootPengModule.defaults['zscore_threshold'])
-    count_threshold = models.IntegerField(default=ShootPengModule.defaults['count_threshold'])
-    bg_model_order = models.IntegerField(default=ShootPengModule.defaults['bg_model_order'])
-    strand = models.CharField(max_length=5, default="BOTH")
-    objective_function = models.CharField(max_length=50, default=ShootPengModule.defaults['iupac_optimization_score'])
-    enrich_pseudocount_factor = models.FloatField(default=ShootPengModule.defaults['enrich_pseudocount_factor'])
-    no_em = models.BooleanField(default=ShootPengModule.defaults['no_em'])
-    em_saturation_threshold = models.FloatField(default=ShootPengModule.defaults['em_saturation_threshold'])
-    em_threshold = models.FloatField(default=ShootPengModule.defaults['em_threshold'])
-    em_max_iterations = models.IntegerField(default=ShootPengModule.defaults['em_max_iterations'])
-    no_merging = models.BooleanField(default=ShootPengModule.defaults['no-merging'])
-    bit_factor_threshold = models.FloatField(default=ShootPengModule.defaults['bit_factor_threshold'])
-    use_default_pwm = models.BooleanField(default=ShootPengModule.defaults['use_default_pwm'])
-    pwm_pseudo_counts = models.IntegerField(default=ShootPengModule.defaults['pwm_pseudo_counts'])
-    n_threads = models.IntegerField(default=ShootPengModule.defaults['n_threads'])
-    silent = models.BooleanField(default=ShootPengModule.defaults['silent'])
-
-
-    class Meta:
-        pass
-
-    def __str__(self):
-        return "peng_" + str(self.job_id)
-
-    def __eq__(self, obj):
-        if isinstance(obj, Peng):
-            return str(obj) == self.__str__()
-        elif (obj, str):
-            return obj == self.__str__()
-        return False
-
-class Bamm(models.Model):
-    job_id = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False, primary_key=True)
-    num_motifs = models.IntegerField(default=1)
-
-    # files
-    Input_Sequences = models.FileField(upload_to=job_directory_path_sequence_new, null=True)
-    Background_Sequences = models.FileField(upload_to=job_directory_path_sequence_new, null=True, blank=True)
-    #Intensity_File = models.FileField(upload_to=job_directory_path , null=True, blank=True)
-    Motif_Initialization = models.CharField(max_length=255, choices=INIT_CHOICES, default="PEnGmotif")
-    Motif_InitFile = models.FileField(upload_to=job_directory_path_motif_new, null=True, blank=True)
-    Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="PWM")
-    num_init_motifs = models.IntegerField(default = 10)
-
-    # options
-    model_Order =models.PositiveSmallIntegerField(default=4)
-    reverse_Complement = models.BooleanField(default=True)
-    extend = models.PositiveSmallIntegerField(default=0)
-    #extend_2 = models.PositiveSmallIntegerField(default=0)
-
-    # fdr options
-    FDR = models.BooleanField(default=True)
-    m_Fold = models.IntegerField(default=5)
-    #cv_Fold = models.IntegerField(default=5)
-    sampling_Order = models.PositiveSmallIntegerField(default=2)
-    #save_LogOdds = models.BooleanField(default=False)
-
-    # CGS options
-    #CGS = models.BooleanField(default=False)
-    #max_CGS_Iterations = models.BigIntegerField(default=10e5)
-    #no_Alpha_Sampling = models.BooleanField( default=True)
-
-    # EM options
-    EM = models.BooleanField(default=True)
-    #epsilon = models.DecimalField(default=0.001, max_digits=5, decimal_places=4)
-    q_value = models.DecimalField(default=0.9, max_digits=3, decimal_places=2)
-    #max_EM_Iterations = models.BigIntegerField(default=10e5)
-    #no_Alpha_Optimization = models.BooleanField(default=True)
-
-    # scoring options
-    score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.1)
-    bgModel_File = models.FileField( upload_to=job_directory_path_motif_new, null=True, blank=True)
-
-    # advanced options
-    #alphabet = models.CharField(max_length=255, choices=ALPHABET_CHOICES, default="STANDARD")
-    background_Order = models.PositiveSmallIntegerField(default=2)
-    verbose = models.BooleanField(default=True)
-    #save_BaMMs = models.BooleanField(default=True)
-    #save_BgModel = models.BooleanField(default=True)
-
-    # MMcompare
-    MMcompare = models.BooleanField(default=False)
-    p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
-    motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
-
-    #class Meta:
-    #    ordering = ['-created_at']
-
-    def __str__(self):
-        return str(self.job_id)
-
-    def Output_filename(self):
-        return os.path.splitext(os.path.basename(self.Input_Sequences.name))[0]
-
-    def Inputseq_filename(self):
-        return os.path.basename(self.Input_Sequences.name)
-
-    def Background_filename(self):
-        return os.path.basename(self.Background_Sequences.name)
-
-    def Intensity_filename(self):
-        return os.path.basename(self.Intensity_File.name)
-
-    def MotifInit_filename(self):
-        return os.path.basename(self.Motif_InitFile.name)
 
 
 class Motifs(models.Model):

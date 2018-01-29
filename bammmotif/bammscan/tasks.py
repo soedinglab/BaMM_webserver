@@ -4,6 +4,8 @@ import celery
 from celery import task
 from django.shortcuts import get_object_or_404
 
+from bammmotif.bamm import tasks as bamm_tasks
+
 from ..utils import (
     JobSaveManager,
     make_job_folder,
@@ -11,7 +13,6 @@ from ..utils import (
 )
 from .models import BaMMScanJob
 from ..mmcompare.tasks import generic_mmcompare_task
-from ..bamm.tasks import generic_fdr_task
 from ..tasks import generic_model_zip_task
 from .commands import BaMMScan
 
@@ -52,7 +53,7 @@ def bamm_scan_task(self, job_pk):
 @task(bind=True)
 def fdr_task(self, job_pk):
     job = get_object_or_404(BaMMScanJob, meta_job__pk=job_pk)
-    generic_fdr_task(job, first_in_pipeline=False, is_refined=False)
+    bamm_tasks.generic_fdr_task(job, first_in_pipeline=False, is_refined=False)
 
 
 @task(bind=True)
