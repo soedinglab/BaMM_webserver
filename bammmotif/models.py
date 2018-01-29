@@ -360,9 +360,20 @@ class Peng(models.Model):
             return obj == self.__str__()
         return False
 
+    @property
+    def filepath_prefix(self):
+        return os.path.dirname(self.fasta_file.name)
+
+    @property
+    def filename_prefix(self):
+        path, _ = os.path.splitext(self.fasta_file.name)
+        return os.path.basename(path)
+
+
 class Bamm(models.Model):
     job_id = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False, primary_key=True)
     num_motifs = models.IntegerField(default=1)
+    peng = models.OneToOneField(Peng, editable=False, on_delete=models.CASCADE)
 
     # files
     Input_Sequences = models.FileField(upload_to=job_directory_path_sequence_new, null=True)

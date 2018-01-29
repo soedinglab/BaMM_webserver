@@ -29,6 +29,7 @@ from .command_line import ShootPengModule
 #                                                        'data-container': 'body'})
 
 
+@deprecated("outdated")
 class PredictionForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -52,6 +53,7 @@ class PredictionForm(forms.ModelForm):
                                                         'data-container': 'body'})
 
 
+@deprecated("outdated")
 class PredictionExampleForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -73,6 +75,7 @@ class PredictionExampleForm(forms.ModelForm):
                                                         'data-container': 'body'})
 
 
+@deprecated("outdated")
 class OccurrenceForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -83,6 +86,7 @@ class OccurrenceForm(forms.ModelForm):
                   'MMcompare', 'p_value_cutoff')
 
 
+@deprecated("outdated")
 class OccurrenceExampleForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -91,6 +95,7 @@ class OccurrenceExampleForm(forms.ModelForm):
                   'MMcompare', 'p_value_cutoff')
 
 
+@deprecated("outdated")
 class OccurrenceDBForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -99,6 +104,7 @@ class OccurrenceDBForm(forms.ModelForm):
                   'MMcompare', 'p_value_cutoff')
 
 
+@deprecated("outdated")
 class CompareForm(forms.ModelForm):
     class Meta:
         model = Job
@@ -106,6 +112,7 @@ class CompareForm(forms.ModelForm):
                   'bgModel_File', 'model_Order', 'p_value_cutoff')
 
 
+@deprecated("outdated")
 class CompareExampleForm(forms.ModelForm):
     class Meta:
         model = Job

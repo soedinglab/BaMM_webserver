@@ -7,10 +7,16 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 
-from bammmotif.peng.settings import file_path_peng, peng_meme_directory, FASTA_VALIDATION_SCRIPT, PENG_OUTPUT, MEME_PLOT_INPUT, FILTERPWM_OUTPUT_FILE
+from bammmotif.peng.settings import (
+    FASTA_VALIDATION_SCRIPT,
+    PENG_OUTPUT,
+    MEME_PLOT_INPUT,
+    FILTERPWM_OUTPUT_FILE,
+)
+from bammmotif.peng.io import file_path_peng, file_path_peng_meta, peng_meme_directory
 from webserver.settings import BAMM_INPUT
 from bammmotif.models import JobInfo
-from bammmotif.peng.settings import ALLOWED_JOBMODES, file_path_peng_meta
+from bammmotif.peng.settings import ALLOWED_JOBMODES
 from bammmotif.utils import get_user
 from bammmotif.utils.meme_reader import get_n_motifs
 from bammmotif.peng.form import JobInfoForm
@@ -68,6 +74,7 @@ def create_bamm_job(job_type, request, form, peng_job):
     bamm_job.Motif_InitFile.name = os.path.join(settings.MEDIA_ROOT, str(bamm_job.job_id.job_id), PENG_OUTPUT, FILTERPWM_OUTPUT_FILE)
     bamm_job.Motif_Initialization = "Custom File"
     bamm_job.Motif_Init_File_Format = "PWM"
+    bamm_job.peng = peng_job
     bamm_job.save()
     return bamm_job
 

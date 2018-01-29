@@ -1,9 +1,11 @@
 import os
-from bammmotif.peng.job import peng_meme_directory
+from bammmotif.peng.io import peng_meme_directory
+
 
 class Meme(object):
     def __init__(self, meme_id, logpval, nsites):
         self.meme_id = meme_id
+        self.number = None
         self.logpval = logpval
         self.nsites = nsites
         self.select = False

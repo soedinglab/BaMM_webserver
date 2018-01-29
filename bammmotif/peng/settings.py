@@ -1,15 +1,23 @@
-import os
-from django.conf import settings
-
-
+JOB_INPUT_DIRECTORY = 'Input'
 JOB_OUTPUT_DIRECTORY = 'Output'
 PENG_OUTPUT = 'pengoutput'
 PENG_INPUT = 'Input'
+PENG_TEMP_DIRECTORY = "temp"
 SELECTED_MOTIFS = 'selected_motifs'
 MEME_PLOT_DIRECTORY = 'meme_plots'
 MEME_OUTPUT_FILE = 'out.meme'
 MOTIF_SELECT_IDENTIFIER = "_select"
 JSON_OUTPUT_FILE = "out.json"
+BMSCORE_SUFFIX = ".bmscore"
+PENG_PLOT_LOGO_ORDER = 0
+
+PENG_OUTPUT_MEME = 'out.meme' # replace MEME_OUTPUT_FILE
+PENG_OUTPUT_JSON = 'out.json' # replace JSON_OUTPUT_FILE
+PWM2BAMM_DIRECTORY = 'converttemp'
+BAMMPLOT_SUFFIX_STAMP = '-logo-order-0_stamp.png'
+BAMMPLOT_SUFFIX_REV_STAMP = '-logo-order-0_stamp_revComp.png'
+BAMMPLOT_SUFFIX = '-logo-order-0.png'
+BAMMPLOT_SUFFIX_REV = '-logo-order-0_revComp.png'
 
 
 #Filter PWM
@@ -33,51 +41,11 @@ ALLOWED_JOBMODES = [
     "peng",
 ]
 
+# Use this from now on. These should replace the over functions over time.
 
-def get_meme_result_file_path(job_id):
-    return os.path.join(get_job_directory(job_id), JOB_OUTPUT_DIRECTORY, MEME_PLOT_INPUT)
+# Only use the following functions temporary.
 
-def get_plot_output_directory(job_id):
-    meme_path = get_meme_result_file_path(job_id)
-    return os.path.join(meme_path.rsplit('/', maxsplit=1)[0], MEME_PLOT_DIRECTORY)
-
-def get_job_ouput_directory(job_id):
-    ptj = get_job_directory(job_id)
-    p = os.path.join(ptj, JOB_OUTPUT_DIRECTORY)
-    if not os.path.exists(p):
-        os.makedirs(p)
-    return p
+# END
 
 
-
-def get_job_directory(job_id):
-    path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id))
-    if not os.path.exists(path_to_job):
-        os.makedirs(path_to_job)
-    return path_to_job
-
-def file_path_peng(job_id, filename):
-    path_to_job = get_job_directory(job_id)
-    #path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id), PENG_JOB_RESULT)
-    #if not os.path.exists(path_to_job):
-    #    os.makedirs(path_to_job)
-    return os.path.join(path_to_job, str(filename))
-
-def file_path_peng_meta(job_id, filename):
-    path_to_job = os.path.join(settings.MEDIA_ROOT, str(job_id), JOB_OUTPUT_DIRECTORY)
-    if not os.path.exists(path_to_job):
-        os.makedirs(path_to_job)
-    return os.path.join(path_to_job, str(filename))
-
-def peng_meme_directory(job_id):
-    path_to_plots = os.path.join(settings.MEDIA_ROOT, str(job_id), JOB_OUTPUT_DIRECTORY)
-    if not os.path.exists(path_to_plots):
-        os.makedirs(path_to_plots)
-    return path_to_plots
-
-def job_directory_path_peng(instance, filename, intermediate_dir="Input"):
-    path = os.path.join(settings.MEDIA_ROOT, str(instance.job_id), intermediate_dir)
-    if not os.path.exists(path):
-        os.makedirs(path)
-    return os.path.join(path, str(filename))
 

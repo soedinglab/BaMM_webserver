@@ -4,7 +4,7 @@ from bammmotif.models import Job, Bamm
 class PengToBammForm(forms.ModelForm):
     class Meta:
         model = Bamm
-        fields = ('reverse_Complement', 'model_Order',
+        fields = ('model_Order',
                   'extend', 'background_Order',
                   'Background_Sequences', 'score_Seqset', 'score_Cutoff',
                   'FDR', 'q_value',)
