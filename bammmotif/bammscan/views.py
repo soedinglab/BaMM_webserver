@@ -1,5 +1,9 @@
+from os import path
+import os
+
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
+from django.db import transaction
 
 from .forms import (
     BaMMScanExampleForm,
@@ -11,9 +15,13 @@ from ..forms import MetaJobNameForm
 from ..utils import (
     get_user,
     set_job_name,
+    get_log_file,
+    get_result_folder,
     upload_example_fasta,
     upload_example_motif,
 )
+
+from .models import BaMMScanJob
 
 from .tasks import bamm_scan_pipeline
 
@@ -53,10 +61,15 @@ def run_bammscan_view(request, mode='normal', pk='null'):
                 pass
                 # this is currently not implemented
 
-            job.save()
+            with transaction.atomic():
+                job.meta_job.save()
+                job.save()
 
             bamm_scan_pipeline.delay(job_pk)
-            return render(request, 'job/submitted.html', {'pk': job_pk})
+            return render(request, 'job/submitted.html', {
+                'pk': job_pk,
+                'result_target': 'scan_results',
+            })
 
     meta_job_form = MetaJobNameForm()
     if mode == 'example':
@@ -66,6 +79,37 @@ def run_bammscan_view(request, mode='normal', pk='null'):
     return render(request, 'job/bammscan_input.html',
                   {
                       'form': form,
-                      'meta_job_form': meta_job_form,
                       'mode': mode,
                   })
+
+
+def result_details(request, pk):
+    result = get_object_or_404(BaMMScanJob, pk=pk)
+    meta_job = result.meta_job
+    opath = get_result_folder(pk)
+    filename_prefix = result.filename_prefix
+
+    motif_db = result.motif_db
+    db_dir = motif_db.relative_db_model_dir
+
+    if meta_job.complete:
+        num_logos = range(1, (min(3, result.model_order+1)))
+        return render(request, 'bammscan/result_detail.html', {
+            'sequence_fname': path.basename(result.Input_Sequences.name),
+            'motif_fname': path.basename(result.Motif_InitFile.name),
+            'result': result,
+            'opath': opath,
+            'mode': meta_job.mode,
+            'Output_filename': filename_prefix,
+            'num_logos': num_logos,
+            'db_dir': db_dir})
+    else:
+        log_file = get_log_file(pk)
+        command = "tail -20 %r" % log_file
+        output = os.popen(command).read()
+        return render(request, 'results/result_status.html', {
+            'job_id': pk,
+            'job_name': meta_job.job_name,
+            'status': meta_job.status,
+            'output': output
+        })

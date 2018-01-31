@@ -38,10 +38,9 @@ def bamm_scan_pipeline(self, job_pk):
         pipeline_tasks.append(fdr_task.si(job_pk))
     if job.MMcompare:
         pipeline_tasks.append(mmcompare_task.si(job_pk))
+    pipeline_tasks.append(mmcompare_finalize.si(job_pk))
 
     celery.chain(pipeline_tasks)()
-    job.meta_job.complete = True
-    job.save()
 
 
 @task(bind=True)
@@ -66,3 +65,10 @@ def mmcompare_task(self, job_pk):
 def compress_task(self, job_pk):
     job = get_object_or_404(BaMMScanJob, meta_job__pk=job_pk)
     generic_model_zip_task(job)
+
+
+@task(bind=True)
+def mmcompare_finalize(self, job_pk):
+    job = get_object_or_404(BaMMScanJob, meta_job__pk=job_pk)
+    job.meta_job.complete = True
+    job.meta_job.save()

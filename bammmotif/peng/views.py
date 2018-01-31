@@ -26,6 +26,7 @@ from bammmotif.peng.settings import (
 from ..utils import (
     get_user,
     set_job_name,
+    get_job_output_folder,
     valid_uuid,
     get_result_folder,
     get_log_file,
@@ -53,6 +54,7 @@ from .job import (
 )
 from .cmd_modules import PlotMeme
 from .models import PengJob
+from ..bamm.models import BaMMJob
 
 from .settings import (
     get_meme_result_file_path,
@@ -63,6 +65,7 @@ from .settings import (
 def peng_result_detail(request, pk):
     job_pk = pk
     result = get_object_or_404(PengJob, meta_job__pk=job_pk)
+    meta_job = result.meta_job
     if result.meta_job.complete:
         meme_result_file_path = get_meme_result_file_path(job_pk)
         plot_output_directory = get_plot_output_directory(job_pk)
@@ -71,20 +74,24 @@ def peng_result_detail(request, pk):
         if not path.exists(plot_output_directory):
             os.makedirs(plot_output_directory)
         meme_meta_info_list = Meme.fromfile(meme_result_file_path)
-        return render(request, 'peng/peng_result_detail.html',
-                      {'result': result,
-                        'pk': result.meta_job.pk,
-                       'job_info': result.meta_job,
-                       'mode': result.meta_job.mode,
-                       'opath': opath,
-                       'meme_meta_info': meme_meta_info_list,
-                       })
+        return render(request, 'peng/peng_result_detail.html', {
+            'result': result,
+            'pk': result.meta_job.pk,
+            'job_info': result.meta_job,
+            'mode': result.meta_job.mode,
+            'opath': opath,
+            'meme_meta_info': meme_meta_info_list,
+        })
     else:
         log_file = get_log_file(job_pk)
         command = "tail -20 %r" % log_file
         output = os.popen(command).read()
-        return render(request, 'results/result_status.html',
-                      {'result': result, 'output': output})
+        return render(request, 'results/result_status.html', {
+            'output': output,
+            'job_id': meta_job.pk,
+            'job_name': meta_job.job_name,
+            'status': meta_job.status,
+        })
 
 
 def run_peng_view(request, mode='normal'):
@@ -153,7 +160,7 @@ def peng_load_bamm(request, pk):
             at_least_one_motif_selected = save_selected_motifs(request.POST, pk)
             if not at_least_one_motif_selected:
                 opath = os.path.join(get_result_folder(peng_job_pk), MEME_PLOT_DIRECTORY)
-                meme_result_file_path = get_meme_result_file_path(peng_job.job_id.job_id)
+                meme_result_file_path = get_meme_result_file_path(peng_job_pk)
                 meme_meta_info_list = Meme.fromfile(meme_result_file_path)
                 return render(request, 'results/peng_result_detail.html', {
                     'result': peng_job,
@@ -184,6 +191,9 @@ def peng_load_bamm(request, pk):
             bamm_refinement_pipeline.delay(bamm_job_pk)
 
             return render(request, 'job/peng_to_bamm_submitted.html', {'pk': bamm_job_pk})
+
+        else:
+            print(form.errors)
 
     form = PengToBammForm()
     return render(request, 'peng/peng_to_bamm.html', {
@@ -218,43 +228,40 @@ def peng_to_bamm_result_overview(request, pk):
     else:
         return redirect(request, 'find_peng_to_bamm_results')
 
+
 def peng_to_bamm_result_detail(request, pk):
-    result = get_object_or_404(Bamm, pk=pk)
-    opath = get_result_folder(pk)
-    Output_filename = result.Output_filename()
-    # meme_logo_path = peng_meme_directory(pk)
-    peng_path = os.path.join(settings.MEDIA_ROOT, pk, "pengoutput")
-    meme_plots = os.path.join(pk, "pengoutput", "meme_plots")
+    result = get_object_or_404(BaMMJob, meta_job__pk=pk)
+    meta_job = result.meta_job
+
+    relative_result_folder = get_result_folder(pk)
+    job_output_dir = get_job_output_folder(pk)
+    peng_path = path.join(job_output_dir, "pengoutput")
+    meme_plots = path.join(job_output_dir, "pengoutput", "meme_plots")
     meme_motifs = load_meme_ids(peng_path)
-    # meme_meta_info_list = Meme.fromfile(os.path.join(peng_meme_directory(pk), "out.meme"))
     meme_meta_info_list = Meme.fromfile(os.path.join(peng_path, "out.meme"))
-    database = 100
-    db = get_object_or_404(DbParameter, pk=database)
-    db_dir = os.path.join(db.base_dir, 'Results')
 
-    print(meme_plots)
-    if result.job_id.complete:
-        print("status is successfull")
-        num_logos = range(1, (min(2, result.model_Order)+1))
-        print(result.job_id.mode)
-        if result.job_id.mode == "Prediction" or result.job_id.mode == "Compare":
-            return render(request, 'results/peng_to_bamm_result_detail.html',
-                          {'result': result, 'opath': opath,
-                           'mode': result.job_id.mode,
-                           'Output_filename': Output_filename,
-                           'num_logos': num_logos,
-                           'db_dir': db_dir,
-                           'meme_logo_path': meme_plots,
-                           'meme_motifs': meme_motifs,
-                           'meme_meta_info': meme_meta_info_list,
-                           })
-        elif result.job_id.mode == "Occurrence":
-            return redirect('result_occurrence', result.job_id.mode, pk)
+    motif_db = result.motif_db
+    db_dir = motif_db.relative_db_model_dir
 
+    if meta_job.complete:
+        num_logos = range(1, (min(2, result.model_order)+1))
+        return render(request, 'bamm/bamm_result_detail.html', {
+            'result': result, 'opath': get_result_folder(pk),
+            'mode': meta_job.mode,
+            'Output_filename': result.filename_prefix,
+            'num_logos': num_logos,
+            'db_dir': db_dir,
+            'meme_logo_path': path.relpath(meme_plots, relative_result_folder),
+            'meme_motifs': meme_motifs,
+            'meme_meta_info': meme_meta_info_list,
+        })
     else:
-        print('status not ready yet')
         log_file = get_log_file(pk)
         command = "tail -20 %r" % log_file
         output = os.popen(command).read()
-        return render(request, 'results/result_status.html',
-                      {'result': result, 'opath': opath, 'output': output})
+        return render(request, 'results/result_status.html', {
+                'output': output,
+                'job_id': meta_job.pk,
+                'job_name': meta_job.job_name,
+                'status': meta_job.status
+        })

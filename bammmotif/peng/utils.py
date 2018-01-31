@@ -2,19 +2,23 @@ import os
 from os import path
 import shutil
 import subprocess
+import logging
 
 from django.shortcuts import get_object_or_404
 from django.core.files import File
 from django.conf import settings
 
 from ..utils.meme_reader import update_and_copy_meme_file
+from ..utils import (
+    get_job_output_folder,
+    get_job_input_folder,
+)
 
 from .settings import (
     MEME_PLOT_DIRECTORY,
     MEME_OUTPUT_FILE,
     PENG_OUTPUT,
     SELECTED_MOTIFS,
-    PENG_INPUT,
     ZIPPED_MOTIFS,
     MOTIF_SELECT_IDENTIFIER,
     EXAMPLE_FASTA_FILE,
@@ -23,6 +27,7 @@ from .settings import (
     peng_meme_directory,
 )
 
+logger = logging.getLogger(__name__)
 
 
 def upload_example_fasta_for_peng(job):
@@ -32,36 +37,46 @@ def upload_example_fasta_for_peng(job):
 
 
 def copy_peng_to_bamm(peng_id, bamm_id, post):
-    # Copy plots
-    # peng_plot_output_directory = os.path.join(peng_meme_directory(peng_id), "meme_plots")
-    peng_save_directory = os.path.join(peng_meme_directory(peng_id), SELECTED_MOTIFS)
-    bamm_output_dir = os.path.join(settings.MEDIA_ROOT, str(bamm_id), PENG_OUTPUT)
-    bamm_plot_output_directory = os.path.join(bamm_output_dir, MEME_PLOT_DIRECTORY)
-    if not os.path.exists(bamm_plot_output_directory):
+    peng_save_directory = path.join(peng_meme_directory(peng_id), SELECTED_MOTIFS)
+    bamm_output_dir = path.join(get_job_output_folder(bamm_id), PENG_OUTPUT)
+    bamm_plot_output_directory = path.join(bamm_output_dir, MEME_PLOT_DIRECTORY)
+    if not path.exists(bamm_plot_output_directory):
         os.makedirs(bamm_plot_output_directory)
+
     for file in os.listdir(peng_save_directory):
-        shutil.copy(os.path.join(peng_save_directory, file), bamm_plot_output_directory)
+        src = path.join(peng_save_directory, file)
+        dest = bamm_plot_output_directory
+        logger.debug('copying %s -> %s', src, dest)
+        shutil.copy(src, dest)
+
     # copy meme.out
     meme_path_src = os.path.join(peng_meme_directory(peng_id), MEME_OUTPUT_FILE)
     meme_path_dst = os.path.join(bamm_output_dir, MEME_OUTPUT_FILE)
     update_and_copy_meme_file(meme_path_src, meme_path_dst, peng_save_directory)
+
     # copy results of filterPWM
-    filterpwm_src = os.path.join(settings.MEDIA_ROOT, str(peng_id), JOB_OUTPUT_DIRECTORY, FILTERPWM_OUTPUT_FILE)
-    #filterpwm_dst  = os.path.join(settings.MEDIA_ROOT, str(bamm_id), BAMM_INPUT)
+    filterpwm_src = os.path.join(get_job_output_folder(peng_id), FILTERPWM_OUTPUT_FILE)
+
+    logger.debug('copying %s -> %s', filterpwm_src, bamm_output_dir)
     shutil.copy(filterpwm_src, bamm_output_dir)
+
     # copy input file
-    peng_input = os.path.join(settings.MEDIA_ROOT, str(peng_id), PENG_INPUT)
-    bamm_input = os.path.join(settings.MEDIA_ROOT, str(bamm_id), BAMM_INPUT)
-    if not os.path.exists(bamm_input):
+    peng_input = os.path.join(get_job_input_folder(peng_id))
+    bamm_input = os.path.join(get_job_input_folder(bamm_id))
+    if not path.exists(bamm_input):
         os.makedirs(bamm_input)
     # TODO: Is this supposed to be multiple files??
     for file in os.listdir(peng_input):
-        shutil.copy(os.path.join(peng_input, file), bamm_input)
+        logger.debug('copying %s -> %s', filterpwm_src, bamm_output_dir)
+        src = os.path.join(peng_input, file)
+        shutil.copy(src, bamm_input)
+
 
 def load_meme_ids(path, filetype='.png'):
     for _, _, files in os.walk(path):
         filelist = [x.rsplit('.', maxsplit=1)[0] for x in files if x.endswith(filetype)]
     return filelist
+
 
 def zip_motifs(motif_ids, directory, with_reverse=True):
     for motif in motif_ids:
@@ -99,17 +114,21 @@ def check_if_request_from_peng_directly(request):
         return True
     return False
 
+
 def save_selected_motifs(request, pk):
     peng_plot_output_directory = path.join(peng_meme_directory(pk), MEME_PLOT_DIRECTORY)
-    peng_save_directory = os.path.join(peng_meme_directory(pk), SELECTED_MOTIFS)
-    if not os.path.exists(peng_save_directory):
+    peng_save_directory = path.join(peng_meme_directory(pk), SELECTED_MOTIFS)
+    if not path.exists(peng_save_directory):
         os.makedirs(peng_save_directory)
     selected_motifs = [x.replace(MOTIF_SELECT_IDENTIFIER, "") for x in request.keys() if x.endswith(MOTIF_SELECT_IDENTIFIER)]
     min_requirement_for_refinement = False
     for file in os.listdir(peng_plot_output_directory):
         if any([file.startswith(x) for x in selected_motifs]):
             min_requirement_for_refinement = True
-            shutil.copy(os.path.join(peng_plot_output_directory, file), os.path.join(peng_save_directory, file))
+            src = path.join(peng_plot_output_directory, file)
+            dest = path.join(peng_save_directory, file)
+            shutil.copy(src, dest)
+            logger.debug('copying %s -> %s', src, dest)
     return min_requirement_for_refinement
 
 

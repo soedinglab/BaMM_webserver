@@ -20,7 +20,6 @@ from ..utils import (
 
 from ..models import MMcompareJob
 from .utils import (
-    initialize_motifs_compare,
     make_logos,
     add_motif_motif_matches,
 )
@@ -32,13 +31,12 @@ from .commands import (
 
 
 def generic_mmcompare_task(job):
-    with JobSaveManager(job) as mgr:
+    with JobSaveManager(job):
         job_pk = job.meta_job.pk
         logfile = get_log_file(job_pk)
         with open(logfile, 'a') as f:
             with redirect_stdout(f), redirect_stderr(f):
                 MMcompare(job)
-    return 1 if mgr.had_exception else 0
 
 
 def generic_mmcompare_motif_transfer_task(job):
@@ -71,7 +69,6 @@ def generic_mmcompare_motif_transfer_task(job):
 
 def generic_mmcompare_prepare_results(job):
     run_command(get_compare_iupac_command(job))
-    initialize_motifs_compare(job)
     add_motif_iupac(job)
     make_logos(job)
 
@@ -82,17 +79,15 @@ def generic_mmcompare_import_matches(job):
 
 @task(bind=True)
 def mmcompare_pipeline(self, job_pk):
-    job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
     make_job_folder(job_pk)
     pipeline = celery.chain([
         mmcompare_motif_transfer_task.si(job_pk),
         mmcompare_task.si(job_pk),
         mmcompare_prepare_results.si(job_pk),
         mmcompare_import_matches.si(job_pk),
+        mmcompare_finalize.si(job_pk),
     ])
     pipeline()
-    job.meta_job.complete = True
-    job.save()
 
 
 @task(bind=True)
@@ -117,3 +112,10 @@ def mmcompare_prepare_results(self, job_pk):
 def mmcompare_import_matches(self, job_pk):
     job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
     return generic_mmcompare_import_matches(job)
+
+
+@task(bind=True)
+def mmcompare_finalize(self, job_pk):
+    job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
+    job.meta_job.complete = True
+    job.meta_job.save()

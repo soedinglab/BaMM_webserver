@@ -17,16 +17,20 @@ from ..utils import (
     get_job_folder,
     get_model_order,
     get_bg_model_order,
+    add_motif_iupac,
+
+)
+from ..commands import (
+    get_iupac_command,
+    get_logo_command,
 )
 
+from ..mmcompare.utils import add_motif_motif_matches
 from .models import BaMMJob
 from .utils import (
     add_motif_evaluation,
-    add_motif_motif_matches,
-    add_motif_iupac,
     transfer_motif,
     add_peng_output,
-    initialize_motifs_compare
 )
 
 
@@ -34,9 +38,9 @@ def get_core_params(job, is_refined_model, motif_id=1):
 
     job_pk = job.meta_job.pk
 
-    job_folder = get_job_folder(job_pk)
     job_output_folder = get_job_output_folder(job_pk)
-    sequence_file = path.join(job_folder, job.Input_Sequences.name)
+
+    sequence_file = path.join(settings.JOB_DIR, job.Input_Sequences.name)
 
     params = [
         job_output_folder,
@@ -45,7 +49,7 @@ def get_core_params(job, is_refined_model, motif_id=1):
 
     if str(job.Background_Sequences.name) != '':
         params.append("--negSeqFile")
-        params.append(path.join(job_folder, job.Background_Sequences.name))
+        params.append(path.join(settings.JOB_DIR, job.Background_Sequences.name))
 
     if is_refined_model:
         # initialize with refined model
@@ -59,7 +63,7 @@ def get_core_params(job, is_refined_model, motif_id=1):
             '--bgModelFile', path.join(job_output_folder, bg_file),
         ]
     else:
-        motif_init_file = path.join(job_folder, job.Motif_InitFile.name)
+        motif_init_file = path.join(settings.JOB_DIR, job.Motif_InitFile.name)
         if str(job.Motif_Init_File_Format) == "BindingSites":
             params += ['--bindingSiteFile', motif_init_file]
         elif str(job.Motif_Init_File_Format) == "PWM":
@@ -68,7 +72,7 @@ def get_core_params(job, is_refined_model, motif_id=1):
             assert str(job.bgModel_File) != ''
             params += [
                 '--BaMMFile', motif_init_file,
-                '--bgModelFile', path.join(job_folder, str(job.bgModel_File))
+                '--bgModelFile', path.join(settings.JOB_DIR, str(job.bgModel_File))
             ]
 
     # general options
@@ -87,23 +91,6 @@ def get_core_params(job, is_refined_model, motif_id=1):
         pass
 
     return params
-
-
-def get_logo_command(job_pk, order):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    param = []
-    param.append('plotBaMMLogo.R')
-    param.append(get_job_output_folder(job_pk) + '/')
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
-    else:
-        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
-    param.append(order)
-    param.append('--web 1')
-    command = " ".join(str(s) for s in param)
-    print(command)
-    sys.stdout.flush()
-    return command
 
 
 def get_distribution_command(job_pk):
@@ -132,27 +119,6 @@ def get_evaluation_command(job):
         '--PRC 1',
     ]
     command = ' '.join(str(s) for s in params)
-    return command
-
-
-def get_iupac_command(job_pk):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    param = []
-    param.append('IUPAC.py')
-    param.append(get_job_output_folder(job_pk) + '/')
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
-    else:
-        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
-
-    if job.job_id.mode == "Compare":
-        param.append(get_model_order(job_pk))
-        param.append(job.Motif_Init_File_Format)
-    else:
-        param.append(job.model_Order)
-    command = " ".join(str(s) for s in param)
-    print(command)
-    sys.stdout.flush()
     return command
 
 
@@ -195,20 +161,14 @@ def get_convert_input_command(job_pk):
     return command
 
 
-def get_compress_command(job_pk):
-    job = get_object_or_404(Bamm, pk=job_pk)
+def get_compress_command(job):
     param = []
     param.append('zip -j')
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
-    else:
-        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
-    param.append(get_job_output_folder(job_pk) + '/' + outname + '_BaMMmotif.zip')
-    param.append(get_job_output_folder(job_pk) + '/*')
+    prefix = job.filename_prefix
+    param.append(path.join(get_job_output_folder(job_pk), outname + '_BaMMmotif.zip'))
+    param.append(path.join(get_job_output_folder(job_pk), '*'))
 
     command = " ".join(str(s) for s in param)
-    print(command)
-    sys.stdout.flush()
     return command
 
 
@@ -254,66 +214,37 @@ def get_FDR_command(job, useRefined, model_no=1):
         '--basename',
     ]
     
-    output_folder = get_job_output_folder(job_pk)
     if (useRefined or job.Motif_Init_File_Format == 'BaMM'
        or job.Motif_Init_File_Format == 'BindingSites'):
         prefix = '%s_motif_%s' % (job.filename_prefix, model_no)
-        params.append(path.join(output_folder, prefix))
+        params.append(prefix)
     else:
         if job.Motif_Init_File_Format == 'PWM':
             prefix = job.filename_prefix
-            params.append(path.join(output_folder, prefix))
+            params.append(prefix)
 
     command = ' '.join(str(s) for s in params)
     return command
 
 
-def get_BaMMScan_command(job_pk, first_task_in_pipeline, useRefined, m=1):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    param = []
-
-    # define executable
-    param.append('BaMMScan')
-
-    # adjust extensions
-    job.extend = 0
-    job.save()
-
-    # adjust model order if run without BaMMmotif
-    if not useRefined and job.Motif_Init_File_Format == 'BaMM':
-        job.model_Order = get_model_order(job_pk)
-        job.background_Order = get_bg_model_order(job_pk)
-        job.save()
-
-    if not useRefined and (job.Motif_Init_File_Format == 'PWM' or job.Motif_Init_File_Format == 'BindingSites'):
-        job.model_Order = 0
-        job.save()
-
-    # get params shared between bammmotif bammscan and fdr
-    param.append(get_core_params(job_pk, useRefined, m))
-
-    # add specific params
-    param.append("--pvalCutoff")
-    param.append(job.score_Cutoff)
-
-    if first_task_in_pipeline:
-        param.append("--saveInitialModel")
-
-    param.append("--basename")
-    if useRefined or job.Motif_Init_File_Format == 'BaMM' or job.Motif_Init_File_Format == 'BindingSites':
-        param.append(str(job.Output_filename()) + '_motif_' + str(m))
-    else:
-        if job.Motif_Init_File_Format == 'PWM':
-            param.append(job.Output_filename())
-
-    command = " ".join(str(s) for s in param)
-    print(command)
+def BaMM(job, first_task_in_pipeline, useRefined):
+    job_pk = job.meta_job.pk
+    job.meta_job.status = 'running BaMMmotif'
+    job.meta_job.save()
+    print(timezone.now(), "\t | update: \t %s " % job.meta_job.status)
     sys.stdout.flush()
-    return command
+    run_command(get_BaMMmotif_command(job, useRefined, first_task_in_pipeline, 5))
+    sys.stdout.flush()
+    # add IUPACs
+    run_command(get_iupac_command(job))
+    add_motif_iupac(job)
+    # plot logos
+    for order in range(min(job.model_order+1, 3)):
+        run_command(get_logo_command(job, order))
 
 
-def get_BaMMmotif_command(job_pk, useRefined, first, maxPWMs=5):
-    job = get_object_or_404(Bamm, pk=job_pk)
+def get_BaMMmotif_command(job, useRefined, first, maxPWMs=5):
+    job_pk = job.meta_job.pk
     param = []
 
     # restrict to top 5 motifs from PeNG
@@ -325,7 +256,7 @@ def get_BaMMmotif_command(job_pk, useRefined, first, maxPWMs=5):
     param.append('BaMMmotif')
 
     # get params shared between bammmotif bammscan and fdr
-    param.append(get_core_params(job_pk, useRefined))
+    param.extend(get_core_params(job, useRefined))
 
     # add specific params
     param.append("--EM")
@@ -334,69 +265,8 @@ def get_BaMMmotif_command(job_pk, useRefined, first, maxPWMs=5):
     param.append("--verbose")
 
     command = " ".join(str(s) for s in param)
-    print(command)
     sys.stdout.flush()
     return command
-
-
-def get_MMcompare_command(job_pk, db_id):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    motif_db = get_object_or_404(MotifDatabase, pk=db_id)
-
-    param = []
-    param.append('MMcompare_PWM.R')
-    param.append(get_job_output_folder(job_pk))
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        param.append(basename(os.path.splitext(job.Motif_InitFile.name)[0]))
-    else:
-        param.append(basename(os.path.splitext(job.Input_Sequences.name)[0]))
-    param.append('--dbDir')
-    param.append(path.join(settings.MOTIF_DATABASE_PATH, motif_db.db_id, 'models'))
-    param.append('--dbOrder')
-    param.append(motif_db.model_parameters.modelorder)
-    param.append('--qOrder')
-    param.append(job.model_Order)
-
-    param.append('--pValue')
-    param.append(job.p_value_cutoff)
-
-    command = " ".join(str(s) for s in param)
-    print(command)
-    sys.stdout.flush()
-    return command
-
-
-def Peng(job_pk, useRefined):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    job.status = 'running PEnGmotif'
-    job.save()
-    print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
-    run_command(get_peng_command(job_pk, useRefined))
-    sys.stdout.flush()
-    # add output to the input for further optionals
-    add_peng_output(job_pk)
-    return 0
-
-
-def BaMM(job_pk, first_task_in_pipeline, useRefined):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    job.status = 'running BaMMmotif'
-    job.save()
-    print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
-    sys.stdout.flush()
-    run_command(get_BaMMmotif_command(job_pk, useRefined, first_task_in_pipeline, 5))
-    sys.stdout.flush()
-    if first_task_in_pipeline:
-        # generate motif objects
-        initialize_motifs(job_pk, 2, 2)
-        job = get_object_or_404(Bamm, pk=job_pk)
-    # add IUPACs
-    run_command(get_iupac_command(job_pk))
-    add_motif_iupac(job_pk)
-    # plot logos
-    for order in range(min(job.model_Order+1, 3)):
-        run_command(get_logo_command(job_pk, order))
-    return 0
 
 
 def FDR(job, first_task_in_pipeline, useRefined):
@@ -413,15 +283,3 @@ def FDR(job, first_task_in_pipeline, useRefined):
     # plot motif evaluation
     run_command(get_evaluation_command(job))
     add_motif_evaluation(job)
-
-
-def Compress(job_pk):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    job.status = 'compressing results'
-    job.save()
-    print(datetime.datetime.now(), "\t | update: \t %s " % job.status)
-    sys.stdout.flush()
-    run_command(get_compress_command(job_pk))
-    for motif in range(1, (int(job.num_motifs) + 1)):
-        run_command(get_motif_compress_command(job_pk, motif))
-    return 0

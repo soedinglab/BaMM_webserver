@@ -21,11 +21,15 @@ urlpatterns = [
     # url(r'^job/bamm/(?P<mode>\w+)/$', views.run_bamm_view, name='run_bamm'),
     url(r'^job/bamm/$', bamm_views.run_bamm_view, name='run_bamm'),
     url(r'^job/bamm/(?P<mode>\w+)/$', bamm_views.run_bamm_view, name='run_bamm'),
+    # scan
     url(r'^job/bamm_scan/$', scan_views.run_bammscan_view, name='run_bamm_scan'),
     url(r'^job/bamm_scan/(?P<mode>\w+)/$', scan_views.run_bammscan_view, name='run_bamm_scan'),
     url(r'^job/bamm_scan/(?P<mode>\w+)/(?P<pk>.*)/$', scan_views.run_bammscan_view, name='run_bamm_scan'),
+    url(r'^scan_results/(?P<pk>.*)/$', scan_views.result_details, name='scan_results'),
+    # compare
     url(r'^job/bamm_compare/$', compare_views.run_compare_view, name='run_compare'),
     url(r'^job/bamm_compare/(?P<mode>\w+)/$', compare_views.run_compare_view, name='run_compare'),
+    url(r'^compare_results/(?P<pk>.*)/$', compare_views.result_detail, name='run_compare'),
     url(r'^results/$', bamm_views.find_results, name='find_results'),
     url(r'^results/result_overview/$', bamm_views.result_overview, name='result_overview'),
     url(r'^results/(?P<pk>.*)/$', bamm_views.result_detail, name='result_detail'),

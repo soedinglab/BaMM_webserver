@@ -12,7 +12,6 @@ from .models import (
 from .utils import (
     run_command, initialize_motifs,
     add_motif_evaluation,
-    add_motif_motif_matches,
     add_motif_iupac,
     transfer_motif,
     add_peng_output,
@@ -178,20 +177,15 @@ def get_convert_input_command(job_pk):
     return command
 
 
-def get_compress_command(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
+def get_compress_command(job):
+    job_pk = job.meta_job.pk
     param = []
     param.append('zip -j')
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
-    else:
-        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
-    param.append(get_job_output_folder(job_pk) + '/' + outname + '_BaMMmotif.zip')
-    param.append(get_job_output_folder(job_pk) + '/*')
+    prefix = job.filename_prefix
+    param.append(path.join(get_job_output_folder(job_pk), prefix + '_BaMMmotif.zip'))
+    param.append(path.join(get_job_output_folder(job_pk), '*'))
 
     command = " ".join(str(s) for s in param)
-    print(command)
-    sys.stdout.flush()
     return command
 
 
@@ -439,7 +433,7 @@ def FDR(job_pk, first, useRefined):
 
 def Compress(job):
     job.meta_job.status = 'compressing results'
-    job.save()
+    job.meta_job.save()
     print(timezone.now(), "\t | update: \t %s " % job.meta_job.status)
     sys.stdout.flush()
 

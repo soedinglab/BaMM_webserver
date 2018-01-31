@@ -189,23 +189,6 @@ def add_motif_motif_matches(job_pk, database_id):
                     rel_obj.save()
 
 
-def add_motif_iupac(job_pk):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    motifs = Motifs.objects.filter(parent_job=job)
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
-    else:
-        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
-    filename = str(get_job_output_folder(job_pk)) + "/" + outname + ".iupac"
-    with open(filename) as fh:
-        for line in fh:
-            tokens = line.split()
-            motif_obj = motifs.filter(job_rank=tokens[1])[0]
-            motif_obj.iupac = tokens[2]
-            motif_obj.length = tokens[3]
-            motif_obj.save()
-
-
 def transfer_motif(job_pk):
     job = get_object_or_404(Bamm, pk=job_pk)
     make_job_output_folder(job_pk)

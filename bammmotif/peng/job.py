@@ -60,8 +60,9 @@ def create_bamm_job(job_type, request, form, peng_job):
     bamm_job = form.save(commit=False)
     bamm_job.meta_job = job_info
     bamm_job.Input_Sequences = peng_job.fasta_file
-    bamm_job.num_init_motifs = get_n_motifs(job_pk)
-    bamm_job.Motif_InitFile.name = path.join(get_job_output_folder(job_pk), FILTERPWM_OUTPUT_FILE)
+    bamm_job.num_init_motifs = get_n_motifs(peng_job.pk)
+    bamm_job.Motif_InitFile.name = path.join(get_job_output_folder(job_pk), PENG_OUTPUT,
+                                             FILTERPWM_OUTPUT_FILE)
     bamm_job.Motif_Initialization = "Custom File"
     bamm_job.Motif_Init_File_Format = "PWM"
 

@@ -12,15 +12,15 @@ from ..utils import (
     get_log_file,
     make_job_folder,
 )
+from ..commands import Compress
+from ..bammscan.tasks import generic_bammscan_task
+from ..mmcompare.tasks import generic_mmcompare_task
 
 from .commands import (
     BaMM, FDR,
-    Compress,
 )
-
 from .models import BaMMJob
-from ..bammscan.tasks import generic_bammscan_task
-from ..mmcompare.tasks import generic_mmcompare_task
+
 
 logger = logging.getLogger(__name__)
 
@@ -54,13 +54,13 @@ class ChainBuilder:
         return True
 
 
-def generic_compress_task(self, job):
+def generic_compress_task(job):
     job_pk = job.meta_job.pk
     with JobSaveManager(job):
         logfile = get_log_file(job_pk)
         with open(logfile, 'a') as f:
             with redirect_stdout(f):
-                Compress(job_pk)
+                Compress(job)
 
 
 def generic_bamm_task(job, first_in_pipeline, is_refined):
@@ -69,7 +69,7 @@ def generic_bamm_task(job, first_in_pipeline, is_refined):
         logfile = get_log_file(job_pk)
         with open(logfile, 'a') as f:
             with redirect_stdout(f), redirect_stderr(f):
-                    BaMM(job_pk, first_in_pipeline, is_refined)
+                    BaMM(job, first_in_pipeline, is_refined)
 
 
 def generic_fdr_task(job, first_in_pipeline, is_refined):
@@ -98,37 +98,43 @@ def bamm_refinement_pipeline(self, job_pk):
     if job.MMcompare:
         pipeline.append(mmcompare_task.si(job_pk))
     pipeline.append(compress_task.si(job_pk))
+    pipeline.append(finalize.si(job_pk))
 
     chain(pipeline)()
-    job.meta_job.complete = True
-    job.meta_job.save()
 
 
 @task(bind=True)
-def bamm_task(job_pk):
+def bamm_task(self, job_pk):
     job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
     generic_bamm_task(job, first_in_pipeline=True, is_refined=False)
 
 
 @task(bind=True)
-def bammscan_task(job_pk):
+def bammscan_task(self, job_pk):
     job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
     generic_bammscan_task(job, first_in_pipeline=False, is_refined_model=False)
 
 
 @task(bind=True)
-def fdr_task(job_pk):
+def fdr_task(self, job_pk):
     job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
     generic_fdr_task(job, first_in_pipeline=False, is_refined=False)
 
 
 @task(bind=True)
-def mmcompare_task(job_pk):
+def mmcompare_task(self, job_pk):
     job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
-    generic_mmcompare_task(job, first_in_pipeline=False, is_refined=False)
+    generic_mmcompare_task(job)
 
 
 @task(bind=True)
-def compress_task(job_pk):
+def compress_task(self, job_pk):
     job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
     generic_compress_task(job)
+
+
+@task(bind=True)
+def finalize(self, job_pk):
+    job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
+    job.meta_job.complete = True
+    job.meta_job.save()

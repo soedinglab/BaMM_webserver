@@ -21,7 +21,7 @@ INIT_CHOICES = (
 
 
 class BaMMJob(models.Model):
-    job_meta = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False,
+    meta_job = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False,
                                     primary_key=True)
     num_motifs = models.IntegerField(default=1)
 
@@ -38,7 +38,7 @@ class BaMMJob(models.Model):
     num_init_motifs = models.IntegerField(default=10)
 
     # options
-    model_Order = models.PositiveSmallIntegerField(default=4)
+    model_order = models.PositiveSmallIntegerField(default=4)
     reverse_Complement = models.BooleanField(default=True)
     extend = models.PositiveSmallIntegerField(default=0)
 

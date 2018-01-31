@@ -93,7 +93,7 @@ def get_valid_peng_form(post, files, user, mode):
 class PengToBammForm(forms.ModelForm):
     class Meta:
         model = BaMMJob
-        fields = ('reverse_Complement', 'model_Order',
+        fields = ('reverse_Complement', 'model_order',
                   'extend', 'background_Order',
                   'Background_Sequences', 'score_Seqset', 'score_Cutoff',
                   'FDR', 'q_value', 'motif_db')

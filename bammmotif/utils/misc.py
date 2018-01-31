@@ -187,50 +187,6 @@ def add_motif_evaluation(job_pk):
             motif_obj.save()
 
 
-def add_motif_motif_matches(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    motifs = Motifs.objects.filter(parent_job=job)
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
-    else:
-        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
-    filename = str(get_job_output_folder(job_pk)) + "/" + outname + ".mmcomp"
-    with open(filename) as fh:
-        for line in fh:
-            tokens = line.split()
-            if len(tokens) > 0:
-                if tokens[1] != 'matches!':
-                    motif_query = motifs.filter(job_rank=tokens[1])[0]
-                    motif_target = get_object_or_404(ChIPseq, filename=tokens[2])
-                    # create relationship
-                    rel_obj = DbMatch(
-                        motif=motif_query,
-                        db_entry=motif_target,
-                        p_value=tokens[3],
-                        e_value=tokens[4],
-                        score=tokens[5],
-                        overlap_len=tokens[6]
-                    )
-                    rel_obj.save()
-
-
-def add_motif_iupac(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    motifs = Motifs.objects.filter(parent_job=job)
-    if basename(os.path.splitext(job.Input_Sequences.name)[0]) == '':
-        outname = basename(os.path.splitext(job.Motif_InitFile.name)[0])
-    else:
-        outname = basename(os.path.splitext(job.Input_Sequences.name)[0])
-    iupac_file = path.join(get_job_output_folder(job_pk), outname + ".iupac")
-    with open(iupac_file) as fh:
-        for line in fh:
-            _, motif_id, iupac_representation, motif_length = line.split()
-            motif_obj = motifs.filter(job_rank=motif_id)[0]
-            motif_obj.iupac = iupac_representation
-            motif_obj.length = motif_length
-            motif_obj.save()
-
-
 def transfer_motif(job_pk):
     job = get_object_or_404(Job, pk=job_pk)
     make_job_output_folder(job_pk)

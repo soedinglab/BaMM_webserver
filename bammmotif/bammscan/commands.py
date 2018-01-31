@@ -1,5 +1,8 @@
 import sys
+from glob import glob
 from os import path
+import logging
+import shutil
 
 from django.utils import timezone
 
@@ -12,6 +15,7 @@ from ..utils.job_helpers import (
 from ..utils import (
     run_command,
     get_job_input_folder,
+    get_job_output_folder,
     meme_count_motifs,
 )
 from ..commands import (
@@ -20,10 +24,19 @@ from ..commands import (
     get_distribution_command,
 )
 
+logger = logging.getLogger(__name__)
+
+
+def rename_init_files(output_dir, filename_prefix):
+    for file in glob(path.join(output_dir, filename_prefix + '_init_motif_*.ihb*p')):
+        new_name = file.replace('_init_motif_', '_motif_')
+        logger.debug('renaming: %s -> %s', file, new_name)
+        shutil.move(file, new_name)
+
 
 def BaMMScan(job, first_task_in_pipeline, is_refined_model):
     job.meta_job.status = 'running BaMMScan'
-    job.save()
+    job.meta_job.save()
     print(timezone.now(), "\t | update: \t %s " % job.meta_job.status)
     sys.stdout.flush()
     if is_refined_model:
@@ -32,6 +45,9 @@ def BaMMScan(job, first_task_in_pipeline, is_refined_model):
                                              motif_no+1))
     else:
         run_command(get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model))
+
+    if first_task_in_pipeline:
+        rename_init_files(get_job_output_folder(job.meta_job.pk), job.filename_prefix)
     sys.stdout.flush()
 
     if first_task_in_pipeline:

@@ -140,8 +140,13 @@ def peng_seeding_pipeline(self, job_pk):
         peng_task.si(job_pk),
         pwm_filter_task.si(job_pk),
         meme_plotting_task.si(job_pk),
+        finalize.si(job_pk),
     ]
     chain(pipeline)()
 
+
+@task(bind=True)
+def finalize(self, job_pk):
+    job = get_object_or_404(PengJob, meta_job__pk=job_pk)
     job.meta_job.complete = True
     job.meta_job.save()
