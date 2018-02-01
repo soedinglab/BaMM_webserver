@@ -5,7 +5,7 @@
     <div class="container-fluid">
 
         <div class="jumbotron container-fluid" style="background-color:white"><font color="black">
-            <h2> De-novo Motif Discovery </h2>
+            <h2>Higher Order Model Refinement</h2>
             <hr style="border: 1px solid #1f2e2e">
             <div class='container-fluid'>
 
@@ -66,7 +66,14 @@
                         onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" ><span
                                 class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a>
                         Search on both strands:</label><font color="#1f2e2e"> &nbsp;&nbsp;<input
-                            id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font></p>
+                            id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font>
+		    </p>
+
+		    <p><label for="db_selector"><a class "testpup"
+		        onmouseover="nhpup.popup($('#DBselectorInfo').html(),{'width':400});"><span
+	 		        class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a>
+			    MMcompare Motif Database</label><font color="#1f2e2e"> &nbsp;&nbsp; {{ form.motif_db }} </font>
+		    </p>
 
 
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
@@ -258,6 +265,19 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="DBselectorInfo" tabindex="-1" role="dialog"
+          aria-labelledby="DBSelectorInfo">
+         <div class="modal-dialog" role="document">
+             <div class="modal-content">
+                 <div class="modal-body">
+                     <font color="#0B0719">
+                         <p align="justify"> Motif database used for annotating the trained models</p>
+                     </font>
+                 </div>
+             </div>
+         </div>
+     </div>
 
     <div class="modal fade" id="BackgroundSequence_Info" tabindex="-1" role="dialog"
          aria-labelledby="BackgroundSequence_Info">

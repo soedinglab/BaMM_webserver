@@ -2,8 +2,11 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views
-from bammmotif.peng import views as peng_views
-from bammmotif.bamm import views as bamm_views
+from .peng import views as peng_views
+from .bamm import views as bamm_views
+from .mmcompare import views as compare_views
+from .database import views as db_views
+from .bammscan import views as scan_views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
@@ -18,11 +21,15 @@ urlpatterns = [
     # url(r'^job/bamm/(?P<mode>\w+)/$', views.run_bamm_view, name='run_bamm'),
     url(r'^job/bamm/$', bamm_views.run_bamm_view, name='run_bamm'),
     url(r'^job/bamm/(?P<mode>\w+)/$', bamm_views.run_bamm_view, name='run_bamm'),
-    url(r'^job/bamm_scan/$', views.run_bammscan_view, name='run_bamm_scan'),
-    url(r'^job/bamm_scan/(?P<mode>\w+)/$', views.run_bammscan_view, name='run_bamm_scan'),
-    url(r'^job/bamm_scan/(?P<mode>\w+)/(?P<pk>.*)/$', views.run_bammscan_view, name='run_bamm_scan'),
-    url(r'^job/bamm_compare/$', views.run_compare_view, name='run_compare'),
-    url(r'^job/bamm_compare/(?P<mode>\w+)/$', views.run_compare_view, name='run_compare'),
+    # scan
+    url(r'^job/bamm_scan/$', scan_views.run_bammscan_view, name='run_bamm_scan'),
+    url(r'^job/bamm_scan/(?P<mode>\w+)/$', scan_views.run_bammscan_view, name='run_bamm_scan'),
+    url(r'^job/bamm_scan/(?P<mode>\w+)/(?P<pk>.*)/$', scan_views.run_bammscan_view, name='run_bamm_scan'),
+    url(r'^scan_results/(?P<pk>.*)/$', scan_views.result_details, name='scan_results'),
+    # compare
+    url(r'^job/bamm_compare/$', compare_views.run_compare_view, name='run_compare'),
+    url(r'^job/bamm_compare/(?P<mode>\w+)/$', compare_views.run_compare_view, name='run_compare'),
+    url(r'^compare_results/(?P<pk>.*)/$', compare_views.result_detail, name='run_compare'),
     url(r'^results/$', bamm_views.find_results, name='find_results'),
     url(r'^results/result_overview/$', bamm_views.result_overview, name='result_overview'),
     url(r'^results/(?P<pk>.*)/$', bamm_views.result_detail, name='result_detail'),
@@ -33,8 +40,8 @@ urlpatterns = [
     #url(r'^results/result_overview/$', views.result_overview, name='result_overview'),
     #url(r'^results/(?P<pk>.*)/$', views.result_detail, name='result_detail'),
     url(r'^delete/(?P<pk>.*)/$', views.delete, name='delete'),
-    url(r'^database/$', views.maindb, name='maindb'),
-    url(r'^database/(?P<pk>.*)/$', views.db_detail, name='db_detail'),
+    url(r'^database/$', db_views.maindb, name='maindb'),
+    url(r'^database/(?P<pk>.*)/$', db_views.db_detail, name='db_detail'),
     url(r'^job/run_peng_view/$', peng_views.run_peng_view, name='peng_predict'),
     url(r'^job/run_peng_view/(?P<mode>\w+)/$', peng_views.run_peng_view, name='peng_predict'),
     url(r'^peng_results/(?P<pk>.*)/$', peng_views.peng_result_detail, name='peng_result_detail'),

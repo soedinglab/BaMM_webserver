@@ -30,14 +30,14 @@ RUN mkdir /code/media/
 RUN mkdir -p /ext/bin
 
 ADD tools/bamm /tmp/bamm
-RUN cd /tmp/bamm && mkdir -p build && cd build && cmake .. && make
+RUN cd /tmp/bamm && mkdir -p build && cd build && cmake .. && make -j8
 RUN cp /tmp/bamm/build/bin/* /ext/bin
 RUN cp /tmp/bamm/R/* /ext/bin
 RUN rm -rf /tmp/bamm
 
 ADD tools/suite /tmp/suite
 RUN mkdir -p /tmp/suite/build
-RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make install >/dev/null 2>/dev/null
+RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make -j8 install >/dev/null 2>/dev/null
 RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
 
@@ -48,7 +48,7 @@ RUN cd /tmp/meme_suite && \
     tar xfvz meme_${MEME_VERSION}.tar.gz && \
     cd meme_${MEME_VERSION} && \
     ./configure --prefix=/ext/meme --with-url=http://meme-suite.org --enable-build-libxml2 --enable-build-libxslt --enable-serial  && \
-    make && \
+    make -j8 && \
     make install
 RUN cp /ext/meme/bin/ceqlogo /ext/bin
 RUN rm -rf /tmp/meme_suite

@@ -63,7 +63,7 @@
             </div>
         </form>
         {% endcomment %}
-        <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=result.job_id %}">
+        <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=pk %}">
             {% csrf_token %}
             <table class="table table-hover">
                 <tr>
@@ -278,10 +278,11 @@
                 </div>
             </div>
             <div>
-                <input type="hidden" value="from_peng"
-                       name="meme_meta_info"/>
-                <input type="hidden" value="{{ result.job_id }}" name="pk">
-                <input type="submit" value="call peng_to_bamm"/>
+                <input type="hidden" value="from_peng" name="meme_meta_info"/>
+                <input type="hidden" value="{{ result.job_id.pk }}" name="pk">
+		<button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e">
+            		<font color="white">Refine Selected Seeds</font>
+ 		</button>
             </div>
     </div>
     </form>

@@ -1,31 +1,26 @@
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404
-from bammmotif.models import (
-    Job, ChIPseq, DbParameter, Bamm, JobInfo
-)
-from bammmotif.bamm.forms import (
-    PredictionForm, PredictionExampleForm,
-    OccurrenceForm, OccurrenceExampleForm,
-    OccurrenceDBForm,
-    CompareForm, CompareExampleForm,
-    FindForm, DBForm
-)
-from bammmotif.bamm.tasks import (
-    run_bamm, run_bammscan,
-    run_compare, run_peng, build_and_exec_chain
-)
-from bammmotif.utils import (
-    get_log_file,
-    get_user, set_job_name, upload_example_fasta,
-    upload_example_motif, get_result_folder,
-    upload_db_input, valid_uuid
-)
-from bammmotif.peng.job import init_job
 import datetime
 import os
 from os import path
 from os.path import basename
+
+from django.shortcuts import render
+from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
+
+from ..models import (
+    ChIPseq, DbParameter, BaMMJob, JobInfo
+)
+
+from ..utils import (
+    get_log_file,
+    get_result_folder,
+)
+from bammmotif.utils import (
+    get_user, set_job_name, upload_example_fasta,
+    upload_example_motif,
+    upload_db_input, valid_uuid
+)
+from bammmotif.peng.job import init_job
 
 
 # #########################

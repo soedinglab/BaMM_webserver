@@ -10,7 +10,11 @@
       {% endif %}
      <form method="post"  enctype="multipart/form-data">
         {% csrf_token %}
-        <p><label for="id_db_ID"><font size=3>Please enter the name of your protein of interest:</label> <input id="id_db_ID" maxlength="255" name="db_ID" type="text" placeholder="i.e: CTCF ..." required /> </font>&nbsp;
+	<p><label><font size=3>Model Database:</label> &nbsp; {{ form.database }}</p>
+	<p>
+		<label for="id_db_ID"><font size=3>Please enter the name of your protein of interest:</label> &nbsp; 
+		<input id="id_db_ID" maxlength="255" name="search_term" type="text" placeholder="i.e: CTCF ..." required /> </font>&nbsp;
+	</p>
         <button class="btn btn-primary btn-lg" href="{% url 'maindb' %}" role="button" style="border:0px; background-color:#1f2e2e"><font color="white" type="submit"> <font size=3>Search DB</font></button></p>
     </form>    
 
