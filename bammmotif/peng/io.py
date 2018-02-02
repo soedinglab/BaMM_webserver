@@ -9,7 +9,7 @@ from bammmotif.peng.settings import JOB_OUTPUT_DIRECTORY, JOB_INPUT_DIRECTORY, M
 
 
 def job_directory(job_pk):
-    return os.path.join(settings.JOB_DIRECTORY, job_pk)
+    return os.path.join(settings.JOB_DIR, job_pk)
 
 
 def job_output_directory(job_pk):

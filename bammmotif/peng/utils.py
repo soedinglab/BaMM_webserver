@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404
 from django.core.files import File
 from django.conf import settings
 
-from ..utils.meme_reader import update_and_copy_meme_file
+from ..utils.meme_reader import update_and_copy_meme_file, Meme
 from ..utils import (
     get_job_output_folder,
     get_job_input_folder,
@@ -25,7 +25,13 @@ from .settings import (
     FILTERPWM_OUTPUT_FILE,
     JOB_OUTPUT_DIRECTORY,
     peng_meme_directory,
+    BAMMPLOT_SUFFIX,
+    BAMMPLOT_SUFFIX_REV,
+    BAMMPLOT_SUFFIX_REV_STAMP,
+    BAMMPLOT_SUFFIX_STAMP,
 )
+
+from .models import PengJob
 
 logger = logging.getLogger(__name__)
 
@@ -133,9 +139,72 @@ def save_selected_motifs(request, pk):
 
 
 def upload_example_fasta(job_pk):
-    job = get_object_or_404(Peng, pk=job_pk)
+    job = get_object_or_404(PengJob, pk=job_pk)
     out_filename = "ExampleData.fasta"
     with open(settings.EXAMPLE_FASTA) as fh:
         job.fasta_file.save(out_filename, File(fh))
         job.save()
     print(job.fasta_file.name)
+
+def rename_bamms(target_dir, input_file):
+    bamm_file_prefix = os.path.splitext(os.path.basename(input_file))[0]
+    meme_list = Meme.fromfile(input_file)
+    for i, meme in enumerate(meme_list):
+        bamm_name = os.path.join(target_dir, bamm_file_prefix + "_motif_%s.ihbcp" %(i+1))
+        bamm_name_new = os.path.join(target_dir, meme.meme_id + ".ihbcp")
+        os.rename(bamm_name, bamm_name_new)
+        bamm_name = os.path.join(target_dir, bamm_file_prefix + "_motif_%s.ihbp" %(i+1))
+        bamm_name_new = os.path.join(target_dir, meme.meme_id + ".ihbp")
+        os.rename(bamm_name, bamm_name_new)
+
+
+def rename_and_move_plots(directory, new_dir):
+    plots = [x for x in os.listdir(directory) if x.endswith(".png")]
+    for plot in plots:
+        print('plot', plot)
+        if plot.endswith(BAMMPLOT_SUFFIX_REV_STAMP):
+            new_file = plot.replace(BAMMPLOT_SUFFIX_REV_STAMP, '') + '_revComp.png'
+        elif plot.endswith(BAMMPLOT_SUFFIX_STAMP):
+            new_file = plot.replace(BAMMPLOT_SUFFIX_STAMP, '') + '.png'
+        elif plot.endswith(BAMMPLOT_SUFFIX):
+            new_file = plot.replace(BAMMPLOT_SUFFIX, '_zip') + '.png'
+        elif plot.endswith(BAMMPLOT_SUFFIX_REV):
+            new_file = plot.replace(BAMMPLOT_SUFFIX_REV, '_revComp_zip') + '.png'
+        else:
+            continue
+        old_name = os.path.join(directory, plot)
+        new_name = os.path.join(new_dir, new_file)
+        print('old', old_name)
+        print('new', new_name)
+        os.rename(old_name, new_name)
+
+
+def zip_bamm_motifs(motif_ids, directory, with_reverse=True):
+    for motif in motif_ids:
+        cmd = ['zip']
+        cmd.append('-j')
+        archive_name = os.path.join(directory, motif + ".zip")
+        if os.path.exists(archive_name):
+            os.remove(archive_name)
+        cmd.append(archive_name)
+        args = os.path.join(directory, motif + "_zip.png")
+        cmd.append(args)
+        # Now add meme file
+        meme_file = os.path.join(directory, motif + ".meme")
+        cmd.append(meme_file)
+        if with_reverse:
+            additional_args = os.path.join(directory, motif + "_revComp_zip.png")
+            cmd.append(additional_args)
+            # Use -j option to prune directory prefixes
+        subprocess.run(cmd)
+    # Now zip all
+    plots = [os.path.join(directory, x) for x in os.listdir(directory) if x.endswith(".png") or x.endswith(".meme")]
+    # Add meme file
+    plots.append(os.path.join(directory.rsplit('/', maxsplit=1)[0], MEME_OUTPUT_FILE))
+    archive_name = os.path.join(directory, ZIPPED_MOTIFS)
+    cmd = ['zip', '-j', archive_name] + plots
+    # cmd = "zip -j %s %s" % (archive_name, plots)
+    # print(cmd)
+    subprocess.run(cmd)
+
+

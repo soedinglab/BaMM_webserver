@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from bammmotif.models import Job, Bamm, JobInfo
+from bammmotif.models import Bamm, JobInfo
 from bammmotif.bamm.tasks import run_bamm
 import datetime
 #from ...utils import (
