@@ -4,10 +4,18 @@
     {% load static %}
     {% load bammmotif_extras %}
 
+    {% if err_msg %}
     <div class="jumbotron container-fluid" style="background-color:white"><font color="red">
 
         <h>{{ err_msg }}</h>
     </div>
+    {% else %}
+    <div class="jumbotron container-fluid" style="background-color:white"><font color="black">
+
+        <h>Select motifs for refinement.</h>
+    </div>
+    {% endif %}
+
     <div class="jumbotron" style="background-color:white"><font color="black">
         <form action="{% get_media_prefix %}/{{ opath }}/motif_all.zip" method="get" target="_blank">
             <p align="right">
@@ -72,7 +80,7 @@
                     <th> PWM</th>
                     <th> reverse Comp.</th>
                     <th> log(pval)</th>
-                    <th> # sites</th>
+                    <th> ausfc</th>
                     <th> Download</th>
                 </tr>
                 {% for motif in meme_meta_info %}
@@ -85,7 +93,7 @@
                                  class="responsive-img"
                                  style='max-height:400px;' width="100" height="50" alt={{ motif }}_rev></th>
                         <th> {{ motif.logpval }} </th>
-                        <th> {{ motif.nsites }}</th>
+                        <th> {{ motif.ausfc }}</th>
                         <th>
                             {% comment %}
                             <form action="{% get_media_prefix %}/{{ opath }}/{{ motif.meme_id }}.zip" method="get" target="_blank">
@@ -96,10 +104,10 @@
                                 </p>
                             </form>
                             {%  endcomment %}
-                            {% comment %}
                             <a href="{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip" >Download</a>
-                            {%  endcomment %}
+                            {% comment %}
                             <button type="submit" onclick="window.open('{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip')">Download!</button>
+                            {%  endcomment %}
                         </th>
                     </tr>
                 {% endfor %}
@@ -134,13 +142,14 @@
                     <h2>Peng Settings </h2>
                     <hr style="border: 1px solid #1f2e2e">
                     <table>
+
+                        {% comment %}
                         {% if mode == "Prediction" or mode == "Occurrence" %}
                             <tr>
                                 <td> &emsp; Input Sequence:</td>
                                 <td> &emsp; {{ result.fasta_file }}</td>
                             </tr>
                         {% endif %}
-                        {% comment %}
                 <tr>
                     <td>  &emsp; Mofti File: </td>
                     <td>  &emsp; {{result.MotifInit_filename}}</td>
@@ -279,7 +288,7 @@
             </div>
             <div>
                 <input type="hidden" value="from_peng" name="meme_meta_info"/>
-                <input type="hidden" value="{{ result.job_id.pk }}" name="pk">
+                <input type="hidden" value="{{ result.meta_job.pk }}" name="pk">
 		<button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e">
             		<font color="white">Refine Selected Seeds</font>
  		</button>

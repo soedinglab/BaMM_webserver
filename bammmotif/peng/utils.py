@@ -3,6 +3,7 @@ from os import path
 import shutil
 import subprocess
 import logging
+import csv
 
 from django.shortcuts import get_object_or_404
 from django.core.files import File
@@ -13,6 +14,7 @@ from ..utils import (
     get_job_output_folder,
     get_job_input_folder,
 )
+from bammmotif.peng.io import meme_plot_directory, peng_meme_directory, get_temporary_job_dir, get_bmscore_filename
 
 from .settings import (
     MEME_PLOT_DIRECTORY,
@@ -32,6 +34,7 @@ from .settings import (
 )
 
 from .models import PengJob
+from webserver.settings import BAMM_INPUT
 
 logger = logging.getLogger(__name__)
 
@@ -207,4 +210,29 @@ def zip_bamm_motifs(motif_ids, directory, with_reverse=True):
     # print(cmd)
     subprocess.run(cmd)
 
+def copy_bmscores(peng_id, bamm_id):
+    bamm_input = os.path.join(settings.MEDIA_ROOT, str(bamm_id), BAMM_INPUT)
+    bmf_path = os.path.join(get_temporary_job_dir(peng_id), get_bmscore_filename(peng_id))
+    shutil.copy(bmf_path, bamm_input)
+
+def read_bmscore(fname):
+    scores = {}
+    with open(fname, newline='') as f:
+        reader = csv.DictReader(f, dialect=csv.excel_tab)
+        for row in reader:
+            scores[row['motif_number']] = row
+    return scores
+
+def merge_meme_and_bmscore(meme_list, meme_list_old, bm_scores):
+    # first we need to match ausfc scores with the memes from peng
+    for i in range(1, len(meme_list_old) + 1):
+        meme_list_old[i-1].ausfc = float(bm_scores[str(i)]['ausfc'])
+        meme_list_old[i-1].motif_number = i
+    meme_dict = {meme_list_old[i].meme_id: meme_list_old[i] for i in range(len(meme_list_old))}
+    # now we need to macth the peng memes with the filterpwm meme
+    for i, meme in enumerate(meme_list):
+        meme.ausfc = meme_dict[meme.meme_id].ausfc
+        #meme.motif_number = meme_dict[meme.meme_id].motif_number
+        meme.motif_number = i+1
+    return meme_list
 

@@ -83,7 +83,6 @@ class ShootPengModule(CommandlineModule):
     def run(self, **kw_args):
         self.create_temp_directory()
         super().run(**kw_args)
-        self.remove_temp_directory()
 
 
 class FilterPWM(CommandlineModule):

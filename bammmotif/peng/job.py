@@ -65,6 +65,7 @@ def create_bamm_job(job_type, request, form, peng_job):
                                              FILTERPWM_OUTPUT_FILE)
     bamm_job.Motif_Initialization = "Custom File"
     bamm_job.Motif_Init_File_Format = "PWM"
+    bamm_job.peng = peng_job
 
     with transaction.atomic():
         job_info.save()

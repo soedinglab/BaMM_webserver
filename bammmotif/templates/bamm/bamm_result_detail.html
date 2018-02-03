@@ -134,6 +134,11 @@
         </div>
     </div>
 
+    <th> <a href="{% url 'peng_result_detail' result.peng.meta_job.job_id %}" style="color:black">
+        <button type="submit" class="btn btn-default">Back to PeNG results.</button></a>
+    </a>
+    </th>
+
     <div class="jumbotron" style="background-color:white"><font color="black">
     {% comment %}
     TODO: Download for all kept peng motifs
@@ -145,6 +150,7 @@
             </p>
         </form>
         {% endcomment %}
+    {% comment %}
 
         {% if mode == "Prediction" %}
             <h2> Peng Motifs </h2>
@@ -275,7 +281,7 @@
         </table>
     </div>
 
-    {% for m in result.motifs_set.all|dictsort:"job_rank" %}
+    {% for m in result.meta_job.motifs_set.all|dictsort:"job_rank" %}
         <a id="{{m.job_rank}}">  </a>
         <div class="jumbotron" style="background-color:white"><font color="black">
 
