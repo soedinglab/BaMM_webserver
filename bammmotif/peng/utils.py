@@ -163,7 +163,6 @@ def rename_bamms(target_dir, input_file):
 def rename_and_move_plots(directory, new_dir):
     plots = [x for x in os.listdir(directory) if x.endswith(".png")]
     for plot in plots:
-        print('plot', plot)
         if plot.endswith(BAMMPLOT_SUFFIX_REV_STAMP):
             new_file = plot.replace(BAMMPLOT_SUFFIX_REV_STAMP, '') + '_revComp.png'
         elif plot.endswith(BAMMPLOT_SUFFIX_STAMP):
@@ -176,8 +175,6 @@ def rename_and_move_plots(directory, new_dir):
             continue
         old_name = os.path.join(directory, plot)
         new_name = os.path.join(new_dir, new_file)
-        print('old', old_name)
-        print('new', new_name)
         os.rename(old_name, new_name)
 
 

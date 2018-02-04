@@ -41,7 +41,6 @@ class Meme(object):
 
 
 def split_meme_file(fpath, directory):
-    print("now split meme file")
     with open(fpath) as f:
         fcont = f.read().split("\n\n")
         meme_header = "\n\n".join(fcont[:3])
@@ -53,11 +52,9 @@ def split_meme_file(fpath, directory):
             with open(fname, "w") as d:
                 outstring = meme_header + "\n\n" + elem
                 d.write(outstring)
-                print(meme_id, "now has own file.")
 
 
 def update_and_copy_meme_file(fpath, tpath, motif_directory):
-    print("update and copy meme file")
     selected_memes = [x.rsplit(".", maxsplit=1)[0] for x in os.listdir(motif_directory) if x.endswith(".meme")]
     with open(fpath, "r") as f:
         fcont = f.read().split("\n\n")

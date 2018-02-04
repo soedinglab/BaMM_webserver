@@ -1,7 +1,6 @@
 import os
 from os import path
 import shutil
-from collections import OrderedDict
 
 from .settings import (
     MEME_OUTPUT_FILE,
