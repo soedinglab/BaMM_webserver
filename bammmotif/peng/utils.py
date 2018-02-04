@@ -207,7 +207,7 @@ def zip_bamm_motifs(motif_ids, directory, with_reverse=True):
     subprocess.run(cmd)
 
 def copy_bmscores(peng_id, bamm_id):
-    bamm_input = os.path.join(settings.MEDIA_ROOT, str(bamm_id), BAMM_INPUT)
+    bamm_input = get_job_input_folder(str(bamm_id))
     bmf_path = os.path.join(get_temporary_job_dir(peng_id), get_bmscore_filename(peng_id))
     shutil.copy(bmf_path, bamm_input)
 
