@@ -80,7 +80,6 @@ from .settings import (
 
 
 def peng_result_detail(request, pk):
-    print("sdkjf<zskdnfkjdsn")
     job_pk = pk
     result = get_object_or_404(PengJob, meta_job__pk=job_pk)
     meta_job = result.meta_job
@@ -88,15 +87,11 @@ def peng_result_detail(request, pk):
         meme_result_file_path = get_meme_result_file_path(job_pk)
         plot_output_directory = get_plot_output_directory(job_pk)
         bm_scores = read_bmscore(peng_bmscore_file_old(str(result.meta_job.pk), result.filename_prefix))
-
-        #opath = path.join(get_result_folder(job_pk), MEME_PLOT_DIRECTORY)
         if not path.exists(plot_output_directory):
             os.makedirs(plot_output_directory)
         meme_meta_info_list = Meme.fromfile(meme_result_file_path)
         meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
-        #print(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
         meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
-        print(media_bammplot_directory_html(result.meta_job.pk))
         return render(request, 'peng/peng_result_detail.html', {
             'result': result,
             'pk': result.meta_job.pk,

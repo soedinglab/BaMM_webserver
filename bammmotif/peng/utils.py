@@ -14,7 +14,7 @@ from ..utils import (
     get_job_output_folder,
     get_job_input_folder,
 )
-from bammmotif.peng.io import meme_plot_directory, peng_meme_directory, get_temporary_job_dir, get_bmscore_filename
+from bammmotif.peng.io import peng_meme_directory, get_temporary_job_dir, get_bmscore_filename
 
 from .settings import (
     MEME_PLOT_DIRECTORY,
@@ -25,7 +25,6 @@ from .settings import (
     MOTIF_SELECT_IDENTIFIER,
     EXAMPLE_FASTA_FILE,
     FILTERPWM_OUTPUT_FILE,
-    JOB_OUTPUT_DIRECTORY,
     peng_meme_directory,
     BAMMPLOT_SUFFIX,
     BAMMPLOT_SUFFIX_REV,
@@ -230,9 +229,8 @@ def merge_meme_and_bmscore(meme_list, meme_list_old, bm_scores):
         meme_list_old[i-1].motif_number = i
     meme_dict = {meme_list_old[i].meme_id: meme_list_old[i] for i in range(len(meme_list_old))}
     # now we need to macth the peng memes with the filterpwm meme
-    for i, meme in enumerate(meme_list):
+    for i, meme in enumerate(meme_list, start=1):
         meme.ausfc = meme_dict[meme.meme_id].ausfc
-        #meme.motif_number = meme_dict[meme.meme_id].motif_number
-        meme.motif_number = i+1
+        meme.motif_number = i
     return meme_list
 
