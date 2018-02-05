@@ -14,7 +14,7 @@ from ..utils import (
     get_job_output_folder,
     get_job_input_folder,
 )
-from bammmotif.peng.io import peng_meme_directory, get_temporary_job_dir, get_bmscore_filename
+from bammmotif.peng.io import peng_meme_directory, get_temporary_job_dir, get_bmscore_filename, get_motif_init_file
 
 from .settings import (
     MEME_PLOT_DIRECTORY,
@@ -30,6 +30,7 @@ from .settings import (
     BAMMPLOT_SUFFIX_REV,
     BAMMPLOT_SUFFIX_REV_STAMP,
     BAMMPLOT_SUFFIX_STAMP,
+    BAMM_MOTIF_INIT_FILE,
 )
 
 from .models import PengJob
@@ -56,10 +57,11 @@ def copy_peng_to_bamm(peng_id, bamm_id, post):
         dest = bamm_plot_output_directory
         logger.debug('copying %s -> %s', src, dest)
         shutil.copy(src, dest)
-
     # copy meme.out
     meme_path_src = os.path.join(peng_meme_directory(peng_id), MEME_OUTPUT_FILE)
-    meme_path_dst = os.path.join(bamm_output_dir, MEME_OUTPUT_FILE)
+    #meme_path_dst = os.path.join(bamm_output_dir, MEME_OUTPUT_FILE)
+    #meme_path_dst = os.path.join(bamm_output_dir, BAMM_MOTIF_INIT_FILE)
+    meme_path_dst = get_motif_init_file(str(bamm_id))
     update_and_copy_meme_file(meme_path_src, meme_path_dst, peng_save_directory)
 
     # copy results of filterPWM
@@ -130,13 +132,16 @@ def save_selected_motifs(request, pk):
         os.makedirs(peng_save_directory)
     selected_motifs = [x.replace(MOTIF_SELECT_IDENTIFIER, "") for x in request.keys() if x.endswith(MOTIF_SELECT_IDENTIFIER)]
     min_requirement_for_refinement = False
+    #motifs_to_merge = []
     for file in os.listdir(peng_plot_output_directory):
         if any([file.startswith(x) for x in selected_motifs]):
             min_requirement_for_refinement = True
             src = path.join(peng_plot_output_directory, file)
+            #motifs_to_merge.append(src)
             dest = path.join(peng_save_directory, file)
             shutil.copy(src, dest)
             logger.debug('copying %s -> %s', src, dest)
+    #merge_selected_motifs(motifs_to_merge, bamm_motif_init_file())
     return min_requirement_for_refinement
 
 

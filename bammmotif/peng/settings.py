@@ -39,6 +39,7 @@ FILTERPWM_OUTPUT_FILE = 'out_filtered.meme'
 
 #Meme plotting
 MEME_PLOT_INPUT = FILTERPWM_OUTPUT_FILE
+BAMM_MOTIF_INIT_FILE = 'motif_init.meme'
 
 FASTA_VALIDATION_SCRIPT = '/code/bammmotif/static/scripts/valid_fasta'
 ZIPPED_MOTIFS = 'motif_all.zip'

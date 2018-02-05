@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from bammmotif.peng.settings import JOB_OUTPUT_DIRECTORY, JOB_INPUT_DIRECTORY, MEME_PLOT_DIRECTORY, MEME_PLOT_INPUT, \
     PENG_OUTPUT_MEME, PENG_TEMP_DIRECTORY, BMSCORE_SUFFIX, PWM2BAMM_DIRECTORY, FILTERPWM_OUTPUT_FILE, PENG_OUTPUT, \
-    MEME_OUTPUT_FILE
+    MEME_OUTPUT_FILE, BAMM_MOTIF_INIT_FILE
 
 
 def job_directory(job_pk):
@@ -131,6 +131,12 @@ def get_peng_output_in_bamm_directory(job_pk):
     return os.path.join(get_job_directory(job_pk), PENG_OUTPUT)
 
 
+def peng_output_in_bamm(job_pk):
+    return os.path.join(get_job_ouput_directory(job_pk), PENG_OUTPUT)
+
+def get_motif_init_file(job_pk):
+    return os.path.join(peng_output_in_bamm(job_pk), BAMM_MOTIF_INIT_FILE)
+
 def get_peng_meme_output_in_bamm(job_pk):
     return os.path.join(get_peng_output_in_bamm_directory(job_pk), MEME_OUTPUT_FILE)
 
@@ -153,3 +159,6 @@ def media_bammplot_directory_html(job_pk):
 
 def media_memeplot_directory_from_peng_html(job_pk):
     return os.path.join(str(job_pk), PENG_OUTPUT, MEME_PLOT_DIRECTORY)
+
+def bamm_motif_init_file(job_pk):
+    return os.path.join(get_job_directory(job_pk), BAMM_MOTIF_INIT_FILE)

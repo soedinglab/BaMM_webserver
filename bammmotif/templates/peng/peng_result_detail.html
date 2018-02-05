@@ -3,6 +3,7 @@
 {% block content %}
     {% load static %}
     {% load bammmotif_extras %}
+    <script src="{% static "/js/jquery-3.1.1.js" %}"></script>
 
     {% if err_msg %}
     <div class="jumbotron container-fluid" style="background-color:white"><font color="red">
@@ -72,7 +73,20 @@
         </form>
         <script language="JavaScript">
         </script>
+    <script type="text/javascript" src="{{ STATIC_URL }} /static/js/jquery-3.1.1.js">
+        $("#checkAll").click(function(){
+            $('input:checkbox').not(this).prop('checked', this.checked);
+        });
+    </script>
+    <script language="javascript">
+        $("#checkAlsdfsl").change(
+            function(){
+                $("input[type=checkbox]").attr('checked', this.checked);
+            }
+        );
+    </script>
         {% endcomment %}
+    {% comment %}
     <script type="text/javascript">
         function checkAll(source) {
             checkboxes = document.getElementById('meme_ids');
@@ -82,10 +96,38 @@
         }
     </script>
 
+    <script language="JavaScript">
+        var select_all = document.getElementById("select_all"); //select all checkbox
+        var checkboxes = document.getElementsByClassName("checkbox"); //checkbox items
+
+        //select all checkboxes
+        select_all.addEventListener("change", function(e){
+        for (i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].checked = select_all.checked;
+        }
+        });
+
+
+        for (var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].addEventListener('change', function(e){ //".checkbox" change
+        //uncheck "select all", if one of the listed checkbox item is unchecked
+        if(this.checked == false){
+        select_all.checked = false;
+        }
+        //check "select all" if all checkbox items are checked
+        if(document.querySelectorAll('.checkbox:checked').length == checkboxes.length){
+        select_all.checked = true;
+        }
+        });
+        }
+        </script>
+    {% endcomment %}
+
 
         <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=pk %}">
-            <input type="checkbox" onClick="checkAll(this)" />Select All<br/>
             {% csrf_token %}
+            <input type="checkbox" id="checkAll" />Select All<br/>
+            <script src="{% static "/js/jqueries.js" %}"></script>
             <table class="table table-hover">
                 <tr>
                     <th> Selected Motifs</th>
@@ -102,7 +144,7 @@
                         <th><input id="id_{{ motif.meme_id }}" name="{{ motif.meme_id }}_select" type="checkbox"/></th>
                         <input type="checkbox" name="foo" value="bar1"> Bar 1<br/>
                         {% endcomment %}
-                        <th><input id='meme_ids' name="{{ motif.meme_id }}_select" type="checkbox"/></th>
+                        <th><input id='meme_ids' name="{{ motif.meme_id }}_select" class="checkbox" type="checkbox"/></th>
                         <th>{{ motif.meme_id }}</th>
                         <th><img src="{% get_media_prefix %}{{ opath }}/{{ motif.meme_id }}.png" class="responsive-img"
                                  style='max-height:400px;' width="100" height="50" alt={{ motif }}></th>

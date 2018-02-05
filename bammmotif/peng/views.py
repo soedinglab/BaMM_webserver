@@ -17,6 +17,7 @@ from bammmotif.peng.io import (
     media_memeplot_directory_html,
     media_bammplot_directory_html,
     media_memeplot_directory_from_peng_html,
+    get_motif_init_file,
 )
 
 import bammmotif.bamm.tasks as bamm_tasks
@@ -259,7 +260,8 @@ def peng_to_bamm_result_detail(request, pk):
     peng_path = path.join(job_output_dir, "pengoutput")
     meme_plots = path.join(job_output_dir, "pengoutput", "meme_plots")
     meme_motifs = load_meme_ids(peng_path)
-    meme_meta_info_list = Meme.fromfile(os.path.join(peng_path, "out.meme"))
+    #meme_meta_info_list = Meme.fromfile(os.path.join(peng_path, "out.meme"))
+    meme_meta_info_list = Meme.fromfile(get_motif_init_file(str(meta_job.job_id)))
 
     motif_db = result.motif_db
     db_dir = motif_db.relative_db_model_dir
