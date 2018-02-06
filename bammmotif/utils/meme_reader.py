@@ -6,10 +6,26 @@ class Meme(object):
     def __init__(self, meme_id, logpval, nsites):
         self.meme_id = meme_id
         self.number = None
-        self.logpval = logpval
+        self._logpval = float(logpval)
         self.nsites = nsites
         self.select = False
+        self._ausfc = None
 
+    @property
+    def logpval(self):
+        return round(self._logpval, 3)
+
+    @property
+    def ausfc(self):
+        return round(self._ausfc, 10)
+
+    @logpval.setter
+    def logpval(self, val):
+        self._logpval = float(val)
+
+    @ausfc.setter
+    def ausfc(self, val):
+        self._ausfc = float(val)
 
     @classmethod
     def fromdict(cls, meme_dict):

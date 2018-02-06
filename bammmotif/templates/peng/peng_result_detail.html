@@ -10,11 +10,6 @@
 
         <h>{{ err_msg }}</h>
     </div>
-    {% else %}
-    <div class="jumbotron container-fluid" style="background-color:white"><font color="black">
-
-        <h>Select motifs for refinement.</h>
-    </div>
     {% endif %}
 
     <div class="jumbotron" style="background-color:white"><font color="black">
@@ -33,6 +28,157 @@
         {% if mode == "Prediction" %}
             <h2> Predicted Motifs </h2>
         {% endif %}
+        <div class="jumbotron" style="background-color:white" xmlns="http://www.w3.org/1999/html">
+            <h2> Results for {{ job_info.job_name }} </h2>
+            <hr style="border: 1px solid #1f2e2e">
+            <div class="well" style="background-color:white">
+                <h2>Peng Settings </h2>
+                <hr style="border: 1px solid #1f2e2e">
+                <table>
+
+                    {% comment %}
+                        {% if mode == "Prediction" or mode == "Occurrence" %}
+                            <tr>
+                                <td> &emsp; Input Sequence:</td>
+                                <td> &emsp; {{ result.fasta_file }}</td>
+                            </tr>
+                        {% endif %}
+                <tr>
+                    <td>  &emsp; Mofti File: </td>
+                    <td>  &emsp; {{result.MotifInit_filename}}</td>
+                </tr>
+                {% if mode == "Prediction" or mode == "Occurrence" %}
+                    <tr>
+                        <td>  &emsp; Search on Both Strands: </td>
+                        <td>  &emsp; {{result.reverse_Complement}}</td>
+                    </tr>
+                {% endif %}
+            {% endcomment %}
+                </table>
+
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
+                     style="background-color:white; border:0px">
+
+                    {% if mode == "Prediction" or mode == "Occurrrence" %}
+                        <div class="panel-heading" role="tab" id="headingOne"
+                             style="background-color:white; border:0px">
+                            <h2 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                                   aria-expanded="true" aria-controls="collapseOne"
+                                   style="background-color:white; border:0px">
+                                    <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"
+                                              style="color:black"></span> Advanced Settings </h3>
+                                </a>
+                            </h2>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingOne"
+                             style="background-color:white">
+                            <div class="panel-body">
+
+                                {% if mode == "Prediction" %}
+                                    <h3>Model Settings</h3>
+                                    <table>
+                                        <tr>
+                                            <td> &emsp; Z-Score Threshold:</td>
+                                            <td> &emsp; {{ result.zscore_threshold }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td> &emsp; Count Threshold:</td>
+                                            <td> &emsp; {{ result.count_threshold }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td> &emsp; Background Model Order:</td>
+                                            <td> &emsp; {{ result.bg_model_order }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td> &emsp; Strand:</td>
+                                            <td> &emsp; {{ result.strand }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td> &emsp; IUPAC Optimization Score:</td>
+                                            <td> &emsp; {{ result.objective_function }} </td>
+                                        </tr>
+                                        {% if result.no_em %}
+                                            <tr>
+                                                <td> &emsp; No EM</td>
+                                            </tr>
+                                        {% endif %}
+                                        <tr>
+                                            <td> &emsp; EM Saturation Threshold:</td>
+                                            <td> &emsp; {{ result.em_saturation_threshold }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td> &emsp; EM Threshold:</td>
+                                            <td> &emsp; {{ result.em_threshold }} </td>
+                                        </tr>
+                                        <tr>
+                                            <td> &emsp; EM Maximum Iterations:</td>
+                                            <td> &emsp; {{ result.em_max_iterations }} </td>
+                                        </tr>
+                                        {% if result.no_merging %}
+                                            <tr>
+                                                <td> &emsp; No Merging</td>
+                                            </tr>
+                                        {% endif %}
+                                        <tr>
+                                            <td> &emsp; Bit Factor Threshold:</td>
+                                            <td> &emsp; {{ result.bit_factor_threshold }} </td>
+                                        </tr>
+                                        {% if result.use_default_pwm %}
+                                            <tr>
+                                                <td> &emsp; Use Default PWM</td>
+                                            </tr>
+                                        {% endif %}
+                                        <tr>
+                                            <td> &emsp; PWM Pseudocounts:</td>
+                                            <td> &emsp; {{ result.pwm_pseudo_counts }} </td>
+                                        </tr>
+                                    </table>
+                                {% endif %}
+
+
+                                {% if result.EM %}
+                                    <h3>Expectation Maximization Optimization:</h3>
+                                    <table>
+                                        <tr>
+                                            <td> &emsp; q value:</td>
+                                            <td> &emsp; {{ result.q_value }}</td>
+                                        </tr>
+                                        <tr>
+                                    </table>
+                                {% endif %}
+
+                                {% if result.CGS %}
+                                    <h3>Collapsed Gibbs Sampling:</h3>
+                                    <table>
+                                        <tr>
+                                            <td> &emsp; sampling Alphas:</td>
+                                            <td> &emsp; {{ result.no_Alpha_Sampling|yesno:"False,True" }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td> &emsp; max Iterations:</td>
+                                            <td> &emsp; {{ result.max_CGS_Iterations }}</td>
+                                        </tr>
+                                    </table>
+                                {% endif %}
+
+                                {% if result.MMcompare %}
+                                    <h3>Database Model Comparison:</h3>
+                                    <table>
+                                        <tr>
+                                            <td> &emsp; P-value cutoff:</td>
+                                            <td> &emsp; {{ result.p_value_cutoff }}</td>
+                                        </tr>
+                                    </table>
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         {% comment %}
         <table class="table table-hover">
             {% for motif in motif_ids %}
@@ -194,157 +340,6 @@
             </table>
             <!-- Temp Input -->
 
-            <div class="jumbotron" style="background-color:white" xmlns="http://www.w3.org/1999/html">
-                <h2> Results for {{ job_info.job_name }} </h2>
-                <hr style="border: 1px solid #1f2e2e">
-                <div class="well" style="background-color:white">
-                    <h2>Peng Settings </h2>
-                    <hr style="border: 1px solid #1f2e2e">
-                    <table>
-
-                        {% comment %}
-                        {% if mode == "Prediction" or mode == "Occurrence" %}
-                            <tr>
-                                <td> &emsp; Input Sequence:</td>
-                                <td> &emsp; {{ result.fasta_file }}</td>
-                            </tr>
-                        {% endif %}
-                <tr>
-                    <td>  &emsp; Mofti File: </td>
-                    <td>  &emsp; {{result.MotifInit_filename}}</td>
-                </tr>
-                {% if mode == "Prediction" or mode == "Occurrence" %}
-                    <tr>
-                        <td>  &emsp; Search on Both Strands: </td>
-                        <td>  &emsp; {{result.reverse_Complement}}</td>
-                    </tr>
-                {% endif %}
-            {% endcomment %}
-                    </table>
-
-                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
-                         style="background-color:white; border:0px">
-
-                        {% if mode == "Prediction" or mode == "Occurrrence" %}
-                            <div class="panel-heading" role="tab" id="headingOne"
-                                 style="background-color:white; border:0px">
-                                <h2 class="panel-title">
-                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
-                                       aria-expanded="true" aria-controls="collapseOne"
-                                       style="background-color:white; border:0px">
-                                        <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"
-                                                  style="color:black"></span> Advanced Settings </h3>
-                                    </a>
-                                </h2>
-                            </div>
-                            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel"
-                                 aria-labelledby="headingOne"
-                                 style="background-color:white">
-                                <div class="panel-body">
-
-                                    {% if mode == "Prediction" %}
-                                        <h3>Model Settings</h3>
-                                        <table>
-                                            <tr>
-                                                <td> &emsp; Z-Score Threshold:</td>
-                                                <td> &emsp; {{ result.zscore_threshold }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td> &emsp; Count Threshold:</td>
-                                                <td> &emsp; {{ result.count_threshold }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td> &emsp; Background Model Order:</td>
-                                                <td> &emsp; {{ result.bg_model_order }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td> &emsp; Strand:</td>
-                                                <td> &emsp; {{ result.strand }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td> &emsp; IUPAC Optimization Score:</td>
-                                                <td> &emsp; {{ result.objective_function }} </td>
-                                            </tr>
-                                            {% if result.no_em %}
-                                                <tr>
-                                                    <td> &emsp; No EM</td>
-                                                </tr>
-                                            {% endif %}
-                                            <tr>
-                                                <td> &emsp; EM Saturation Threshold:</td>
-                                                <td> &emsp; {{ result.em_saturation_threshold }} </td>
-                                            </tr>
-                                            <tr>
-                                                <td> &emsp; EM Threshold:</td>
-                                                <td> &emsp; {{ result.em_threshold }} </td>
-                                            </tr>
-                                            <tr>
-                                                <td> &emsp; EM Maximum Iterations:</td>
-                                                <td> &emsp; {{ result.em_max_iterations }} </td>
-                                            </tr>
-                                            {% if result.no_merging %}
-                                                <tr>
-                                                    <td> &emsp; No Merging</td>
-                                                </tr>
-                                            {% endif %}
-                                            <tr>
-                                                <td> &emsp; Bit Factor Threshold:</td>
-                                                <td> &emsp; {{ result.bit_factor_threshold }} </td>
-                                            </tr>
-                                            {% if result.use_default_pwm %}
-                                                <tr>
-                                                    <td> &emsp; Use Default PWM</td>
-                                                </tr>
-                                            {% endif %}
-                                            <tr>
-                                                <td> &emsp; PWM Pseudocounts:</td>
-                                                <td> &emsp; {{ result.pwm_pseudo_counts }} </td>
-                                            </tr>
-                                        </table>
-                                    {% endif %}
-
-
-                                    {% if result.EM %}
-                                        <h3>Expectation Maximization Optimization:</h3>
-                                        <table>
-                                            <tr>
-                                                <td> &emsp; q value:</td>
-                                                <td> &emsp; {{ result.q_value }}</td>
-                                            </tr>
-                                            <tr>
-                                        </table>
-                                    {% endif %}
-
-                                    {% if result.CGS %}
-                                        <h3>Collapsed Gibbs Sampling:</h3>
-                                        <table>
-                                            <tr>
-                                                <td> &emsp; sampling Alphas:</td>
-                                                <td> &emsp; {{ result.no_Alpha_Sampling|yesno:"False,True" }}</td>
-                                            </tr>
-                                            <tr>
-                                                <td> &emsp; max Iterations:</td>
-                                                <td> &emsp; {{ result.max_CGS_Iterations }}</td>
-                                            </tr>
-                                        </table>
-                                    {% endif %}
-
-                                    {% if result.MMcompare %}
-                                        <h3>Database Model Comparison:</h3>
-                                        <table>
-                                            <tr>
-                                                <td> &emsp; P-value cutoff:</td>
-                                                <td> &emsp; {{ result.p_value_cutoff }}</td>
-                                            </tr>
-                                        </table>
-                                    {% endif %}
-
-                                </div>
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
             <div>
                 <input type="hidden" value="from_peng" name="meme_meta_info"/>
                 <input type="hidden" value="{{ result.meta_job.pk }}" name="pk">
