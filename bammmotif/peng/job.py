@@ -58,6 +58,7 @@ def init_job_from_form(job_type, request):
 def create_bamm_job(job_type, request, form, peng_job):
     job_info = init_job_from_form(job_type, request)
     job_info.user = get_user(request)
+    job_info.job_type = 'bamm'
     job_pk = job_info.pk
 
     bamm_job = form.save(commit=False)
@@ -100,6 +101,7 @@ def create_anonymuous_user(request):
 def create_job(form, meta_job_form, request):
     meta_job = meta_job_form.save(commit=False)
     meta_job.created_at = timezone.now()
+    meta_job.job_type = 'peng'
     job_pk = meta_job.pk
 
     job = form.save(commit=False)

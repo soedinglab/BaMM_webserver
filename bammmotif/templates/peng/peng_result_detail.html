@@ -312,6 +312,13 @@
                             {%  endcomment %}
                             <a href="{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip" >Download</a>
                             {% comment %}
+                            <form action="{% get_media_prefix %}/{{ opath }}/motif_all.zip" method="get" target="_blank">
+                                <p align="right">
+                                    <button type="submit" class="btn btn-default" aria-label="Download">
+                                        <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD ALL</span>
+                                    </button>
+                                </p>
+                            </form>
                             <button type="submit" onclick="window.open('{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip')">Download!</button>
                             {%  endcomment %}
                         </th>

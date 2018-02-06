@@ -1,5 +1,6 @@
 import os
 from os import path
+from urllib.parse import urljoin
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db import transaction
@@ -32,6 +33,7 @@ from .utils import (
     read_bmscore,
     merge_meme_and_bmscore,
 )
+from bammmotif.utils.misc import url_prefix
 from bammmotif.forms import FindForm
 from bammmotif.peng_utils import get_motif_ids
 from bammmotif.utils.meme_reader import Meme, split_meme_file, get_n_motifs
@@ -70,7 +72,7 @@ from .job import (
     create_bamm_job,
 )
 from .cmd_modules import PlotMeme
-from .models import PengJob
+from .models import PengJob, JobInfo
 from ..bamm.models import BaMMJob
 
 from .settings import (
@@ -157,6 +159,20 @@ def find_peng_results(request, pk):
             return redirect('peng_result_detail', pk=jobid)
         form = FindForm()
     return render(request, 'results/peng_results_main.html', {'form': form})
+
+
+def find_results(request):
+    if request.method == "POST":
+        form = FindForm(request.POST)
+        if form.is_valid():
+            jobid = form.cleaned_data['job_ID']
+            meta_job = get_object_or_404(JobInfo, job_id=jobid)
+            base = request.build_absolute_uri('/')
+            url =urljoin(base, url_prefix[meta_job.job_type] + jobid)
+            return redirect(url, permanent=True)
+    return render(request, 'results/peng_results_main.html', {'form': FindForm()})
+
+
 
 
 def peng_result_overview(request, pk):
