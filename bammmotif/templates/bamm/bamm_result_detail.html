@@ -106,7 +106,6 @@
                 </button>
             </p>
         </form>
-
         {% if mode == "Prediction" %}
             <h2> Predicted Motifs </h2>
         {% elif mode == "Occurrence" %}
@@ -248,7 +247,7 @@
                                 <table>
                                 <tr>
                                     <td>  &emsp; Input Sequence: </td>
-                                    <td>  &emsp; {{result.Input_Sequences.name}}</td>
+                                    <td>  &emsp; {{result.filename_prefix}}</td>
                                 </tr>
                                     <tr>
                                         <td>  &emsp; Search on Both Strands: </td>
@@ -348,6 +347,14 @@
             </div>
         </div>
     </div>
+
+    <form action="{% get_media_prefix %}{{ result.peng_job.meta_job.pk }}/Output/meme_plots/motif_all.zip" method="get" target="_blank">
+        <p align="right">
+            <button type="submit" class="btn btn-default" aria-label="Download">
+                <span class="glyphicon glyphicon-download" aria-hidden="true"> Download PeNG Seeding.</span>
+            </button>
+        </p>
+    </form>
 
     <th> <a href="{% url 'peng_result_detail' result.peng.meta_job.job_id %}" style="color:black">
         <button type="submit" class="btn btn-default">Run another Refinement.</button></a>
