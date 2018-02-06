@@ -31,6 +31,7 @@
         <div class="jumbotron" style="background-color:white" xmlns="http://www.w3.org/1999/html">
             <h2> Results for {{ job_info.job_name }} </h2>
             <hr style="border: 1px solid #1f2e2e">
+        {% comment %}
             <div class="well" style="background-color:white">
                 <h2>Peng Settings </h2>
                 <hr style="border: 1px solid #1f2e2e">
@@ -53,9 +54,9 @@
                         <td>  &emsp; {{result.reverse_Complement}}</td>
                     </tr>
                 {% endif %}
-            {% endcomment %}
                 </table>
 
+            {% endcomment %}
                 <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
                      style="background-color:white; border:0px">
 
@@ -67,7 +68,7 @@
                                    aria-expanded="true" aria-controls="collapseOne"
                                    style="background-color:white; border:0px">
                                     <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"
-                                              style="color:black"></span> Advanced Settings </h3>
+                                              style="color:black"></span> Peng Settings </h3>
                                 </a>
                             </h2>
                         </div>
@@ -178,8 +179,8 @@
                     {% endif %}
                 </div>
             </div>
-        </div>
         {% comment %}
+        </div>
         <table class="table table-hover">
             {% for motif in motif_ids %}
                 <tr>
