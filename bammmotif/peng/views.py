@@ -161,17 +161,6 @@ def find_peng_results(request, pk):
     return render(request, 'results/peng_results_main.html', {'form': form})
 
 
-def find_results(request):
-    if request.method == "POST":
-        form = FindForm(request.POST)
-        if form.is_valid():
-            jobid = form.cleaned_data['job_ID']
-            meta_job = get_object_or_404(JobInfo, job_id=jobid)
-            base = request.build_absolute_uri('/')
-            url =urljoin(base, url_prefix[meta_job.job_type] + jobid)
-            return redirect(url, permanent=True)
-    return render(request, 'results/peng_results_main.html', {'form': FindForm()})
-
 
 
 

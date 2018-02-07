@@ -52,12 +52,11 @@ class CommandFailureException(Exception):
     pass
 
 
-
-# TODO: Maybe its better to put this in models
 url_prefix = {
     'peng': 'peng_results/',
     'bamm': 'peng_to_bamm_results/',
 }
+
 
 def run_command(command, enforce_exit_zero=True):
 
@@ -240,5 +239,3 @@ job_dir_storage = FileSystemStorage(location=settings.JOB_DIR)
 
 def job_upload_to_input(job, filename):
     return path.join(str(job.meta_job.pk), 'Input', filename)
-
-

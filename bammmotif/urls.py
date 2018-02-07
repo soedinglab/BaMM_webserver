@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'^job/bamm_compare/$', compare_views.run_compare_view, name='run_compare'),
     url(r'^job/bamm_compare/(?P<mode>\w+)/$', compare_views.run_compare_view, name='run_compare'),
     url(r'^compare_results/(?P<pk>.*)/$', compare_views.result_detail, name='run_compare'),
-    url(r'^results/$', peng_views.find_results, name='find_results'),
+    url(r'^results/$', views.find_results, name='find_results'),
     url(r'^results/result_overview/$', bamm_views.result_overview, name='result_overview'),
     url(r'^results/(?P<pk>.*)/$', bamm_views.result_detail, name='result_detail'),
     #url(r'^results/$', views.find_results, name='find_results'),
@@ -51,3 +51,5 @@ urlpatterns = [
     url(r'^peng_to_bamm_results/result_overview/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_overview, name='peng_to_bamm_result_overview'),
     url(r'^peng_to_bamm_results/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_detail, name='peng_to_bamm_result_detail'),
  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
