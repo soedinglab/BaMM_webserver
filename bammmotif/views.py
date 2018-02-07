@@ -26,10 +26,14 @@ from .utils.path_helpers import (
     get_log_file,
     get_result_folder,
 )
+from bammmotif.models import JobInfo
+from bammmotif.utils.misc import url_prefix
+from .forms import FindForm
 import datetime
 import os
 from os import path
 from os.path import basename
+from urllib.parse import urljoin
 
 
 # #########################
@@ -170,19 +174,30 @@ def submitted(request, pk):
 # #########################
 
 
+#def find_results(request):
+#    if request.method == "POST":
+#        form = FindForm(request.POST)
+#        if form.is_valid():
+#            jobid = form.cleaned_data['job_ID']
+#            if valid_uuid(jobid):
+#                if Job.objects.filter(pk=jobid).exists():
+#                    return redirect('result_detail', pk=jobid)
+#            form = FindForm()
+#            return render(request, 'results/results_main.html', {'form': form, 'warning': True})
+#    else:
+#        form = FindForm()
+#    return render(request, 'results/results_main.html', {'form': form, 'warning': False})
+
 def find_results(request):
     if request.method == "POST":
         form = FindForm(request.POST)
         if form.is_valid():
             jobid = form.cleaned_data['job_ID']
-            if valid_uuid(jobid):
-                if Job.objects.filter(pk=jobid).exists():
-                    return redirect('result_detail', pk=jobid)
-            form = FindForm()
-            return render(request, 'results/results_main.html', {'form': form, 'warning': True})
-    else:
-        form = FindForm()
-    return render(request, 'results/results_main.html', {'form': form, 'warning': False})
+            meta_job = get_object_or_404(JobInfo, job_id=jobid)
+            base = request.build_absolute_uri('/')
+            url = urljoin(base, url_prefix[meta_job.job_type] + jobid)
+            return redirect(url, permanent=True)
+    return render(request, 'results/results_main.html', {'form': FindForm()})
 
 
 def result_overview(request):

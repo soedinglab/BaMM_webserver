@@ -8,6 +8,7 @@ from .settings import (
     FILTERPWM_INPUT_FILE,
     FILTERPWM_OUTPUT_FILE,
     PATH_TO_FILTERPWM_SCRIPT,
+    ZIPPED_MOTIFS,
 )
 from ..utils.commandline import CommandlineModule
 from ..command_line import transfer_options
@@ -83,7 +84,6 @@ class ShootPengModule(CommandlineModule):
     def run(self, **kw_args):
         self.create_temp_directory()
         super().run(**kw_args)
-        self.remove_temp_directory()
 
 
 class FilterPWM(CommandlineModule):
@@ -138,7 +138,7 @@ class PlotMeme(CommandlineModule):
 
     defaults = {
         'output_file_format': 'PNG',
-        'reverse_complement': False
+        'reverse_complement': False,
     }
 
     def __init__(self):
@@ -173,3 +173,45 @@ class PlotMeme(CommandlineModule):
             meme_plotter.output_file = os.path.join(output_directory, motif + "_rev.png")
             meme_plotter.reverse_complement = True
             meme_plotter.run()
+
+
+class ZipMotifs(CommandlineModule):
+
+    defaults = {
+        'strip_filepath': True,
+    }
+
+    def __init__(self):
+        config = [
+            ('strip_filepath', '-j'),
+            ('argslist', None),
+        ]
+        super().__init__('zip', config)
+
+    def run(self):
+        super().run()
+
+    @staticmethod
+    def zip_motifs(motif_ids, directory, with_reverse=True):
+        for motif in motif_ids:
+            archive_name = os.path.join(directory, motif + '.zip')
+            if os.path.exists(archive_name):
+                os.remove(archive_name)
+            argslist = [archive_name]
+            argslist.append(os.path.join(directory, motif + "_zip.png"))
+            argslist.append(os.path.join(directory, motif + ".meme"))
+            if with_reverse:
+                argslist.append(os.path.join(directory, motif + "_revComp_zip.png"))
+            zm = ZipMotifs()
+            zm.strip_filepath = ZipMotifs.defaults['strip_filepath']
+            zm.argslist = argslist
+            zm.run()
+        archive_name = os.path.join(directory, ZIPPED_MOTIFS)
+        argslist = [archive_name]
+        plots = [os.path.join(directory, x) for x in os.listdir(directory) if x.endswith(".png") or x.endswith(".meme")]
+        plots.append(os.path.join(directory.rsplit('/', maxsplit=1)[0], MEME_OUTPUT_FILE))
+        argslist += plots
+        zm = ZipMotifs()
+        zm.strip_filepath = ZipMotifs.defaults['strip_filepath']
+        zm.argslist = argslist
+        zm.run()

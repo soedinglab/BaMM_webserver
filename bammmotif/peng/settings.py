@@ -10,13 +10,25 @@ from ..utils import (
 
 
 JOB_OUTPUT_DIRECTORY = 'Output'
+JOB_INPUT_DIRECTORY = 'Input'
 PENG_OUTPUT = 'pengoutput'
 PENG_INPUT = 'Input'
+PENG_TEMP_DIRECTORY = 'temp'
 SELECTED_MOTIFS = 'selected_motifs'
 MEME_PLOT_DIRECTORY = 'meme_plots'
 MEME_OUTPUT_FILE = 'out.meme'
 MOTIF_SELECT_IDENTIFIER = "_select"
 JSON_OUTPUT_FILE = "out.json"
+BMSCORE_SUFFIX = '.bmscore'
+PENG_PLOT_LOGO_ORDER = 0
+
+PENG_OUTPUT_MEME = 'out.meme'
+PENG_OUTPUT_JSON = 'out.json'
+PWM2BAMM_DIRECTORY = 'converttemp'
+BAMMPLOT_SUFFIX_STAMP = '-logo-order-0_stamp.png'
+BAMMPLOT_SUFFIX_REV_STAMP = '-logo-order-0_stamp_revComp.png'
+BAMMPLOT_SUFFIX = '-logo-order-0.png'
+BAMMPLOT_SUFFIX_REV = '-logo-order-0_revComp.png'
 
 
 # Filter PWM
@@ -27,6 +39,7 @@ FILTERPWM_OUTPUT_FILE = 'out_filtered.meme'
 
 #Meme plotting
 MEME_PLOT_INPUT = FILTERPWM_OUTPUT_FILE
+BAMM_MOTIF_INIT_FILE = 'motif_init.meme'
 
 FASTA_VALIDATION_SCRIPT = '/code/bammmotif/static/scripts/valid_fasta'
 ZIPPED_MOTIFS = 'motif_all.zip'

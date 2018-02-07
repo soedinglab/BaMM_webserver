@@ -52,6 +52,12 @@ class CommandFailureException(Exception):
     pass
 
 
+url_prefix = {
+    'peng': 'peng_results/',
+    'bamm': 'peng_to_bamm_results/',
+}
+
+
 def run_command(command, enforce_exit_zero=True):
 
     if isinstance(command, str):

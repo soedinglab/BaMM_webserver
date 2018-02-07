@@ -14,7 +14,10 @@ from .settings import (
     PENG_OUTPUT,
     MEME_PLOT_INPUT,
     FILTERPWM_OUTPUT_FILE,
+    MEME_OUTPUT_FILE
 )
+
+from .io import get_peng_meme_output_in_bamm, peng_output_meme_file, get_motif_init_file
 
 from ..utils import (
     get_user,
@@ -55,16 +58,17 @@ def init_job_from_form(job_type, request):
 def create_bamm_job(job_type, request, form, peng_job):
     job_info = init_job_from_form(job_type, request)
     job_info.user = get_user(request)
+    job_info.job_type = 'bamm'
     job_pk = job_info.pk
 
     bamm_job = form.save(commit=False)
     bamm_job.meta_job = job_info
     bamm_job.Input_Sequences = peng_job.fasta_file
     bamm_job.num_init_motifs = get_n_motifs(peng_job.pk)
-    bamm_job.Motif_InitFile.name = path.join(get_job_output_folder(job_pk), PENG_OUTPUT,
-                                             FILTERPWM_OUTPUT_FILE)
+    bamm_job.Motif_InitFile.name = get_motif_init_file(str(bamm_job.pk))
     bamm_job.Motif_Initialization = "Custom File"
     bamm_job.Motif_Init_File_Format = "PWM"
+    bamm_job.peng_job = peng_job
 
     with transaction.atomic():
         job_info.save()
@@ -97,6 +101,7 @@ def create_anonymuous_user(request):
 def create_job(form, meta_job_form, request):
     meta_job = meta_job_form.save(commit=False)
     meta_job.created_at = timezone.now()
+    meta_job.job_type = 'peng'
     job_pk = meta_job.pk
 
     job = form.save(commit=False)

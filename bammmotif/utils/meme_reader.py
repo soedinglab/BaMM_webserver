@@ -1,15 +1,31 @@
 import os
-
-from ..peng.settings import peng_meme_directory
+from bammmotif.peng.io import peng_meme_directory
 
 
 class Meme(object):
     def __init__(self, meme_id, logpval, nsites):
         self.meme_id = meme_id
-        self.logpval = logpval
+        self.number = None
+        self._logpval = float(logpval)
         self.nsites = nsites
         self.select = False
+        self._ausfc = None
 
+    @property
+    def logpval(self):
+        return round(self._logpval, 3)
+
+    @property
+    def ausfc(self):
+        return round(self._ausfc, 10)
+
+    @logpval.setter
+    def logpval(self, val):
+        self._logpval = float(val)
+
+    @ausfc.setter
+    def ausfc(self, val):
+        self._ausfc = float(val)
 
     @classmethod
     def fromdict(cls, meme_dict):
@@ -41,7 +57,6 @@ class Meme(object):
 
 
 def split_meme_file(fpath, directory):
-    print("now split meme file")
     with open(fpath) as f:
         fcont = f.read().split("\n\n")
         meme_header = "\n\n".join(fcont[:3])
@@ -53,11 +68,9 @@ def split_meme_file(fpath, directory):
             with open(fname, "w") as d:
                 outstring = meme_header + "\n\n" + elem
                 d.write(outstring)
-                print(meme_id, "now has own file.")
 
 
 def update_and_copy_meme_file(fpath, tpath, motif_directory):
-    print("update and copy meme file")
     selected_memes = [x.rsplit(".", maxsplit=1)[0] for x in os.listdir(motif_directory) if x.endswith(".meme")]
     with open(fpath, "r") as f:
         fcont = f.read().split("\n\n")
@@ -100,7 +113,7 @@ def load_nsites_from_dict(meme_dict):
     nsites_dict = {key: meme_dict[key]['nsites'] for key in meme_dict}
     return nsites_dict
 
-
 def get_n_motifs(pk):
     meme_directory = os.path.join(peng_meme_directory(pk), "selected_motifs")
     return len([x for x in os.listdir(meme_directory) if x.endswith(".meme")])
+

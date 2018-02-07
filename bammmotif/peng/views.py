@@ -1,9 +1,25 @@
 import os
 from os import path
+from urllib.parse import urljoin
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db import transaction
 from django.conf import settings
+
+
+from bammmotif.peng.io import (
+    peng_bmscore_file_old,
+    get_meme_result_file_path,
+    get_plot_output_directory,
+    file_path_peng,
+    peng_meme_directory,
+    get_peng_output_in_bamm_directory,
+    get_peng_meme_output_in_bamm,
+    media_memeplot_directory_html,
+    media_bammplot_directory_html,
+    media_memeplot_directory_from_peng_html,
+    get_motif_init_file,
+)
 
 import bammmotif.bamm.tasks as bamm_tasks
 from .utils import (
@@ -13,8 +29,11 @@ from .utils import (
     zip_motifs,
     check_if_request_from_peng_directly,
     save_selected_motifs,
-    upload_example_fasta
+    upload_example_fasta,
+    read_bmscore,
+    merge_meme_and_bmscore,
 )
+from bammmotif.utils.misc import url_prefix
 from bammmotif.forms import FindForm
 from bammmotif.peng_utils import get_motif_ids
 from bammmotif.utils.meme_reader import Meme, split_meme_file, get_n_motifs
@@ -53,12 +72,13 @@ from .job import (
     create_bamm_job,
 )
 from .cmd_modules import PlotMeme
-from .models import PengJob
+from .models import PengJob, JobInfo
 from ..bamm.models import BaMMJob
 
 from .settings import (
     get_meme_result_file_path,
     get_plot_output_directory,
+    FILTERPWM_INPUT_FILE,
 )
 
 
@@ -69,18 +89,19 @@ def peng_result_detail(request, pk):
     if result.meta_job.complete:
         meme_result_file_path = get_meme_result_file_path(job_pk)
         plot_output_directory = get_plot_output_directory(job_pk)
-
-        opath = path.join(get_result_folder(job_pk), MEME_PLOT_DIRECTORY)
+        bm_scores = read_bmscore(peng_bmscore_file_old(str(result.meta_job.pk), result.filename_prefix))
         if not path.exists(plot_output_directory):
             os.makedirs(plot_output_directory)
         meme_meta_info_list = Meme.fromfile(meme_result_file_path)
+        meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
+        meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
         return render(request, 'peng/peng_result_detail.html', {
             'result': result,
             'pk': result.meta_job.pk,
             'job_info': result.meta_job,
             'mode': result.meta_job.mode,
-            'opath': opath,
-            'meme_meta_info': meme_meta_info_list,
+            'opath': media_memeplot_directory_html(result.meta_job.pk),
+            'meme_meta_info': meme_meta_info_list_new,
         })
     else:
         log_file = get_log_file(job_pk)
@@ -140,6 +161,9 @@ def find_peng_results(request, pk):
     return render(request, 'results/peng_results_main.html', {'form': form})
 
 
+
+
+
 def peng_result_overview(request, pk):
     if request.user.is_authenticated:
         user_jobs = PengJob_deprecated.objects.filter(user=request.user.id)
@@ -159,15 +183,18 @@ def peng_load_bamm(request, pk):
         if check_if_request_from_peng_directly(request):
             at_least_one_motif_selected = save_selected_motifs(request.POST, pk)
             if not at_least_one_motif_selected:
+                bm_scores = read_bmscore(peng_bmscore_file_old(str(peng_job.meta_job.pk), peng_job.filename_prefix))
                 opath = os.path.join(get_result_folder(peng_job_pk), MEME_PLOT_DIRECTORY)
                 meme_result_file_path = get_meme_result_file_path(peng_job_pk)
                 meme_meta_info_list = Meme.fromfile(meme_result_file_path)
-                return render(request, 'results/peng_result_detail.html', {
+                meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
+                meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
+                return render(request, 'peng/peng_result_detail.html', {
                     'result': peng_job,
                     'pk': peng_job_pk,
                     'mode': peng_job.meta_job.mode,
                     'opath': opath,
-                    'meme_meta_info': meme_meta_info_list,
+                    'meme_meta_info': meme_meta_info_list_new,
                     'err_msg': NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT
                 })
             form = PengToBammForm()
@@ -238,7 +265,8 @@ def peng_to_bamm_result_detail(request, pk):
     peng_path = path.join(job_output_dir, "pengoutput")
     meme_plots = path.join(job_output_dir, "pengoutput", "meme_plots")
     meme_motifs = load_meme_ids(peng_path)
-    meme_meta_info_list = Meme.fromfile(os.path.join(peng_path, "out.meme"))
+    #meme_meta_info_list = Meme.fromfile(os.path.join(peng_path, "out.meme"))
+    meme_meta_info_list = Meme.fromfile(get_motif_init_file(str(meta_job.job_id)))
 
     motif_db = result.motif_db
     db_dir = motif_db.relative_db_model_dir

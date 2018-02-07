@@ -2,7 +2,7 @@ from os import path
 
 from django.db import models
 
-from ..models import JobInfo, MotifDatabase
+from ..models import JobInfo, MotifDatabase, PengJob
 from ..utils import job_dir_storage as job_fs
 from ..utils import job_upload_to_input
 
@@ -23,6 +23,7 @@ INIT_CHOICES = (
 class BaMMJob(models.Model):
     meta_job = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False,
                                     primary_key=True)
+    peng_job = models.OneToOneField(PengJob, editable=False, on_delete=models.CASCADE)
     num_motifs = models.IntegerField(default=1)
 
     # files
