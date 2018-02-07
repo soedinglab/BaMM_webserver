@@ -157,6 +157,15 @@ class ChIPseq(models.Model):
     def __str__(self):
         return self.db_public_id
 
+    @property
+    def model_parameters(self):
+        return self.parent
+
+    @property
+    def filename_prefix(self):
+        prefix, extension = path.splitext(self.filename)
+        return prefix
+
 
 class JobInfo(models.Model):
     # General information about each job is stored here.

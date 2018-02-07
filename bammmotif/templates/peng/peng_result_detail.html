@@ -271,6 +271,7 @@
     {% endcomment %}
 
 
+        <input type="checkbox" id="checkall_seeds" />Select All<br/>
         <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=pk %}">
             {% csrf_token %}
             <input type="checkbox" id="checkAll" />Select All<br/>
@@ -310,7 +311,6 @@
                                 </p>
                             </form>
                             {%  endcomment %}
-                            <a href="{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip" >Download</a>
                             {% comment %}
                             <form action="{% get_media_prefix %}/{{ opath }}/motif_all.zip" method="get" target="_blank">
                                 <p align="right">
@@ -321,6 +321,7 @@
                             </form>
                             <button type="submit" onclick="window.open('{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip')">Download!</button>
                             {%  endcomment %}
+                            <button type="submit" onclick="window.open('{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip')">Download!</button>
                         </th>
                     </tr>
                 {% endfor %}

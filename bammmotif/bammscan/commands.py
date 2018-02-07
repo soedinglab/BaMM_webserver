@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 def rename_init_files(output_dir, filename_prefix):
-    for file in glob(path.join(output_dir, filename_prefix + '_init_motif_*.ihb*p')):
+    for file in glob(path.join(output_dir, filename_prefix + '*_init_motif_*.ihb*p')):
         new_name = file.replace('_init_motif_', '_motif_')
         logger.debug('renaming: %s -> %s', file, new_name)
         shutil.move(file, new_name)
@@ -47,6 +47,7 @@ def BaMMScan(job, first_task_in_pipeline, is_refined_model):
         run_command(get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model))
 
     if first_task_in_pipeline:
+        # required also for uploaded BaMMs, as we need to generate .ihbp files
         rename_init_files(get_job_output_folder(job.meta_job.pk), job.filename_prefix)
     sys.stdout.flush()
 
@@ -75,7 +76,7 @@ def get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model, motif_id
             job.model_order = get_model_order(job)
             job.background_Order = get_bg_model_order(job)
         elif job.Motif_Init_File_Format == 'PWM':
-            meme_file = str(job.Motif_InitFile)
+            meme_file = job.full_motif_file_path
             job.num_motifs = meme_count_motifs(meme_file)
             job.model_order = 0
         elif job.Motif_Init_File_Format == 'BindingSites':

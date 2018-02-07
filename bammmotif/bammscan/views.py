@@ -1,15 +1,13 @@
 from os import path
 import os
 
+from django.http import Http404
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, render
 from django.db import transaction
 
-from .forms import (
-    BaMMScanExampleForm,
-    BaMMScanDBForm,
-    BaMMScanForm
-)
+
+from ..models import ChIPseq
 from ..forms import MetaJobNameForm
 
 from ..utils import (
@@ -21,9 +19,14 @@ from ..utils import (
     upload_example_motif,
 )
 
+from .forms import (
+    BaMMScanExampleForm,
+    BaMMScanDBForm,
+    BaMMScanForm
+)
 from .models import BaMMScanJob
-
 from .tasks import bamm_scan_pipeline
+from .utils import upload_db_motif
 
 
 def run_bammscan_view(request, mode='normal', pk='null'):
@@ -33,8 +36,11 @@ def run_bammscan_view(request, mode='normal', pk='null'):
             form = BaMMScanExampleForm(request.POST, request.FILES)
         elif mode == 'db':
             form = BaMMScanDBForm(request.POST, request.FILES)
+            motif = get_object_or_404(ChIPseq, pk=pk)
         elif mode == 'normal':
             form = BaMMScanForm(request.POST, request.FILES)
+        else:
+            raise Http404("Unknown mode: %s" % mode)
 
         if form.is_valid() and meta_job_form.is_valid():
             meta_job = meta_job_form.save(commit=False)
@@ -55,11 +61,9 @@ def run_bammscan_view(request, mode='normal', pk='null'):
             if mode == 'example':
                 upload_example_fasta(job)
                 upload_example_motif(job)
-
             # enter db input
-            if mode == 'db':
-                pass
-                # this is currently not implemented
+            elif mode == 'db':
+                upload_db_motif(job, motif)
 
             with transaction.atomic():
                 job.meta_job.save()
@@ -74,9 +78,21 @@ def run_bammscan_view(request, mode='normal', pk='null'):
     meta_job_form = MetaJobNameForm()
     if mode == 'example':
         form = BaMMScanExampleForm()
-    if mode == 'normal':
+    elif mode == 'normal':
         form = BaMMScanForm()
-    return render(request, 'job/bammscan_input.html',
+    elif mode == 'db':
+         form = BaMMScanDBForm()
+         db_entry = get_object_or_404(ChIPseq, pk=pk)
+         return render(request, 'bammscan/bammscan_input.html', {
+             'form': form,
+             'mode': mode,
+             'pk': pk,
+             'db_entry': db_entry,
+        })
+    else:
+        raise Http404("Unknown mode: %s" % mode)
+
+    return render(request, 'bammscan/bammscan_input.html',
                   {
                       'form': form,
                       'mode': mode,

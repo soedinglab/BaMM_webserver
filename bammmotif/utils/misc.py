@@ -240,5 +240,9 @@ job_dir_storage = FileSystemStorage(location=settings.JOB_DIR)
 def job_upload_to_input(job, filename):
     return path.join(str(job.meta_job.pk), 'Input', filename)
 
+
 def is_fasta(name):
     return name.endswith('.fa') or name.endswith('.fasta')
+
+
+filename_relative_to_job_dir = job_upload_to_input

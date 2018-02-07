@@ -1,6 +1,7 @@
 from os import path
 
 from django.db import models
+from django.conf import settings
 
 from ..models import JobInfo, MotifDatabase, PengJob
 from ..utils import job_dir_storage as job_fs
@@ -72,6 +73,10 @@ class BaMMJob(models.Model):
         file_name = path.basename(self.Input_Sequences.name)
         prefix, _ = path.splitext(file_name)
         return prefix
+
+    @property
+    def full_motif_file_path(self):
+        return path.join(settings.JOB_DIR, str(self.Motif_InitFile))
 
     def __str__(self):
         return str(self.meta_job.pk)
