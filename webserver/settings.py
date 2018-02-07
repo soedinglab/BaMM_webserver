@@ -199,6 +199,7 @@ STATICFILES_DIRS.append(MOTIF_DATABASE_PATH)
 LOG_DIR = '/logs'
 
 # Settings realted to example data
+EXAMPLE_DIR = 'example_data'
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
 EXAMPLE_MOTIF = 'example_data/ExampleMotifs.meme' 
 PENG_INIT = 'PengInitialization.meme'

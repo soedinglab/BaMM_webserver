@@ -34,6 +34,7 @@ import os
 from os import path
 from os.path import basename
 from urllib.parse import urljoin
+from django.contrib.auth.models import User
 
 
 # #########################
@@ -196,6 +197,11 @@ def find_results(request):
             meta_job = get_object_or_404(JobInfo, job_id=jobid)
             base = request.build_absolute_uri('/')
             url = urljoin(base, url_prefix[meta_job.job_type] + jobid)
+
+            example_user = get_object_or_404(User, username='Example_User')
+            example_jobs = JobInfo.objects.filter(user=example_user)
+            print(example_user)
+            print(example_jobs)
             return redirect(url, permanent=True)
     return render(request, 'results/results_main.html', {'form': FindForm()})
 
