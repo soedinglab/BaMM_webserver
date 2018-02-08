@@ -11,39 +11,64 @@
         <h2>Database entry information:</h2>
         <hr style="border: 1px solid #1f2e2e">
         <table>
+
            <tr>
                 <td> &emsp; Protein / Target name: </td>
                 <td> &emsp; {{entry.target_name}} </td>
             </tr>
+
+	    {% if entry.cell_type %}
             <tr>
                 <td> &emsp; Cell type: </td>
                 <td> &emsp; {{entry.cell_type}} </td>
             </tr>
+	    {% endif %}
+
+	    {% if entry.parent.experiment %}
             <tr>
                 <td> &emsp; Experiment: </td>
                 <td> &emsp; {{entry.parent.experiment}} </td>
             </tr>
+	    {% endif %}
+
+	    {% if entry.lab %}
             <tr>
                 <td> &emsp; Lab : </td>
                 <td> &emsp; {{entry.lab}} </td>
             </tr>
+	    {% endif %}
+
+	    {% if entry.grant %}
             <tr>
                 <td> &emsp; Grant: </td>
                 <td> &emsp; {{entry.grant }} </td>
             </tr>
+	    {% endif %}
+
+	    {% if entry.parent.data_source %}
             <tr>
                 <td> &emsp; Data source: </td>
                 <td> &emsp; {{entry.parent.data_source}} </td>
             </tr>
+	    {% endif %}
+
+	    {% if entry.motif_db.organism %}
             <tr>
                 <td> &emsp; Species: </td>
-                <td> &emsp; {{entry.parent.species}} </td>
+                <td> &emsp; {{entry.motif_db.organism}} </td>
             </tr>
+	    {% endif %}
             
+	    {% if entry.url %}
+            <tr>
+                <td> &emsp; Database URL: </td>
+		<td> &emsp; <a href="{{entry.url}}">Link to Motif Entry</a></td>
+            </tr>
+	    {% endif %}
         </table>
         </font>
         <br>    
-        <td>  &emsp; <a href="{% url 'run_bamm_scan' mode="db" pk=entry.db_public_id %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> USE THIS MODE FOR MOTIF SEARCH  </span></a> </td>
+        <td>  &emsp; <a href="{% url 'run_bamm_scan' mode="db" pk=entry.motif_id %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> USE THIS MODEL FOR MOTIF SEARCH  </span></a> </td>
     </div>
     </font>
 </div>

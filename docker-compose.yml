@@ -31,7 +31,6 @@ services:
     command: celery --app=webserver.celery:app worker --loglevel=DEBUG
     user: ${BAMM_USER_UID}
     volumes:
-      - ${DB_DIR}:/code/BaMM_webserver/DB/
       - ${WEBSERVER_DIR}:/code
       - ${MEDIA_DIR}:/code/media
       - ${MOTIF_DB_DIR}:/motif_db
@@ -60,7 +59,6 @@ services:
     environment:
       - EXAMPLE_MOTIF_DB=${EXAMPLE_MOTIF_DB}
     volumes:
-      - ${DB_DIR}:/code/BaMM_webserver/DB/
       - ${WEBSERVER_DIR}:/code
       - ${MEDIA_DIR}:/code/media
       - ${MOTIF_DB_DIR}:/motif_db

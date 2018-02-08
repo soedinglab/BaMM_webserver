@@ -86,8 +86,8 @@ def job_directory_path_peng_meta(instance, filename, intermediate_dir="Input"):
 
 
 class DbParameter(models.Model):
-    param_id = models.SmallIntegerField(db_column='param_ID', primary_key=True)  # Field name made lowercase.
-    data_source = models.CharField(max_length=12)
+    param_id = models.AutoField(db_column='param_ID', primary_key=True)  # Field name made lowercase.
+    data_source = models.CharField(max_length=100)
     species = models.CharField(max_length=12)
     experiment = models.CharField(max_length=20)
     base_dir = models.CharField(max_length=50)
@@ -139,23 +139,29 @@ class MotifDatabase(models.Model):
 
 
 class ChIPseq(models.Model):
-    db_public_id = models.UUIDField(db_column='db_public_ID', primary_key=True, default=uuid.uuid4, editable=False)  # Field name made lowercase.
+    motif_id = models.CharField(max_length=100, primary_key=True)
     filename = models.CharField(max_length=255)
-    lab = models.CharField(max_length=12)
-    grant = models.CharField(max_length=12)
-    cell_type = models.CharField(max_length=20)
-    target_name = models.CharField(max_length=12)
-    ensembl_target_id = models.CharField(max_length=15)
-    treatment = models.CharField(max_length=25)
-    protocol = models.CharField(max_length=15)
+    lab = models.CharField(max_length=100, null=True)
+    grant = models.CharField(max_length=100, null=True)
+    cell_type = models.CharField(max_length=250, null=True)
+    target_name = models.CharField(max_length=100)
+    ensembl_target_id = models.CharField(max_length=100, null=True)
+    treatment = models.CharField(max_length=100, null=True)
+    protocol = models.CharField(max_length=100, null=True)
     pos_seq_file = models.CharField(max_length=120)
     motif_init_file = models.CharField(max_length=255)
-    result_location = models.CharField(max_length=80)
+    result_location = models.CharField(max_length=100, null=True)
+    url = models.URLField(null=True)
     parent = models.ForeignKey(DbParameter, blank=True, null=True, on_delete=models.CASCADE)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
+
+    # overwrite a previous database field. This patch makes previous code runnable
+    @property
+    def result_location(self):
+        return self.filename
     
     def __str__(self):
-        return self.db_public_id
+        return self.motif_id
 
     @property
     def model_parameters(self):

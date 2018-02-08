@@ -28,14 +28,14 @@
             <td> {{ forloop.counter           }} </td>
             <td> {{ entry.target_name         }} </td>
             <td> <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0_stamp.png" style='max-height:90px;' alt=""> </td>
-            <td> <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0_revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></td>     
-            <td> {{ entry.cell_type           }} </td>
-            <td> {{ entry.parent.experiment   }} </td>
-            <td> {{ entry.lab                 }} </td>            
-            <td> {{ entry.grant               }} </td>
-            <td> {{ entry.parent.data_source  }} </td>
-            <td> {{ entry.parent.species      }} </td>
-            <td> <a href="{% url 'db_detail' entry.db_public_id %}" role="button"> more...</a> </td>
+            <td> <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:90px;' alt=""></td>     
+            <td> {{ entry.cell_type|default:"unknown"           }} </td>
+            <td> {{ entry.parent.experiment|default:"unknown"   }} </td>
+            <td> {{ entry.lab|default:"unknown"                 }} </td>            
+            <td> {{ entry.grant|default:"unknown"               }} </td>
+            <td> {{ entry.parent.data_source|default:"unknown"  }} </td>
+            <td> {{ entry.motif_db.organism|default:"unknown"      }} </td>
+            <td> <a href="{% url 'db_detail' entry.motif_id %}" role="button"> more...</a> </td>
         </tr>
        {% endfor %}
         </table>

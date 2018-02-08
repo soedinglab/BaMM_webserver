@@ -298,7 +298,7 @@ def maindb(request):
 
 
 def db_detail(request, pk):
-    entry = get_object_or_404(ChIPseq, db_public_id=pk)
+    entry = get_object_or_404(ChIPseq, motif_id=pk)
     db_location = path.join(entry.parent.base_dir, 'Results')
     return render(request, 'database/db_detail.html',
                   {'entry': entry, 'db_location': db_location})

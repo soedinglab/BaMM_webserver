@@ -342,7 +342,7 @@
                                 {% endif %}
                                 <th> <img src="{% get_static_prefix %}{{db_dir}}/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </th>
                                 <th> <img src="{% get_static_prefix %}{{db_dir}}/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></th>
-                                <th> <a href="{% url 'db_detail' match.db_entry.db_public_id %}" style="color:black">
+                                <th> <a href="{% url 'db_detail' match.db_entry.motif_id %}" style="color:black">
                                     <button type="submit" class="btn btn-default" aria-label="Database" >
                                         <span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span>
                                     </button>

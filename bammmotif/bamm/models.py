@@ -24,7 +24,7 @@ INIT_CHOICES = (
 class BaMMJob(models.Model):
     meta_job = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False,
                                     primary_key=True)
-    peng_job = models.OneToOneField(PengJob, editable=False, on_delete=models.CASCADE)
+    peng_job = models.ForeignKey(PengJob, editable=False, on_delete=models.CASCADE)
     num_motifs = models.IntegerField(default=1)
 
     # files
