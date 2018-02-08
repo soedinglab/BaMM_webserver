@@ -2,29 +2,39 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from .models import (
-    Job, ChIPseq, DbParameter
+    ChIPseq, DbParameter
 )
+"""
 from .forms import (
     PredictionForm, PredictionExampleForm,
     OccurrenceForm, OccurrenceExampleForm,
     OccurrenceDBForm,
     CompareForm, CompareExampleForm,
-    FindForm, DBForm
+    FindForm
 )
+"""
 from .tasks import (
     run_bamm, run_bammscan,
-    run_compare, run_peng
+    run_peng
 )
 from .utils import (
-    get_log_file,
     get_user, set_job_name, upload_example_fasta,
-    upload_example_motif, get_result_folder,
+    upload_example_motif, 
     upload_db_input, valid_uuid
 )
+from .utils.path_helpers import (
+    get_log_file,
+    get_result_folder,
+)
+from bammmotif.models import JobInfo
+from bammmotif.utils.misc import url_prefix
+from .forms import FindForm
 import datetime
 import os
 from os import path
 from os.path import basename
+from urllib.parse import urljoin
+from django.contrib.auth.models import User
 
 
 # #########################
@@ -58,49 +68,6 @@ def imprint(request):
 # #########################
 # ## JOB RELATED VIEWS
 # #########################
-
-
-def run_compare_view(request, mode='normal'):
-    if request.method == "POST":
-        if mode == 'example':
-            form = CompareExampleForm(request.POST, request.FILES)
-        else:
-            print('store normal form')
-            form = CompareForm(request.POST, request.FILES)
-        if form.is_valid():
-            # read in data and parameter
-            job = form.save(commit=False)
-            job.created_at = datetime.datetime.now()
-            job.user = get_user(request)
-            job.mode = "Compare"
-            job.save()
-            job_pk = job.job_ID
-
-            if job.job_name is None:
-                set_job_name(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            # if example is requested, load the sampleData
-            if mode == 'example':
-                #upload_example_fasta(job_pk)
-                #job = get_object_or_404(Job, pk = job_pk)
-                upload_example_motif(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            job = get_object_or_404(Job, pk = job_pk)
-            job.FDR = False
-            job.score_Seqset = False
-            job.MMcompare = True
-            job.save()
-            run_compare.delay(job_pk)
-            return render(request, 'job/submitted.html', {'pk': job_pk})
-
-    if mode == 'example':
-        form = CompareExampleForm()
-    else:
-        form = CompareForm()
-    return render(request, 'job/compare_input.html',
-                  {'form': form, 'mode': mode})
 
 
 def run_bammscan_view(request, mode='normal', pk='null'):
@@ -208,19 +175,30 @@ def submitted(request, pk):
 # #########################
 
 
+#def find_results(request):
+#    if request.method == "POST":
+#        form = FindForm(request.POST)
+#        if form.is_valid():
+#            jobid = form.cleaned_data['job_ID']
+#            if valid_uuid(jobid):
+#                if Job.objects.filter(pk=jobid).exists():
+#                    return redirect('result_detail', pk=jobid)
+#            form = FindForm()
+#            return render(request, 'results/results_main.html', {'form': form, 'warning': True})
+#    else:
+#        form = FindForm()
+#    return render(request, 'results/results_main.html', {'form': form, 'warning': False})
+
 def find_results(request):
     if request.method == "POST":
         form = FindForm(request.POST)
         if form.is_valid():
             jobid = form.cleaned_data['job_ID']
-            if valid_uuid(jobid):
-                if Job.objects.filter(pk=jobid).exists():
-                    return redirect('result_detail', pk=jobid)
-            form = FindForm()
-            return render(request, 'results/results_main.html', {'form': form, 'warning': True})
-    else:
-        form = FindForm()
-    return render(request, 'results/results_main.html', {'form': form, 'warning': False})
+            meta_job = get_object_or_404(JobInfo, job_id=jobid)
+            base = request.build_absolute_uri('/')
+            url = urljoin(base, url_prefix[meta_job.job_type] + jobid)
+            return redirect(url, permanent=True)
+    return render(request, 'results/results_main.html', {'form': FindForm()})
 
 
 def result_overview(request):
@@ -270,35 +248,3 @@ def result_detail(request, pk):
         output = os.popen(command).read()
         return render(request, 'results/result_status.html',
                       {'job_ID': result.job_ID, 'job_name': result.job_name, 'status': result.status, 'output': output})
-
-
-# #########################
-# ## DATABASE RELATED VIEWS
-# #########################
-
-
-def maindb(request):
-    if request.method == "POST":
-        form = DBForm(request.POST)
-        if form.is_valid():
-            p_name = form.cleaned_data['db_ID']
-            db_entries = ChIPseq.objects.filter(target_name__icontains=p_name)
-            if db_entries.exists():
-                sample = db_entries.first()
-                db_location = path.join(sample.parent.base_dir, 'Results')
-                return render(request, 'database/db_overview.html',
-                              {'protein_name': p_name,
-                               'db_entries': db_entries,
-                               'db_location': db_location})
-            form = DBForm()
-            return render(request, 'database/db_main.html', {'form': form, 'warning': True})
-    else:
-        form = DBForm()
-    return render(request, 'database/db_main.html', {'form': form})
-
-
-def db_detail(request, pk):
-    entry = get_object_or_404(ChIPseq, db_public_id=pk)
-    db_location = path.join(entry.parent.base_dir, 'Results')
-    return render(request, 'database/db_detail.html',
-                  {'entry': entry, 'db_location': db_location})

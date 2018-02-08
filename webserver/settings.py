@@ -38,6 +38,10 @@ ALLOWED_HOSTS = ['0.0.0.0','bammmotif.mpibpc.mpg.de']
 
 INSTALLED_APPS = (
     'bammmotif',
+#    'bammmotif.peng',
+#    'bammmotif.bamm',
+#    'bammmotif.bammscan',
+#    'bammmotif.mmcompare',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,14 +49,15 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'widget_tweaks',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -173,11 +178,10 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = (
+STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'staticfiles'),
     os.path.join(BASE_DIR, 'BaMM_webserver/DB')
-
-)
+]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'email.gwdg.de'
@@ -191,12 +195,68 @@ DEFAULT_FROM_EMAIL = 'bamm@mpibpc.mpg.de'
 EMAIL_SUBJECT_SUCCESS = str("BaMM!motif: Your Job has finished!")
 EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You can view its results following this link: xcxdxx\n\n Greetings from the BaMM!team\n")
 
-
 # Settings related to file system structure
-JOB_DIR_PREFIX = 'jobs'
+JOB_DIR_PREFIX = ''
+JOB_DIR = path.join(MEDIA_ROOT, JOB_DIR_PREFIX)
+MOTIF_DATABASE_PATH = '/motif_db'
+STATICFILES_DIRS.append(MOTIF_DATABASE_PATH)
+LOG_DIR = '/logs'
 
 # Settings realted to example data
+EXAMPLE_DIR = 'example_data'
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
 EXAMPLE_MOTIF = 'example_data/ExampleMotifs.meme' 
 PENG_INIT = 'PengInitialization.meme'
 PENG_OUT = 'PengOut.meme'
+BAMM_INPUT = 'Input'
+
+# logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s [%(levelname)s] %(module)s: %(message)s',
+        },
+    },
+    'handlers': {
+        'django_logfile': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024*1024*100,
+            'backupCount': 5,
+            'filename': path.join(LOG_DIR, 'django.log'),
+            'formatter': 'verbose'
+        },
+        'django_requests_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024*1024*100,
+            'backupCount': 5,
+            'filename': path.join(LOG_DIR, 'django_requests.log'),
+            'formatter': 'verbose'
+        },
+        'bammmotif_logfile': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024*1024*100,
+            'backupCount': 5,
+            'filename': path.join(LOG_DIR, 'bammmotif.log'),
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['django_logfile'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['django_requests_file'],
+            'level': 'WARN',
+            'propagate': True,
+        },
+        'bammmotif': {
+            'handlers': ['bammmotif_logfile'],
+            'level': 'DEBUG',
+            'propagate': True,
+        }
+    }
+}

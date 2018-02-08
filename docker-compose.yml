@@ -34,6 +34,8 @@ services:
       - ${DB_DIR}:/code/BaMM_webserver/DB/
       - ${WEBSERVER_DIR}:/code
       - ${MEDIA_DIR}:/code/media
+      - ${MOTIF_DB_DIR}:/motif_db
+      - ${LOG_DIR}:/logs
     links:
       - redis_celery
       - db
@@ -49,6 +51,8 @@ services:
       - ${DB_DIR}:/code/BaMM_webserver/DB/
       - ${WEBSERVER_DIR}:/code
       - ${MEDIA_DIR}:/code/media
+      - ${MOTIF_DB_DIR}:/motif_db
+      - ${LOG_DIR}:/logs
     ports:
       - "10080:10080"
       - "587:587"

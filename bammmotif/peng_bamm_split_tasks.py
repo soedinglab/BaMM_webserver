@@ -12,7 +12,7 @@ from django.core.files import File
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
 from ipware.ip import get_ip
-from .models import Job, PengJob
+from .models import Job, PengJob_deprecated
 from .command_line import ShootPengModule
 
 from os.path import basename
@@ -73,7 +73,7 @@ def valid_fasta(self, job_pk):
 
 @task(bind=True)
 def run_peng(self, job_pk):
-    peng_job = get_object_or_404(PengJob, pk=job_pk)
+    peng_job = get_object_or_404(PengJob_deprecated, pk=job_pk)
     with JobSaveManager(peng_job) as mgr:
         # first define log file for redirecting output information
         make_job_folder(job_pk)

@@ -1,0 +1,36 @@
+{% extends "home/header.html" %}
+
+{% block content %}
+    {% load static %}
+
+    <div class="jumbotron" style="background-color:white"><font color="black">
+        <h2> BaMMmotif Results from User: {{user.username}} </h2>
+        <hr style="border: 1px solid #1f2e2e">
+        <div>
+            <table class="table table-hover">
+                <tr>
+                    <th> Submitted on  </th>
+                    <th> Job Name        </th>
+                    <th> Input Sequence File </th>
+                    <th> Status        </th>
+                    <th>                </th>
+                </tr>
+                {% for user_job in user_jobs %}
+                    <tr>
+                        <td> {{ user_job.created_at }} </td>
+                        <td> {{ user_job.job_name }}     </td>
+                        <td> {{ user_job.Inputseq_filename }} </td>
+                        <td> <a href="{% url 'peng_to_bamm_result_detail' user_job.job_ID %}" role="button">{{user_job.status}}</a></td>
+                        <td> <a href="{% url 'delete' user_job.job_ID %}" role="button"><span class="glyphicon glyphicon-trash" aria-hidden="true" style="color:black"></span></a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+
+
+

@@ -258,3 +258,10 @@ tramp
 /GetOpt_ppLibrary/
 
 .idea/
+.idea
+
+# Database initialization
+POPULATED
+
+#Mysql start time
+MYSQL_STARTUP_TIME
