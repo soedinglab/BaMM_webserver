@@ -3,14 +3,11 @@ import sys
 
 from django.utils import timezone
 
-from ..utils.path_helpers import (
+from ..utils import (
     get_job_output_folder,
-)
-from ..utils.job_helpers import (
     get_model_order,
-)
-from ..utils.misc import (
     run_command,
+    meme_count_motifs,
 )
 
 
@@ -40,7 +37,11 @@ def MMcompare(job):
     print(timezone.now(), "\t | update: \t %s " % job.meta_job.status)
     sys.stdout.flush()
 
+    if job.Motif_Init_File_Format == 'PWM':
+        meme_file = job.full_motif_file_path
+        job.num_motifs = meme_count_motifs(meme_file)
     run_command(get_MMcompare_command(job))
+    job.save()
     sys.stdout.flush()
 
 
