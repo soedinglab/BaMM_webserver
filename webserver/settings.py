@@ -38,10 +38,6 @@ ALLOWED_HOSTS = ['0.0.0.0','bammmotif.mpibpc.mpg.de']
 
 INSTALLED_APPS = (
     'bammmotif',
-#    'bammmotif.peng',
-#    'bammmotif.bamm',
-#    'bammmotif.bammscan',
-#    'bammmotif.mmcompare',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -260,3 +256,4 @@ LOGGING = {
         }
     }
 }
+

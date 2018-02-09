@@ -15,10 +15,11 @@ def job_directory(job_pk):
 def job_output_directory(job_pk):
     return os.path.join(job_directory(job_pk), JOB_OUTPUT_DIRECTORY)
 
-
 def job_input_directory(job_pk):
     return os.path.join(job_directory(job_pk), JOB_INPUT_DIRECTORY)
 
+def mmcompare_motif_init_file(job_pk):
+    return os.path.join(job_input_directory(job_pk), BAMM_MOTIF_INIT_FILE)
 
 def meme_plot_directory(job_pk):
     return os.path.join(job_output_directory(job_pk), MEME_PLOT_DIRECTORY)

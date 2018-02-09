@@ -45,7 +45,7 @@ def upload_example_fasta_for_peng(job):
         job.fasta_file.save(out_filename, File(fh))
 
 
-def copy_peng_to_bamm(peng_id, bamm_id, post):
+def copy_peng_to_bamm(peng_id, bamm_id, post=None):
     peng_save_directory = path.join(peng_meme_directory(peng_id), SELECTED_MOTIFS)
     bamm_output_dir = path.join(get_job_output_folder(bamm_id), PENG_OUTPUT)
     bamm_plot_output_directory = path.join(bamm_output_dir, MEME_PLOT_DIRECTORY)
@@ -125,23 +125,24 @@ def check_if_request_from_peng_directly(request):
     return False
 
 
-def save_selected_motifs(request, pk):
+def save_selected_motifs(request, pk, select_all=False):
+    MEME_SUFFIX = '.meme'
     peng_plot_output_directory = path.join(peng_meme_directory(pk), MEME_PLOT_DIRECTORY)
     peng_save_directory = path.join(peng_meme_directory(pk), SELECTED_MOTIFS)
     if not path.exists(peng_save_directory):
         os.makedirs(peng_save_directory)
-    selected_motifs = [x.replace(MOTIF_SELECT_IDENTIFIER, "") for x in request.keys() if x.endswith(MOTIF_SELECT_IDENTIFIER)]
+    if select_all:
+        selected_motifs = [x.replace(MEME_SUFFIX, "") for x in os.listdir(peng_plot_output_directory) if x.endswith(MEME_SUFFIX)] # Lets call that one 'deadline dirty'
+    else:
+        selected_motifs = [x.replace(MOTIF_SELECT_IDENTIFIER, "") for x in request.keys() if x.endswith(MOTIF_SELECT_IDENTIFIER)]
     min_requirement_for_refinement = False
-    #motifs_to_merge = []
     for file in os.listdir(peng_plot_output_directory):
         if any([file.startswith(x) for x in selected_motifs]):
             min_requirement_for_refinement = True
             src = path.join(peng_plot_output_directory, file)
-            #motifs_to_merge.append(src)
             dest = path.join(peng_save_directory, file)
             shutil.copy(src, dest)
             logger.debug('copying %s -> %s', src, dest)
-    #merge_selected_motifs(motifs_to_merge, bamm_motif_init_file())
     return min_requirement_for_refinement
 
 
