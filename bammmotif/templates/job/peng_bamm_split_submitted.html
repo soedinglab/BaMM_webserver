@@ -2,8 +2,19 @@
 
 {% block content %}
 
+    <div class="jumbotron" style="background-color:white"><font color="black">
+        <h2> Submission successful! </h2>
+        <hr style="border: 1px solid #1f2e2e">
+        <p align="justify"> Your job is accepted and queued. You can watch the status of your job by entering your job-ID into the search panel of "Find my job" or click the button below.
+        </p><p class="indent" style="padding-left: 1.8em"><a class="btn btn-primary" href="/{{result_target|default:'result'}}/{{pk}}/" role="button" style="background-color:white"><font color="black">> Check your job status </font></a> </p>
+        <p align="justify">Once your job has finished, the status page will automatically redirect to the result page. Alternatively, you can bookmark this link <a href="https://bammmotif.mpibpc.mpg.de/results/{{pk}}/">https://bammmotif.mpibpc.mpg.de/{{result_target|default:'result'}}/{{pk}}</a> </p>
+        <p> Your job-ID : {{pk}} </p>
+        <p> Thank you for using BaMMmotif </p>
+    </font>
+    </div>
 
 
+    {% comment %}
     <div class="jumbotron" style="background-color:white"><font color="black">
         <h2> Submission Successful! </h2>
         <hr style="border: 1px solid #1f2e2e">
@@ -13,6 +24,7 @@
         <p> Thank you for using Peng! </p>
     </font>
     </div>
+    {% endcomment %}
 
 
 {% endblock %}
