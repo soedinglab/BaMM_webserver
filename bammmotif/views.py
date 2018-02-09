@@ -34,6 +34,7 @@ import os
 from os import path
 from os.path import basename
 from urllib.parse import urljoin
+from django.contrib.auth.models import User
 
 
 # #########################

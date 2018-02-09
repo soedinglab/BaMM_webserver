@@ -14,6 +14,8 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py sync_databases
 
+#exit
+
 # fill db construct (only use this when setting up webserver on completely new environment!)
 if [ ! -f POPULATED ]
 then

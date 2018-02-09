@@ -47,6 +47,8 @@ services:
     build: .
     command: ./run_web.sh
     user: ${BAMM_USER_UID}
+    environment:
+      - EXAMPLE_MOTIF_DB=${EXAMPLE_MOTIF_DB}
     volumes:
       - ${DB_DIR}:/code/BaMM_webserver/DB/
       - ${WEBSERVER_DIR}:/code

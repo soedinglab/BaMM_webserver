@@ -35,7 +35,9 @@ MODE_CHOICES = (
 
 JOB_INFO_MODE_CHOICES = (
     ('peng', 'peng'),
-    ('bamm', 'bamm'), 
+    ('bamm', 'bamm'),
+    ('bammscan', 'bammscan'),
+    ('mmcompare', 'mmcompare'),
 )
 
 def job_directory_path_new(instance, filename):
