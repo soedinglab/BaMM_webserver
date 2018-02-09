@@ -66,7 +66,6 @@ def new_peng_job(next_id, example_file):
     peng_seeding_pipeline.delay(peng_job.meta_job.pk)
     while not job_info.complete:
         job_info = get_object_or_404(JobInfo, pk=job_info.pk) # Kind of dirt.
-        print('waiting for job to finish')
         time.sleep(10)
     return next_id, peng_job
 
@@ -86,7 +85,7 @@ def new_bamm_job(next_id, example_file, peng_job):
     )
     with open(example_file) as fh:
         bamm_job.Input_Sequences.save(os.path.basename(example_file), File(fh))
-    save_selected_motifs(None, peng_job.pk, True)
+    save_selected_motifs(request=None, pk=peng_job.pk, select_all=True)
     copy_peng_to_bamm(peng_job.pk, bamm_job.pk)
     bamm_job.num_init_motifs = get_n_motifs(peng_job.pk)
     bamm_job.Motif_InitFile.name = get_motif_init_file(str(bamm_job.pk))
@@ -97,7 +96,6 @@ def new_bamm_job(next_id, example_file, peng_job):
     bamm_refinement_pipeline.delay(bamm_job.meta_job.pk)
     while not job_info.complete:
         job_info = get_object_or_404(JobInfo, pk=job_info.pk) # Kind of dirt.
-        print('waiting for job to finish')
         time.sleep(10)
     return next_id, bamm_job.pk
 
@@ -119,7 +117,6 @@ def new_bammscan_job(next_id, example_file, bamm_id):
     bamm_scan_pipeline.delay(bamm_scan_job.meta_job.pk)
     while not job_info.complete:
         job_info = get_object_or_404(JobInfo, pk=job_info.pk) # Kind of dirt.
-        print('waiting for job to finish')
         time.sleep(10)
     return next_id
 
@@ -145,7 +142,6 @@ def new_mmcompare_job(next_id, example_file, bamm_id):
     mmcompare_pipeline.delay(mmcompare_job.meta_job.pk)
     while not job_info.complete:
         job_info = get_object_or_404(JobInfo, pk=job_info.pk)
-        print('waiting for job to finish')
         time.sleep(10)
     return next_id
 

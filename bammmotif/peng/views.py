@@ -136,7 +136,7 @@ def run_peng_view(request, mode='normal'):
             peng_job.save()
 
         peng_seeding_pipeline.delay(job_pk)
-        return render(request, 'job/peng_bamm_split_submitted.html', {'pk': job_pk})
+        return render(request, 'job/submitted.html', {'pk': job_pk, 'result_target': 'peng_results'})
 
     meta_job_form = MetaJobNameForm()
     if mode == 'example':
@@ -217,7 +217,7 @@ def peng_load_bamm(request, pk):
 
             bamm_refinement_pipeline.delay(bamm_job_pk)
 
-            return render(request, 'job/peng_to_bamm_submitted.html', {'pk': bamm_job_pk})
+            return render(request, 'job/submitted.html', {'pk': bamm_job_pk, 'result_target': 'peng_to_bamm_results'})
 
         else:
             print(form.errors)
