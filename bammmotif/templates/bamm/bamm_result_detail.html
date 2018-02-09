@@ -356,7 +356,9 @@
         </p>
     </form>
 
-    <th> <a href="{% url 'peng_result_detail' result.peng.meta_job.job_id %}" style="color:black">
+    <th>
+        <input type="hidden" value="{{ result.peng_job.pk }}" name="pk">
+        <a href="{% url 'peng_result_detail' result.peng_job.pk %}" style="color:black">
         <button type="submit" class="btn btn-default">Run another Refinement.</button></a>
         </a>
     </th>
