@@ -116,3 +116,13 @@ def get_n_motifs(pk):
     meme_directory = os.path.join(peng_meme_directory(pk), "selected_motifs")
     return len([x for x in os.listdir(meme_directory) if x.endswith(".meme")])
 
+
+def get_motif_ids(meme_file):
+    motif_ids = []
+    with open(meme_file) as infile:
+        for line in infile:
+            line = line.strip()
+            if line.startswith('MOTIF'):
+                motif_id = line.replace('MOTIF', '').strip()
+                motif_ids.append(motif_id)
+    return motif_ids

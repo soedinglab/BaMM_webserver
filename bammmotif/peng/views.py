@@ -242,8 +242,9 @@ def peng_load_bamm(request, pk):
             bamm_job_pk = bamm_job.meta_job.pk
 
             # Copy necessary files from last peng job.
-            copy_peng_to_bamm(peng_job_pk, bamm_job_pk, request.POST)
-            save_selected_motifs(request.POST, peng_job.meta_job.pk, bamm_job_pk)
+            selected_motifs = get_selected_motifs(request.POST)
+            copy_peng_to_bamm(peng_job_pk, bamm_job_pk, selected_motifs)
+            save_selected_motifs(selected_motifs, peng_job.meta_job.pk, bamm_job_pk)
 
             with transaction.atomic():
                 bamm_job.meta_job.save()

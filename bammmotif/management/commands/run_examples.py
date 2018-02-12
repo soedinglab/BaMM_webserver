@@ -1,49 +1,67 @@
+import time
+from shutil import copyfile
+import uuid
+import os
+from os import path
+import logging
+
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 from django.core.files import File
+from django.utils import timezone
+
 from bammmotif.peng.tasks import peng_seeding_pipeline
 from bammmotif.bamm.tasks import bamm_refinement_pipeline
 from bammmotif.bammscan.tasks import bamm_scan_pipeline
 from bammmotif.mmcompare.tasks import mmcompare_pipeline
 from bammmotif.models import JobInfo, PengJob, BaMMJob, BaMMScanJob, MMcompareJob, MotifDatabase
-from bammmotif.utils import get_job_output_folder
-import datetime
-import time
+from bammmotif.utils import get_job_output_folder, filename_relative_to_job_dir
 from bammmotif.peng.cmd_modules import ShootPengModule
-from bammmotif.utils.meme_reader import get_n_motifs
+from bammmotif.utils.meme_reader import get_n_motifs, get_motif_ids
 from bammmotif.peng.utils import save_selected_motifs, copy_peng_to_bamm
 from bammmotif.peng.io import get_motif_init_file, job_input_directory, mmcompare_motif_init_file
-from shutil import copyfile
-#from ...utils import (
-#    upload_example_fasta,
-#    upload_example_motif
-#)
 from bammmotif.bamm.utils import (
     upload_example_fasta,
     upload_example_motif,
 )
 from bammmotif.utils.misc import is_fasta
 from webserver.settings import EXAMPLE_DIR
+from bammmotif.peng.settings import FILTERPWM_OUTPUT_FILE
 
-import uuid
-import os
 
 INITIAL_EXAMPLE_UUID = 0
 EXAMPLE_MOTIF_DB = os.environ['EXAMPLE_MOTIF_DB']
+logger = logging.getLogger(__name__)
+
 
 def example_in_db(example_file):
     example_user = get_object_or_404(User, username='Example_User')
     example_jobs = JobInfo.objects.filter(user=example_user, job_name=os.path.basename(example_file))
     return len(example_jobs) > 0
 
+
+def already_done(job_id):
+    job_uuid = uuid.UUID(int=job_id)
+    job = JobInfo.objects.filter(pk=job_uuid).first()
+    if job:
+        if not job.complete:
+            job.delete()
+            logger.info('Job %s not finished. Cleaning up and restarting', job)
+            return False
+        logger.debug('Job %s already done. Skipping', job)
+        return True
+    else:
+        return False
+
+
 def new_example_job_info(next_id, job_type, fname):
     example_user = get_object_or_404(User, username='Example_User')
     job_info = JobInfo(
         job_id=uuid.UUID(int=next_id),
         job_name=os.path.basename(fname),
-        created_at=datetime.datetime.now(),
+        created_at=timezone.now(),
         mode='Prediction',
         complete=False,
         job_type=job_type,
@@ -85,9 +103,13 @@ def new_bamm_job(next_id, example_file, peng_job):
     )
     with open(example_file) as fh:
         bamm_job.Input_Sequences.save(os.path.basename(example_file), File(fh))
-    save_selected_motifs(request=None, pk=peng_job.pk, select_all=True)
-    copy_peng_to_bamm(peng_job.pk, bamm_job.pk)
-    bamm_job.num_init_motifs = get_n_motifs(peng_job.pk)
+
+    n_motifs = 3
+    meme_file = path.join(get_job_output_folder(peng_job.pk), FILTERPWM_OUTPUT_FILE)
+    motifs = get_motif_ids(meme_file)[:n_motifs]
+    save_selected_motifs(motifs, peng_job.pk, bamm_job.meta_job.pk)
+    copy_peng_to_bamm(peng_job.pk, bamm_job.pk, motifs)
+    bamm_job.num_init_motifs = n_motifs
     bamm_job.Motif_InitFile.name = get_motif_init_file(str(bamm_job.pk))
     bamm_job.Motif_Initialization = "Custom File"
     bamm_job.Motif_Init_File_Format = "PWM"
@@ -95,7 +117,7 @@ def new_bamm_job(next_id, example_file, peng_job):
     bamm_job.save()
     bamm_refinement_pipeline.delay(bamm_job.meta_job.pk)
     while not job_info.complete:
-        job_info = get_object_or_404(JobInfo, pk=job_info.pk) # Kind of dirt.
+        job_info = get_object_or_404(JobInfo, pk=job_info.pk)
         time.sleep(10)
     return next_id, bamm_job.pk
 
@@ -137,7 +159,8 @@ def new_mmcompare_job(next_id, example_file, bamm_id):
     if not os.path.exists(motif_init_directory):
         os.makedirs(motif_init_directory)
     copyfile(motif_init_file_src, motif_init_file_dst)
-    mmcompare_job.Motif_InitFile.name = get_motif_init_file(str(mmcompare_job.pk))
+    init_bname = path.basename(motif_init_file_dst)
+    mmcompare_job.Motif_InitFile = filename_relative_to_job_dir(mmcompare_job, init_bname)
     mmcompare_job.save()
     mmcompare_pipeline.delay(mmcompare_job.meta_job.pk)
     while not job_info.complete:
@@ -147,24 +170,52 @@ def new_mmcompare_job(next_id, example_file, bamm_id):
 
 
 def add_example_to_db(example_file, next_id):
-    #First peng job
-    next_id, peng_job = new_peng_job(next_id, example_file)
-    next_id, bamm_id = new_bamm_job(next_id, example_file, peng_job)
-    next_id = new_bammscan_job(next_id, example_file, bamm_id)
-    next_id = new_mmcompare_job(next_id, example_file, bamm_id)
+    if already_done(next_id):
+        peng_job = PengJob.objects.get(pk=uuid.UUID(int=next_id))
+        next_id += 1
+    else:
+        next_id, peng_job = new_peng_job(next_id, example_file)
+
+    if already_done(next_id):
+        bamm_id = uuid.UUID(int=next_id)
+        next_id += 1
+    else:
+        next_id, bamm_id = new_bamm_job(next_id, example_file, peng_job)
+
+    if already_done(next_id):
+        next_id += 1
+    else:
+        next_id = new_bammscan_job(next_id, example_file, bamm_id)
+
+    if already_done(next_id):
+        next_id += 1
+    else:
+        next_id = new_mmcompare_job(next_id, example_file, bamm_id)
     return next_id
 
 
 class Command(BaseCommand):
+
+    def add_arguments(self, parser):
+        parser.add_argument('--flush', action='store_true')
+
     def handle(self, *args, **options):
 
         # Check if user exists in db
-        if not User.objects.filter(username='Example_User').exists():
-            u = User(username='Example_User', first_name='User', last_name='Example')
-            u.set_unusable_password()
-            u.save()
+        user_query = User.objects.filter(username='Example_User')
+        if not user_query.exists():
+            user = User(username='Example_User', first_name='User', last_name='Example')
+            user.set_unusable_password()
+            user.save()
+        else:
+            user = user_query.first()
+            
+        if options['flush']:
+            for example_job in JobInfo.objects.filter(user=user):
+                logger.info('Removing example job %s', example_job)
+                example_job.delete()
+
         example_list = [os.path.join(EXAMPLE_DIR, x) for x in os.listdir(EXAMPLE_DIR) if is_fasta(x)]
-        next_id = INITIAL_EXAMPLE_UUID + len(JobInfo.objects.filter(user__username='Example_User'))
+        next_id = INITIAL_EXAMPLE_UUID
         for example in example_list:
-            if not example_in_db(example):
-                next_id = add_example_to_db(example, next_id)
+            next_id = add_example_to_db(example, next_id)
