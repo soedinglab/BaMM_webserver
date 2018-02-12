@@ -31,7 +31,6 @@ services:
     command: celery --app=webserver.celery:app worker --loglevel=DEBUG
     user: ${BAMM_USER_UID}
     volumes:
-      - ${DB_DIR}:/code/BaMM_webserver/DB/
       - ${WEBSERVER_DIR}:/code
       - ${MEDIA_DIR}:/code/media
       - ${MOTIF_DB_DIR}:/motif_db
@@ -42,6 +41,16 @@ services:
     networks:
       bamm_net:
         ipv4_address: ${NETWORK_PREFIX}.4
+    environment: &env_vars
+        - DJANGO_DEBUG=${DJANGO_DEBUG}
+        - BAMM_LOG_LEVEL=${BAMM_LOG_LEVEL}
+        - SECRET_KEY=${SECRET_KEY}
+        - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+        - DB_HOST=${DB_HOST}
+        - DB_NAME=${DB_NAME}
+        - DB_PORT=${DB_PORT}
+        - DB_USER=${DB_USER}
+        - MYSQL_PASSWORD=${MYSQL_PASSWORD}
 
   web:
     build: .
@@ -50,7 +59,6 @@ services:
     environment:
       - EXAMPLE_MOTIF_DB=${EXAMPLE_MOTIF_DB}
     volumes:
-      - ${DB_DIR}:/code/BaMM_webserver/DB/
       - ${WEBSERVER_DIR}:/code
       - ${MEDIA_DIR}:/code/media
       - ${MOTIF_DB_DIR}:/motif_db
@@ -66,6 +74,8 @@ services:
     networks:
       bamm_net:
         ipv4_address: ${NETWORK_PREFIX}.5
+    environment: *env_vars
+
 
 networks:
   bamm_net:

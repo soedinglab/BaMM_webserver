@@ -13,8 +13,8 @@
                     <div class="jumbotron" style="background-color:white"><font color="black">
 
                         <center>
-                            <a class="btn btn-primary btn-lg" href="{% url 'peng_predict' %}"
-                               style="width:57%;background-color:#4169E1">De-novo motif discovery
+                            <a class="btn btn-primary btn-lg workflow_button" href="{% url 'peng_predict' %}"
+                        	>De-novo motif discovery
                             </a></center>
 
                         <!-- Modal -->
@@ -93,8 +93,8 @@
                         {% else %}
                             <!-- Button trigger modal -->
                             <center>
-                            <a class="btn btn-primary btn-lg" href="{% url 'run_bamm_scan' %}"
-                               style="width: 57%;background-color:#4169E1">Motif scan
+                            <a class="btn btn-primary btn-lg workflow_button" href="{% url 'run_bamm_scan' %}">
+			        Motif scan
                             </a></center>
 
                             <!-- Modal -->
@@ -172,7 +172,7 @@
                         </a></center>
                         {% endcomment %}
 
-                        <center><a class="btn btn-primary btn-lg" href='/database/' role="button" style="width:57%;background-color:#4169E1">Motif database</a></center>
+                        <center><a class="btn btn-primary btn-lg workflow_button" href='/database/' role="button">Motif database</a></center>
                         <hr style="border: 1px solid #1f2e2e">
                         <p align="justify"><font size=3>Download or select for analysis models from a database of over
                             400 models learned on ChIP-seq data</font></p>
@@ -199,8 +199,8 @@
                         </center>
                         {% endcomment %}
                         <center>
-                        <a class="btn btn-primary btn-lg" href="{% url 'run_compare' %}"
-                               style="background-color:	#4169E1;width: 57%">Motif-motif comparison
+                        <a class="btn btn-primary btn-lg workflow_button" href="{% url 'run_compare' %}"
+                        	>Motif-motif comparison
                         </a></center>
 
                         <!-- Modal -->

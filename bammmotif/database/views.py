@@ -31,7 +31,7 @@ def maindb(request):
 
 
 def db_detail(request, pk):
-    entry = get_object_or_404(ChIPseq, db_public_id=pk)
+    entry = get_object_or_404(ChIPseq, motif_id=pk)
     db_location = entry.motif_db.relative_db_model_dir
     return render(request, 'database/db_detail.html',
                   {'entry': entry, 'db_location': db_location})

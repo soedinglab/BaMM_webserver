@@ -133,7 +133,7 @@
                     <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
                     <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
                     {% if mode == "Prediction" %}
-                        <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.auc|floatformat:7}} </a></th>
+                        <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.auc|floatformat:3}} </a></th>
                         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.occurrence|floatformat:3}} </a></th>
                     {% endif %}
                     <th> <a href="#{{m.job_rank}}" style="color:black">
@@ -176,11 +176,11 @@
                     <h2> Performance and Positional Distribution on Input Sequences </h2>
                     <hr style="border: 1px solid #1f2e2e">
                     <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partiacl ROC5 curve">
+                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partial ROC5 curve">
                     <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_PRC.jpeg" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
                 {% endif %}
                 {% if result.score_Seqset %}
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Ditsribution"> &emsp;
+                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Distribution"> &emsp;
 
                 {% endif %}
 
@@ -201,19 +201,11 @@
                         {% for match in m.dbmatch_set.all|dictsort:"p_value"   %}
                             <tr>
                                 <th> {{match.db_entry.target_name}} </th>
-                                {% if  match.p_value < 0.0000000001 %}
-                                    <th> < 1e-10 </th>
-                                {% else %}
-                                    <th> {{match.p_value|floatformat:10}} </th>
-                                {% endif %}
-                                {% if  match.e_value < 0.0000000001 %}
-                                    <th> < 1e-10 </th>
-                                {% else %}
-                                    <th> {{match.e_value|floatformat:10}} </th>
-                                {% endif %}
+				<th> {{match.p_value|stringformat:".01E"}} </th>
+				<th> {{match.e_value|stringformat:".01E"}} </th>
                                 <th> <img src="{% get_static_prefix %}{{db_dir}}/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale_stamp.png" style='max-height:90px;' alt=""> </th>
                                 <th> <img src="{% get_static_prefix %}{{db_dir}}/{{match.db_entry.result_location}}/{{match.db_entry.result_location}}_motif_1-logo-order-0-icColumnScale-icLetterScale-revComp_stamp.png" class="responsive-img" style='max-height:90px;' alt=""></th>
-                                <th> <a href="{% url 'db_detail' match.db_entry.db_public_id %}" style="color:black">
+                                <th> <a href="{% url 'db_detail' match.db_entry.motif_id %}" style="color:black">
                                     <button type="submit" class="btn btn-default" aria-label="Database" >
                                         <span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span>
                                     </button>
@@ -224,6 +216,10 @@
                 {% endif %}
 
             </div>
+		<input type="hidden" value="{{ result.peng_job.pk }}" name="pk">
+		<a href="{% url 'peng_result_detail' result.peng_job.pk %}" style="color:black">
+		<button type="submit" class="btn btn-primary btn-lg">Back to the seeding results</button></a>
+		</a>
 
         </div>
     {% endfor %}
@@ -347,22 +343,8 @@
             </div>
         </div>
     </div>
-
-    <form action="{% get_media_prefix %}{{ result.peng_job.meta_job.pk }}/Output/meme_plots/motif_all.zip" method="get" target="_blank">
-        <p align="right">
-            <button type="submit" class="btn btn-default" aria-label="Download">
-                <span class="glyphicon glyphicon-download" aria-hidden="true"> Download PeNG Seeding.</span>
-            </button>
-        </p>
-    </form>
-
-    <th>
-        <input type="hidden" value="{{ result.peng_job.pk }}" name="pk">
-        <a href="{% url 'peng_result_detail' result.peng_job.pk %}" style="color:black">
-        <button type="submit" class="btn btn-default">Run another Refinement.</button></a>
-        </a>
-    </th>
     </div>
+
 
 {% endblock %}
 

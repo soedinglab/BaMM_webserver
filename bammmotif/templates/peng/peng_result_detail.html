@@ -26,7 +26,7 @@
 
 
         {% if mode == "Prediction" %}
-            <h2> Predicted Motifs </h2>
+            <h2>Seeds for higher-order refinement</h2>
         {% endif %}
         <div class="jumbotron" style="background-color:white" xmlns="http://www.w3.org/1999/html">
             <h2> Results for {{ job_info.job_name }} </h2>
@@ -178,7 +178,6 @@
                         </div>
                     {% endif %}
                 </div>
-            </div>
         {% comment %}
         </div>
         <table class="table table-hover">
@@ -282,7 +281,7 @@
                     <th> PWM</th>
                     <th> reverse Comp.</th>
                     <th> log(pval)</th>
-                    <th> ausfc</th>
+                    <th> AUSFC</th>
                     <th> Download</th>
                 </tr>
                 {% for motif in meme_meta_info %}
@@ -298,8 +297,8 @@
                         <th><img src="{% get_media_prefix %}{{ opath }}/{{ motif.meme_id }}_revComp.png"
                                  class="responsive-img"
                                  style='max-height:400px;' width="100" height="50" alt={{ motif }}_rev></th>
-                        <th> {{ motif.logpval }} </th>
-                        <th> {{ motif.ausfc }}</th>
+			<th> {{ motif.logpval|stringformat:".01E" }} </th>
+                        <th> {{ motif.ausfc|floatformat:3}}</th>
                         <th>
                             {% comment %}
                             <form action="{% get_media_prefix %}/{{ opath }}/{{ motif.meme_id }}.zip" method="get" target="_blank">
@@ -310,7 +309,7 @@
                                 </p>
                             </form>
                             {%  endcomment %}
-                            <a href="{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip" >Download</a>
+			    <a class="btn btn-default glyphicon glyphicon-download" href="{% get_media_prefix %}/{{ opath }}//{{ motif.meme_id }}.zip" ></a>
                             {% comment %}
                             <form action="{% get_media_prefix %}/{{ opath }}/motif_all.zip" method="get" target="_blank">
                                 <p align="right">

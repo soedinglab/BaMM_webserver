@@ -12,7 +12,7 @@ from ..utils import (
     get_log_file,
 )
 from .models import BaMMScanJob
-from ..mmcompare.tasks import generic_mmcompare_task
+from ..mmcompare.tasks import generic_mmcompare_task, generic_mmcompare_import_matches
 from ..tasks import generic_model_zip_task
 from .commands import BaMMScan
 
@@ -38,6 +38,8 @@ def bamm_scan_pipeline(self, job_pk):
         pipeline_tasks.append(fdr_task.si(job_pk))
     if job.MMcompare:
         pipeline_tasks.append(mmcompare_task.si(job_pk))
+        pipeline_tasks.append(import_mmcompare_hits.si(job_pk))
+    pipeline_tasks.append(compress_task.si(job_pk))
     pipeline_tasks.append(mmcompare_finalize.si(job_pk))
 
     celery.chain(pipeline_tasks)()
@@ -72,3 +74,9 @@ def mmcompare_finalize(self, job_pk):
     job = get_object_or_404(BaMMScanJob, meta_job__pk=job_pk)
     job.meta_job.complete = True
     job.meta_job.save()
+
+
+@task(bind=True)
+def import_mmcompare_hits(self, job_pk):
+    job = get_object_or_404(BaMMScanJob, meta_job__pk=job_pk)
+    generic_mmcompare_import_matches(job)

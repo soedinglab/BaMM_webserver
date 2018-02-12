@@ -32,14 +32,18 @@ from .utils import (
     upload_example_fasta,
     read_bmscore,
     merge_meme_and_bmscore,
+    get_selected_motifs,
 )
 from bammmotif.utils.misc import url_prefix
 from bammmotif.forms import FindForm
 from bammmotif.peng_utils import get_motif_ids
 from bammmotif.utils.meme_reader import Meme, split_meme_file, get_n_motifs
 from bammmotif.peng.settings import (
-    MEME_PLOT_DIRECTORY, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY,
-    NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT,
+    MEME_PLOT_DIRECTORY,
+    MEME_PLOT_INPUT,
+    JOB_OUTPUT_DIRECTORY,
+    NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT, 
+    MOTIF_SELECT_IDENTIFIER,
 )
 
 from ..utils import (
@@ -68,7 +72,6 @@ from .job import (
     create_job,
     validate_input_data,
     init_job,
-    create_job,
     create_bamm_job,
 )
 from .cmd_modules import PlotMeme
@@ -95,6 +98,7 @@ def peng_result_detail(request, pk):
         meme_meta_info_list = Meme.fromfile(meme_result_file_path)
         meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
         meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
+
         return render(request, 'peng/peng_result_detail.html', {
             'result': result,
             'pk': result.meta_job.pk,
@@ -181,8 +185,8 @@ def peng_load_bamm(request, pk):
 
     if request.method == "POST":
         if check_if_request_from_peng_directly(request):
-            at_least_one_motif_selected = save_selected_motifs(request.POST, pk)
-            if not at_least_one_motif_selected:
+            selected_motif_keys = [x for x in request.POST.keys() if x.endswith(MOTIF_SELECT_IDENTIFIER)]
+            if len(selected_motif_keys) == 0:
                 bm_scores = read_bmscore(peng_bmscore_file_old(str(peng_job.meta_job.pk), peng_job.filename_prefix))
                 opath = os.path.join(get_result_folder(peng_job_pk), MEME_PLOT_DIRECTORY)
                 meme_result_file_path = get_meme_result_file_path(peng_job_pk)
@@ -191,6 +195,7 @@ def peng_load_bamm(request, pk):
                 meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
                 return render(request, 'peng/peng_result_detail.html', {
                     'result': peng_job,
+                    'job_info': peng_job.meta_job,
                     'pk': peng_job_pk,
                     'mode': peng_job.meta_job.mode,
                     'opath': opath,
@@ -203,21 +208,53 @@ def peng_load_bamm(request, pk):
                 'mode': mode,
                 'inputfile': inputfile,
                 'job_name': peng_job.meta_job.job_name,
-                'pk': peng_job_pk
+                'pk': peng_job_pk,
+                'selected_motif_keys': selected_motif_keys,
             })
         form = PengToBammForm(request.POST, request.FILES)
+
+        # the user gets here when he/she reloads the page or does other dirty tricks.
+        # in this case the information about the selected motifs gets lost and the
+        # user has to start over again
+        if len(get_selected_motifs(request.POST)) == 0:
+            bm_scores = read_bmscore(peng_bmscore_file_old(
+                str(peng_job.meta_job.pk), peng_job.filename_prefix))
+            opath = os.path.join(get_result_folder(peng_job_pk), MEME_PLOT_DIRECTORY)
+            meme_result_file_path = get_meme_result_file_path(peng_job_pk)
+            meme_meta_info_list = Meme.fromfile(meme_result_file_path)
+            meme_meta_info_list_old = Meme.fromfile(
+                path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
+            meme_meta_info_list_new = merge_meme_and_bmscore(
+                meme_meta_info_list, meme_meta_info_list_old, bm_scores)
+
+            return render(request, 'peng/peng_result_detail.html', {
+                'result': peng_job,
+                'pk': peng_job_pk,
+                'mode': peng_job.meta_job.mode,
+                'opath': opath,
+                'meme_meta_info': meme_meta_info_list_new,
+                'job_info': peng_job.meta_job,
+            })
+
         if form.is_valid():
             bamm_job = create_bamm_job('bamm', request, form, peng_job)
             bamm_job.MMcompare = True
-            bamm_job.save()
             bamm_job_pk = bamm_job.meta_job.pk
 
             # Copy necessary files from last peng job.
             copy_peng_to_bamm(peng_job_pk, bamm_job_pk, request.POST)
+            save_selected_motifs(request.POST, peng_job.meta_job.pk, bamm_job_pk)
+
+            with transaction.atomic():
+                bamm_job.meta_job.save()
+                bamm_job.save()
 
             bamm_refinement_pipeline.delay(bamm_job_pk)
 
-            return render(request, 'job/submitted.html', {'pk': bamm_job_pk, 'result_target': 'peng_to_bamm_results'})
+            return render(request, 'job/submitted.html', {
+                'pk': bamm_job_pk,
+                'result_target': 'peng_to_bamm_results'
+            })
 
         else:
             print(form.errors)

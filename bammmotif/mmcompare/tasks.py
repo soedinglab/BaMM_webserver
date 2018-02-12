@@ -19,11 +19,12 @@ from ..utils import (
 )
 
 from ..models import MMcompareJob
+from ..tasks import generic_model_zip_task
+
 from .utils import (
     make_logos,
     add_motif_motif_matches,
 )
-
 from .commands import (
     MMcompare,
     get_compare_iupac_command,
@@ -85,6 +86,7 @@ def mmcompare_pipeline(self, job_pk):
         mmcompare_task.si(job_pk),
         mmcompare_prepare_results.si(job_pk),
         mmcompare_import_matches.si(job_pk),
+        mmcompare_zip_motifs.si(job_pk),
         mmcompare_finalize.si(job_pk),
     ])
     pipeline()
@@ -113,6 +115,11 @@ def mmcompare_import_matches(self, job_pk):
     job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
     return generic_mmcompare_import_matches(job)
 
+@task(bind=True)
+def mmcompare_zip_motifs(self, job_pk):
+    job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
+    return generic_model_zip_task(job)
+    
 
 @task(bind=True)
 def mmcompare_finalize(self, job_pk):

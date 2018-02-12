@@ -14,6 +14,18 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 from os import path
 
+
+class MissingConfigurationException(Exception):
+    pass
+
+
+def get_from_env(env_variable, converter=str):
+    if env_variable not in os.environ:
+        raise MissingConfigurationException('Environment variable %s undefined' % env_variable)
+    else:
+        return converter(os.getenv(env_variable))
+
+
 # CELERY SETTINGS
 BROKER_URL = 'redis://redis_celery:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
@@ -26,14 +38,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '3&umq7d9gtpb=8atu$z8+#n92f--yk%yv_=v%c05&*+pwod7l='
+
+SECRET_KEY = get_from_env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = get_from_env('DJANGO_DEBUG', converter=lambda x: x == "1")
 
-ALLOWED_HOSTS = ['0.0.0.0','bammmotif.mpibpc.mpg.de']
-
-
+ALLOWED_HOSTS = get_from_env('ALLOWED_HOSTS', converter=lambda x: x.split())
 # Application definition
 
 INSTALLED_APPS = (
@@ -86,11 +97,11 @@ WSGI_APPLICATION = 'webserver.wsgi.application'
 DB_ROOT = os.path.join(BASE_DIR, '/DB')
 
 
-DB_HOST = 'db'
-DB_NAME = 'webserver'
-DB_USER = 'root'
-DB_PW = '3aMM!mot1f'
-DB_PORT = '3306'
+DB_HOST = get_from_env('DB_HOST')
+DB_NAME = get_from_env('DB_NAME')
+DB_USER = get_from_env('DB_USER')
+DB_PORT = get_from_env('DB_PORT')
+DB_PW = get_from_env('MYSQL_PASSWORD')
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
@@ -201,7 +212,7 @@ LOG_DIR = '/logs'
 # Settings realted to example data
 EXAMPLE_DIR = 'example_data'
 EXAMPLE_FASTA = 'example_data/ExampleData.fasta'
-EXAMPLE_MOTIF = 'example_data/ExampleMotifs.meme' 
+EXAMPLE_MOTIF = 'example_data/ExampleMotifs.meme'
 PENG_INIT = 'PengInitialization.meme'
 PENG_OUT = 'PengOut.meme'
 BAMM_INPUT = 'Input'
@@ -251,7 +262,7 @@ LOGGING = {
         },
         'bammmotif': {
             'handlers': ['bammmotif_logfile'],
-            'level': 'DEBUG',
+            'level': get_from_env('BAMM_LOG_LEVEL'),
             'propagate': True,
         }
     }

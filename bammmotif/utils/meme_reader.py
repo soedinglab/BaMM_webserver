@@ -70,9 +70,9 @@ def split_meme_file(fpath, directory):
                 d.write(outstring)
 
 
-def update_and_copy_meme_file(fpath, tpath, motif_directory):
-    selected_memes = [x.rsplit(".", maxsplit=1)[0] for x in os.listdir(motif_directory) if x.endswith(".meme")]
-    with open(fpath, "r") as f:
+def meme_drop_unselected_motifs(src_path, dest_path, selected_motifs):
+    selected_memes = set(selected_motifs)
+    with open(src_path, "r") as f:
         fcont = f.read().split("\n\n")
         meme_header = "\n\n".join(fcont[:3])
         remaining_motifs = meme_header + "\n\n"
@@ -83,9 +83,8 @@ def update_and_copy_meme_file(fpath, tpath, motif_directory):
             if meme_id not in selected_memes:
                 continue
             remaining_motifs += "\n\n" + elem
-        with open(tpath, "w") as t:
+        with open(dest_path, "w") as t:
             t.write(remaining_motifs)
-
 
 
 def load_meme_dict(fpath):

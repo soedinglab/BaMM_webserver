@@ -17,7 +17,12 @@ from .settings import (
     MEME_OUTPUT_FILE
 )
 
-from .io import get_peng_meme_output_in_bamm, peng_output_meme_file, get_motif_init_file
+from .io import (
+    get_peng_meme_output_in_bamm,
+    peng_output_meme_file,
+    get_motif_init_file,
+)
+from .utils import get_selected_motifs
 
 from ..utils import (
     get_user,
@@ -64,7 +69,7 @@ def create_bamm_job(job_type, request, form, peng_job):
     bamm_job = form.save(commit=False)
     bamm_job.meta_job = job_info
     bamm_job.Input_Sequences = peng_job.fasta_file
-    bamm_job.num_init_motifs = get_n_motifs(peng_job.pk)
+    bamm_job.num_init_motifs = len(get_selected_motifs(request.POST))
     bamm_job.Motif_InitFile.name = get_motif_init_file(str(bamm_job.pk))
     bamm_job.Motif_Initialization = "Custom File"
     bamm_job.Motif_Init_File_Format = "PWM"
@@ -124,7 +129,7 @@ def create_job(form, meta_job_form, request):
     # check if job has a name, if not use first 6 digits of job_id as job_name
     if meta_job.job_name is None:
         # truncate job_id
-        job_id_short = str().split("-", 1)
+        job_id_short = str(meta_job.pk).split("-", 1)
         meta_job.job_name = job_id_short[0]
     job.meta_job = meta_job
     return job
