@@ -112,7 +112,7 @@ def bamm_task(self, job_pk):
 @task(bind=True)
 def bammscan_task(self, job_pk):
     job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
-    generic_bammscan_task(job, first_in_pipeline=False, is_refined_model=False)
+    generic_bammscan_task(job, first_in_pipeline=False, is_refined_model=True)
 
 
 @task(bind=True)

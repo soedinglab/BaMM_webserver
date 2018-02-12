@@ -68,7 +68,6 @@ from .job import (
     create_job,
     validate_input_data,
     init_job,
-    create_job,
     create_bamm_job,
 )
 from .cmd_modules import PlotMeme
@@ -95,6 +94,7 @@ def peng_result_detail(request, pk):
         meme_meta_info_list = Meme.fromfile(meme_result_file_path)
         meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
         meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
+
         return render(request, 'peng/peng_result_detail.html', {
             'result': result,
             'pk': result.meta_job.pk,
@@ -209,11 +209,14 @@ def peng_load_bamm(request, pk):
         if form.is_valid():
             bamm_job = create_bamm_job('bamm', request, form, peng_job)
             bamm_job.MMcompare = True
-            bamm_job.save()
             bamm_job_pk = bamm_job.meta_job.pk
 
             # Copy necessary files from last peng job.
             copy_peng_to_bamm(peng_job_pk, bamm_job_pk, request.POST)
+
+            with transaction.atomic():
+                bamm_job.meta_job.save()
+                bamm_job.save()
 
             bamm_refinement_pipeline.delay(bamm_job_pk)
 

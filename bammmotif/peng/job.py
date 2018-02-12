@@ -124,7 +124,7 @@ def create_job(form, meta_job_form, request):
     # check if job has a name, if not use first 6 digits of job_id as job_name
     if meta_job.job_name is None:
         # truncate job_id
-        job_id_short = str().split("-", 1)
+        job_id_short = str(meta_job.pk).split("-", 1)
         meta_job.job_name = job_id_short[0]
     job.meta_job = meta_job
     return job
