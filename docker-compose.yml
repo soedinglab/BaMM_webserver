@@ -51,6 +51,8 @@ services:
         - DB_PORT=${DB_PORT}
         - DB_USER=${DB_USER}
         - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        - MYSQL_STARTUP_DELAY_SECONDS=${MYSQL_STARTUP_DELAY_SECONDS}
+        - EXAMPLE_MOTIF_DB=${EXAMPLE_MOTIF_DB}
 
   web:
     build: .

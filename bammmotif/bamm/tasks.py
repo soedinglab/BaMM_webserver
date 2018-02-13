@@ -14,7 +14,7 @@ from ..utils import (
 )
 from ..commands import Compress
 from ..bammscan.tasks import generic_bammscan_task
-from ..mmcompare.tasks import generic_mmcompare_task
+from ..mmcompare.tasks import generic_mmcompare_task, generic_mmcompare_import_matches
 
 from .commands import (
     BaMM, FDR,
@@ -125,6 +125,7 @@ def fdr_task(self, job_pk):
 def mmcompare_task(self, job_pk):
     job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
     generic_mmcompare_task(job)
+    generic_mmcompare_import_matches(job)
 
 
 @task(bind=True)

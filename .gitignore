@@ -1,7 +1,6 @@
 ExampleData_BaMMmotif.zip
 /bammmotif/static/scripts/*.html
 /media/
-/bammmotif/migrations/
 /DB/
 /bammmotif/static/DB/*
 /bammmotif/templates/home/test.html

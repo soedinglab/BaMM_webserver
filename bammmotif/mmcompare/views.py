@@ -35,6 +35,7 @@ def run_compare_view(request, mode='normal'):
             meta_job.created_at = datetime.now()
             meta_job.user = get_user(request)
             meta_job.mode = "Compare"
+            meta_job.job_type = 'compare'
             meta_job.save()
 
             # read in data and parameter

@@ -22,7 +22,7 @@
 
     
     {% if mode == 'example' %}
-      <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif initializatin file:</label>  <p class="indent" style="padding-left: 1.8em"> Example motif </p>
+      <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif initialization file:</label>  <p class="indent" style="padding-left: 1.8em"> Example motif </p>
       
       <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif init file format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em">PWM</font></p>
         
@@ -50,10 +50,11 @@
 
   </div>
   <hr style="border: 1px solid #1f2e2e">
-  <p>
-    <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font color="white">BaMM!</font></button></p>
-     &emsp; <a href="{% url 'result_detail' pk='b43a98d7-cf12-4c9c-8259-53d13c47a0d9' %}"  role="button"> <span
+  <span style="font-size: 21px">
+    <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font color="white">BaMM!</font></button>
+     &emsp; <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000003' %}"  role="button"> <span
             class="glyphicon glyphicon-play-circle" aria-hidden="true"> View example result </span></a>
+ </span>
   </p>
   </form>
 </div>

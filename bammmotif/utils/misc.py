@@ -55,6 +55,8 @@ class CommandFailureException(Exception):
 url_prefix = {
     'peng': 'peng_results/',
     'bamm': 'peng_to_bamm_results/',
+    'scan': 'scan_results/',
+    'compare': 'compare_results/',
 }
 
 

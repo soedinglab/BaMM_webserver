@@ -37,28 +37,20 @@ RUN rm -rf /tmp/bamm
 
 ADD tools/suite /tmp/suite
 RUN mkdir -p /tmp/suite/build
-RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make -j8 install >/dev/null 2>/dev/null
+RUN cd /tmp/suite/build && CXXFLAGS=-std=c++1y cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make -j8 install
 RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
-
-# Note: NOT ALL OF MEME-SUITES TOOLS INSTALL CORRECTLY. For now this is fine, since we are only interested in plotting.
-RUN mkdir -p /tmp/meme_suite
-RUN cd /tmp/meme_suite && \
-    wget http://meme-suite.org/meme-software/${MEME_VERSION}/meme_${MEME_VERSION}.tar.gz && \
-    tar xfvz meme_${MEME_VERSION}.tar.gz && \
-    cd meme_${MEME_VERSION} && \
-    ./configure --prefix=/ext/meme --with-url=http://meme-suite.org --enable-build-libxml2 --enable-build-libxslt --enable-serial  && \
-    make -j8 && \
-    make install
-RUN cp /ext/meme/bin/ceqlogo /ext/bin
-RUN rm -rf /tmp/meme_suite
 
 # Add filterpwm to /ext
 ADD tools/bamm/py /tmp/py
 RUN mkdir -p /ext/filterPWMs
 RUN cp /tmp/py/* /ext/filterPWMs/
 RUN rm -rf /tmp/filterPWMs
-# RUN cp -a tools/bamm/py/filterPWMs /ext
+
+# patch https://github.com/soedinglab/BaMMmotif2/pull/25
+COPY docker-utils/filterPWM_le2.patch /ext/filterPWMs/
+RUN cd /ext/filterPWMs && git apply filterPWM_le2.patch && rm filterPWM_le2.patch
+
 ENV PATH="/ext/filterPWMs:${PATH}"
 
 ENV PATH="/ext/bin:${PATH}"

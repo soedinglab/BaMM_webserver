@@ -76,9 +76,10 @@ def add_motif_motif_matches(job):
                     matching_models = ChIPseq.objects.filter(
                         motif_db=job.motif_db, filename=tokens[2]
                     )
-                    logger.error('database %s inconsistent. Model %s defined but not found', 
-                                 job.motif_db, tokens[2])
-                    assert len(matching_models) == 1
+                    if len(matching_models) != 1:
+                        logger.error('database %s inconsistent. Model %s defined but not found',
+                                     job.motif_db, tokens[2])
+                        assert False
                     target_motif, = matching_models
 
                     # create relationship

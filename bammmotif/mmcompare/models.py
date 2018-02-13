@@ -40,5 +40,9 @@ class MMcompareJob(models.Model):
     def full_motif_file_path(self):
         return path.join(settings.JOB_DIR, str(self.Motif_InitFile))
 
+    @property
+    def motif_file_name(self):
+        return path.basename(str(self.Motif_InitFile))
+
     def __str__(self):
         return str(self.meta_job.job_id)

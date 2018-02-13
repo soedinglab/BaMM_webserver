@@ -48,10 +48,10 @@ logger = logging.getLogger(__name__)
 def upload_example_fasta_for_peng(job):
     out_filename = EXAMPLE_FASTA_FILE
     with open(settings.EXAMPLE_FASTA) as fh:
-        job.fasta_file.save(out_filename, File(fh))
+        job.fasta_file.save(out_filename, File(fh), save=False)
 
 
-def copy_peng_to_bamm(peng_id, bamm_id, post):
+def copy_peng_to_bamm(peng_id, bamm_id, selected_motifs):
     bamm_output_dir = path.join(get_job_output_folder(bamm_id), PENG_OUTPUT)
     bamm_plot_output_directory = path.join(bamm_output_dir, MEME_PLOT_DIRECTORY)
     if not path.exists(bamm_plot_output_directory):
@@ -60,7 +60,6 @@ def copy_peng_to_bamm(peng_id, bamm_id, post):
     # copy meme.out
     meme_path_src = os.path.join(peng_meme_directory(peng_id), MEME_OUTPUT_FILE)
     meme_path_dst = get_motif_init_file(str(bamm_id))
-    selected_motifs = get_selected_motifs(post)
     meme_drop_unselected_motifs(meme_path_src, meme_path_dst, selected_motifs)
 
     # copy results of filterPWM
@@ -132,13 +131,12 @@ def get_selected_motifs(post_data):
     return motif_ids
 
 
-def save_selected_motifs(post_data, peng_pk, bamm_pk):
+def save_selected_motifs(motifs, peng_pk, bamm_pk):
+    selected_motif_ids = set(motifs)
     peng_plot_output_directory = path.join(peng_meme_directory(peng_pk), MEME_PLOT_DIRECTORY)
     peng_save_directory = path.join(peng_meme_directory(bamm_pk), SELECTED_MOTIFS)
     if not path.exists(peng_save_directory):
         os.makedirs(peng_save_directory)
-
-    selected_motif_ids = set(get_selected_motifs(post_data))
 
     split_pat = re.compile(r'[^a-zA-Z]')
     for file in os.listdir(peng_plot_output_directory):

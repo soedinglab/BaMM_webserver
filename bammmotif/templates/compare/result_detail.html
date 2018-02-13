@@ -8,162 +8,27 @@
     <h2> Results for:  {{result.meta_job.job_name}}</h2>
     <hr style="border: 1px solid #1f2e2e">
       <div class="well" style="background-color:white">
-        <h2>BaMMmotif settings </h2>
+        <h2>MMcompare settings </h2>
         <hr style="border: 1px solid #1f2e2e">
         <table>
-        {% if mode == "Prediction" or mode == "Occurrence" %}
-            <tr>
-                <td>  &emsp; Input sequence: </td>
-                <td>  &emsp; {{result.Inputseq_filename}}</td>
-            </tr>
-        {% endif %}
             <tr>
                 <td>  &emsp; Motif file: </td>
-                <td>  &emsp; {{result.MotifInit_filename}}</td>
+                <td>  &emsp; {{result.motif_file_name}}</td>
             </tr>
-        {% if mode == "Prediction" or mode == "Occurrence" %}
             <tr>
-                <td>  &emsp; Search on both strands: </td>
-                <td>  &emsp; {{result.reverse_Complement}}</td>
+                <td>  &emsp; Motif database: </td>
+                <td>  &emsp; {{result.motif_db.display_name}}</td>
             </tr>
-        {% endif %}
-        {% if mode == "Compare" %}
-        <h3>Database model comparison:</h3>
-        <table>
             <tr>
                 <td>  &emsp; P-value cutoff: </td>
                 <td>  &emsp; {{result.p_value_cutoff}}</td>
             </tr>
         </table>
-        {% endif %}
-        </table>
-
-<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white; border:0px">
-
-    {% if mode == "Prediction" or mode == "Occurrrence" %}
-        <div class="panel-heading" role="tab" id="headingOne" style="background-color:white; border:0px">
-          <h2 class="panel-title">
-          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color:white; border:0px">
-          <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"style="color:black"></span> Advanced settings </h3>
-          </a>
-          </h2>
-        </div>
-        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white">
-        <div class="panel-body">
-
-        {% if mode == "Prediction" %}
-        <h3>Model settings</h3>
-        <table>
-            <tr>
-                <td>  &emsp; Model order: </td>
-                <td>  &emsp; {{result.model_Order}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; Add flanking positions: </td>
-                <td>  &emsp; {{result.extend}}</td>
-            </tr>
-        </table>
-        {% endif %}
-
-        {% if mode == "Prediction" %}
-        <h3>Motif initialization</h3>
-        <table>
-            <tr>
-                <td>  &emsp; Motif initialization: </td>
-                <td>  &emsp; {{result.Motif_Initialization}}</td>
-            </tr>
-            {% if result.Motif_Initialization == "Custom File" %}
-            <tr>
-                <td>  &emsp; Motif initialization file: </td>
-                <td>  &emsp; {{result.MotifInit_filename}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; Motif init file format: </td>
-                <td>  &emsp; {{result.Motif_Init_File_Format}}</td>
-            </tr>
-            {% endif %}
-        </table>
-        {% endif %}
-
-        {% if mode == "Prediction" %}
-        <h3>Background model</h3>
-        <table>
-            <tr>
-                <td>  &emsp; Background order: </td>
-                <td>  &emsp; {{result.background_Order}}</td>
-            </tr>
-            {% if result.Background_Sequences != "" %}
-            <tr>
-                <td>  &emsp; Background sequences: </td>
-                <td>  &emsp; {{result.background_sequences}}</td>
-            </tr>
-            {% endif %}
-        </table>
-        {% endif %}
-        
-        {% if mode == "Prediction" %}
-        <h3>Expectation maximization optimization:</h3>
-        <table>
-            <tr>
-                <td>  &emsp; Motif prior probability: </td>
-                <td>  &emsp; {{result.q_value}}</td>
-            </tr>
-            <tr>
-        </table>
-        {% endif %}
-
-        {% if result.CGS %}
-        <h3>Collapsed Gibbs sampling:</h3>
-        <table>
-            <tr>
-                <td>  &emsp; sampling alphas: </td>
-                <td>  &emsp; {{result.no_Alpha_Sampling|yesno:"False,True"}}</td>
-            </tr>
-            <tr>
-                <td>  &emsp; max iterations: </td>
-                <td>  &emsp; {{result.max_CGS_Iterations}}</td>
-            </tr>
-        </table>
-        {% endif %}
-
-        {% if result.ScoreSeqset %}
-        <h3>Motif Occurrence:</h3>
-        <table>
-            <tr>
-                <td>  &emsp; Occurrence score cutoff: </td>
-                <td>  &emsp; {{result.score_cutoff}}</td>
-            </tr>
-        </table>
-        {% endif %}
-
-        {% if result.FDR %}
-        <h3>Motif Evaluation:</h3>
-        <table>
-            <tr>
-                <td>  &emsp; Evaluate Motifs: </td>
-                <td>  &emsp; {{result.FDR}}</td>
-            </tr>
-        </table>
-        {% endif %}
-            
-        {% if result.MMcompare %}
-        <h3>Database model comparison:</h3>
-        <table>
-            <tr>
-                <td>  &emsp; P-value cutoff: </td>
-                <td>  &emsp; {{result.p_value_cutoff}}</td>
-            </tr>
-        </table>
-        {% endif %}
-
-       </div>
-</div>
-{% endif %}
-</div>
-</div>
-</div>
+      </div>
+    </div>
 
 <div class="jumbotron" style="background-color:white"><font color="black">
+ <h2> Query motifs </h2>
   <form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_BaMMmotif.zip" method="get" target="_blank">
          <p align="right">           
            <button type="submit" class="btn btn-default" aria-label="Download">
@@ -172,13 +37,6 @@
          </p>
        </form>
 
-{% if mode == "Prediction" %}
- <h2> Predicted motifs </h2>
-{% elif mode == "Occurrence" %}
- <h2> Input motifs </h2>
- {%elif mode == "Compare" %}
- <h2> Query motifs </h2>
-{% endif %}
 
  <table class="table table-hover">
     <tr>
