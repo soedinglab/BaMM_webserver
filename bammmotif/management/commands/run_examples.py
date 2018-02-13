@@ -26,7 +26,10 @@ from bammmotif.bamm.utils import (
     upload_example_fasta,
     upload_example_motif,
 )
-from bammmotif.utils.misc import is_fasta
+from bammmotif.utils import (
+    is_fasta,
+    remove_job_folder,
+)
 from webserver.settings import EXAMPLE_DIR
 from bammmotif.peng.settings import FILTERPWM_OUTPUT_FILE
 
@@ -47,8 +50,9 @@ def already_done(job_id):
     job = JobInfo.objects.filter(pk=job_uuid).first()
     if job:
         if not job.complete:
-            job.delete()
             logger.info('Job %s not finished. Cleaning up and restarting', job)
+            job.delete()
+            remove_job_folder(job_uuid)
             return False
         logger.debug('Job %s already done. Skipping', job)
         return True
@@ -60,7 +64,7 @@ def new_example_job_info(next_id, job_type, fname):
     example_user = get_object_or_404(User, username='Example_User')
     job_info = JobInfo(
         job_id=uuid.UUID(int=next_id),
-        job_name=os.path.basename(fname),
+        job_name="example run",
         created_at=timezone.now(),
         mode='Prediction',
         complete=False,
@@ -109,7 +113,8 @@ def new_bamm_job(next_id, example_file, peng_job):
     motifs = get_motif_ids(meme_file)[:n_motifs]
     save_selected_motifs(motifs, peng_job.pk, bamm_job.meta_job.pk)
     copy_peng_to_bamm(peng_job.pk, bamm_job.pk, motifs)
-    bamm_job.num_init_motifs = n_motifs
+    bamm_job.num_init_motifs = len(motifs)
+    bamm_job.num_motifs = len(motifs)
     bamm_job.Motif_InitFile.name = get_motif_init_file(str(bamm_job.pk))
     bamm_job.Motif_Initialization = "Custom File"
     bamm_job.Motif_Init_File_Format = "PWM"
@@ -122,7 +127,7 @@ def new_bamm_job(next_id, example_file, peng_job):
     return next_id, bamm_job.pk
 
 def new_bammscan_job(next_id, example_file, bamm_id):
-    job_info, next_id = new_example_job_info(next_id, 'bamm', example_file)
+    job_info, next_id = new_example_job_info(next_id, 'scan', example_file)
     job_info.save()
     mdb = get_object_or_404(MotifDatabase, db_id=EXAMPLE_MOTIF_DB)
     bamm_scan_job = BaMMScanJob(
@@ -143,7 +148,7 @@ def new_bammscan_job(next_id, example_file, bamm_id):
     return next_id
 
 def new_mmcompare_job(next_id, example_file, bamm_id):
-    job_info, next_id = new_example_job_info(next_id, 'mmcompare', example_file)
+    job_info, next_id = new_example_job_info(next_id, 'compare', example_file)
     job_info.save()
     mdb = get_object_or_404(MotifDatabase, db_id=EXAMPLE_MOTIF_DB)
     mmcompare_job = MMcompareJob(
@@ -213,6 +218,7 @@ class Command(BaseCommand):
         if options['flush']:
             for example_job in JobInfo.objects.filter(user=user):
                 logger.info('Removing example job %s', example_job)
+                remove_job_folder(example_job.pk)
                 example_job.delete()
 
         example_list = [os.path.join(EXAMPLE_DIR, x) for x in os.listdir(EXAMPLE_DIR) if is_fasta(x)]

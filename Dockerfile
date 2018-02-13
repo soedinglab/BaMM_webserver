@@ -37,7 +37,7 @@ RUN rm -rf /tmp/bamm
 
 ADD tools/suite /tmp/suite
 RUN mkdir -p /tmp/suite/build
-RUN cd /tmp/suite/build && cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make -j8 install >/dev/null 2>/dev/null
+RUN cd /tmp/suite/build && CXXFLAGS=-std=c++1y cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make -j8 install
 RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
 

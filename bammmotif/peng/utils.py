@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 def upload_example_fasta_for_peng(job):
     out_filename = EXAMPLE_FASTA_FILE
     with open(settings.EXAMPLE_FASTA) as fh:
-        job.fasta_file.save(out_filename, File(fh))
+        job.fasta_file.save(out_filename, File(fh), save=False)
 
 
 def copy_peng_to_bamm(peng_id, bamm_id, selected_motifs):

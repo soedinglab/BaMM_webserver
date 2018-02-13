@@ -284,7 +284,7 @@
                     <th> AUSFC</th>
                     <th> Download</th>
                 </tr>
-                {% for motif in meme_meta_info %}
+                {% for motif in meme_meta_info|dictsortreversed:"ausfc" %}
                     <tr>
                     {% comment %}
                         <th><input id="id_{{ motif.meme_id }}" name="{{ motif.meme_id }}_select" type="checkbox"/></th>
@@ -345,17 +345,22 @@
             {% endfor %}
             {% endcomment %}
             </table>
-            <!-- Temp Input -->
 
-            <div>
-                <input type="hidden" value="from_peng" name="meme_meta_info"/>
-                <input type="hidden" value="{{ result.meta_job.pk }}" name="pk">
+        <input type="hidden" value="from_peng" name="meme_meta_info"/>
+        <input type="hidden" value="{{ result.meta_job.pk }}" name="pk">
+	
+	    <hr style="border: 1px solid #1f2e2e">
+	    <p>
 		<button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e">
             		<font color="white">Refine Selected Seeds</font>
  		</button>
-            </div>
-    </div>
+		 &emsp;
+		 <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000001' %}" role="button">
+		  <span class="glyphicon glyphicon-play-circle" style="font-size: 21px" aria-hidden="true">View Example Result</span>
+		</a>
+	  </p>
     </form>
+    </div>
     </div>
 
 

@@ -21,7 +21,6 @@ from bammmotif.peng.io import (
     get_motif_init_file,
 )
 
-import bammmotif.bamm.tasks as bamm_tasks
 from .utils import (
     upload_example_fasta_for_peng,
     copy_peng_to_bamm,
@@ -140,19 +139,21 @@ def run_peng_view(request, mode='normal'):
             peng_job.save()
 
         peng_seeding_pipeline.delay(job_pk)
-        return render(request, 'job/submitted.html', {'pk': job_pk, 'result_target': 'peng_results'})
+        return render(request, 'job/submitted.html', {
+            'pk': job_pk,
+            'result_target': 'peng_results'
+        })
 
     meta_job_form = MetaJobNameForm()
     if mode == 'example':
         form = PengExampleForm()
     else:
         form = PengForm()
-    return render(request, 'job/peng_bamm_split_peng_input.html',
-                  {
-                    'form': form,
-                    'meta_job_form': meta_job_form,
-                    'mode': mode,
-                  })
+    return render(request, 'peng/peng_seeding.html', {
+        'form': form,
+        'meta_job_form': meta_job_form,
+        'mode': mode,
+    })
 
 
 def find_peng_results(request, pk):

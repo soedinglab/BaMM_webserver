@@ -110,10 +110,6 @@ def create_job(form, meta_job_form, request):
     job_pk = meta_job.pk
 
     job = form.save(commit=False)
-    # Invert Default boolean values beginning with "no"
-    # TODO: Find a better solution for this.
-    job.no_em = not job.no_em
-    job.no_merging = not job.no_merging
     # Add correct path to files.
     output_dir = get_job_output_folder(job_pk)
     job.meme_output = path.join(output_dir, job.meme_output)

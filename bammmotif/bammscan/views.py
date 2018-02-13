@@ -47,6 +47,7 @@ def run_bammscan_view(request, mode='normal', pk='null'):
             meta_job.created_at = timezone.now()
             meta_job.user = get_user(request)
             meta_job.mode = "BaMMScan"
+            meta_job.job_type = 'scan'
             meta_job.save()
 
             if meta_job.job_name is None:

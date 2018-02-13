@@ -16,18 +16,23 @@ from ..command_line import transfer_options
 
 class ShootPengModule(CommandlineModule):
 
+    objective_functions = [
+        'LOGPVAL',
+        'MUTUAL_INFO',
+        'ENRICHMENT',
+    ]
     defaults = {
         'pattern_length': 10,
         'zscore_threshold': 10,
-        'count_threshold': 1,
+        'count_threshold': 5,
         'bg_model_order': 2,
         'strand': 'BOTH',
-        'iupac_optimization_score': 'LOGPVAL',
+        'optimization_score': 'MUTUAL_INFO',
         'enrich_pseudocount_factor': 0.005,
-        'no_em': True,
+        'no_em': False,
         'em_threshold': 0.08,
-        'em_max_iterations': 100,
-        'no-merging': True,
+        'em_max_iterations': 20,
+        'no_merging': False,
         'bit_factor_threshold': 0.4,
         'use_default_pwm': False,
         'pwm_pseudo_counts': 10,
@@ -52,7 +57,7 @@ class ShootPengModule(CommandlineModule):
             ('count_threshold', '--count-threshold'),
             ('bg_model_order', '--bg-model-order'),
             ('strand', '--strand'),
-            ('objective_function', '--iupac_optimization_score'),
+            ('objective_function', '--optimization_score'),
             ('enrich_pseudocount_factor', '--enrich_pseudocount_factor'),
             ('no_em', '--no-em'),
             ('em_saturation_threshold', '-a'),

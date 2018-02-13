@@ -10,7 +10,12 @@
       {% endif %}
      <form method="post"  enctype="multipart/form-data">
         {% csrf_token %}
-	<p><label><font size=3>Model Database:</label> &nbsp; {{ form.database }}</p>
+	<p><label for="{{ form.database.id_for_label}}"><a class "testpup"
+             onmouseover="nhpup.popup($('#DBselectorInfo').html(),{'width':400});"><span
+             class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a>
+             Motif Database</label><font color="#1f2e2e"> &nbsp;&nbsp; {{ form.database }} </font>
+    	</p>
+
 	<p>
 		<label for="id_db_ID"><font size=3>Please enter the name of your protein of interest:</label> &nbsp; 
 		<input id="id_db_ID" maxlength="255" name="search_term" type="text" placeholder="i.e: CTCF ..." required /> </font>&nbsp;
@@ -18,7 +23,20 @@
         <button class="btn btn-primary btn-lg" href="{% url 'maindb' %}" role="button" style="border:0px; background-color:#1f2e2e"><font color="white" type="submit"> <font size=3>Search DB</font></button></p>
     </form>    
 
+ <div class="modal fade" id="DBselectorInfo" tabindex="-1" role="dialog" aria-labelledby="DBselectorInfo">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <font color="#0B0719">
+                        <p align="justify">Motif database to search against.</p>
+                    </font>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
 
 {% endblock %}
 

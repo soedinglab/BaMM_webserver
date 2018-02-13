@@ -9,7 +9,7 @@ python manage.py makemigrations
 python manage.py migrate
 python manage.py sync_databases
 
-python manage.py run_examples
+python manage.py run_examples &
 
 # start webserver
 python manage.py runserver 0.0.0.0:10080
