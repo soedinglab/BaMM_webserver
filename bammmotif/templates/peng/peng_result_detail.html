@@ -13,21 +13,11 @@
     {% endif %}
 
     <div class="jumbotron" style="background-color:white"><font color="black">
-        <form action="{% get_media_prefix %}/{{ opath }}/motif_all.zip" method="get" target="_blank">
-            <p align="right">
-                <button type="submit" class="btn btn-default" aria-label="Download">
-                    <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD ALL</span>
-                </button>
-            </p>
-        </form>
 
 
 
 
 
-        {% if mode == "Prediction" %}
-            <h2>Seeds for higher-order refinement</h2>
-        {% endif %}
         <div class="jumbotron" style="background-color:white" xmlns="http://www.w3.org/1999/html">
             <h2> Results for {{ job_info.job_name }} </h2>
             <hr style="border: 1px solid #1f2e2e">
@@ -270,6 +260,16 @@
     {% endcomment %}
 
 
+        <h2>Discovered seeds</h2>
+
+        <form action="{% get_media_prefix %}/{{ opath }}/motif_all.zip" method="get" target="_blank">
+            <p align="right">
+                <button type="submit" class="btn btn-default" aria-label="Download">
+                    <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD ALL</span>
+                </button>
+            </p>
+        </form>
+
         <form name="call_bamm" method="post" action="{% url 'peng_to_bamm' pk=pk %}">
             {% csrf_token %}
             <input type="checkbox" id="checkAll" />Select All<br/>
@@ -356,7 +356,7 @@
  		</button>
 		 &emsp;
 		 <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000001' %}" role="button">
-		  <span class="glyphicon glyphicon-play-circle" style="font-size: 21px" aria-hidden="true">View Example Result</span>
+		  <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> View example result</span>
 		</a>
 	  </p>
     </form>
@@ -372,7 +372,7 @@
         <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e">
             {% filter_motifs keep_dict outpath %}
             &emsp; <a href="{% url 'peng_to_bamm' pk=result.job_ID%}" role="button">
-                   <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> View Example Result </span>
+                   <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> View example result </span>
                    </a>
                    <font color="white">Peng</font>
         </button>
@@ -392,7 +392,7 @@
             <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font
                     color="white">BaMM!</font></button>
             &emsp; <a href="{% url 'result_detail' pk='293aae88-6e1e-48ba-ad87-19e7304e0393' %}"  role="button"> <span
-                class="glyphicon glyphicon-play-circle" aria-hidden="true"> View Example Result </span></a>
+                class="glyphicon glyphicon-play-circle" aria-hidden="true"> View example result </span></a>
         </p>
             <a class="btn btn-primary btn-lg" href="{% url 'peng_to_bamm' pk=result.job_ID %}" {% filter_motifs keep_dict outpath %}
                style="background-color:#1f2e2e">Continue to Bamm

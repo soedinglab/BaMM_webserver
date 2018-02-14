@@ -182,6 +182,7 @@ def find_results_by_id(request, pk):
     url = urljoin(base, url_prefix[meta_job.job_type] + job_id)
     return redirect(url, permanent=True)
 
+
 def find_results(request):
     if request.method == "POST":
         form = FindForm(request.POST)

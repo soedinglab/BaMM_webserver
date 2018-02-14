@@ -10,10 +10,17 @@ def maindb(request):
     if request.method == "POST":
         form = DBForm(request.POST)
         if form.is_valid():
-            search_term = form.cleaned_data['search_term']
             motif_db = form.cleaned_data['database']
-            db_entries = ChIPseq.objects.filter(target_name__icontains=search_term,
-                                                motif_db=motif_db)
+            if 'browse_button' in request.POST:
+                db_entries = ChIPseq.objects.filter(motif_db=motif_db)
+                search_term = motif_db.display_name
+            else:
+                search_term = form.cleaned_data['search_term']
+                if not search_term:
+                    form = DBForm()
+                    return render(request, 'database/db_main.html', {'form': form, 'warning': True})
+                db_entries = ChIPseq.objects.filter(target_name__icontains=search_term,
+                                                    motif_db=motif_db)
             if db_entries.exists():
                 return render(
                     request, 'database/db_overview.html',

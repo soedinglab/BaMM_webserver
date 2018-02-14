@@ -1,9 +1,23 @@
+.jumbotron p.tool_description {
+  margin: auto;
+  text-align: center;
+  font-weight: 350;
+  font-size: 18px
+}
+
 .workflow_button {
   width: 70%;
   background-color: #4169E1
 }
 
+.example_button {
+  font-size: 20px;
+  word-spacing: -13px
+}
+
 .run_button {
   border: 0px;
-  background-color: #1f2e2e"
+  background-color: #4169E1;
+  font-color: white;
+  font-size: 20px
 }

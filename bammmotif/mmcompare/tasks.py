@@ -80,49 +80,13 @@ def generic_mmcompare_import_matches(job):
 
 @task(bind=True)
 def mmcompare_pipeline(self, job_pk):
-    make_job_folder(job_pk)
-    pipeline = celery.chain([
-        mmcompare_motif_transfer_task.si(job_pk),
-        mmcompare_task.si(job_pk),
-        mmcompare_prepare_results.si(job_pk),
-        mmcompare_import_matches.si(job_pk),
-        mmcompare_zip_motifs.si(job_pk),
-        mmcompare_finalize.si(job_pk),
-    ])
-    pipeline()
-
-
-@task(bind=True)
-def mmcompare_task(self, job_pk):
     job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
-    return generic_mmcompare_task(job)
+    with JobSaveManager(job): 
+        make_job_folder(job_pk)
 
-
-@task(bind=True)
-def mmcompare_motif_transfer_task(self, job_pk):
-    job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
-    return generic_mmcompare_motif_transfer_task(job)
-
-
-@task(bind=True)
-def mmcompare_prepare_results(self, job_pk):
-    job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
-    return generic_mmcompare_prepare_results(job)
-
-
-@task(bind=True)
-def mmcompare_import_matches(self, job_pk):
-    job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
-    return generic_mmcompare_import_matches(job)
-
-@task(bind=True)
-def mmcompare_zip_motifs(self, job_pk):
-    job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
-    return generic_model_zip_task(job)
-    
-
-@task(bind=True)
-def mmcompare_finalize(self, job_pk):
-    job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
-    job.meta_job.complete = True
-    job.meta_job.save()
+        generic_mmcompare_motif_transfer_task(job)
+        generic_mmcompare_task(job)
+        generic_mmcompare_prepare_results(job)
+        generic_mmcompare_import_matches(job)
+        generic_model_zip_task(job)
+        job.meta_job.complete = True

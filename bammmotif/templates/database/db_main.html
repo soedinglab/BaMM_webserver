@@ -18,9 +18,13 @@
 
 	<p>
 		<label for="id_db_ID"><font size=3>Please enter the name of your protein of interest:</label> &nbsp; 
-		<input id="id_db_ID" maxlength="255" name="search_term" type="text" placeholder="i.e: CTCF ..." required /> </font>&nbsp;
+		<input id="id_db_ID" maxlength="255" name="search_term" type="text" placeholder="i.e: CTCF ..."/> </font>&nbsp;
 	</p>
-        <button class="btn btn-primary btn-lg" href="{% url 'maindb' %}" role="button" style="border:0px; background-color:#1f2e2e"><font color="white" type="submit"> <font size=3>Search DB</font></button></p>
+	<span>
+        	<button class="btn btn-primary btn-lg run_button" href="{% url 'maindb' %}" role="button" type="submit">Search by keyword</button>
+		<span style="font-size:18px; font-weight:bold;padding:10px"> or </span> 	
+        	<button class="btn btn-primary btn-lg run_button" name="browse_button" value="clicked" href="{% url 'maindb' %}" role="button" type="submit">Browse all models</button>
+	</span>
     </form>    
 
  <div class="modal fade" id="DBselectorInfo" tabindex="-1" role="dialog" aria-labelledby="DBselectorInfo">

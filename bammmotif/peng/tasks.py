@@ -142,53 +142,15 @@ def plot_bamm_format_generic(job):
 
 
 @task(bind=True)
-def convert_to_bamm(self, job_pk):
-    job = get_object_or_404(PengJob, meta_job__pk=job_pk)
-    convert_to_bamm_generic(job)
-
-@task(bind=True)
-def peng_task(self, job_pk):
-    job = get_object_or_404(PengJob, meta_job__pk=job_pk)
-    run_peng_generic(job)
-
-
-@task(bind=True)
-def pwm_filter_task(self, job_pk):
-    job = get_object_or_404(PengJob, meta_job__pk=job_pk)
-    run_pwm_filter_generic(job)
-
-
-@task(bind=True)
-def meme_plotting_task(self, job_pk):
-    job = get_object_or_404(PengJob, meta_job__pk=job_pk)
-    run_meme_plotting_generic(job)
-
-
-@task(bind=True)
-def plot_bamm_format(self, job_pk):
-    job = get_object_or_404(PengJob, meta_job__pk=job_pk)
-    plot_bamm_format_generic(job)
-
-
-
-@task(bind=True)
 def peng_seeding_pipeline(self, job_pk):
     job = get_object_or_404(PengJob, meta_job__pk=job_pk)
     job_pk = job.meta_job.pk
-    make_job_folder(job_pk)
-    pipeline = [
-        peng_task.si(job_pk),
-        pwm_filter_task.si(job_pk),
-        convert_to_bamm.si(job_pk),
-        #meme_plotting_task.si(job_pk),
-        plot_bamm_format.si(job_pk),
-        finalize.si(job_pk),
-    ]
-    chain(pipeline)()
+    with JobSaveManager(job):
+        make_job_folder(job_pk)
 
+        run_peng_generic(job)
+        run_pwm_filter_generic(job)
+        convert_to_bamm_generic(job)
+        plot_bamm_format_generic(job)
 
-@task(bind=True)
-def finalize(self, job_pk):
-    job = get_object_or_404(PengJob, meta_job__pk=job_pk)
-    job.meta_job.complete = True
-    job.meta_job.save()
+        job.meta_job.complete = True

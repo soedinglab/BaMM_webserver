@@ -86,56 +86,16 @@ def generic_fdr_task(job, first_in_pipeline, is_refined):
 def bamm_refinement_pipeline(self, job_pk):
     job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
     job_pk = job.meta_job.pk
-    make_job_folder(job_pk)
+    with JobSaveManager(job):
+        make_job_folder(job_pk)
 
-    pipeline = [
-        bamm_task.si(job_pk)
-    ]
-    if job.score_Seqset:
-        pipeline.append(bammscan_task.si(job_pk))
-    if job.FDR:
-        pipeline.append(fdr_task.si(job_pk))
-    if job.MMcompare:
-        pipeline.append(mmcompare_task.si(job_pk))
-    pipeline.append(compress_task.si(job_pk))
-    pipeline.append(finalize.si(job_pk))
-
-    chain(pipeline)()
-
-
-@task(bind=True)
-def bamm_task(self, job_pk):
-    job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
-    generic_bamm_task(job, first_in_pipeline=True, is_refined=False)
-
-
-@task(bind=True)
-def bammscan_task(self, job_pk):
-    job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
-    generic_bammscan_task(job, first_in_pipeline=False, is_refined_model=True)
-
-
-@task(bind=True)
-def fdr_task(self, job_pk):
-    job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
-    generic_fdr_task(job, first_in_pipeline=False, is_refined=False)
-
-
-@task(bind=True)
-def mmcompare_task(self, job_pk):
-    job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
-    generic_mmcompare_task(job)
-    generic_mmcompare_import_matches(job)
-
-
-@task(bind=True)
-def compress_task(self, job_pk):
-    job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
-    generic_compress_task(job)
-
-
-@task(bind=True)
-def finalize(self, job_pk):
-    job = get_object_or_404(BaMMJob, meta_job__pk=job_pk)
-    job.meta_job.complete = True
-    job.meta_job.save()
+        generic_bamm_task(job, first_in_pipeline=True, is_refined=False)
+        if job.score_Seqset:
+            generic_bammscan_task(job, first_in_pipeline=False, is_refined_model=True)
+        if job.FDR:
+            generic_fdr_task(job, first_in_pipeline=False, is_refined=False)
+        if job.MMcompare:
+            generic_mmcompare_task(job)
+            generic_mmcompare_import_matches(job)
+        generic_compress_task(job)
+        job.meta_job.complete = True
