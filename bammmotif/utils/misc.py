@@ -39,13 +39,14 @@ class JobSaveManager:
         if error_type is not None:
             job.meta_job.status = self.error_status
             self.had_exception = True
+            logger.exception(error)
             traceback.print_exception(error_type, error, tb, file=sys.stdout)
             print(timezone.now(), "\t | WARNING: \t %s " % job.meta_job.status)
         else:
             job.meta_job.status = self.success_status
             self.had_exception = False
             print(timezone.now(), "\t | END: \t %s " % job.meta_job.status)
-        job.save()
+        job.meta_job.save()
 
 
 class CommandFailureException(Exception):

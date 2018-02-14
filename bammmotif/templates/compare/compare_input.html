@@ -29,7 +29,7 @@
     {% endif %}    
     {% if mode == 'normal' %}
       <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif initialization file:</label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
-      <p>  &emsp; <a href="{% url  'run_compare' mode="example" %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> Example data </span></a> </td>
+      <p>  &emsp; <a href="{% url  'run_compare' mode="example" %}" role="button"> <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> Example data </span></a> </td>
 
       <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif init file format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
          <option value="PWM" selected="selected">PWM</option>
@@ -45,15 +45,16 @@
      <p><label for="db_selector"><a class "testpup"
 	     onmouseover="nhpup.popup($('#DBselectorInfo').html(),{'width':400});"><span
 	     class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a>
-	     MMcompare Motif Database</label><font color="#1f2e2e"> &nbsp;&nbsp; {{ form.motif_db }} </font>
+	     MMcompare Motif Database:</label><font color="#1f2e2e">
+	     <p  style="padding-left: 1.8em"> {{ form.motif_db }} </p> </font>
     </p>
 
   </div>
   <hr style="border: 1px solid #1f2e2e">
-  <span style="font-size: 21px">
-    <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font color="white">BaMM!</font></button>
+  <span>
+    <button class="btn btn-primary btn-lg run_button" type="submit">BaMM!</button>
      &emsp; <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000003' %}"  role="button"> <span
-            class="glyphicon glyphicon-play-circle" aria-hidden="true"> View example result </span></a>
+            class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> View example result </span></a>
  </span>
   </p>
   </form>
@@ -107,6 +108,20 @@
     </div>
   </div>
 </div>
+
+  <div class="modal fade" id="DBselectorInfo" tabindex="-1" role="dialog"
+          aria-labelledby="DBSelectorInfo">
+         <div class="modal-dialog" role="document">
+             <div class="modal-content">
+                 <div class="modal-body">
+                     <font color="#0B0719">
+                         <p align="justify"> Select the target BaMM database.</p>
+                     </font>
+                 </div>
+             </div>
+         </div>
+     </div>
+
 
 <div class="modal fade" id="db_match_p_value_cutoff_Info" tabindex="-1" role="dialog" aria-labelledby="db_match_p_value_cutoff_Info">
   <div class="modal-dialog" role="document">

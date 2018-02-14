@@ -56,7 +56,7 @@
                                                                              name="Input_Sequences" type="file"
                                                                              required/></p>
                         <p>  &emsp;<a href="{% url 'run_bamm' mode="example" %}" role="button"> <span
-                            class="glyphicon glyphicon-play-circle" aria-hidden="true"> Load Example Data </span></a>
+                            class="glyphicon glyphicon-play-circle" aria-hidden="true"> Load example data </span></a>
                         </td>
                                                                              {% endcomment %}
                     {% endif %}
@@ -235,7 +235,7 @@
         <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font
                 color="white">BaMM!</font></button>
         &emsp; <a href="{% url 'peng_to_bamm_result_detail' pk='293aae88-6e1e-48ba-ad87-19e7304e0393' %}"  role="button"> <span
-            class="glyphicon glyphicon-play-circle" aria-hidden="true"> View Example Result </span></a>
+            class="glyphicon glyphicon-play-circle" aria-hidden="true"> View example result </span></a>
     </p>
     {% for selected_motif in selected_motif_keys %}
     	<input type="hidden" name={{ selected_motif }} value="on" />

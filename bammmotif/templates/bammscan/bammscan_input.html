@@ -22,7 +22,7 @@
     {% endif %}
     
     {% if mode == 'normal' %}
-      <p>  &emsp; <a href="{% url 'run_bamm_scan' mode="example" %}" role="button"> <span class="glyphicon glyphicon-play-circle" aria-hidden="true"> Load example data </span></a> </td>
+      <p>  &emsp; <a href="{% url 'run_bamm_scan' mode="example" %}" role="button"> <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> Load example data </span></a> </td>
     {% endif %}
 
     {% if mode == 'db' %}
@@ -92,10 +92,9 @@
     
   <hr style="border: 1px solid #1f2e2e">
   <p>
-        <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font
-                color="white">BaMM!</font></button>
+        <button class="btn btn-primary btn-lg run_button" type="submit">BaMM!</button>
          &emsp; <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000002' %}"  role="button"> <span
-            class="glyphicon glyphicon-play-circle" aria-hidden="true"> View Example Result</span></a>
+            class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> View Example Result</span></a>
     </p>
   </form>
 </div>

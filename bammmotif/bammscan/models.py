@@ -41,7 +41,7 @@ class BaMMScanJob(models.Model):
 
     # FDR related fields
     FDR = models.BooleanField(default=True)
-    m_Fold = models.IntegerField(default=5)
+    m_Fold = models.IntegerField(default=10)
     sampling_Order = models.PositiveSmallIntegerField(default=2)
 
     # MMcompare related fields
