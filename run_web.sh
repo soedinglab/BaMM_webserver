@@ -6,6 +6,7 @@ sleep $MYSQL_STARTUP_DELAY_SECONDS
 
 # construct empty database
 python manage.py makemigrations
+python manage.py makemigrations bammmotif
 python manage.py migrate
 python manage.py sync_databases
 
