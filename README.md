@@ -19,15 +19,10 @@ git pull origin fixit
 git submodule update --init --recursive
 ```
 
-## Setting the environment variables for docker-compose
-Move to a folder of your choice and clone the webserver again.
 
-```bash
-## this is not necessarily needed
-cd ~/git_repositories
-git clone git@github.com:soedinglab/BaMM_webserver.git
-cd BaMM_webserver
-git submodule update --init --recursive
+## Configuring the webserver
+```
+cd $WEBSERVER_DIR/BaMM_webserver
 cp .env_template .env
 ```
 
@@ -89,7 +84,7 @@ After successfully building the webserver, use `docker-compose up` to start the 
 
 ## Profit
 
-Now you should be able to access the webserver at  `0.0.0.0:10080` in your favorite browser.
+Now you should be able to access the webserver at `0.0.0.0:10080` in your favorite browser.
 
 # Notes and caveats
 

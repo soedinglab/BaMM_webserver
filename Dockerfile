@@ -51,6 +51,10 @@ RUN rm -rf /tmp/filterPWMs
 COPY docker-utils/filterPWM_le2.patch /ext/filterPWMs/
 RUN cd /ext/filterPWMs && git apply filterPWM_le2.patch && rm filterPWM_le2.patch
 
-ENV PATH="/ext/filterPWMs:${PATH}"
+# use a cool init system for handing signals: https://github.com/Yelp/dumb-init
+RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64
+RUN chmod +x /usr/local/bin/dumb-init
 
+
+ENV PATH="/ext/filterPWMs:${PATH}"
 ENV PATH="/ext/bin:${PATH}"
