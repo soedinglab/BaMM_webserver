@@ -28,7 +28,7 @@ services:
 
   celery:
     build: .
-    command: celery --app=webserver.celery:app worker --loglevel=DEBUG
+    command: celery --app=webserver.celery:app worker
     user: ${BAMM_USER_UID}
     volumes:
       - ${WEBSERVER_DIR}:/code
@@ -56,7 +56,7 @@ services:
 
   web:
     build: .
-    command: ./run_web.sh
+    command: /usr/local/bin/dumb-init -- ./run_web.sh
     user: ${BAMM_USER_UID}
     environment:
       - EXAMPLE_MOTIF_DB=${EXAMPLE_MOTIF_DB}
