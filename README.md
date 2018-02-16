@@ -100,9 +100,11 @@ Now you should be able to access the webserver at `0.0.0.0:10080` in your favori
 
 ## Notes for setting up the server on marvin
 * the server is run by the user `bammmotif_admin`. You can find the current version in `/opt/bamm_server`
-* Configuration in `.env` (**VERY IMPORTANT, please double check this**. Wrong configuration will lead to password leaks)
+* Configuration in `.env` (**VERY IMPORTANT, please double check this**. Wrong configuration leads to password leaks)
   - make sure `DJANGO_DEBUG` is not defined. Otherwise the server will run in debug mode and leak sensitive information
   - set `ALLOWED_HOSTS=bammmotif.mpibpc.mpg.de`
   - set `UID=BAMM_USER_UID=1002`
 * `/etc/nginx/sites-available/bammmotif.mpibpc.mpg.de` has to edited to allow access to static data. See the template on the server
 * all files and subdirectories in `motif_db` require group and other permissions. (755 on directories, 644 on files)
+* a systemd unit controls the startup and shutdown of the webserver. Use `sudo systemctl stop bammserver` and `sudo systemctl start bammserver` to bring it down and up by hand
+* stopping the server can take quite some time, because all running jobs are finished before the celery container is shutdown. Please be patient.
