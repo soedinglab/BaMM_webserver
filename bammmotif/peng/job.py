@@ -114,10 +114,7 @@ def create_job(form, meta_job_form, request):
     output_dir = get_job_output_folder(job_pk)
     job.meme_output = path.join(output_dir, job.meme_output)
     job.json_output = path.join(output_dir, job.json_output)
-    if job.strand == 'on':
-        job.strand = "BOTH"
-    else:
-        job.strand = "PLUS"
+
     if request.user.is_authenticated:
         job.user = request.user
     else:
