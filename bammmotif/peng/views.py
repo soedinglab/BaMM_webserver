@@ -33,7 +33,12 @@ from .utils import (
     merge_meme_and_bmscore,
     get_selected_motifs,
 )
-from bammmotif.utils.misc import url_prefix
+from ..utils import (
+    url_prefix,
+    register_job_session,
+)
+
+
 from bammmotif.forms import FindForm
 from bammmotif.peng_utils import get_motif_ids
 from bammmotif.utils.meme_reader import Meme, split_meme_file, get_n_motifs
@@ -136,6 +141,7 @@ def run_peng_view(request, mode='normal'):
 
         with transaction.atomic():
             peng_job.meta_job.save()
+            register_job_session(request, peng_job.meta_job)
             peng_job.save()
 
         peng_seeding_pipeline.delay(job_pk)

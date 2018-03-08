@@ -17,7 +17,11 @@ from django.core.files import File
 from django.utils import timezone
 from ipware.ip import get_ip
 from ..models import (
-    JobInfo, Motifs, ChIPseq, DbMatch
+    JobInfo,
+    Motifs,
+    ChIPseq,
+    DbMatch,
+    JobSession,
 )
 
 import logging
@@ -56,8 +60,8 @@ class CommandFailureException(Exception):
 url_prefix = {
     'peng': 'peng_results/',
     'bamm': 'peng_to_bamm_results/',
-    'scan': 'scan_results/',
-    'compare': 'compare_results/',
+    'bammscan': 'scan_results/',
+    'mmcompare': 'compare_results/',
 }
 
 
@@ -249,3 +253,15 @@ def is_fasta(name):
 
 
 filename_relative_to_job_dir = job_upload_to_input
+
+
+def get_session_key(request):
+    if not request.session.session_key:
+        request.session.save()
+    return request.session.session_key
+
+
+def register_job_session(request, meta_job):
+    session_key = get_session_key(request)
+    session_record = JobSession(session_key=session_key, job=meta_job)
+    session_record.save()

@@ -17,6 +17,7 @@ from ..utils import (
     get_result_folder,
     upload_example_fasta,
     upload_example_motif,
+    register_job_session,
 )
 
 from .forms import (
@@ -44,10 +45,9 @@ def run_bammscan_view(request, mode='normal', pk='null'):
 
         if form.is_valid() and meta_job_form.is_valid():
             meta_job = meta_job_form.save(commit=False)
-            meta_job.created_at = timezone.now()
             meta_job.user = get_user(request)
             meta_job.mode = "BaMMScan"
-            meta_job.job_type = 'scan'
+            meta_job.job_type = 'bammscan'
             meta_job.save()
 
             if meta_job.job_name is None:
@@ -68,6 +68,7 @@ def run_bammscan_view(request, mode='normal', pk='null'):
 
             with transaction.atomic():
                 job.meta_job.save()
+                register_job_session(request, job.meta_job)
                 job.save()
 
             bamm_scan_pipeline.delay(job_pk)

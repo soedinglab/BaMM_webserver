@@ -5,6 +5,23 @@
   font-size: 18px
 }
 
+
+.jumbotron hr.header_line {
+  border: 1px solid #1f2e2e
+}
+
+.bamm_box {
+  background-color: white
+}
+
+.bamm_text {
+  font-size: 17px;
+}
+
+.jumbotron p.bamm_text {
+  font-size: 17px;
+}
+
 .workflow_button {
   width: 70%;
   background-color: #4169E1
