@@ -1,0 +1,46 @@
+{% extends "home/header.html" %}
+{% load static %}
+{% block content %}
+
+<div class="jumbotron bamm_box" style="width:75%">
+  <div class="text_box">
+  <h2>Getting help & reporting bugs</h2>
+  <hr class="header_line" />
+  <p>If you encountered a bug or have a question that it not covered in the <a href="http://bammserver.readthedocs.io/en/latest" target="_blank"> documentation</a>, please open a new issue in our <a href=https://github.com/soedinglab/BaMMserver target="_blank" >github repository</a> or contact us 
+  <!-- http://joemaller.com/js-mailer.shtml -->
+  <SCRIPT TYPE="text/javascript">
+  email_adress=('bamm@mpibpc.mpg.de')	
+  document.write(
+    '<a href="mailto:' + email_adress + '">' 
+    + 'directly'+ '</a>'
+  )
+</SCRIPT>.
+
+  </p>
+  </div>
+
+  <div class="text_box">
+  <h2>Downloading the commandline tools</h2>
+  <hr class="header_line" />
+  <p>
+  <a href="https://github.com/soedinglab/PEnG-motif" target="_blank">PEnG-motif</a> (seeding stage) and <a href="https://github.com/soedinglab/BaMMmotif2" target="_blank"> BaMMmotif</a> (higher-order refinement) are freely available as command line tools under GPL license.
+  Please refer to the respective README to find out how to use them and how to get help.
+  </p>
+  </div>
+            
+  <div class="text_box">
+  <h2>Downloading the databases</h2>
+  <hr class="header_line" />
+  <p>
+  Our higher-order databases can be downloaded from our <a href="http://wwwuser.gwdg.de/~compbiol/bamm" target="_blank" >data server</a>.
+  </p>
+  </div>
+  
+</div>
+
+
+
+
+
+{% endblock %}
+
