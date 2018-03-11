@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 import datetime
 import uuid
 import os
@@ -39,6 +40,14 @@ JOB_INFO_MODE_CHOICES = (
     ('bammscan', 'bammscan'),
     ('mmcompare', 'mmcompare'),
 )
+
+JOB_MODE_MAPPING = {
+    'peng': 'De-novo discovery',
+    'bamm': 'Motif refinement',
+    'bammscan': 'Motif scan',
+    'mmcompare': 'Motif-Motif comparison',
+}
+
 
 def job_directory_path_new(instance, filename):
     return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_id),
@@ -177,7 +186,7 @@ class JobInfo(models.Model):
     # General information about each job is stored here.
     job_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     job_name = models.CharField(max_length=50, null=True, blank=True)
-    created_at = models.DateTimeField(default=datetime.datetime.now)
+    created_at = models.DateTimeField(default=timezone.now)
     mode = models.CharField(max_length=50, default="Prediction", choices=MODE_CHOICES)
     status = models.CharField(max_length=255, default="queueing", null=True, blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -189,6 +198,10 @@ class JobInfo(models.Model):
 
     def __str__(self):
         return str(self.job_id)
+
+    @property
+    def job_type_display(self):
+        return JOB_MODE_MAPPING[self.job_type]
 
 
 class Motifs(models.Model):
@@ -216,3 +229,8 @@ class DbMatch(models.Model):
 
     def __str__(self):
         return self.match_ID
+
+
+class JobSession(models.Model):
+    session_key = models.CharField(max_length=100, null=True)
+    job = models.ForeignKey(JobInfo, on_delete=models.CASCADE)

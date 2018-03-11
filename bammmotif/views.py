@@ -2,17 +2,11 @@ from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from .models import (
-    ChIPseq, DbParameter
+    ChIPseq,
+    DbParameter,
+    JobSession,
+
 )
-"""
-from .forms import (
-    PredictionForm, PredictionExampleForm,
-    OccurrenceForm, OccurrenceExampleForm,
-    OccurrenceDBForm,
-    CompareForm, CompareExampleForm,
-    FindForm
-)
-"""
 from .tasks import (
     run_bamm, run_bammscan,
     run_peng
@@ -20,7 +14,9 @@ from .tasks import (
 from .utils import (
     get_user, set_job_name, upload_example_fasta,
     upload_example_motif, 
-    upload_db_input, valid_uuid
+    upload_db_input,
+    valid_uuid,
+    get_session_key,
 )
 from .utils.path_helpers import (
     get_log_file,
@@ -184,6 +180,9 @@ def find_results_by_id(request, pk):
 
 
 def find_results(request):
+    session_key = get_session_key(request)
+    session_jobs = JobSession.objects.filter(session_key=session_key)
+
     if request.method == "POST":
         form = FindForm(request.POST)
         if form.is_valid():
@@ -192,7 +191,10 @@ def find_results(request):
             base = request.build_absolute_uri('/')
             url = urljoin(base, url_prefix[meta_job.job_type] + jobid)
             return redirect(url, permanent=True)
-    return render(request, 'results/results_main.html', {'form': FindForm()})
+    return render(request, 'results/results_main.html', {
+        'form': FindForm(),
+        'jobs': session_jobs,
+    })
 
 
 def result_overview(request):

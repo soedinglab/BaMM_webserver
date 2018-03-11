@@ -17,6 +17,7 @@ from ..utils import (
     get_user,
     get_result_folder,
     get_log_file,
+    register_job_session,
 )
 
 from .tasks import mmcompare_pipeline
@@ -32,10 +33,9 @@ def run_compare_view(request, mode='normal'):
             form = MMCompareForm(request.POST, request.FILES)
         if form.is_valid() and meta_job_form.is_valid():
             meta_job = meta_job_form.save(commit=False)
-            meta_job.created_at = datetime.now()
             meta_job.user = get_user(request)
             meta_job.mode = "Compare"
-            meta_job.job_type = 'compare'
+            meta_job.job_type = 'mmcompare'
             meta_job.save()
 
             # read in data and parameter
@@ -58,6 +58,7 @@ def run_compare_view(request, mode='normal'):
 
             with transaction.atomic():
                 meta_job.save()
+                register_job_session(request, meta_job)
                 job.save()
 
             mmcompare_pipeline.delay(job_pk)
