@@ -14,8 +14,6 @@ cd $WEBSERVER_DIR
 git clone git@github.com:soedinglab/BaMM_webserver.git
 
 cd  BaMM_webserver
-git checkout fixit
-git pull origin fixit
 git submodule update --init --recursive
 ```
 
