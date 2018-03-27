@@ -1,23 +1,17 @@
+import logging
 import os
 from os import path
-from urllib.parse import urljoin
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db import transaction
-from django.conf import settings
 
 
 from bammmotif.peng.io import (
     peng_bmscore_file_old,
     get_meme_result_file_path,
     get_plot_output_directory,
-    file_path_peng,
     peng_meme_directory,
-    get_peng_output_in_bamm_directory,
-    get_peng_meme_output_in_bamm,
     media_memeplot_directory_html,
-    media_bammplot_directory_html,
-    media_memeplot_directory_from_peng_html,
     get_motif_init_file,
 )
 
@@ -25,35 +19,29 @@ from .utils import (
     upload_example_fasta_for_peng,
     copy_peng_to_bamm,
     load_meme_ids,
-    zip_motifs,
     check_if_request_from_peng_directly,
     save_selected_motifs,
-    upload_example_fasta,
     read_bmscore,
     merge_meme_and_bmscore,
     get_selected_motifs,
 )
-from bammmotif.utils.misc import url_prefix
 from bammmotif.forms import FindForm
-from bammmotif.peng_utils import get_motif_ids
-from bammmotif.utils.meme_reader import Meme, split_meme_file, get_n_motifs
+from bammmotif.utils.meme_reader import Meme
 from bammmotif.peng.settings import (
     MEME_PLOT_DIRECTORY,
-    MEME_PLOT_INPUT,
-    JOB_OUTPUT_DIRECTORY,
-    NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT, 
+    NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT,
     MOTIF_SELECT_IDENTIFIER,
 )
 
 from ..utils import (
-    get_user,
-    set_job_name,
     get_job_output_folder,
     valid_uuid,
     get_result_folder,
     get_log_file,
-    upload_example_fasta
 )
+
+from ..utils.input_validation import FastaValidationError
+
 from ..forms import (
     MetaJobNameForm,
 )
@@ -70,18 +58,19 @@ from .forms import (
 from .job import (
     create_job,
     validate_input_data,
-    init_job,
     create_bamm_job,
 )
-from .cmd_modules import PlotMeme
-from .models import PengJob, JobInfo
+from .models import PengJob
 from ..bamm.models import BaMMJob
 
 from .settings import (
     get_meme_result_file_path,
     get_plot_output_directory,
     FILTERPWM_INPUT_FILE,
+
 )
+
+logger = logging.getLogger(__name__)
 
 
 def peng_result_detail(request, pk):
@@ -132,7 +121,17 @@ def run_peng_view(request, mode='normal'):
 
         if mode == 'example':
             upload_example_fasta_for_peng(peng_job)
-        ret, valid_input = validate_input_data(peng_job)
+        try:
+            validate_input_data(peng_job)
+        except FastaValidationError as v_err:
+            logger.error(str(v_err))
+            return render(request, 'peng/peng_seeding.html', {
+                'form': form,
+                'meta_job_form': meta_job_form,
+                'mode': mode,
+                'err_msg': v_err.user_error_message(),
+            })
+
 
         with transaction.atomic():
             peng_job.meta_job.save()
@@ -164,18 +163,6 @@ def find_peng_results(request, pk):
             return redirect('peng_result_detail', pk=jobid)
         form = FindForm()
     return render(request, 'results/peng_results_main.html', {'form': form})
-
-
-
-
-
-def peng_result_overview(request, pk):
-    if request.user.is_authenticated:
-        user_jobs = PengJob_deprecated.objects.filter(user=request.user.id)
-        return render(request, 'results/peng_result_overview.html',
-                      {'user_jobs': user_jobs})
-    else:
-        return redirect(request, 'find_peng_results')
 
 
 def peng_load_bamm(request, pk):
@@ -238,7 +225,19 @@ def peng_load_bamm(request, pk):
             })
 
         if form.is_valid():
-            bamm_job = create_bamm_job('bamm', request, form, peng_job)
+            try:
+                bamm_job = create_bamm_job('bamm', request, form, peng_job)
+            except FastaValidationError as verr:
+                logger.error(str(verr))
+                return render(request, 'peng/peng_to_bamm.html', {
+                    'form': PengToBammForm(),
+                    'mode': mode,
+                    'inputfile': inputfile,
+                    'job_name': peng_job.meta_job.job_name,
+                    'pk': pk,
+                    'err_msg': verr.user_error_message(),
+                })
+
             bamm_job.MMcompare = True
             bamm_job_pk = bamm_job.meta_job.pk
 
@@ -271,30 +270,6 @@ def peng_load_bamm(request, pk):
     })
 
 
-def find_peng_to_bamm_results(request, pk):
-    if request.method == "POST":
-        form = FindForm(request.POST)
-        if form.is_valid():
-            jobid = form.cleaned_data['job_ID']
-            if valid_uuid(jobid):
-                job = Job.objects.get(pk=jobid).exists()
-                if job.exists():
-                    return redirect('peng_to_bamm_result_detail', pk=jobid)
-            form = FindForm()
-            return render(request, 'results/peng_to_bamm_results_main.html', {'form': form, 'warning': True})
-    else:
-        form = FindForm()
-    return render(request, 'results/peng_to_bamm_result_main.html', {'form': form, 'warning': False})
-
-def peng_to_bamm_result_overview(request, pk):
-    if request.user.is_authenticated:
-        user_jobs = Job.objects.filter(user=request.user.id)
-        return render(request, 'results/peng_to_bamm_result_overview.html',
-                      {'user_jobs': user_jobs})
-    else:
-        return redirect(request, 'find_peng_to_bamm_results')
-
-
 def peng_to_bamm_result_detail(request, pk):
     result = get_object_or_404(BaMMJob, meta_job__pk=pk)
     meta_job = result.meta_job
@@ -304,7 +279,6 @@ def peng_to_bamm_result_detail(request, pk):
     peng_path = path.join(job_output_dir, "pengoutput")
     meme_plots = path.join(job_output_dir, "pengoutput", "meme_plots")
     meme_motifs = load_meme_ids(peng_path)
-    #meme_meta_info_list = Meme.fromfile(os.path.join(peng_path, "out.meme"))
     meme_meta_info_list = Meme.fromfile(get_motif_init_file(str(meta_job.job_id)))
 
     motif_db = result.motif_db

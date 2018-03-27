@@ -1,6 +1,6 @@
 import subprocess
-import os
 from os import path
+import logging
 from ipware.ip import get_ip
 
 from django.contrib.auth.models import User
@@ -29,9 +29,14 @@ from ..utils import (
     meme_count_motifs,
     get_job_output_folder,
 )
+from ..utils.misc import job_upload_to_input
 from ..utils.meme_reader import get_n_motifs
+from ..utils.input_validation import validate_fasta_file, FastaValidationError
 from ..models import JobInfo
 from ..forms import MetaJobNameForm
+
+
+logger = logging.getLogger(__name__)
 
 
 def init_job(job_type):
@@ -64,7 +69,6 @@ def create_bamm_job(job_type, request, form, peng_job):
     job_info = init_job_from_form(job_type, request)
     job_info.user = get_user(request)
     job_info.job_type = 'bamm'
-    job_pk = job_info.pk
 
     bamm_job = form.save(commit=False)
     bamm_job.meta_job = job_info
@@ -74,7 +78,14 @@ def create_bamm_job(job_type, request, form, peng_job):
     bamm_job.Motif_Initialization = "Custom File"
     bamm_job.Motif_Init_File_Format = "PWM"
     bamm_job.peng_job = peng_job
-
+    #Validate input file here.
+    if bamm_job.Background_Sequences:
+        # filepath = os.path.join(settings.JOB_DIR_PREFIX, bamm_job.Background_Sequences.name)
+        seq_path = job_upload_to_input(bamm_job, bamm_job.Background_Sequences.name)
+        success, description = validate_fasta_file(seq_path)
+        if not success:
+            raise ValidationError(description, bamm_job.Background_Sequences.name, "background sequence")
+    logger.debug(description)
     with transaction.atomic():
         job_info.save()
         bamm_job.save()
@@ -131,6 +142,7 @@ def create_job(form, meta_job_form, request):
     return job
 
 
+# TODO: Deprecated
 def validate_fasta(path):
     ret = subprocess.Popen([FASTA_VALIDATION_SCRIPT, path], stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT)
@@ -141,13 +153,16 @@ def validate_fasta(path):
 
 
 def validate_input_data(job):
-    fasta_file = path.join(settings.JOB_DIR_PREFIX, job.fasta_file.name)
-    msg_seq, valid_seq = validate_fasta(fasta_file)
-    if not valid_seq:
-        return msg_seq, False
+#    fasta_file = path.join(settings.JOB_DIR_PREFIX, job.fasta_file.name)
+    fasta_file = job_upload_to_input(job, job.fasta_file.name)
+    success, description = validate_fasta_file(fasta_file)
+    if not success:
+        raise ValidationError(description, job.fasta_file.name, "bnput sequence")
     if job.bg_sequences.name is not None:
-        bg_file = path.join(settings.JOB_DIR_PREFIX, job.bg_sequences.name)
-        msg_background, valid_background = validate_fasta(bg_file)
-        if not valid_background:
-            return msg_background, False
-    return 'Validation Successful', True
+        #bg_file = path.join(settings.JOB_DIR_PREFIX, job.bg_sequences.name)
+        bg_file = job_upload_to_input(job, job.bg_sequences.name)
+        success, description = validate_fasta_file(bg_file)
+        if not success:
+            raise ValidationError(description, job.bg_sequences.name, "background sequence")
+    # TODO: Return not really needed anymore.
+    return success
