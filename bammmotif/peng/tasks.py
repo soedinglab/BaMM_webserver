@@ -83,6 +83,10 @@ def plot_bamm_format_generic(job):
 def peng_seeding_pipeline(self, job_pk):
     job = get_object_or_404(PengJob, meta_job__pk=job_pk)
     job_pk = job.meta_job.pk
+
+    job.meta_job.status = "running"
+    job.meta_job.save()
+
     with JobSaveManager(job):
         make_job_folder(job_pk)
 

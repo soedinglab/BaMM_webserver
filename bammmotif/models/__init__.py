@@ -17,6 +17,7 @@ from .models import (
     Motifs,
     DbMatch,
     JobInfo,
+    JobSession,
 )
 
 from ..mmcompare.models import MMcompareJob

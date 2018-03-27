@@ -25,7 +25,7 @@ class PengJob(models.Model):
     zscore_threshold = models.FloatField(default=ShootPengModule.defaults['zscore_threshold'])
     count_threshold = models.IntegerField(default=ShootPengModule.defaults['count_threshold'])
     bg_model_order = models.IntegerField(default=ShootPengModule.defaults['bg_model_order'])
-    strand = models.CharField(max_length=5, default="BOTH")
+    strand = models.CharField(max_length=5, default="BOTH", choices=[('PLUS', 'PLUS'), ('BOTH', 'BOTH')])
     objective_function = models.CharField(
         choices=[(choice, choice) for choice in ShootPengModule.objective_functions],
         max_length=50, default=ShootPengModule.defaults['optimization_score'])

@@ -113,8 +113,8 @@
                         <select id="id_pattern_length" type="number" name="pattern_length" required>
                             <option value="4">4</option>
                             <option value="6">6</option>
-                            <option value="8">8</option>
-                            <option value="10" selected="selected">10</option>
+                            <option value="8" selected>8</option>
+                            <option value="10">10</option>
                         </select>
                     </font></p>
 
@@ -172,12 +172,13 @@
                             <option value="2" selected="selected">2</option>
                         </select>
                     </font></p>
-
+		 <!-- hidden input trick: https://stackoverflow.com/questions/31367098 -->
+		   <input type="hidden" name="strand" value="PLUS" />
                     <p class="indent" style="padding-left: 1.8em"><label for="id_strand"><a class
                         "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});"
                         ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"
                                style="color:black"></span></a> Search on Both Strands:</label><font color="#1f2e2e">&nbsp;&nbsp;<input
-                            id="id_strand" name="strand" type="checkbox" checked/></font>
+                            id="id_strand" name="strand" type="checkbox" value="BOTH" checked/></font>
                     </p>
 
                 {% comment %}

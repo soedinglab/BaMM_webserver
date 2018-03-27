@@ -57,6 +57,9 @@ def find_results_by_id(request, pk):
 
 
 def find_results(request):
+    session_key = get_session_key(request)
+    session_jobs = JobSession.objects.filter(session_key=session_key)
+
     if request.method == "POST":
         form = FindForm(request.POST)
         if form.is_valid():
@@ -65,7 +68,10 @@ def find_results(request):
             base = request.build_absolute_uri('/')
             url = urljoin(base, url_prefix[meta_job.job_type] + jobid)
             return redirect(url, permanent=True)
-    return render(request, 'results/results_main.html', {'form': FindForm()})
+    return render(request, 'results/results_main.html', {
+        'form': FindForm(),
+        'jobs': session_jobs,
+    })
 
 
 def delete(request, pk):

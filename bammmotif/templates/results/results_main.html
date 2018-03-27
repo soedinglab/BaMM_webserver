@@ -1,30 +1,60 @@
+
 {% extends "home/header.html" %}
+{% load tz %}
 
 {% block content %}
 
 
 
-<div class="jumbotron" style="background-color:white"><font color="black">
+<div class="jumbotron bamm_box"><font color="black">
   <h2> Find your job </h2>
-      <hr style="border: 1px solid #1f2e2e">
+  <p class="bamm_text">
+      <hr class="header_line">
       {% if warning %}
         <p> <font color="#B22222">No job found with the provided job ID, did you enter the correct job ID ? </font></p>
       {% endif %}
-     <form method="post"  enctype="multipart/form-data">
+     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <p>
-            <label for="id_job_ID"><font size=3>Enter job ID: </label> <font color="#1f2e2e">
-            <input id="id_job_ID" maxlength="455" name="job_ID" type="text" placeholder="i.e: fdd1d833-7192-4f20-8832-4857db4ddfb4 " required /></font> &nbsp
-            <button type="submit" class="btn btn-primary btn-sm"  style="border:0px; background-color:#1f2e2e"><font color="white" size=3> Search sesults </font></button>
+            <label for="id_job_ID">Enter job ID: </label> 
+            <input id="id_job_ID" maxlength="100" size="46" name="job_ID" type="text" placeholder="i.e: 00000000-0000-0000-0000-000000000000" required /> &nbsp
+            <button type="submit" class="btn btn-primary btn-sm"  style="border:0px; background-color:#1f2e2e"><font color="white" size=4> Find job</font></button>
         </p>
     </form>    
-
-<br>
-    <!-- <p>Or <a class="btn btn-primary btn-lg" href="{% url 'login' %}?next={{'/results/result_overview/'}}" role="button" style="border:0px; background-color:#1f2e2e"><font color="white">login </font></a> to view all your Jobs </p> -->
-    
- </font>
+ </p>
 </div>
 
+<div class="jumbotron bamm_box"><font color="black">
+  <h2> Recently submitted jobs </h2>
+  <hr class="header_line"/>
+
+  <table class="table table-hover bamm_text">
+	<tr>
+		<th>Submission time</th>
+		<th>Job name</th>
+		<th>Job type</th>
+		<th>Job status</th>
+		<th>Link</th>
+	</tr>
+	{% for session in jobs|dictsortreversed:"job.created_at"|slice:"50" %}
+	<tr>
+		<td>
+			{{ session.job.created_at|localtime }}
+		</td>  
+		<td>{{ session.job.job_name }}</td>
+		<td>{{ session.job.job_type_display }}</td>
+		<td>{{ session.job.status }}</td>
+		<td>
+			<a href="{% url 'find_results_by_id' session.job_id %}">
+                                    <button type="submit" class="btn btn-default" aria-label="Go to" >
+                                        <span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span>
+                                    </button>
+                        </a>
+		</td> 
+	  </tr>
+	  {%endfor %}
+  </table>
+</div>
 
 
 {% endblock %}

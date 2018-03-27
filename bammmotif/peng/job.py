@@ -28,6 +28,7 @@ from ..utils import (
     get_user,
     meme_count_motifs,
     get_job_output_folder,
+    register_job_session,
 )
 from ..utils.misc import job_upload_to_input
 from ..utils.meme_reader import get_n_motifs
@@ -41,7 +42,6 @@ logger = logging.getLogger(__name__)
 
 def init_job(job_type):
     job = JobInfo.objects.create()
-    job.created_at = timezone.now()
     job.status = "data uploaded"
     job.job_type = job_type
     if job.job_name is None:
@@ -55,7 +55,6 @@ def init_job(job_type):
 def init_job_from_form(job_type, request):
     form = MetaJobNameForm(request.POST, request.FILES)
     job = form.save(commit=False)
-    job.created_at = timezone.now()
     job.status = "data uploaded"
     job.job_type = job_type
     if job.job_name is None:
@@ -88,6 +87,7 @@ def create_bamm_job(job_type, request, form, peng_job):
     logger.debug(description)
     with transaction.atomic():
         job_info.save()
+        register_job_session(request, job_info)
         bamm_job.save()
 
     return bamm_job
@@ -116,7 +116,6 @@ def create_anonymuous_user(request):
 
 def create_job(form, meta_job_form, request):
     meta_job = meta_job_form.save(commit=False)
-    meta_job.created_at = timezone.now()
     meta_job.job_type = 'peng'
     job_pk = meta_job.pk
 
@@ -125,10 +124,7 @@ def create_job(form, meta_job_form, request):
     output_dir = get_job_output_folder(job_pk)
     job.meme_output = path.join(output_dir, job.meme_output)
     job.json_output = path.join(output_dir, job.json_output)
-    if job.strand == 'on':
-        job.strand = "BOTH"
-    else:
-        job.strand = "PLUS"
+
     if request.user.is_authenticated:
         job.user = request.user
     else:

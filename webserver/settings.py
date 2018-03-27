@@ -47,6 +47,9 @@ DEBUG = get_from_env('DJANGO_DEBUG', converter=lambda x: x == "1")
 ALLOWED_HOSTS = get_from_env('ALLOWED_HOSTS', converter=lambda x: x.split())
 # Application definition
 
+SESSION_COOKIE_AGE = 3600 * 24 * 7 * 4  # four weeks 
+SESSION_SAVE_EVERY_REQUEST = True
+
 INSTALLED_APPS = (
     'bammmotif',
     'django.contrib.admin',

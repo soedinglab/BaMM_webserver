@@ -65,7 +65,6 @@ def new_example_job_info(next_id, job_type, fname):
     job_info = JobInfo(
         job_id=uuid.UUID(int=next_id),
         job_name="example run",
-        created_at=timezone.now(),
         mode='Prediction',
         complete=False,
         job_type=job_type,
