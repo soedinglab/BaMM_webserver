@@ -5,13 +5,17 @@
   font-size: 18px
 }
 
-
 .jumbotron hr.header_line {
   border: 1px solid #1f2e2e
 }
 
 .bamm_box {
   background-color: white
+}
+ 
+.jumbotron div.text_box {
+  padding: 10px;
+  margin-bottom: 10px 
 }
 
 .bamm_text {

@@ -49,8 +49,8 @@ def documentation(request):
     return render(request, 'home/documentation.html')
 
 
-def download(request):
-    return render(request, 'home/download.html')
+def links(request):
+    return render(request, 'home/links.html')
 
 
 def contact(request):
