@@ -234,3 +234,4 @@ class DbMatch(models.Model):
 class JobSession(models.Model):
     session_key = models.CharField(max_length=100, null=True)
     job = models.ForeignKey(JobInfo, on_delete=models.CASCADE)
+    creation_time = models.DateTimeField(default=timezone.now)
