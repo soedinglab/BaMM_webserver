@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
+
+from django.conf import settings
+from django.utils import timezone
+
 from .models import (
     ChIPseq,
     DbParameter,
@@ -13,9 +17,8 @@ from .tasks import (
 )
 from .utils import (
     get_user, set_job_name, upload_example_fasta,
-    upload_example_motif, 
+    upload_example_motif,
     upload_db_input,
-    valid_uuid,
     get_session_key,
 )
 from .utils.path_helpers import (
@@ -30,7 +33,6 @@ import os
 from os import path
 from os.path import basename
 from urllib.parse import urljoin
-from django.contrib.auth.models import User
 
 
 # #########################
@@ -181,7 +183,8 @@ def find_results_by_id(request, pk):
 
 def find_results(request):
     session_key = get_session_key(request)
-    session_jobs = JobSession.objects.filter(session_key=session_key)
+    min_time = timezone.now() - timezone.timedelta(days=settings.MAX_FINDJOB_DAYS)
+    session_jobs = JobSession.objects.filter(session_key=session_key, job__created_at__gt=min_time)
 
     if request.method == "POST":
         form = FindForm(request.POST)
