@@ -1,8 +1,15 @@
-[![License](https://img.shields.io/github/license/soedinglab/BaMM_webserver.svg)](https://choosealicense.com/licenses/agpl-3.0/)
+# BaMM web server
+[![License](https://img.shields.io/github/license/soedinglab/BaMM_webserver.svg)](https://choosealicense.com/licenses/agpl-3.0/) [![Documentation Status](https://readthedocs.org/projects/bammserver/badge/?version=latest)](http://bammserver.readthedocs.io/en/latest/?badge=latest)
 
-# Starting the webserver
+This repository contains the source code of the BaMM web server. A bioinformatic resource for analysis of nucleotide binding proteins with higher-order Bayesian Markov Models (BaMMs).
 
-## Preparing the database directories on the host
+## News
+* 2017/03/07 - We fixed a bug in the interface causing a 500 error when running the seeding stage in single-strand mode.
+
+
+## Setting up the webserver locally
+
+### Preparing the database directories on the host
 
 All persistent data will be stored on the host. I am using the directory `/var/webserver`. Make sure to choose a folder in which your BaMM user account has read/write access.
 
@@ -12,14 +19,14 @@ WEBSERVER_DIR=/var/webserver
 mkdir -p $WEBSERVER_DIR/{media_db,logs,motif_db,mysql_db,redis_db}
 
 cd $WEBSERVER_DIR
-git clone git@github.com:soedinglab/BaMM_webserver.git
+git clone https://github.com/soedinglab/BaMM_webserver.git
 
 cd  BaMM_webserver
 git submodule update --init --recursive
 ```
 
 
-## Configuring the webserver
+### Configuring the webserver
 ```
 cd $WEBSERVER_DIR/BaMM_webserver
 cp .env_template .env
@@ -35,8 +42,8 @@ DB_HOST=db
 DB_NAME=webserver
 DB_PORT=3306
 DB_USER=root
-MYSQL_PASSWORD=3aMM!mot1f
-MYSQL_ROOT_PASSWORD=3aMM!mot1f
+MYSQL_PASSWORD=verysecurepassword
+MYSQL_ROOT_PASSWORD=verysecurepassword
 
 NETWORK_PREFIX=172.12.12
 
@@ -63,7 +70,7 @@ Make sure `BAMM_USER_UID` matches the UID of your user account. You can find you
 
 If done correctly, `docker-compose config` does not print any warnings.
 
-## Setting up the motif databases
+### Setting up the motif databases
 
 Download the motif databases from [http://wwwuser.gwdg.de/~compbiol/bamm/](http://wwwuser.gwdg.de/~compbiol/bamm/), extract the databases into the database directory `/var/webserver/motif_db`.
 
@@ -75,39 +82,29 @@ motif_db
 └── remap2018_human
 ```
 
-## Building the webserver
+### Building the webserver
 Now use `docker-compose build` to download and build all docker images.
 
-## Starting the webserver
+### Starting the webserver
 After successfully building the webserver, use `docker-compose up` to start the webserver. In case you see errors related to mysql stop the server by `ctrl-C` and let is shut down gracefully and restart with `docker-compose up`. The error should be gone.
 
-## Profit
+### Profit
 
 Now you should be able to access the webserver at `0.0.0.0:10080` in your favorite browser.
 
-# Notes and caveats
+## Notes and caveats
 
-## General notes
+### General notes
 
 * docker-compose build commands always have to be started from the root of the git repository of the webserver
 * all files created by the webserver are accessible on the host in `$WEBSERVER_DIR/media_db`
 
-## Developer notes
-
+### Developer notes
 * whenever you change the models, you have to restart the server. Django will create a database migration automatically. These migrations are under version control and should be committed to the git repository
 * Sometimes building the migrations needs user input. In this case, use `docker exec -it bammmwebserver_web_1 bash` to jump into the webserver container and run the migration commands manually. You can find the code in `run_web.sh`.
 
-## Notes for setting up the server on marvin
-* the server is run by the user `bammmotif_admin`. You can find the current version in `/opt/bamm_server`
-* Configuration in `.env` (**VERY IMPORTANT, please double check this**. Wrong configuration leads to password leaks)
-  - make sure `DJANGO_DEBUG` is not defined. Otherwise the server will run in debug mode and leak sensitive information
-  - set `ALLOWED_HOSTS=bammmotif.mpibpc.mpg.de`
-  - set `UID=BAMM_USER_UID=1002`
-* `/etc/nginx/sites-available/bammmotif.mpibpc.mpg.de` has to edited to allow access to static data. See the template on the server
-* all files and subdirectories in `motif_db` require group and other permissions. (755 on directories, 644 on files)
-* a systemd unit controls the startup and shutdown of the webserver. Use `sudo systemctl stop bammserver` and `sudo systemctl start bammserver` to bring it down and up by hand
-* stopping the server can take quite some time, because all running jobs are finished before the celery container is shutdown. Please be patient.
-
+### Setting up the server in production
+We strongly advice against running your own publicly accessible webserver without first reading the django documentation carefully. Failure in doing so can lead to a insecure server.
 
 ## License
 
