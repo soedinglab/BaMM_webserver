@@ -193,18 +193,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'BaMM_webserver/DB')
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'email.gwdg.de'
-EMAIL_HOST_PASSWORD = 'BaMM_motif11610'
-EMAIL_HOST_USER = 'bamm@mpibpc.mpg.de'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-SERVER_EMAIL = 'bamm@mpibpc.mpg.de'
-DEFAULT_FROM_EMAIL = 'bamm@mpibpc.mpg.de'
-
-EMAIL_SUBJECT_SUCCESS = str("BaMM!motif: Your Job has finished!")
-EMAIL_MESSAGE_SUCCESS = str("Dear User, \n your BaMM!motif Job has finished. You can view its results following this link: xcxdxx\n\n Greetings from the BaMM!team\n")
-
 # Settings related to file system structure
 JOB_DIR_PREFIX = ''
 JOB_DIR = path.join(MEDIA_ROOT, JOB_DIR_PREFIX)

@@ -1,3 +1,4 @@
+[![License](https://img.shields.io/github/license/soedinglab/BaMM_webserver.svg)](https://choosealicense.com/licenses/agpl-3.0/)
 
 # Starting the webserver
 
@@ -106,3 +107,8 @@ Now you should be able to access the webserver at `0.0.0.0:10080` in your favori
 * all files and subdirectories in `motif_db` require group and other permissions. (755 on directories, 644 on files)
 * a systemd unit controls the startup and shutdown of the webserver. Use `sudo systemctl stop bammserver` and `sudo systemctl start bammserver` to bring it down and up by hand
 * stopping the server can take quite some time, because all running jobs are finished before the celery container is shutdown. Please be patient.
+
+
+## License
+
+The BaMMserver code can be used, distributed and modified under the GNU Affero General Public License v3.0 ([GNU AGPLv3](https://choosealicense.com/licenses/agpl-3.0/))
