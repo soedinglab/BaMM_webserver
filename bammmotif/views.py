@@ -183,8 +183,8 @@ def find_results_by_id(request, pk):
 
 def find_results(request):
     session_key = get_session_key(request)
-    min_time = timezone.now - timezone.timedelta(days=settings.MAX_FINDJOB_DAYS)
-    session_jobs = JobSession.objects.filter(session_key=session_key, creation_time__gt=min_time)
+    min_time = timezone.now() - timezone.timedelta(days=settings.MAX_FINDJOB_DAYS)
+    session_jobs = JobSession.objects.filter(session_key=session_key, job__created_at__gt=min_time)
 
     if request.method == "POST":
         form = FindForm(request.POST)

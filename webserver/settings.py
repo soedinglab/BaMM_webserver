@@ -270,3 +270,6 @@ LOGGING = {
         }
     }
 }
+
+# Miscellaneous configuration
+MAX_FINDJOB_DAYS = get_from_env('MAX_FINDJOB_DAYS', converter=int)
