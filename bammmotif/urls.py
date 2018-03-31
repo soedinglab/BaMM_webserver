@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^compare_results/(?P<pk>.*)/$', compare_views.result_detail, name='run_compare'),
     url(r'^results/$', views.find_results, name='find_results'),
     url(r'^find_result/(?P<pk>.*)/$', views.find_results_by_id, name='find_results_by_id'),
+    url(r'denovo$', bamm_views.one_step_denovo, name='one_step_denovo'),
     url(r'^delete/(?P<pk>.*)/$', views.delete, name='delete'),
     url(r'^database/$', db_views.maindb, name='maindb'),
     url(r'^database/(?P<pk>.*)/$', db_views.db_detail, name='db_detail'),

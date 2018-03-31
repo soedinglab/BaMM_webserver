@@ -1,6 +1,8 @@
 from django import forms
-from ..models import JobInfo, BaMMJob
+
 from ..utils.ui import DBChoiceField
+
+from .models import BaMMJob, OneStepBaMMJob
 
 
 class PredictionForm(forms.ModelForm):
@@ -11,7 +13,7 @@ class PredictionForm(forms.ModelForm):
                   'Motif_Initialization', 'Motif_InitFile',
                   'Motif_Init_File_Format', 'background_Order',
                   'Background_Sequences', 'score_Seqset',
-                  'score_Cutoff', 'FDR', 
+                  'score_Cutoff', 'FDR',
                   'q_value',
                   'MMcompare', 'p_value_cutoff')
 
@@ -46,3 +48,21 @@ class PredictionExampleForm(forms.ModelForm):
                                                         'data-content': help_text,
                                                         'data-placement': 'right',
                                                         'data-container': 'body'})
+
+
+class OneStepBammJobForm(forms.ModelForm):
+    class Meta:
+        model = OneStepBaMMJob
+        fields = (
+            'Input_Sequences', 'reverse_Complement', 'model_order',
+            'extend', 'background_Order',
+            'Background_Sequences', 'score_Seqset', 'score_Cutoff',
+            'FDR',
+            'MMcompare', 'motif_db', 'p_value_cutoff',
+            'pattern_length', 'zscore_threshold', 'count_threshold',
+            'objective_function', 'no_em', 'max_refined_motifs',
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['motif_db'] = DBChoiceField()

@@ -26,6 +26,8 @@ def get_from_env(env_variable, converter=str):
         return converter(os.getenv(env_variable))
 
 
+N_PARALLEL_THREADS = 4
+
 # CELERY SETTINGS
 BROKER_URL = 'redis://redis_celery:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']

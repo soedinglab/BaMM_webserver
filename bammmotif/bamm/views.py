@@ -15,6 +15,10 @@ from ..utils import (
     get_log_file,
     get_result_folder,
 )
+
+from ..forms import MetaJobNameForm
+from . import forms as bamm_forms
+
 from bammmotif.utils import (
     get_user, set_job_name, upload_example_fasta,
     upload_example_motif,
@@ -23,32 +27,19 @@ from bammmotif.utils import (
 from bammmotif.peng.job import init_job
 
 
-# #########################
-# ## HOME and GENERAL VIEWS #########################
-
-
-def home(request):
-    return render(request, 'home/home.html')
-
-
-def info(request):
-    return render(request, 'home/aboutBaMMmotif.html')
-
-
-def documentation(request):
-    return render(request, 'home/documentation.html')
-
-
-def download(request):
-    return render(request, 'home/download.html')
-
-
-def contact(request):
-    return render(request, 'home/contact.html')
-
-
-def imprint(request):
-    return render(request, 'home/imprint.html')
+def one_step_denovo(request, mode='normal'):
+    if request.method == 'POST':
+        pass
+    else:
+        metajob_form = MetaJobNameForm()
+        job_form = bamm_forms.OneStepBammJobForm()
+        return render(
+            request, 'denovo/one_step_denovo.html',
+            {
+                'metajob_form': metajob_form,
+                'job_form': job_form,
+            }
+        )
 
 
 # #########################
