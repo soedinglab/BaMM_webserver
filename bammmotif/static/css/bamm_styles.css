@@ -12,10 +12,10 @@
 .bamm_box {
   background-color: white
 }
- 
+
 .jumbotron div.text_box {
   padding: 10px;
-  margin-bottom: 10px 
+  margin-bottom: 10px
 }
 
 .bamm_text {
@@ -41,4 +41,24 @@
   background-color: #4169E1;
   font-color: white;
   font-size: 20px
+}
+
+.indented_input_field {
+  padding-left: 1.8em
+}
+
+.info_icon {
+  color: black
+}
+
+.advanced_settings_header {
+  padding-bottom: 15px
+}
+
+.indented {
+  padding-left: 1.8em
+}
+
+.advopt_input_font {
+  color: #1f2e2e
 }
