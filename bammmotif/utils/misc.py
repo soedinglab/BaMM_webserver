@@ -7,7 +7,6 @@ import traceback
 import subprocess
 from shutil import copyfile
 import re
-from collections import OrderedDict
 
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
@@ -15,7 +14,9 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.core.files import File
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from ipware.ip import get_ip
+
 from ..models import (
     JobInfo,
     Motifs,
@@ -265,3 +266,9 @@ def register_job_session(request, meta_job):
     session_key = get_session_key(request)
     session_record = JobSession(session_key=session_key, job=meta_job)
     session_record.save()
+
+
+# adapted from: https://stackoverflow.com/a/35321718/2272172
+def file_size_validator(value):
+    if value.size > settings.MAX_UPLOAD_FILE_SIZE:
+        raise ValidationError('File size exceeds upload limits.')

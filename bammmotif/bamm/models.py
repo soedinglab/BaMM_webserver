@@ -5,7 +5,7 @@ from django.conf import settings
 
 from ..models import JobInfo, MotifDatabase, PengJob
 from ..utils import job_dir_storage as job_fs
-from ..utils import job_upload_to_input
+from ..utils import job_upload_to_input, file_size_validator
 from ..peng.cmd_modules import ShootPengModule
 
 
@@ -92,9 +92,9 @@ class OneStepBaMMJob(models.Model):
 
     # shared
     Input_Sequences = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
-                                       null=True)
+                                       null=True, validators=[file_size_validator])
     Background_Sequences = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
-                                            null=True, blank=True)
+                                            null=True, blank=True, validators=[file_size_validator])
     num_motifs = models.IntegerField(default=1)
     reverse_Complement = models.BooleanField(default=True)
     background_Order = models.PositiveSmallIntegerField(default=2)
