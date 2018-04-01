@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'denovo$', bamm_views.one_step_denovo, name='one_step_denovo'),
     url(r'^delete/(?P<pk>.*)/$', views.delete, name='delete'),
     url(r'^database/$', db_views.maindb, name='maindb'),
+    url(r'^database/browse/(?P<db_id>.*)/$', db_views.db_browse, name='db_browse'),
     url(r'^database/(?P<pk>.*)/$', db_views.db_detail, name='db_detail'),
     url(r'^job/run_peng_view/$', peng_views.run_peng_view, name='peng_predict'),
     url(r'^job/run_peng_view/(?P<mode>\w+)/$', peng_views.run_peng_view, name='peng_predict'),
