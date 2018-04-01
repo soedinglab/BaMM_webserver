@@ -1,6 +1,6 @@
 from django import forms
 
-from ..utils.ui import DBChoiceField
+from ..utils.ui import DBChoiceField, HELP_TEXTS
 
 from .models import BaMMJob, OneStepBaMMJob
 
@@ -50,7 +50,7 @@ class PredictionExampleForm(forms.ModelForm):
                                                         'data-container': 'body'})
 
 
-class OneStepBammJobForm(forms.ModelForm):
+class _OneStepBammJobForm(forms.ModelForm):
     class Meta:
         model = OneStepBaMMJob
         fields = (
@@ -63,6 +63,10 @@ class OneStepBammJobForm(forms.ModelForm):
             'objective_function', 'no_em', 'max_refined_motifs',
         )
 
+
+class OneStepBammJobForm(_OneStepBammJobForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['motif_db'] = DBChoiceField()
+        for name, field in self.fields.items():
+            field.help_text = HELP_TEXTS[name]

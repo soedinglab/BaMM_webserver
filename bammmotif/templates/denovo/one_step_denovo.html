@@ -14,11 +14,10 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
 
-
                     <!-- job name -->
                     <p>
                       <label for="{{ metajob_form.job_name.id_for_label }}">
-                        <a class="testpup infopopup" onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" >
+                        <a class="testpup infopopup" onmouseover="nhpup.popup($('#{{ metajob_form.job_name.html_name }}_info').html(),{'width':400});" >
                             <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"/>
                         </a>
                         {{ metajob_form.job_name.label }}:
@@ -32,7 +31,7 @@
                     {% if mode == 'example' %}
                     <p>
                       <label for="{{job_form.Input_Sequences.id_for_label}}">
-                        <a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});">
+                        <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.Input_Sequences.html_name }}_info').html(),{'width':400});">
                           <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
                         </a>
                         Input Sequences:
@@ -43,20 +42,21 @@
                     {% else %}
                     <p>
                       <label for="{{ job_form.Input_Sequences.id_for_label }}">
-                        <a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});">
+                        <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.Input_Sequences.html_name }}_info').html(),{'width':400});">
                           <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                         </a>
                         Input Sequences:
                       </label>
                     </p>
                     <p class="advopt_input_font">
-                      {{ job_form.Input_Sequences }}
+                      <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
+        name="{{ job_form.Input_Sequences.html_name }}" value="{{ job_form.Input_Sequences.value }}"/>
                     </p>
                     {% endif %}
 
                     <p>
                       <label for="{{ job_form.reverse_Complement.id_for_label }}">
-                        <a class "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" >
+                        <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.reverse_Complement.html_name }}_info').html(),{'width':400});" >
                           <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                         </a>
                         Search on both strands:
@@ -67,8 +67,8 @@
 		                </p>
 
             		    <p>
-                      <label for="db_selector">
-                        <a class "testpup" onmouseover="nhpup.popup($('#DBselectorInfo').html(),{'width':400});">
+                      <label for="{{ job_form.Input_Sequences.id_for_label }}">
+                        <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.motif_db.html_name }}_info').html(),{'width':400});">
                           <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                         </a>
             			      MMcompare Motif Database:
@@ -109,19 +109,20 @@
 
                         <p class="indented">
                           <label for="{{ job_form.Background_Sequences.id_for_label }}">
-                            <a class "testpup" onmouseover="nhpup.popup($('#Background_Sequences_Info').html(),{'width':400});">
+                            <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.Background_Sequences.html_name }}_info').html(),{'width':400});">
                               <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                             </a>
                             Background Sequences:
                           </label>
                         </p>
                         <p class="indented">
-                           {{ job_form.Background_Sequences }}
+                          <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
+            name="{{ job_form.Background_Sequences.html_name }}" value="{{ job_form.Background_Sequences.value }}"/>
                         </p>
 
                         <p class="indented">
                           <label for="{{ job_form.background_Order.id_for_label }}">
-                            <a class "testpup" onmouseover="nhpup.popup($('#BackgroundOrder_Info').html(),{'width':400});">
+                            <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.background_Order.html_name }}_info').html(),{'width':400});">
                               <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                             </a>
                             Background Model Order:
@@ -139,7 +140,7 @@
 
                         <p class="indented">
                           <label for="{{ job_form.pattern_length.id_for_label }}">
-                            <a class "testpup" onmouseover="nhpup.popup($('#Pattern_Length_Info').html(),{'width':400});">
+                            <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.pattern_length.html_name }}_info').html(),{'width':400});">
                               <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"/>
                             </a>
                             Pattern Length:
@@ -157,7 +158,7 @@
 
                         <p class="indented">
                           <label for="{{ job_form.zscore_threshold.id_for_label }}">
-                            <a class "testpup" onmouseover="nhpup.popup($('#Z-Score_Threshold_Info').html(),{'width':400});">
+                            <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.zscore_threshold.html_name }}_info').html(),{'width':400});">
                               <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                             </a>
                             Z-Score Threshold:
@@ -175,7 +176,7 @@
 
                         <p class="indented">
                           <label for="{{ job_form.count_threshold.id_for_label }}">
-                            <a class "testpup" onmouseover="nhpup.popup($('#Count_Threshold_Info').html(),{'width':400});">
+                            <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.count_threshold.html_name }}_info').html(),{'width':400});">
                               <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                             </a>
                             Count Threshold:
@@ -187,7 +188,7 @@
 
                         <p class="indented">
                           <label for={{ form.objective_function.id_for_label }}>
-                            <a class "testpup" onmouseover="nhpup.popup($('#IUPAC_Optimization_Score_Info').html(),{'width':400});">
+                            <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.objective_function.html_name }}_info').html(),{'width':400});">
                               <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                             </a>
                             IUPAC Optimization Score:
@@ -199,7 +200,7 @@
 
                         <p class="indented">
                           <label for="{{ job_form.no_em.id_for_label }}">
-                            <a class "testpup" onmouseover="nhpup.popup($('#EM_Info').html(),{'width':400});">
+                            <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.no_em.html_name }}_info').html(),{'width':400});">
                               <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                             </a>
                             Skip EM:
@@ -211,7 +212,7 @@
 
                         <p class="indented">
                           <label for="{{ job_form.max_refined_motifs.id_for_label }}">
-                            <a class "testpup" onmouseover="nhpup.popup($('#max_optimized_seeds_info').html(),{'width':400});">
+                            <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.max_refined_motifs.html_name }}_info').html(),{'width':400});">
                               <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                             </a>
                             Number of optimized seeds:
@@ -230,7 +231,7 @@
 
                       <p class="indented">
                         <label for="{{ job_form.model_order.id_for_label }}">
-                          <a class "testpup" onmouseover="nhpup.popup($('#ModelOrder_Info').html(),{'width':400});">
+                          <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.model_order.html_name }}_info').html(),{'width':400});">
                             <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                           </a>
                           Model Order:
@@ -242,7 +243,7 @@
 
                       <p class="indented">
                         <label for="{{ job_form.extend.id_for_label }}">
-                          <a class "testpup" onmouseover="nhpup.popup($('#Extend_Info').html(),{'width':400});">
+                          <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.extend.html_name }}_info').html(),{'width':400});">
                             <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                           </a> Flank extension:
                         </label>
@@ -260,7 +261,7 @@
 
                       <p class="indented">
                         <label for="{{ job_form.score_Seqset.id_for_label }}">
-                          <a class "testpup" onmouseover="nhpup.popup($('#BaMMScan_Info').html(),{'width':400});" >
+                          <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.score_Seqset.html_name }}_info').html(),{'width':400});" >
                             <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                           </a>
                           Run motif scanning:
@@ -272,7 +273,7 @@
 
                       <p class="indented">
                         <label for="{{ job_form.score_Cutoff.id_for_label }}">
-                          <a class "testpup" onmouseover="nhpup.popup($('#score_Cutoff_Info').html(),{'width':400});">
+                          <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.score_Cutoff.html_name }}_info').html(),{'width':400});">
                             <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                           </a>
                           Motif scanning e-value cutoff:
@@ -283,8 +284,8 @@
                       </p>
 
                     <p class="indented">
-                      <label for="id_FDR">
-                        <a class "testpup" onmouseover="nhpup.popup($('#FDR_Info').html(),{'width':400});">
+                      <label for="{{ job_form.FDR.id_for_label }}">
+                        <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.FDR.html_name }}_info').html(),{'width':400});">
                           <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                         </a>
                         Run motif evaluation:
@@ -300,7 +301,7 @@
     <p style="margin:15px">
         <button class="btn btn-primary btn-lg run_button" type="submit"><font
                 color="white">BaMM!</font></button>
-        &emsp; <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000001' %}"  role="button"> <span
+        &emsp; <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000004' %}"  role="button"> <span
             class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> View example result </span></a>
     </p>
     </form>
@@ -308,7 +309,19 @@
     </div>
   </div>
 
-  {% include "utils/mouseover_dialogs.html" %}
+  {% for field in all_form_fields %}
+  <div class="modal fade" id="{{ field.html_name }}_info" tabindex="-1" role="dialog" aria-labelledby="{{field.html_name}}_info">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+              <div class="modal-body">
+                  <font color="#0B0719">
+                      <p align="justify"> {{ field.help_text }}</p>
+                  </font>
+              </div>
+          </div>
+      </div>
+  </div>
+  {% endfor %}
 
 
 {% endblock %}

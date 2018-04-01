@@ -2,10 +2,12 @@ import datetime
 import os
 from os import path
 from os.path import basename
+import itertools
 
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 
 from ..models import (
     ChIPseq, DbParameter, BaMMJob, JobInfo
@@ -28,6 +30,7 @@ from bammmotif.peng.job import init_job
 
 
 def one_step_denovo(request, mode='normal'):
+    max_file_size = settings.MAX_UPLOAD_FILE_SIZE
     if request.method == 'POST':
         pass
     else:
@@ -38,6 +41,8 @@ def one_step_denovo(request, mode='normal'):
             {
                 'metajob_form': metajob_form,
                 'job_form': job_form,
+                'max_file_size': max_file_size,
+                'all_form_fields': itertools.chain(metajob_form, job_form),
             }
         )
 
@@ -263,33 +268,3 @@ def result_detail(request, pk):
                       {'job_ID': result.job_id.job_id, 'job_name': result.job_id.job_name, 'status': result.job_id.status, 'output': output})
 
 
-# #########################
-# ## DATABASE RELATED VIEWS
-# #########################
-
-
-def maindb(request):
-    if request.method == "POST":
-        form = DBForm(request.POST)
-        if form.is_valid():
-            p_name = form.cleaned_data['db_ID']
-            db_entries = ChIPseq.objects.filter(target_name__icontains=p_name)
-            if db_entries.exists():
-                sample = db_entries.first()
-                db_location = path.join(sample.parent.base_dir, 'Results')
-                return render(request, 'database/db_overview.html',
-                              {'protein_name': p_name,
-                               'db_entries': db_entries,
-                               'db_location': db_location})
-            form = DBForm()
-            return render(request, 'database/db_main.html', {'form': form, 'warning': True})
-    else:
-        form = DBForm()
-    return render(request, 'database/db_main.html', {'form': form})
-
-
-def db_detail(request, pk):
-    entry = get_object_or_404(ChIPseq, motif_id=pk)
-    db_location = path.join(entry.parent.base_dir, 'Results')
-    return render(request, 'database/db_detail.html',
-                  {'entry': entry, 'db_location': db_location})
