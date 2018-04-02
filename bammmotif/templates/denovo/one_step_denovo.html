@@ -299,10 +299,21 @@
   </div>
 
     <p style="margin:15px">
-        <button class="btn btn-primary btn-lg run_button" type="submit"><font
-                color="white">BaMM!</font></button>
-        &emsp; <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000004' %}"  role="button"> <span
-            class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> View example result </span></a>
+        <button class="btn btn-primary btn-lg run_button" type="submit">
+          <font color="white">BaMM!</font>
+        </button>
+        &emsp;
+        <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000004' %}"  role="button">
+          <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true">
+            View example result
+          </span>
+        </a>
+        &emsp;
+        <a href="{% url 'peng_predict' %}"  role="button">
+          <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true">
+            Manual seed selection
+          </span>
+        </a>
     </p>
     </form>
 
