@@ -37,7 +37,9 @@
                         Input Sequences:
                       </label>
                     </p>
-                    <p class="indented" Example Data </p>
+                    <p class="indented">
+                      Example Data
+                    </p>
 
                     {% else %}
                     <p>
@@ -52,19 +54,16 @@
                       <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
         name="{{ job_form.Input_Sequences.html_name }}" value="{{ job_form.Input_Sequences.value }}"/>
                     </p>
-                    {% endif %}
 
                     <p>
-                      <label for="{{ job_form.reverse_Complement.id_for_label }}">
-                        <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.reverse_Complement.html_name }}_info').html(),{'width':400});" >
-                          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
-                        </a>
-                        Search on both strands:
-                      </label>
-                      <span class="advopt_input_font">
-                         &nbsp;&nbsp;  {{ job_form.reverse_Complement }}
-                      </span>
-		                </p>
+                      &emsp;
+                      <a href="{% url 'one_step_denovo' mode="example" %}" role="button">
+                        <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true">
+                          Load example data
+                        </span>
+                      </a>
+                    </p>
+                    {% endif %}
 
             		    <p>
                       <label for="{{ job_form.Input_Sequences.id_for_label }}">
@@ -106,6 +105,18 @@
                           <h3>General settings</h3>
                           <hr />
                         </p>
+
+                        <p class="indented">
+                          <label for="{{ job_form.reverse_Complement.id_for_label }}">
+                            <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.reverse_Complement.html_name }}_info').html(),{'width':400});" >
+                              <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+                            </a>
+                            Search on both strands:
+                          </label>
+                          <span class="advopt_input_font">
+                             &nbsp;&nbsp;  {{ job_form.reverse_Complement }}
+                          </span>
+    		                </p>
 
                         <p class="indented">
                           <label for="{{ job_form.Background_Sequences.id_for_label }}">
@@ -297,7 +308,7 @@
         </div>
     </div>
   </div>
-
+    <hr class="header_line">
     <p style="margin:15px">
         <button class="btn btn-primary btn-lg run_button" type="submit">
           <font color="white">BaMM!</font>

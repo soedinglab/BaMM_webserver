@@ -62,7 +62,7 @@ HELP_TEXTS = defaultdict(str, {
         'Patterns with less than this amount of counts will not be considered.'
     ),
     'objective_function': (
-        'The scoring function used for the optimnization to IUPAC patterns.'
+        'The scoring function used for the optimization to IUPAC patterns.'
     ),
     'no_em': (
         'When checked, the Expectation Maximization step will be skipped.'
@@ -71,3 +71,8 @@ HELP_TEXTS = defaultdict(str, {
         'Maximum number of seed motifs that will be refined with the BaMM algorithm.'
     ),
 })
+
+# defining aliases
+HELP_TEXTS['fasta_file'] = HELP_TEXTS['Input_Sequences']
+HELP_TEXTS['bg_sequences'] = HELP_TEXTS['Background_Sequences']
+HELP_TEXTS['bg_model_order'] = HELP_TEXTS['background_Order']

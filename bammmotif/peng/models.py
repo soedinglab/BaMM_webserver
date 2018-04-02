@@ -25,7 +25,8 @@ class PengJob(models.Model):
     zscore_threshold = models.FloatField(default=ShootPengModule.defaults['zscore_threshold'])
     count_threshold = models.IntegerField(default=ShootPengModule.defaults['count_threshold'])
     bg_model_order = models.IntegerField(default=ShootPengModule.defaults['bg_model_order'])
-    strand = models.CharField(max_length=5, default="BOTH", choices=[('PLUS', 'PLUS'), ('BOTH', 'BOTH')])
+
+    reverse_Complement = models.BooleanField(default=True)
     objective_function = models.CharField(
         choices=[(choice, choice) for choice in ShootPengModule.objective_functions],
         max_length=50, default=ShootPengModule.defaults['optimization_score'])
@@ -49,3 +50,7 @@ class PengJob(models.Model):
         file_name = path.basename(self.fasta_file.name)
         prefix, _ = path.splitext(file_name)
         return prefix
+
+    @property
+    def strand(self):
+        return 'BOTH' if self.reverse_Complement else 'PLUS'

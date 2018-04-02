@@ -1,6 +1,6 @@
 import os
 from os import path
-from urllib.parse import urljoin
+import itertools
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db import transaction
@@ -156,9 +156,11 @@ def run_peng_view(request, mode='normal'):
     else:
         form = PengForm()
     return render(request, 'peng/peng_seeding.html', {
-        'form': form,
-        'meta_job_form': meta_job_form,
+        'job_form': form,
+        'metajob_form': meta_job_form,
         'mode': mode,
+        'all_form_fields': itertools.chain(meta_job_form, form),
+        'max_file_size': settings.MAX_UPLOAD_FILE_SIZE,
     })
 
 
