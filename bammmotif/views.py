@@ -16,7 +16,8 @@ from .tasks import (
     run_peng
 )
 from .utils import (
-    get_user, set_job_name, upload_example_fasta,
+    get_user,
+    upload_example_fasta,
     upload_example_motif,
     upload_db_input,
     get_session_key,
@@ -61,64 +62,6 @@ def contact(request):
 
 def imprint(request):
     return render(request, 'home/imprint.html')
-
-
-# #########################
-# ## JOB RELATED VIEWS
-# #########################
-
-
-def run_bammscan_view(request, mode='normal', pk='null'):
-    if request.method == "POST":
-        if mode == 'example':
-            form = OccurrenceExampleForm(request.POST, request.FILES)
-        if mode == 'db':
-            form = OccurrenceDBForm(request.POST, request.FILES)
-        if mode == 'normal':
-            form = OccurrenceForm(request.POST, request.FILES)
-        if form.is_valid():
-            # read in data and parameter
-            job = form.save(commit=False)
-            job.created_at = datetime.datetime.now()
-            job.user = get_user(request)
-            job.mode = "Occurrence"
-            job.save()
-            job_pk = job.job_ID
-
-            if job.job_name is None:
-                set_job_name(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            # if example is requested, load the sampleData
-            if mode == 'example':
-                upload_example_fasta(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-                upload_example_motif(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            # enter db input
-            if mode == 'db':
-                upload_db_input(job_pk, pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            job = get_object_or_404(Job, pk = job_pk)
-
-            run_bammscan.delay(job_pk)
-            return render(request, 'job/submitted.html', {'pk': job_pk})
-        else:
-            print('POST Form is not valid!')
-    if mode == 'db':
-        form = OccurrenceDBForm()
-        db_entry = get_object_or_404(ChIPseq, pk=pk)
-        return render(request, 'job/bammscan_input.html',
-                      {'form': form, 'mode': mode, 'pk': pk,
-                       'db_entry': db_entry})
-    if mode == 'example':
-        form = OccurrenceExampleForm()
-    if mode == 'normal':
-        form = OccurrenceForm()
-    return render(request, 'job/bammscan_input.html',
-                  {'form': form, 'mode': mode})
 
 
 def run_bamm_view(request, mode='normal'):

@@ -22,7 +22,7 @@ from ..forms import MetaJobNameForm
 from . import forms as bamm_forms
 
 from bammmotif.utils import (
-    get_user, set_job_name, upload_example_fasta,
+    get_user, upload_example_fasta,
     upload_example_motif,
     upload_db_input, valid_uuid
 )

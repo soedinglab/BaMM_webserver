@@ -46,13 +46,12 @@ from bammmotif.peng.settings import (
     MEME_PLOT_DIRECTORY,
     MEME_PLOT_INPUT,
     JOB_OUTPUT_DIRECTORY,
-    NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT, 
+    NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT,
     MOTIF_SELECT_IDENTIFIER,
 )
 
 from ..utils import (
     get_user,
-    set_job_name,
     get_job_output_folder,
     valid_uuid,
     get_result_folder,

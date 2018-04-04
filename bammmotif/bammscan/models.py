@@ -9,8 +9,7 @@ from ..utils import get_job_input_folder, job_upload_to_input
 
 
 FORMAT_CHOICES = (
-    ('BindingSites', 'BindingSites'),
-    ('PWM', 'PWM'),
+    ('MEME', 'MEME'),
     ('BaMM', 'BaMM'),
 )
 
@@ -25,7 +24,7 @@ class BaMMScanJob(models.Model):
     num_motifs = models.IntegerField(default=1)
     Motif_InitFile = models.FileField(upload_to=job_upload_to_input, null=True, blank=True)
     Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES,
-                                              default="PWM")
+                                              default="MEME")
 
     model_order = models.PositiveSmallIntegerField(default=4)
     background_Order = models.PositiveSmallIntegerField(default=2)
@@ -36,7 +35,7 @@ class BaMMScanJob(models.Model):
 
     # BaMMScan
     score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.1)
+    score_Cutoff = models.FloatField(default=0.001)
     bgModel_File = models.FileField(upload_to=job_upload_to_input, null=True, blank=True)
 
     # FDR related fields
@@ -46,7 +45,7 @@ class BaMMScanJob(models.Model):
 
     # MMcompare related fields
     MMcompare = models.BooleanField(default=False)
-    p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
+    e_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
     @property

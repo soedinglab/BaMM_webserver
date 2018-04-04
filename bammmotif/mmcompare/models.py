@@ -20,7 +20,7 @@ def job_directory_path_motif(instance, filename):
 class MMcompareJob(models.Model):
     meta_job = models.OneToOneField(JobInfo, on_delete=models.CASCADE, primary_key=True)
 
-    Motif_InitFile = models.FileField(upload_to=job_directory_path_motif, null=True, blank=True)
+    Motif_InitFile = models.FileField(upload_to=job_directory_path_motif, null=True)
     Motif_Init_File_Format = models.CharField(max_length=255, choices=INIT_FORMAT_CHOICES,
                                               default="MEME")
     num_motifs = models.IntegerField(default=1)
@@ -38,6 +38,10 @@ class MMcompareJob(models.Model):
     @property
     def full_motif_file_path(self):
         return path.join(settings.JOB_DIR, str(self.Motif_InitFile))
+
+    @property
+    def full_motif_bg_file_path(self):
+        return path.join(settings.JOB_DIR, str(self.bgModel_File))
 
     @property
     def motif_file_name(self):

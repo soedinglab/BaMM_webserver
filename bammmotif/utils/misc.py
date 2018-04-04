@@ -25,6 +25,13 @@ from ..models import (
     JobSession,
 )
 
+from ..utils.input_validation import (
+    validate_bamm_file,
+    validate_meme_file,
+    validate_bamm_bg_file,
+)
+
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -114,12 +121,11 @@ def get_user(request):
         print("NO USER SETABLE")
 
 
-def set_job_name(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    # truncate job_id
-    job_id_short = str(job.job_ID).split("-", 1)
-    job.job_name = job_id_short[0]
-    job.save()
+def set_job_name_if_unset(job):
+    if job.job_name is None:
+        # truncate job_id
+        job_id_short = str(job).split("-", maxsplit=1)
+        job.job_name = job_id_short[0]
 
 
 def add_peng_output(job_pk):
@@ -272,3 +278,24 @@ def register_job_session(request, meta_job):
 def file_size_validator(value):
     if value.size > settings.MAX_UPLOAD_FILE_SIZE:
         raise ValidationError('File size exceeds upload limits.')
+
+
+def check_motif_input(job, form):
+    is_valid = True
+    if job.Motif_Init_File_Format == 'MEME':
+        if not validate_meme_file(job.full_motif_file_path):
+            form.add_error('Motif_InitFile', 'Does not seem to be in MEME format.')
+            is_valid = False
+    elif job.Motif_Init_File_Format == 'BaMM':
+        if not validate_bamm_file(job.full_motif_file_path):
+            form.add_error('Motif_InitFile', 'Does not seem to be in BaMM format.')
+            is_valid = False
+        if not job.bgModel_File:
+            form.add_error('bgModel_File', 'This field is required.')
+            is_valid = False
+        elif not validate_bamm_bg_file(job.full_motif_bg_file_path):
+            form.add_error('bgModel_File', 'Does not seem to be a BaMM '
+                                           'background model.')
+            is_valid = False
+
+    return is_valid

@@ -9,11 +9,12 @@ function validate_file_size(file, max_size) {
   }
 }
 
-function toggle_visibility(elem_id) {
-    var x = document.getElementById(elem_id);
-    if (x.style.display === "none") {
-        x.style.display = "block";
+function toggle_visibility(elem, hide_id) {
+    var hide_obj = document.getElementById(hide_id);
+    var motif_format = elem.value
+    if (motif_format === "MEME") {
+        hide_obj.style.display = "none";
     } else {
-        x.style.display = "none";
+        hide_obj.style.display = "block";
     }
 }

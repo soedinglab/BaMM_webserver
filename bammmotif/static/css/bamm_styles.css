@@ -52,7 +52,7 @@
 }
 
 .advanced_settings_header {
-  padding-bottom: 15px
+  padding-top: 25px
 }
 
 .indented {
@@ -65,4 +65,25 @@
 
 .jumbotron_p_like {
   font-size: 21px
+}
+
+.error_block {
+  color: #8B0000;
+  background-color:rgba(255, 0, 0, 0.2);
+  width: 60%;
+  padding: 10px 25px 5px 25px;
+  margin: 15px;
+
+}
+
+.error_block ul li span {
+  font-weight: bold;
+}
+
+.nav li a {
+  color: #1f2e2e;
+}
+
+.popup_msg_format {
+  color: #0B0719;
 }

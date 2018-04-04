@@ -4,7 +4,7 @@ FASTA_VALIDATOR_BINARY = 'validate_fasta_file'
 BINDINGSITE_VALIDATOR_BINARY = 'validate_bindingsite_file'
 
 
-class ServerValidationError:
+class ServerValidationError(Exception):
     pass
 
 
@@ -21,7 +21,7 @@ def validate_fasta_file(file_path):
         '%r' % file_path
     ]
     process = subprocess.run([str(x) for x in command])
-    exit_code = process.return_code
+    exit_code = process.returncode
 
     if exit_code < 0:
         raise ServerValidationError('received signal %s' % -exit_code)
@@ -46,7 +46,7 @@ def validate_bindingsite_file(file_path, file_format):
         file_format
     ]
     process = subprocess.run([str(x) for x in command])
-    exit_code = process.return_code
+    exit_code = process.returncode
 
     if exit_code < 0:
         raise ServerValidationError('received signal %s' % -exit_code)
@@ -55,3 +55,15 @@ def validate_bindingsite_file(file_path, file_format):
 
     success = exit_code == 0
     return success, result_description[exit_code]
+
+
+def validate_meme_file(file_path):
+    return True
+
+
+def validate_bamm_file(file_path):
+    return True
+
+
+def validate_bamm_bg_file(file_path):
+    return True

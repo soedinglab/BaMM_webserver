@@ -5,16 +5,34 @@
 {% block content %}
 
 
-<div class="container-fluid" >
+<div class="container-fluid">
 
 <div class="jumbotron container-fluid" style="background-color:white">
   <h2> Motif-motif comparison </h2>
   <hr class="header_line" />
-  <div class='container-fluid'>
+  <div class='container-fluid' onload="">
 
 
    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+
+    {% if validation_errors %}
+    <div class="error_block">
+      <h4>Unfortunately your input did not pass validation</h4>
+      <ul>
+          {% for field, errors in job_form.errors.items %}
+             {% for error in errors %}
+              <li>
+                <span>
+                  {{ field }}:
+                </span>
+                  {{ error}}
+              </li>
+              {% endfor %}
+            {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
 
     <p>
       <label for="{{ metajob_form.job_name.id_for_label }}">
@@ -60,7 +78,8 @@
         </a> Motif format:
       </label>
       <span class="advopt_input_font">
-        &nbsp;&nbsp; {{ job_form.Motif_Init_File_Format|attr:"onchange:toggle_visibility('bg_model_section')" }}
+        &nbsp;&nbsp;
+      {{ job_form.Motif_Init_File_Format|attr:"onchange:toggle_visibility(this, 'bg_model_section')" }}
       </span>
     </p>
 
@@ -72,7 +91,7 @@
       </label>
       <p class="indented">
         <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
-name="{{ job_form.Motif_InitFile.html_name }}" id="{{ job_form.Motif_InitFile.auto_id }}" />
+name="{{ job_form.Motif_InitFile.html_name }}" required id="{{ job_form.Motif_InitFile.auto_id }}" />
       </p>
       <p>
         <a href="{% url  'run_compare' mode="example" %}" role="button">
@@ -83,20 +102,29 @@ name="{{ job_form.Motif_InitFile.html_name }}" id="{{ job_form.Motif_InitFile.au
       </p>
     </div>
 
+
+    {% with field=job_form.bgModel_File %}
+    {% if job_form.Motif_Init_File_Format.value == 'MEME' %}
     <div id="bg_model_section" class="jumbotron_p_like" style="display:none">
-      <label for="{{ job_form.bgModel_File.id_for_label }}">
-        <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.bgModel_File.html_name }}_info').html(),{'width':400});">
+    {% else %}
+    <div id="bg_model_section" class="jumbotron_p_like">
+    {% endif %}
+
+      <label for="{{ field.id_for_label }}">
+        <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
           <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
         </a>
         Motif background model:
       </label>
       <p class="indented">
         <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
-name="{{ job_form.bgModel_File.html_name }}" id="{{ job_form.bgModel_File.auto_id }}"/>
+name="{{ field.html_name }}" id="{{ field.auto_id }}"/>
       </p>
     </div>
+    {% endwith %}
 
-    {% endif %}
+  {% endif %}
+
 
 
         <p>

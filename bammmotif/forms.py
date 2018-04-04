@@ -1,4 +1,5 @@
 from django import forms
+
 from .models import MotifDatabase, JobInfo
 from .utils.ui import DBChoiceField, HELP_TEXTS
 

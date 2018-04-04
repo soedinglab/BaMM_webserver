@@ -17,7 +17,7 @@
   <link rel="shortcut icon" href="{%  static 'img/BAMM_Glyphicon_32.png' %}">
   <meta name="viewport" content = "width=device-width, initial-scale=1.0">
 
-  <style type="text/css">
+  <style>
           html,
           body {
             height:100%
@@ -30,21 +30,33 @@
   <div class="container-fluid" style="min-height:95%; ">
     <div class="row">
       <div class="col-sm-12">
-        <center>
           <ul class="nav nav-tabs navbar-fixed-top" role="tablist" style="background-color:white">
-            <li role="navigation"><a href="/home/"><font color="#1f2e2e">Home</font></a></li>
-            <li role="navigation">
-                <a href="/results/" ><font color="#1f2e2e">Find my job</font></a>
+            <li>
+              <a href="/home/">Home</a>
             </li>
-            <li role="navigation"><a href="{% url 'links' %}"><font color="#1f2e2e">Links</font></a></li>
-            <li role="navigation"><a rel="external noopener" target="_blank" href="http://bammserver.readthedocs.io/en/latest"><font color="#1f2e2e">Documentation</font></a></li>
-            <li role="navigation"><a rel="external noopener" target="_blank" href="http://www.mpibpc.mpg.de/soeding"><font color="#1f2e2e">Söding lab</font></a></li>
+            <li>
+                <a href="/results/">Find my job</a>
+            </li>
+            <li>
+              <a href="{% url 'links' %}">
+                Links
+              </a>
+            </li>
+            <li>
+              <a rel="external noopener" target="_blank" href="http://bammserver.readthedocs.io/en/latest">
+                Documentation
+              </a>
+            </li>
+            <li>
+              <a rel="external noopener" target="_blank" href="http://www.mpibpc.mpg.de/soeding">
+                Söding lab
+              </a>
+            </li>
           </ul>
-        </center>
       </div>
     </div>
     <div class="row">
-        <p><font color="white"><br></font></p>
+        <p><br></p>
     </div>
     <div class="row">
       <div class="col-sm-12">
@@ -72,16 +84,12 @@
 
     <footer>
       <div class="container-fluid" style='margin-left:15px'>
-        <p>
+        <p style="color:#1f2e2e">
           <a href='/contact/'>
-            <font color="#1f2e2e">
               Contact
-            </font>
           </a>
           <a href='/imprint/'>
-            <font color="#1f2e2e">
               Imprint
-            </font>
           </a>
         </p>
       </div>

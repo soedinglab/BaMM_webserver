@@ -1,237 +1,277 @@
 {% extends "home/header.html" %}
 
+{% load widget_tweaks %}
+
 {% block content %}
 
 <div class="container-fluid" >
 
-<div class="jumbotron container-fluid" style="background-color:white"><font color="black">
-  <h2> Motif occurrences </h2>
-  <hr style="border: 1px solid #1f2e2e">
+<div class="jumbotron container-fluid" style="background-color:white">
+  <h2> Motif scan </h2>
+  <hr class="header_line">
   <div class='container-fluid'>
 
 
    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <p><label for="id_job_name"><a class "testpup" onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name" style="color:black"></span></a> Job name:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_job_name" maxlength="50" name="job_name" type="text" placeholder="i.e: My Job #1" /></p>
-
-    {% if mode == 'example' %}
-      <p><label for="id_Input_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Input sequences:</label> </p> <p class="indent" style="padding-left: 1.8em"> Example data </p>
-    {% else %}
-      <p><label for="id_Input_Sequences"><a class "testpup" onmouseover="nhpup.popup($('#InputSequence_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Input sequences:</label> </p> <p class="indent" style="padding-left: 1.8em"><input id="id_Input_Sequences" name="Input_Sequences" type="file" required /></p>
-    {% endif %}
-    
-    {% if mode == 'normal' %}
-      <p>  &emsp; <a href="{% url 'run_bamm_scan' mode="example" %}" role="button"> <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> Load example data </span></a> </td>
-    {% endif %}
-
-    {% if mode == 'db' %}
-     <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif initialization file: </label>  <p class="indent" style="padding-left: 1.8em">{{db_entry.filename_prefix}}</p>
-    
-      <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif init file format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> BaMM</font></p>
-  
-    {% endif %}
-    {% if mode == 'example' %}
-      <p><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif initialization file:</label>  <p class="indent" style="padding-left: 1.8em"> Example motif </p>
-      
-      <p><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif init file format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em">PWM</font></p>
-        
-    {% endif %}    
-    {% if mode == 'normal' %}
-      <p><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif initialization file:</label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
-
-      <p><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif init file format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
-         <option value="BindingSites" >BindingSites</option>
-         <option value="PWM" selected="selected">PWM</option>
-         <option value="BaMM">BaMM</option>
-        </select></font></p>
-    
-      <p><label for="id_bgModel_File"><a class "testpup" onmouseover="nhpup.popup($('#bgModel_File_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#bgModel_File" style="color:black"></span> </a>Motif background file: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_bgModel_File" name="bgModel_File" type="file" /></p>
-       
-    {% endif %}
-
-	 <p><label for="db_selector"><a class "testpup"
-		     onmouseover="nhpup.popup($('#DBselectorInfo').html(),{'width':400});"><span
-		     class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a>
-		 MMcompare Motif Database:</label>
-	 	<p><font color="#1f2e2e"> &nbsp;&nbsp; {{ form.motif_db }} </font></p>
-	</p>
-    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white"><font color="black">
-      <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingOne" style="background-color:white"><font color="black">
-          <h2 class="panel-title">
-          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color:white"><font color="black">
-          <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"style="color:black"></span> Advanced options </h3>
-          </a>
-          </h2>
-        </div>
-        
-        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white"><font color="black">
-        <div class="panel-body">
-        
-        <p class="indent" style="padding-left: 1.8em"><label for="id_score_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#score_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Occurrence score cutoff:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_score_cutoff" name="score_Cutoff" type="number" min="0.0000001" max="0.001" value="0.0001" step="0.00000001"/></font></p>
-
-        <p class="indent" style="padding-left: 1.8em"><label for="id_reverse_Complement"><a class "testpup" onmouseover="nhpup.popup($('#ReverseComplement_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Search on both strands:</label><font color="#1f2e2e"> &nbsp;&nbsp;<input id="id_reverse_Complement" name="reverse_Complement" type="checkbox" checked/></font></p>
-
-        <br>
-        <h3> Motif evaluation: </h3>
-
-        <p class="indent" style="padding-left: 1.8em"><label for="id_FDR"><a class "testpup" onmouseover="nhpup.popup($('#FDR_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif evaluation:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_FDR" name="FDR" type="checkbox" checked /></font></p>
-    
-        <br>
-        <h3> Database model comparison: </h3>
-        
-        <p class="indent" style="padding-left: 1.8em"><label for="MMcompare"><a class "testpup" onmouseover="nhpup.popup($('#MMcompare_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> MMcompare:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_MMcompare" name="MMcompare" type="checkbox" checked /></font></p>
-    
-        <p class="indent" style="padding-left: 1.8em"><label for="id_p_value_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#db_match_p_value_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_p_value_cutoff" name="p_value_cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
-   
-        </div> 
-        </div> 
-      </div>
+    {% if validation_errors %}
+    <div class="error_block">
+      <h4>Unfortunately your input did not pass validation</h4>
+      <ul>
+          {% for field, errors in job_form.errors.items %}
+             {% for error in errors %}
+              <li>
+                <span>
+                  {{ field }}:
+                </span>
+                  {{ error}}
+              </li>
+              {% endfor %}
+            {% endfor %}
+      </ul>
     </div>
-    
-  <hr style="border: 1px solid #1f2e2e">
-  <p>
-        <button class="btn btn-primary btn-lg run_button" type="submit">BaMM!</button>
-         &emsp; <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000002' %}"  role="button"> <span
-            class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> View example result</span></a>
+    {% endif %}
+
+    <p>
+      <label for="{{ metajob_form.job_name.id_for_label }}">
+        <a class="testpup infopopup" onmouseover="nhpup.popup($('#{{ metajob_form.job_name.html_name }}_info').html(),{'width':400});">
+            <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a>
+        Job name:
+      </label>
     </p>
+    <p class="indented">
+      {{ metajob_form.job_name|attr:"placeholder:i.e: My Job #1"}}
+    </p>
+
+
+    <p>
+      <label for="{{job_form.Input_Sequences.id_for_label}}">
+        <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.Input_Sequences.html_name }}_info').html(),{'width':400});">
+          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a>
+        Input Sequences:
+      </label>
+    </p>
+    {% if mode == 'normal' or mode == 'db' %}
+    <p class="advopt_input_font indented">
+      <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
+name="{{ job_form.Input_Sequences.html_name }}" required id="{{ job_form.Input_Sequences.auto_id }}"/>
+    </p>
+    <p>
+      &emsp;
+      <a href="{% url 'run_bamm_scan' mode="example" %}" role="button">
+        <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true">
+          Load example data
+        </span>
+      </a>
+    </p>
+    {% elif mode == 'example' %}
+    <p class="indented">
+      Example Sequences
+    </p>
+    {% endif %}
+
+
+    {% with field=job_form.Motif_Init_File_Format %}
+    <p>
+      <label for="{{ field.id_for_label }}">
+        <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a> Motif format:
+      </label>
+      <span class="advopt_input_font">
+        &nbsp;&nbsp;
+        {% if mode == 'normal' %}
+        {{ field|attr:"onchange:toggle_visibility(this, 'bg_model_section')" }}
+        {% elif mode == 'example' %}
+        MEME
+        {% elif mode == 'db' %}
+        BaMM
+        {% endif %}
+      </span>
+    </p>
+    {% endwith %}
+
+    {% with field=job_form.Motif_InitFile %}
+    <p>
+      <label for="{{ field.id_for_label }}">
+        <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a> Motif file:
+      </label>
+    </p>
+    <p class="indented">
+      {% if mode == 'normal' %}
+      <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
+name="{{ field.html_name }}" required id="{{ field.auto_id }}" />
+      {% elif mode == 'example' %}
+      Example motif
+      {% elif mode == 'db' %}
+      {{ db_entry.filename_prefix }}
+      {% endif %}
+    </p>
+    {% endwith %}
+
+    {% with field=job_form.bgModel_File %}
+    {% if job_form.Motif_Init_File_Format.value == 'MEME' %}
+    <div id="bg_model_section" class="jumbotron_p_like" style="display:none">
+    {% else %}
+    <div id="bg_model_section" class="jumbotron_p_like">
+    {% endif %}
+      <label for="{{ field.id_for_label }}">
+        <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a>
+        Motif background model:
+      </label>
+      <p class="indented">
+        <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
+name="{{ field.html_name }}" id="{{ field.auto_id }}"/>
+      </p>
+    </div>
+    {% endwith %}
+
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white">
+      <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne" style="background-color:white">
+          <p class="panel-title">
+          <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color:white">
+            <span class="glyphicon glyphicon-menu-down info_icon" aria-hidden="true"></span>
+            <span class="advanced_options_header">Advanced options</span>
+          </a>
+        </p>
+        </div>
+
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white">
+        <div class="panel-body">
+
+
+        <h3 class="advanced_settings_header">General settings</h3>
+        <hr />
+
+          {% with field=job_form.reverse_Complement %}
+          <p class="indented">
+            <label for="{{ field.id_for_label }}">
+              <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});" >
+                <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+              </a>
+              Search on both strands:
+            </label>
+            <span class="advopt_input_font">
+               &nbsp;&nbsp;  {{ field }}
+            </span>
+          </p>
+          {% endwith %}
+
+          {% with field=job_form.score_Cutoff %}
+          <p class="indented">
+            <label for="{{ field.id_for_label }}">
+              <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});" >
+                <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+              </a>
+              Occurrence score cutoff:
+            </label>
+            <span class="advopt_input_font">
+              &nbsp;&nbsp;
+              {% render_field field min="0" max="0.1" step="0.0001" %}
+            </span>
+          </p>
+          {% endwith %}
+
+          <h3 class="advanced_settings_header">Motif-motif compare</h3>
+          <hr />
+
+          {% with field=job_form.MMcompare %}
+          <p class="indented">
+            <label for="{{ field.id_for_label }}">
+              <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+                <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+              </a>
+              Run motif-motif compare:
+            </label>
+            <span class="advopt_input_font">
+              &nbsp;&nbsp; {{ field }}
+            </span>
+          </p>
+          {% endwith %}
+
+          {% with field=job_form.motif_db %}
+          <p class="indented">
+            <label for="{{ field.id_for_label }}">
+              <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+                <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+              </a>
+              Motif database:
+            </label>
+            <span class="advopt_input_font">
+               &nbsp;&nbsp; {{ field }}
+            </span>
+          </p>
+          {% endwith %}
+
+          {% with field=job_form.e_value_cutoff %}
+          <p class="indented">
+            <label for="{{ field.id_for_label }}">
+              <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+                <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+              </a> E-value cutoff:
+            </label>
+            <span class="advopt_input_font">
+              &nbsp;&nbsp; {{ field|attr:"min:0.01"|attr:"max:3.00" }}
+            </span>
+          </p>
+          {% endwith %}
+
+
+          <h3 class="advanced_settings_header">Additional tools</h3>
+          <hr />
+
+          {% with field=job_form.FDR %}
+          <p class="indented">
+            <label for="{{ field.id_for_label }}">
+              <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+                <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+              </a>
+              Run motif evaluation:
+            </label>
+            <span class="advopt_input_font">
+              &nbsp;&nbsp; {{ field }}
+            </span>
+          </p>
+          {% endwith %}
+
+        </div>
+    </div>
+  </div>
+
+    <hr class="header_line" />
+    <p>
+      <button class="btn btn-primary btn-lg run_button" type="submit">BaMM!</button>
+        &emsp;
+        <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000002' %}"  role="button">
+          <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true">
+            View example result
+          </span>
+        </a>
+    </p>
+    </div>
   </form>
 </div>
-
-<div class="modal fade" id="job_name_info" tabindex="-1" role="dialog" aria-labelledby="job_name">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-            <p  align="justify">You can give your job a name to better distinguish between several runs.</p>
-        </font>
-      </div>
-    </div>
-  </div>
+</div>
 </div>
 
-<div class="modal fade" id="InputSequence_Info" tabindex="-1" role="dialog" aria-labelledby="InputSequence_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-            <p  align="justify">The input sequence file needs to be of fasta format.</p>
-        </font>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="MotifInitFile_Info" tabindex="-1" role="dialog" aria-labelledby="MotifInitFile_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-            <p  align="justify">Upload a motif model in PWM or BaMM format. Alternatively you can upload a list of binding sites.</p>
-        </font>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="MotifInitFileFormat_Info" tabindex="-1" role="dialog" aria-labelledby="MotifInitFileFormat_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-           <p  align="justify">Please select the file format of your provided motif initialization. </p>
-        </font>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="ReverseComplement_Info" tabindex="-1" role="dialog" aria-labelledby="RevverseComplement_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-           <p  align="justify"> When checked, the reverse complementary sequences will used as well for motif search.</p>
-        </font>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="modal fade" id="MMcompare_Info" tabindex="-1" role="dialog" aria-labelledby="MMcompare_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-       <div class="modal-body">
-        <font color="#0B0719">
-            <p  align="justify">When checked, the inserted motif initialization will be compared to our BaMMmotif database to find similarities.</p>
-        </font>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="db_match_p_value_cutoff_Info" tabindex="-1" role="dialog" aria-labelledby="db_match_p_value_cutoff_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-            <p  align="justify">The p-value limit will be used to define a threshold for motif comparisons between the inserted model and the database. </p>
-        </font>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="score_cutoff_Info" tabindex="-1" role="dialog" aria-labelledby="score_cutoff_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-            <p  align="justify">The score limit will be used to define a threshold for motif occurrences reported. </p>
-        </font>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="bgModel_File_Info" tabindex="-1" role="dialog"
-         aria-labelledby="db_match_p_value_cutoff_Info">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <font color="#0B0719">
-                        <p align="justify">Only needed when providing a BaMM model as initialization. Enter the background model file which belongs to the BaMM model provided as initialization.  </p>
-                    </font>
-                </div>
+{% for field in all_form_fields %}
+<div class="modal fade" id="{{ field.html_name }}_info" tabindex="-1" role="dialog" aria-labelledby="{{field.html_name}}_info">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body popup_msg_format">
+                    {{ field.help_text }}
             </div>
         </div>
     </div>
-
-        <div class="modal fade" id="MMcompare_Info" tabindex="-1" role="dialog" aria-labelledby="MMcompare_Info">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <font color="#0B0719">
-                        <p align="justify">When checked, the inserted motif initialization file will be compared to our BaMMmotif
-                            database to find similarities.</p>
-                    </font>
-                </div>
-            </div>
-        </div>
-    </div>
-
-        <div class="modal fade" id="FDR_Info" tabindex="-1" role="dialog" aria-labelledby="FDR_Info">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <font color="#0B0719">
-                        <p align="justify">When checked, the a false discovery rate estimation will be triggered to evaluate motif performance.</p>
-                    </font>
-                </div>
-            </div>
-        </div>
-    </div>
+</div>
+{% endfor %}
 
 {% endblock %}
-
