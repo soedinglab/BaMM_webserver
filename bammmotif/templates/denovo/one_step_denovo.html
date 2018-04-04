@@ -50,9 +50,9 @@
                         Input Sequences:
                       </label>
                     </p>
-                    <p class="advopt_input_font">
+                    <p class="advopt_input_font indented">
                       <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
-        name="{{ job_form.Input_Sequences.html_name }}" value="{{ job_form.Input_Sequences.value }}"/>
+        name="{{ job_form.Input_Sequences.html_name }}" id="{{ job_form.Input_Sequences.auto_id }}"/>
                     </p>
 
                     <p>
@@ -66,7 +66,7 @@
                     {% endif %}
 
             		    <p>
-                      <label for="{{ job_form.Input_Sequences.id_for_label }}">
+                      <label for="{{ job_form.motif_db.id_for_label }}">
                         <a class "testpup" onmouseover="nhpup.popup($('#{{ job_form.motif_db.html_name }}_info').html(),{'width':400});">
                           <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                         </a>
@@ -128,7 +128,7 @@
                         </p>
                         <p class="indented">
                           <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
-            name="{{ job_form.Background_Sequences.html_name }}" value="{{ job_form.Background_Sequences.value }}"/>
+            name="{{ job_form.Background_Sequences.html_name }}" id="{{ job_form.Background_Sequences.auto_id }}"/>
                         </p>
 
                         <p class="indented">

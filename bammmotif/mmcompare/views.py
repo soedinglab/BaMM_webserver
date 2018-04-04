@@ -1,5 +1,5 @@
-from datetime import datetime
 import os
+import itertools
 
 from django.core import files
 from django.db import transaction
@@ -72,8 +72,13 @@ def run_compare_view(request, mode='normal'):
         form = MMCompareExampleForm()
     else:
         form = MMCompareForm()
-    return render(request, 'compare/compare_input.html',
-                  {'form': form, 'meta_job_form': meta_job_form, 'mode': mode})
+    return render(request, 'compare/compare_input.html', {
+        'job_form': form,
+        'metajob_form': meta_job_form,
+        'mode': mode,
+        'all_form_fields': itertools.chain(form, meta_job_form),
+        'max_file_size': settings.MAX_UPLOAD_FILE_SIZE,
+    })
 
 
 def result_detail(request, pk):

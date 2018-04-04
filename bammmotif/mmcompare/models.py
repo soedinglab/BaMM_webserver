@@ -7,8 +7,7 @@ from bammmotif.models import JobInfo, MotifDatabase
 
 
 INIT_FORMAT_CHOICES = (
-    ('BindingSites', 'BindingSites'),
-    ('PWM', 'PWM'),
+    ('MEME', 'MEME'),
     ('BaMM', 'BaMM'),
 )
 
@@ -23,11 +22,11 @@ class MMcompareJob(models.Model):
 
     Motif_InitFile = models.FileField(upload_to=job_directory_path_motif, null=True, blank=True)
     Motif_Init_File_Format = models.CharField(max_length=255, choices=INIT_FORMAT_CHOICES,
-                                              default="PWM")
+                                              default="MEME")
     num_motifs = models.IntegerField(default=1)
     model_order = models.PositiveSmallIntegerField(default=4)
     bgModel_File = models.FileField(upload_to=job_directory_path_motif, null=True, blank=True)
-    p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
+    e_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
     @property

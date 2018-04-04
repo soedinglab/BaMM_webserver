@@ -1,140 +1,160 @@
 {% extends "home/header.html" %}
 
 {% load widget_tweaks %}
+
 {% block content %}
 
 
 <div class="container-fluid" >
 
-<div class="jumbotron container-fluid" style="background-color:white"><font color="black">
+<div class="jumbotron container-fluid" style="background-color:white">
   <h2> Motif-motif comparison </h2>
-  <hr style="border: 1px solid #1f2e2e">
+  <hr class="header_line" />
   <div class='container-fluid'>
 
 
    <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <p><label for={{ meta_job_form.job_name.id_for_label }}><a class "testpup" onmouseover="nhpup.popup($('#job_name_info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#job_name" style="color:black"></span></a> Job name:</label> </p> 
-	<p class="indent" style="padding-left: 1.8em">
-	{{ meta_job_form.job_name|attr:"max_length:50"|attr:"placeholder:i.e: My Job #1" }} 
-	</p>
-
-    
-    {% if mode == 'example' %}
-      <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif initialization file:</label>  <p class="indent" style="padding-left: 1.8em"> Example motif </p>
-      
-      <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif init file format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em">PWM</font></p>
-        
-    {% endif %}    
-    {% if mode == 'normal' %}
-      <p ><label for="id_Motif_InitFile"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFile_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif initialization file:</label>  <p class="indent" style="padding-left: 1.8em"><input id="id_Motif_InitFile" name="Motif_InitFile" type="file" /></p>
-      <p>  &emsp; <a href="{% url  'run_compare' mode="example" %}" role="button"> <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> Example data </span></a> </td>
-
-      <p ><label for="id_Motif_Init_File_Format"><a class "testpup" onmouseover="nhpup.popup($('#MotifInitFileFormat_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> Motif init file format:</label><font color="#1f2e2e"> <p class="indent" style="padding-left: 1.8em"> <select id="id_Motif_Init_File_Format" name="Motif_Init_File_Format" required>
-         <option value="PWM" selected="selected">PWM</option>
-         <option value="BaMM">BaMM</option>
-        </select></font></p>
-      
-      <p ><label for="id_bgModel_File"><a class "testpup" onmouseover="nhpup.popup($('#bgModel_File_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true" onmouseover="#bgModel_File" style="color:black">
-      </span> </a>Motif background file: </label>  <p class="indent" style="padding-left: 1.8em"><input id="id_bgModel_File" name="bgModel_File" type="file" /></p>
-    {% endif %}
-   
-     <p><label for="id_p_value_cutoff"><a class "testpup" onmouseover="nhpup.popup($('#db_match_p_value_cutoff_Info').html(),{'width':400});" ><span class="glyphicon glyphicon-info-sign" aria-hidden="true"style="color:black"></span></a> P-value limit:</label><font color="#1f2e2e">&nbsp;&nbsp;<input id="id_p_value_cutoff" name="p_value_cutoff" type="number" min="0.01" max="3.00" value="0.01" step="0.01"/></font></p>
-
-     <p><label for="db_selector"><a class "testpup"
-	     onmouseover="nhpup.popup($('#DBselectorInfo').html(),{'width':400});"><span
-	     class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a>
-	     MMcompare Motif Database:</label><font color="#1f2e2e">
-	     <p  style="padding-left: 1.8em"> {{ form.motif_db }} </p> </font>
+    <p>
+      <label for="{{ metajob_form.job_name.id_for_label }}">
+        <a class="testpup infopopup" onmouseover="nhpup.popup($('#{{ metajob_form.job_name.html_name }}_info').html(),{'width':400});">
+            <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a>
+        Job name:
+      </label>
+      <p class="indented">
+        {{ metajob_form.job_name|attr:"placeholder:i.e: My Job #1"}}
+      </p>
     </p>
 
-  </div>
-  <hr style="border: 1px solid #1f2e2e">
+    {% if mode == 'example' %}
+    <p>
+      <label for="{{ job_form.Motif_Init_File_Format.id_for_label }}">
+        <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.Motif_Init_File_Format.html_name }}_info').html(),{'width':400});">
+          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a> Motif format:
+      </label>
+      <span class="advopt_input_font">
+        &nbsp;&nbsp; MEME
+      </span>
+    </p>
+
+    <p>
+      <label for="{{ job_form.Motif_InitFile.id_for_label }}">
+        <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.Motif_InitFile.html_name }}_info').html(),{'width':400});">
+          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a> Motif file:
+      </label>
+      <p class="indented">
+        Example motif
+      </p>
+    </p>
+
+    {% else %}
+
+    <p>
+      <label for="{{ job_form.Motif_Init_File_Format.id_for_label }}">
+        <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.Motif_Init_File_Format.html_name }}_info').html(),{'width':400});">
+          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a> Motif format:
+      </label>
+      <span class="advopt_input_font">
+        &nbsp;&nbsp; {{ job_form.Motif_Init_File_Format|attr:"onchange:toggle_visibility('bg_model_section')" }}
+      </span>
+    </p>
+
+    <div class="jumbotron_p_like">
+      <label for="{{ job_form.Motif_InitFile.id_for_label }}">
+        <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.Motif_InitFile.html_name }}_info').html(),{'width':400});">
+          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a> Motif file:
+      </label>
+      <p class="indented">
+        <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
+name="{{ job_form.Motif_InitFile.html_name }}" id="{{ job_form.Motif_InitFile.auto_id }}" />
+      </p>
+      <p>
+        <a href="{% url  'run_compare' mode="example" %}" role="button">
+          <span class="glyphicon glyphicon-play-circle example_button indented" aria-hidden="true">
+            Load example data
+          </span>
+        </a>
+      </p>
+    </div>
+
+    <div id="bg_model_section" class="jumbotron_p_like" style="display:none">
+      <label for="{{ job_form.bgModel_File.id_for_label }}">
+        <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.bgModel_File.html_name }}_info').html(),{'width':400});">
+          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+        </a>
+        Motif background model:
+      </label>
+      <p class="indented">
+        <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
+name="{{ job_form.bgModel_File.html_name }}" id="{{ job_form.bgModel_File.auto_id }}"/>
+      </p>
+    </div>
+
+    {% endif %}
+
+
+        <p>
+          <label for="{{ job_form.e_value_cutoff.id_for_label }}">
+            <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.e_value_cutoff.html_name }}_info').html(),{'width':400});">
+              <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+            </a> E-value cutoff:
+          </label>
+          <span class="advopt_input_font">
+            &nbsp;&nbsp; {{ job_form.e_value_cutoff|attr:"min:0.01"|attr:"max:3.00" }}
+          </span>
+        </p>
+
+        <p>
+          <label for="{{ job_form.motif_db.id_for_label }}">
+            <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.motif_db.html_name }}_info').html(),{'width':400});">
+              <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+            </a>
+            MMcompare motif database:
+          </label>
+          <span class="advopt_input_font">
+             &nbsp;&nbsp; {{ job_form.motif_db }}
+          </span>
+        </p>
+
+
+  <hr class="header_line">
+
   <span>
-    <button class="btn btn-primary btn-lg run_button" type="submit">BaMM!</button>
-     &emsp; <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000003' %}"  role="button"> <span
-            class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> View example result </span></a>
- </span>
-  </p>
+    <button class="btn btn-primary btn-lg run_button" type="submit">
+      BaMM!
+    </button>
+     &emsp;
+    <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000003' %}"  role="button">
+      <span class="glyphicon glyphicon-play-circle example_button" aria-hidden="true">
+        View example result
+      </span>
+    </a>
+  </span>
+
   </form>
-</div>
-</div>
-
-<div class="modal fade" id="job_name_info" tabindex="-1" role="dialog" aria-labelledby="job_name">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-            <p  align="justify">You can give your job a name to better distinguish between several runs.</p>
-        </font>
-      </div>
     </div>
-  </div>
+</div>
 </div>
 
-<div class="modal fade" id="MotifInitFile_Info" tabindex="-1" role="dialog" aria-labelledby="MotifInitFile_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-            <p  align="justify">Upload a motif model in PWM or BaMM format.</p>
-        </font>
-      </div>
+{% for field in all_form_fields %}
+<div class="modal fade" id="{{ field.html_name }}_info" tabindex="-1" role="dialog" aria-labelledby="{{field.html_name}}_info">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <font color="#0B0719">
+                    {{ field.help_text }}
+                </font>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
-
-<div class="modal fade" id="MotifInitFileFormat_Info" tabindex="-1" role="dialog" aria-labelledby="MotifInitFileFormat_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-           <p  align="justify">Please select the file format of your provided motif initialization.</p>
-        </font>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="bgModel_File_Info" tabindex="-1" role="dialog" aria-labelledby="bgModel_File_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-           <p  align="justify">Please select the background file belonging to the selected BaMM file. This option is only necessary when providing a BaMM file initialization.</p>
-        </font>
-      </div>
-    </div>
-  </div>
-</div>
-
-  <div class="modal fade" id="DBselectorInfo" tabindex="-1" role="dialog"
-          aria-labelledby="DBSelectorInfo">
-         <div class="modal-dialog" role="document">
-             <div class="modal-content">
-                 <div class="modal-body">
-                     <font color="#0B0719">
-                         <p align="justify"> Select the target BaMM database.</p>
-                     </font>
-                 </div>
-             </div>
-         </div>
-     </div>
-
-
-<div class="modal fade" id="db_match_p_value_cutoff_Info" tabindex="-1" role="dialog" aria-labelledby="db_match_p_value_cutoff_Info">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <font color="#0B0719">
-            <p  align="justify">The p-value limit will be used to define a threshold for motif matches between the predicted model and the database. </p>
-        </font>
-      </div>
-    </div>
-  </div>
-</div>
+{% endfor %}
 
 
 {% endblock %}
-

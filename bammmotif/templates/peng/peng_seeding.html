@@ -50,7 +50,7 @@
                     </p>
                     <p class="advopt_input_font">
                       <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
-        name="{{ job_form.fasta_file.html_name }}" value="{{ job_form.fasta_file.value }}"/>
+                             name="{{ job_form.fasta_file.html_name }}" id="{{ job_form.fasta_file.auto_id }}"/>
                     </p>
 
                     <p>
@@ -113,7 +113,7 @@
                                   </p>
                                   <p class="indented">
                                     <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
-                              name="{{ job_form.bg_sequences.html_name }}" value="{{ job_form.bg_sequences.value }}"/>
+                              name="{{ job_form.bg_sequences.html_name }}" id="{{ job_form.bg_sequences.auto_id }}"/>
                                   </p>
 
                                   <p class="indented">

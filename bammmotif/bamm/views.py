@@ -43,6 +43,7 @@ def one_step_denovo(request, mode='normal'):
                 'job_form': job_form,
                 'max_file_size': max_file_size,
                 'all_form_fields': itertools.chain(metajob_form, job_form),
+                'mode': mode,
             }
         )
 
