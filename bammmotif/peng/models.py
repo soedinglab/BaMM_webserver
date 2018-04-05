@@ -15,8 +15,6 @@ class PengJob(models.Model):
     num_motifs = models.IntegerField(default=1)
     fasta_file = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
                                   null=True)
-    meme_output = models.CharField(default=ShootPengModule.defaults['meme_output'], max_length=150)
-    json_output = models.CharField(default=ShootPengModule.defaults['json_output'], max_length=150)
     temp_dir = models.CharField(max_length=100, null=True,
                                 default=ShootPengModule.defaults['temp_dir'])
     bg_sequences = models.FileField(upload_to=job_upload_to_input, storage=job_fs,

@@ -4,6 +4,7 @@ import sys
 import logging
 
 from django.db import models
+from django.core.files import File
 
 from .utils.commandline import CommandlineModule
 
@@ -55,18 +56,13 @@ def execute_command_get_bg_model_order(params, job):
 
 
 def transfer_options(job_object, module):
-    for field in job_object._meta.get_fields():
-        key = field.name
-        if key in module.options:
-            if isinstance(field, models.FileField):
-                file_obj = job_object.__getattribute__(key)
-                if not file_obj.name:
-                    value = file_obj.name
+    for key in module.options:
+        if hasattr(job_object, key):
+            value = job_object.__getattribute__(key)
+            if isinstance(value, File):
+                if not value.name:
+                    value = value.name
                 else:
-                    file_path = file_obj.storage.path(file_obj.name)
-                    value = file_path
-            else:
-                value = job_object.__getattribute__(key)
-
+                    value = value.storage.path(value.name)
             if value:
                 module.options[key] = value

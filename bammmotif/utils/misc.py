@@ -7,6 +7,7 @@ import traceback
 import subprocess
 from shutil import copyfile
 import re
+from tempfile import NamedTemporaryFile
 
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
@@ -26,6 +27,7 @@ from ..models import (
 )
 
 from ..utils.input_validation import (
+    validate_fasta_file,
     validate_bamm_file,
     validate_meme_file,
     validate_bamm_bg_file,
@@ -75,14 +77,12 @@ url_prefix = {
 
 def run_command(command, enforce_exit_zero=True):
 
-    if isinstance(command, str):
-        command_str = command
-    elif isinstance(command, collections.Iterable):
-        command_str = ' '.join(command)
+    command = [str(s) for s in command]
+
+    command_str = ' '.join('%r' % s for s in command)
     logger.debug("executing: %s", command_str)
 
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while True:
         nextline = process.stdout.readline()
         if nextline == b'' and process.poll() is not None:
@@ -299,3 +299,18 @@ def check_motif_input(job, form):
             is_valid = False
 
     return is_valid
+
+
+def check_fasta_input(job, form, rq_files):
+    fasta_field = 'Input_Sequences' if hasattr(job, 'Input_Sequences') else 'fasta_file'
+
+    with NamedTemporaryFile('wb+') as tmp_file:
+        for chunk in rq_files[fasta_field].chunks():
+            tmp_file.write(chunk)
+        tmp_file.flush()
+        success, msg = validate_fasta_file(tmp_file.name)
+
+    if not success:
+        form.add_error(fasta_field, 'Does not seem to be in fasta format.')
+        return False
+    return True

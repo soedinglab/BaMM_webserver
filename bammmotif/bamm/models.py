@@ -5,7 +5,11 @@ from django.conf import settings
 
 from ..models import JobInfo, MotifDatabase, PengJob
 from ..utils import job_dir_storage as job_fs
-from ..utils import job_upload_to_input, file_size_validator
+from ..utils import (
+    job_upload_to_input,
+    file_size_validator,
+    get_job_output_folder,
+)
 from ..peng.cmd_modules import ShootPengModule
 
 
@@ -100,8 +104,6 @@ class OneStepBaMMJob(models.Model):
     background_Order = models.PositiveSmallIntegerField(default=2)
 
     # peng-motif seeding
-    meme_output = models.CharField(default=ShootPengModule.defaults['meme_output'], max_length=150)
-    json_output = models.CharField(default=ShootPengModule.defaults['json_output'], max_length=150)
     temp_dir = models.CharField(max_length=100, null=True,
                                 default=ShootPengModule.defaults['temp_dir'])
     pattern_length = models.IntegerField(default=ShootPengModule.defaults['pattern_length'])
@@ -173,7 +175,7 @@ class OneStepBaMMJob(models.Model):
     verbose = models.BooleanField(default=True)
 
     # MMcompare
-    MMcompare = models.BooleanField(default=False)
+    MMcompare = models.BooleanField(default=True)
     e_value_cutoff = models.DecimalField(default=0.1, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
@@ -186,6 +188,23 @@ class OneStepBaMMJob(models.Model):
     @property
     def full_motif_file_path(self):
         return path.join(settings.JOB_DIR, str(self.Motif_InitFile))
+
+    @property
+    def full_sequence_file_path(self):
+        return path.join(settings.JOB_DIR, str(self.Input_Sequences.path))
+
+    @property
+    def meme_output(self):
+        return path.join(get_job_output_folder(self.meta_job.pk), self.filename_prefix + '.meme')
+
+    @property
+    def json_output(self):
+        return path.join(get_job_output_folder(self.meta_job.pk), self.filename_prefix + '.json')
+
+    @property
+    def filtered_meme(self):
+        return path.join(get_job_output_folder(self.meta_job.pk),
+                         self.filename_prefix + '.filtered.meme')
 
     def __str__(self):
         return str(self.meta_job.pk)

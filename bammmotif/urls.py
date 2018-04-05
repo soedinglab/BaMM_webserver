@@ -17,10 +17,6 @@ urlpatterns = [
     url(r'^contact/', views.contact, name='contact'),
     url(r'^imprint/', views.imprint, name='imprint'),
     url(r'^job/submitted/', views.submitted, name='submitted'),
-    # url(r'^job/bamm/$', views.run_bamm_view, name='run_bamm'),
-    # url(r'^job/bamm/(?P<mode>\w+)/$', views.run_bamm_view, name='run_bamm'),
-    url(r'^job/bamm/$', bamm_views.run_bamm_view, name='run_bamm'),
-    url(r'^job/bamm/(?P<mode>\w+)/$', bamm_views.run_bamm_view, name='run_bamm'),
     # scan
     url(r'^job/bamm_scan/$', scan_views.run_bammscan_view, name='run_bamm_scan'),
     url(r'^job/bamm_scan/(?P<mode>\w+)/$', scan_views.run_bammscan_view, name='run_bamm_scan'),

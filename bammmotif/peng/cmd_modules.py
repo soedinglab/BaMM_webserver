@@ -39,8 +39,6 @@ class ShootPengModule(CommandlineModule):
         'n_threads': 1,
         'em_saturation_threshold': 1E4,
         'silent': True,
-        'meme_output': MEME_OUTPUT_FILE,
-        'json_output': JSON_OUTPUT_FILE,
         'temp_dir': 'temp',
         'bg_sequences': None
     }
@@ -94,8 +92,6 @@ class ShootPengModule(CommandlineModule):
 class FilterPWM(CommandlineModule):
 
     defaults = {
-        'input_file': FILTERPWM_INPUT_FILE,
-        'output_file': FILTERPWM_OUTPUT_FILE,
         'model_db': None,
         'n_neg_perm': 10,
         'highscore_fraction': 0.1,
@@ -126,17 +122,6 @@ class FilterPWM(CommandlineModule):
     def _load_defaults(self):
         for key, val in self.defaults.items():
             self.options[key] = val
-
-        #def _set_directory(self, directory):
-    #    self.input_file = os.path.join(directory, self.defaults['input_file'])
-    #    self.output_file = os.path.join(directory, self.defaults['output_file'])
-
-    @classmethod
-    def init_with_extra_directory(cls, directory):
-        obj = cls()
-        obj.input_file = os.path.join(directory, FilterPWM.defaults['input_file'])
-        obj.output_file = os.path.join(directory, FilterPWM.defaults['output_file'])
-        return obj
 
 
 class PlotMeme(CommandlineModule):

@@ -87,3 +87,7 @@
 .popup_msg_format {
   color: #0B0719;
 }
+
+.advanced_options_header a:hover {
+  text-decoration: none;
+}

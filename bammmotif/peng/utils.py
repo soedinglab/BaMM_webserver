@@ -239,3 +239,9 @@ def merge_meme_and_bmscore(meme_list, meme_list_old, bm_scores):
         meme.motif_number = i
     return meme_list
 
+
+def get_motif_ids(fpath):
+    with open(fpath) as f:
+        lines = f.readlines()
+        motif_ids = [x.rsplit()[-1] for x in lines if x.startswith("MOTIF")]
+    return motif_ids

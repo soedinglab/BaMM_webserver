@@ -32,6 +32,7 @@ from .utils import (
     read_bmscore,
     merge_meme_and_bmscore,
     get_selected_motifs,
+    get_motif_ids,
 )
 from ..utils import (
     url_prefix,
@@ -40,7 +41,6 @@ from ..utils import (
 
 
 from bammmotif.forms import FindForm
-from bammmotif.peng_utils import get_motif_ids
 from bammmotif.utils.meme_reader import Meme, split_meme_file, get_n_motifs
 from bammmotif.peng.settings import (
     MEME_PLOT_DIRECTORY,
