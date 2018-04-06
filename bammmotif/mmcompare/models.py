@@ -27,7 +27,7 @@ class MMcompareJob(models.Model):
     num_motifs = models.IntegerField(default=1)
     model_order = models.PositiveSmallIntegerField(default=4)
     bgModel_File = models.FileField(upload_to=job_directory_path_motif, null=True, blank=True)
-    p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
+    e_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
     @property

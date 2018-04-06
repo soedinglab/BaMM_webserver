@@ -7,7 +7,7 @@ class MMCompareForm(forms.ModelForm):
     class Meta:
         model = MMcompareJob
         fields = ('Motif_InitFile', 'Motif_Init_File_Format',
-                  'bgModel_File', 'p_value_cutoff', 'motif_db')
+                  'bgModel_File', 'e_value_cutoff', 'motif_db')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -17,7 +17,7 @@ class MMCompareForm(forms.ModelForm):
 class MMCompareExampleForm(forms.ModelForm):
     class Meta:
         model = MMcompareJob
-        fields = ('p_value_cutoff', 'motif_db')
+        fields = ('e_value_cutoff', 'motif_db')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

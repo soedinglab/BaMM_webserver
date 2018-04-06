@@ -4,6 +4,11 @@
 
     <div class="container-fluid">
 
+        {% if err_msg is defined %}
+            {{ err_msg }}
+        {% endif %}
+
+
         <div class="jumbotron container-fluid" style="background-color:white"><font color="black">
             <h2>Higher Order Model Refinement</h2>
             <hr style="border: 1px solid #1f2e2e">

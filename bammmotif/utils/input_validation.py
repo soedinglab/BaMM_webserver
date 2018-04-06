@@ -8,6 +8,24 @@ class ServerValidationError:
     pass
 
 
+class FastaValidationError(Exception):
+
+    def __init__(self, msg, filename, context_info=None):
+        self._msg = msg
+        self._filename = filename
+        self._context_info = context_info
+
+    def __str__(self):
+        if not self._context_info:
+            return "ValidationError: %s: %s" % (self._filename, self._msg)
+        return "ValidationError: %s (%s): %s" % (self._filename, self._context_info, self._msg)
+
+    def user_error_message(self):
+        if not self._context_info:
+            return "Please upload a valid fasta file."
+        return "Please upload a correct %s." % self._context_info
+
+
 def validate_fasta_file(file_path):
 
     result_description = {

@@ -40,10 +40,14 @@ from .settings import (
 )
 
 from .models import PengJob
-from webserver.settings import BAMM_INPUT
 
 logger = logging.getLogger(__name__)
 
+def get_motif_ids(fpath):
+    with open(fpath) as f:
+        lines = f.readlines()
+        motif_ids = [x.rsplit()[-1] for x in lines if x.startswith("MOTIF")]
+    return motif_ids
 
 def upload_example_fasta_for_peng(job):
     out_filename = EXAMPLE_FASTA_FILE
@@ -73,7 +77,6 @@ def copy_peng_to_bamm(peng_id, bamm_id, selected_motifs):
     bamm_input = os.path.join(get_job_input_folder(bamm_id))
     if not path.exists(bamm_input):
         os.makedirs(bamm_input)
-    # TODO: Is this supposed to be multiple files??
     for file in os.listdir(peng_input):
         logger.debug('copying %s -> %s', filterpwm_src, bamm_output_dir)
         src = os.path.join(peng_input, file)
@@ -103,15 +106,12 @@ def zip_motifs(motif_ids, directory, with_reverse=True):
             additional_args = " %s_rev.png" % os.path.join(directory, motif)
             cmd.append(additional_args)
             # Use -j option to prune directory prefixes
-        #cmd = "zip -j %s %s" % (archive_name, args)
-        # print(cmd)
         subprocess.run(cmd)
     # Now zip all
-    plots = [os.path.join(directory, x) for x in os.listdir(directory) if x.endswith(".png") or x.endswith(".meme")]
+    plots = [os.path.join(directory, x) for x in os.listdir(directory)
+             if x.endswith(".png") or x.endswith(".meme")]
     archive_name = os.path.join(directory, ZIPPED_MOTIFS)
     cmd = ['zip', '-j', archive_name] + plots
-    # cmd = "zip -j %s %s" % (archive_name, plots)
-    # print(cmd)
     subprocess.run(cmd)
 
 
@@ -156,14 +156,15 @@ def upload_example_fasta(job_pk):
         job.save()
     print(job.fasta_file.name)
 
+
 def rename_bamms(target_dir, input_file):
     bamm_file_prefix = os.path.splitext(os.path.basename(input_file))[0]
     meme_list = Meme.fromfile(input_file)
     for i, meme in enumerate(meme_list):
-        bamm_name = os.path.join(target_dir, bamm_file_prefix + "_motif_%s.ihbcp" %(i+1))
+        bamm_name = os.path.join(target_dir, bamm_file_prefix + "_motif_%s.ihbcp" % (i+1))
         bamm_name_new = os.path.join(target_dir, meme.meme_id + ".ihbcp")
         os.rename(bamm_name, bamm_name_new)
-        bamm_name = os.path.join(target_dir, bamm_file_prefix + "_motif_%s.ihbp" %(i+1))
+        bamm_name = os.path.join(target_dir, bamm_file_prefix + "_motif_%s.ihbp" % (i+1))
         bamm_name_new = os.path.join(target_dir, meme.meme_id + ".ihbp")
         os.rename(bamm_name, bamm_name_new)
 
@@ -205,19 +206,20 @@ def zip_bamm_motifs(motif_ids, directory, with_reverse=True):
             # Use -j option to prune directory prefixes
         subprocess.run(cmd)
     # Now zip all
-    plots = [os.path.join(directory, x) for x in os.listdir(directory) if x.endswith(".png") or x.endswith(".meme")]
+    plots = [os.path.join(directory, x) for x in os.listdir(directory)
+             if x.endswith(".png") or x.endswith(".meme")]
     # Add meme file
     plots.append(os.path.join(directory.rsplit('/', maxsplit=1)[0], MEME_OUTPUT_FILE))
     archive_name = os.path.join(directory, ZIPPED_MOTIFS)
     cmd = ['zip', '-j', archive_name] + plots
-    # cmd = "zip -j %s %s" % (archive_name, plots)
-    # print(cmd)
     subprocess.run(cmd)
+
 
 def copy_bmscores(peng_id, bamm_id):
     bamm_input = get_job_input_folder(str(bamm_id))
     bmf_path = os.path.join(get_temporary_job_dir(peng_id), get_bmscore_filename(peng_id))
     shutil.copy(bmf_path, bamm_input)
+
 
 def read_bmscore(fname):
     scores = {}
@@ -226,6 +228,7 @@ def read_bmscore(fname):
         for row in reader:
             scores[row['motif_number']] = row
     return scores
+
 
 def merge_meme_and_bmscore(meme_list, meme_list_old, bm_scores):
     # first we need to match ausfc scores with the memes from peng
@@ -238,4 +241,3 @@ def merge_meme_and_bmscore(meme_list, meme_list_old, bm_scores):
         meme.ausfc = meme_dict[meme.meme_id].ausfc
         meme.motif_number = i
     return meme_list
-

@@ -21,7 +21,7 @@ def get_MMcompare_command(job):
         '--dbDir', motif_db.db_model_directory,
         '--dbOrder', motif_db.model_parameters.modelorder,
         '--qOrder', job.model_order,
-        '--pValue', job.p_value_cutoff,
+        '--max_evalue', job.e_value_cutoff,
     ]
     command = ' '.join(str(s) for s in params)
     return command

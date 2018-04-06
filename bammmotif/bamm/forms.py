@@ -11,9 +11,9 @@ class PredictionForm(forms.ModelForm):
                   'Motif_Initialization', 'Motif_InitFile',
                   'Motif_Init_File_Format', 'background_Order',
                   'Background_Sequences', 'score_Seqset',
-                  'score_Cutoff', 'FDR', 
+                  'score_Cutoff', 'FDR',
                   'q_value',
-                  'MMcompare', 'p_value_cutoff')
+                  'MMcompare', 'e_value_cutoff')
 
     def __init__(self, *args, **kwargs):
         super(PredictionForm, self).__init__(*args, **kwargs)
@@ -34,7 +34,7 @@ class PredictionExampleForm(forms.ModelForm):
                   'extend', 'background_Order',
                   'Background_Sequences', 'score_Seqset', 'score_Cutoff',
                   'FDR', 'q_value',
-                  'MMcompare', 'p_value_cutoff')
+                  'MMcompare', 'e_value_cutoff')
 
     def __init__(self, *args, **kwargs):
         super(PredictionExampleForm, self).__init__(*args, **kwargs)

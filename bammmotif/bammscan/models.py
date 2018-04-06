@@ -46,7 +46,7 @@ class BaMMScanJob(models.Model):
 
     # MMcompare related fields
     MMcompare = models.BooleanField(default=False)
-    p_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
+    e_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
     @property

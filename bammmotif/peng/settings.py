@@ -47,6 +47,7 @@ EXAMPLE_FASTA_FILE = 'ExampleData.fasta'
 
 #ERROR MESSAGES
 NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT = "Please select at least one motif to start refinement!"
+INVALID_FASTA_FILE_MSG = "Please upload a valid fasta file!"
 
 # models related variables
 ALLOWED_JOBMODES = [

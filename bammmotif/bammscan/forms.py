@@ -18,7 +18,7 @@ class BaMMScanForm(forms.ModelForm):
             'score_Cutoff',
             'FDR',
             'MMcompare',
-            'p_value_cutoff',
+            'e_value_cutoff',
             'motif_db',
         )
 
@@ -35,7 +35,7 @@ class BaMMScanExampleForm(forms.ModelForm):
             'score_Cutoff',
             'FDR',
             'MMcompare',
-            'p_value_cutoff',
+            'e_value_cutoff',
             'motif_db',
         )
 
@@ -53,7 +53,7 @@ class BaMMScanDBForm(forms.ModelForm):
             'score_Cutoff',
             'FDR',
             'MMcompare',
-            'p_value_cutoff',
+            'e_value_cutoff',
             'motif_db',
         )
 

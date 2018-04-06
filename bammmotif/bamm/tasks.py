@@ -4,7 +4,7 @@ import logging
 from contextlib import redirect_stdout, redirect_stderr
 
 
-from celery import task, chain
+from celery import task
 from django.shortcuts import get_object_or_404
 
 from ..utils import (
@@ -23,35 +23,6 @@ from .models import BaMMJob
 
 
 logger = logging.getLogger(__name__)
-
-
-# Don't use that yet.
-class ChainBuilder:
-
-    def __init__(self, job_pk, initializer, finalizer):
-        self._job_pk = job_pk
-        self._initializer = initializer
-        self._finalizer = finalizer
-        self._task_list = []
-
-    @property
-    def next(self):
-        return None
-
-    @next.setter
-    def next(self, _task):
-        self._task_list.append(_task.si(self._job_pk))
-
-    def pop(self):
-        self._task_list.pop()
-
-    def __enter__(self):
-        self._task_list.append(self._initializer.si(self._job_pk))
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self._task_list.append(self._finalizer.si(self._job_pk))
-        ret = chain(*self._task_list)()
-        return True
 
 
 def generic_compress_task(job):
