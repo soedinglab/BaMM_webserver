@@ -28,7 +28,7 @@ services:
 
   celery:
     build: .
-    command: celery --app=webserver.celery:app worker
+    command: ./run_workers.sh
     user: ${BAMM_USER_UID}
     volumes:
       - ${WEBSERVER_DIR}:/code
@@ -55,6 +55,9 @@ services:
         - EXAMPLE_MOTIF_DB=${EXAMPLE_MOTIF_DB}
         - MAX_FINDJOB_DAYS=${MAX_FINDJOB_DAYS}
         - MAX_UPLOAD_FILE_SIZE=${MAX_UPLOAD_FILE_SIZE}
+        - JOB_TIME_LIMIT=${JOB_TIME_LIMIT}
+        - N_PARALLEL_JOBS=${N_PARALLEL_JOBS}
+        - N_CORES_PER_JOB=${N_CORES_PER_JOB}
 
   web:
     build: .

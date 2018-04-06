@@ -18,6 +18,8 @@ from django.utils import timezone
 from django.core.exceptions import ValidationError
 from ipware.ip import get_ip
 
+from celery.exceptions import SoftTimeLimitExceeded
+
 from ..models import (
     JobInfo,
     Motifs,
@@ -50,12 +52,20 @@ class JobSaveManager:
 
     def __exit__(self, error_type, error, tb):
         job = self.job
-        if error_type is not None:
+
+        if error_type is SoftTimeLimitExceeded:
+            job.meta_job.status = 'Killed'
+            self.had_exception = True
+            print(timezone.now(), "\t | WARNING: \t Exceeded time limit.")
+            logger.info('Job %s exceeded the time limit and was killed.', job.meta_job.pk)
+
+        elif error_type is not None:
             job.meta_job.status = self.error_status
             self.had_exception = True
             logger.exception(error)
             traceback.print_exception(error_type, error, tb, file=sys.stdout)
             print(timezone.now(), "\t | WARNING: \t %s " % job.meta_job.status)
+
         else:
             job.meta_job.status = self.success_status
             self.had_exception = False
@@ -72,6 +82,7 @@ url_prefix = {
     'bamm': 'peng_to_bamm_results/',
     'bammscan': 'scan_results/',
     'mmcompare': 'compare_results/',
+    'denovo': 'TODO'
 }
 
 

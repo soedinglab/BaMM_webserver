@@ -83,11 +83,13 @@ def bamm_refinement_pipeline(self, job_pk):
 def denovo_pipeline(self, job_pk):
     job = get_object_or_404(OneStepBaMMJob, meta_job__pk=job_pk)
     job_pk = job.meta_job.pk
+
     with JobSaveManager(job):
         make_job_folder(job_pk)
 
         # seeding part
         run_peng_generic(job)
+        print('how did I get here?')
         run_pwm_filter_generic(job)
         convert_to_bamm_generic(job)
         plot_bamm_format_generic(job)

@@ -42,10 +42,11 @@ JOB_INFO_MODE_CHOICES = (
 )
 
 JOB_MODE_MAPPING = {
-    'peng': 'De-novo discovery',
+    'peng': 'Seeding',
     'bamm': 'Motif refinement',
     'bammscan': 'Motif scan',
     'mmcompare': 'Motif-Motif comparison',
+    'denovo': 'De-novo discovery'
 }
 
 
