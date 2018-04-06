@@ -77,3 +77,7 @@ def one_step_denovo(request, mode='normal'):
         'mode': mode,
         'validation_errors': not is_valid,
     })
+
+
+def denovo_results(request, pk):
+    pass

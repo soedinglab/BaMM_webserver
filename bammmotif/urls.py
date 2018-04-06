@@ -26,20 +26,29 @@ urlpatterns = [
     url(r'^job/bamm_compare/$', compare_views.run_compare_view, name='run_compare'),
     url(r'^job/bamm_compare/(?P<mode>\w+)/$', compare_views.run_compare_view, name='run_compare'),
     url(r'^compare_results/(?P<pk>.*)/$', compare_views.result_detail, name='run_compare'),
-    url(r'^results/$', views.find_results, name='find_results'),
-    url(r'^find_result/(?P<pk>.*)/$', views.find_results_by_id, name='find_results_by_id'),
+
+    # denovo
+    url(r'^job/seeding/$', peng_views.run_peng_view, name='peng_predict'),
+    url(r'^job/seeding/(?P<mode>\w+)/$', peng_views.run_peng_view, name='peng_predict'),
+    url(r'^seed_results/(?P<pk>.*)/$', peng_views.peng_result_detail, name='peng_result_detail'),
+
     url(r'job/denovo/$', bamm_views.one_step_denovo, name='one_step_denovo'),
-    url(r'job/denovo/(?P<mode>\w+)/$$', bamm_views.one_step_denovo, name='one_step_denovo'),
-    url(r'^delete/(?P<pk>.*)/$', views.delete, name='delete'),
+    url(r'job/denovo/(?P<mode>\w+)/$', bamm_views.one_step_denovo, name='one_step_denovo'),
+    url(r'denovo_results/(?P<pk>.*)/$', bamm_views.denovo_results, name='denovo_results'),
+
+    url(r'^job/refinement/$', peng_views.peng_load_bamm, name='peng_to_bamm'),
+    url(r'^refine_results/$', peng_views.find_peng_to_bamm_results, name='find_peng_to_bamm_result'),
+
+    # database
     url(r'^database/$', db_views.maindb, name='maindb'),
     url(r'^database/browse/(?P<db_id>.*)/$', db_views.db_browse, name='db_browse'),
     url(r'^database/(?P<pk>.*)/$', db_views.db_detail, name='db_detail'),
-    url(r'^job/seeding/$', peng_views.run_peng_view, name='peng_predict'),
-    url(r'^job/seeding/(?P<mode>\w+)/$', peng_views.run_peng_view, name='peng_predict'),
-    url(r'^peng_results/(?P<pk>.*)/$', peng_views.peng_result_detail, name='peng_result_detail'),
+
+    # find results
+    url(r'^my_results/$', views.find_results, name='find_results'),
+    url(r'^find_result/(?P<pk>.*)/$', views.find_results_by_id, name='find_results_by_id'),
+    url(r'^delete/(?P<pk>.*)/$', views.delete, name='delete'),
     url(r'^job/peng_to_bamm/(?P<pk>.*)/$', peng_views.peng_load_bamm, name='peng_to_bamm'),
-    url(r'^job/peng_to_bamm/$', peng_views.peng_load_bamm, name='peng_to_bamm'),
-    url(r'^peng_to_bamm_results/$', peng_views.find_peng_to_bamm_results, name='find_peng_to_bamm_result'),
     url(r'^peng_to_bamm_results/result_overview/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_overview, name='peng_to_bamm_result_overview'),
     url(r'^peng_to_bamm_results/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_detail, name='peng_to_bamm_result_detail'),
  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,7 @@
 import os
 from os import path
 import shutil
+import glob
 
 from .settings import (
     MEME_OUTPUT_FILE,
@@ -93,10 +94,6 @@ class FilterPWM(CommandlineModule):
 
     defaults = {
         'model_db': None,
-        'n_neg_perm': 10,
-        'highscore_fraction': 0.1,
-        'evalue_threshold': 0.1,
-        'seed': 42,
         'min_overlap': 2,
         'output_score_file': None
     }
@@ -107,10 +104,6 @@ class FilterPWM(CommandlineModule):
             ('input_file', None),
             ('output_file', None),
             ('model_db', '--model_db'),
-            ('n_neg_perm', '--n_neg_perm'),
-            ('highscore_fraction', '--highscore_fraction'),
-            ('evalue_threshold', '--evalue_threshold'),
-            ('seed', '--seed'),
             ('min_overlap', '--min_overlap'),
             ('n_processes', '--n_processes'),
             ('output_score_file', '--output_score_file')
@@ -199,7 +192,9 @@ class ZipMotifs(CommandlineModule):
         archive_name = os.path.join(directory, ZIPPED_MOTIFS)
         argslist = [archive_name]
         plots = [os.path.join(directory, x) for x in os.listdir(directory) if x.endswith(".png") or x.endswith(".meme")]
-        plots.append(os.path.join(directory.rsplit('/', maxsplit=1)[0], MEME_OUTPUT_FILE))
+
+        meme_file = glob.glob(path.join(directory, '../*.filtered.meme'))
+        plots.extend(meme_file)
         argslist += plots
         zm = ZipMotifs()
         zm.strip_filepath = ZipMotifs.defaults['strip_filepath']

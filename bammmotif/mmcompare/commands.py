@@ -21,14 +21,9 @@ def get_MMcompare_command(job):
         '--dbDir', motif_db.db_model_directory,
         '--dbOrder', motif_db.model_parameters.modelorder,
         '--qOrder', job.model_order,
-        '--pValue', job.p_value_cutoff,
+        '--max_evalue', job.e_value_cutoff,
     ]
-    command = ' '.join(str(s) for s in params)
-    return command
-
-
-def MMcompare_transfer_motifs():
-    pass
+    return params
 
 
 def MMcompare(job):
@@ -52,8 +47,7 @@ def get_pwm2bamm_command(job):
     prefix = job.filename_prefix
     meme_file = path.join(get_job_output_folder(job_pk), prefix + '.meme')
     param.append(meme_file)
-    command = ' '.join(str(s) for s in param)
-    return command
+    return param
 
 
 def get_jointprob_command(job):
@@ -64,8 +58,7 @@ def get_jointprob_command(job):
         get_job_output_folder(job_pk) + '/',
         prefix
     ]
-    command = ' '.join(str(s) for s in params)
-    return command
+    return params
 
 
 def get_compare_iupac_command(job):
@@ -78,5 +71,4 @@ def get_compare_iupac_command(job):
         get_model_order(job),
         job.Motif_Init_File_Format,
     ]
-    command = ' '.join(str(s) for s in params)
-    return command
+    return params

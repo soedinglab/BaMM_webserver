@@ -1,11 +1,14 @@
-from django.shortcuts import get_object_or_404
-from django.conf import settings
-from django.utils import timezone
+import glob
 import sys
 import os
 from os import path
 from os.path import basename
 import datetime
+
+from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.utils import timezone
+
 from .models import (
     DbParameter
 )
@@ -27,84 +30,27 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 
-def get_core_params(job_pk, useRefined, m=1):
-    job = get_object_or_404(Job, pk=job_pk)
-    root = settings.MEDIA_ROOT
-    param = []
-    # outputfolder
-    param.append(get_job_output_folder(job_pk))
-    # sequence file
-    param.append(path.join(root, job.Input_Sequences.name))
-    if str(job.Background_Sequences.name) != '':
-        param.append("--negSeqFile")
-        param.append(path.join(root, job.Background_Sequences.name))
-
-    if useRefined is True:
-        # Initialize with refined Model
-        job.Motif_Init_File_Format == "BaMM"
-        job.save()
-        param.append("--BaMMFile")
-        param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '_motif_' + str(m) + '.ihbcp')
-        param.append("--bgModelFile")
-        param.append(get_job_output_folder(job_pk) + '/' + basename(os.path.splitext(job.Input_Sequences.name)[0]) + '.hbcp')
-    else:
-        # motif Initialization File
-        if str(job.Motif_Init_File_Format) == "BindingSites":
-            param.append("--bindingSiteFile")
-            param.append(path.join(root, job.Motif_InitFile.name))
-        if str(job.Motif_Init_File_Format) == "PWM":
-            param.append("--PWMFile")
-            param.append(path.join(root, job.Motif_InitFile.name))
-        if str(job.Motif_Init_File_Format) == "BaMM":
-            param.append("--BaMMFile")
-            param.append(path.join(root, job.Motif_InitFile.name))
-            # when providing a BaMM file, bg File is needed
-            if str(job.bgModel_File) == '':
-                print('InvalidCommandException')
-                # raise InvalidCommandException
-            else:
-                param.append("--bgModelFile")
-                param.append(path.join(root, job.bgModel_File.name))
-
-    # general options
-    if job.reverse_Complement is False:
-        param.append("--ss")
-    param.append("--order")
-    param.append(job.model_Order)
-    param.append("--Order")
-    param.append(job.background_Order)
-    param.append("--extend")
-    param.append(job.extend)
-    param.append(job.extend)
-    param.append("--maxPWM")
-    param.append(job.num_init_motifs)
-
-    command = " ".join(str(s) for s in param)
-    return command
-
-
 def get_logo_command(job, order):
     job_pk = job.meta_job.pk
     prefix = job.filename_prefix
-    params = [
+    command = [
         'plotBaMMLogo.R',
         get_job_output_folder(job_pk) + '/',
         prefix,
         order,
-        '--web 1'
+        '--web',
+        1,
     ]
-    command = " ".join(str(s) for s in params)
     return command
 
 
 def get_distribution_command(job):
     job_pk = job.meta_job.pk
-    params = [
+    command = [
         'plotMotifDistribution.R',
         get_job_output_folder(job_pk) + '/',
         job.filename_prefix,
     ]
-    command = ' '.join(str(s) for s in params)
     return command
 
 
@@ -128,13 +74,12 @@ def get_evaluation_command(job_pk):
 
 def get_iupac_command(job):
     job_pk = job.meta_job.pk
-    params = [
+    command = [
         'IUPAC.py',
         get_job_output_folder(job_pk) + '/',
         job.filename_prefix,
         job.model_order,
     ]
-    command = ' '.join(str(s) for s in params)
     return command
 
 
@@ -179,14 +124,13 @@ def get_convert_input_command(job_pk):
 
 def get_compress_command(job):
     job_pk = job.meta_job.pk
-    param = []
-    param.append('zip -j')
+    param = ['zip', '-j']
     prefix = job.filename_prefix
     param.append(path.join(get_job_output_folder(job_pk), prefix + '_BaMMmotif.zip'))
-    param.append(path.join(get_job_output_folder(job_pk), '*'))
+    files = glob.glob(path.join(get_job_output_folder(job_pk), '*'))
+    param.extend(files)
 
-    command = " ".join(str(s) for s in param)
-    return command
+    return param
 
 
 def get_motif_compress_command(job, motif):
@@ -195,14 +139,15 @@ def get_motif_compress_command(job, motif):
 
     zip_file_name = '%s_Motif_%s.zip' % (job.filename_prefix, motif)
     model_file_glob = '%s_motif_%s*' % (job.filename_prefix, motif)
+    model_files = glob.glob(path.join(output_folder, model_file_glob))
+    bg_files = glob.glob(path.join(output_folder, job.filename_prefix + '.hb*'))
     params = [
-        'zip',  '-j',
+        'zip', '-j',
         path.join(output_folder, zip_file_name),
-        path.join(output_folder, model_file_glob),
-        path.join(output_folder, job.filename_prefix + '.hb*')
+        *model_files,
+        *bg_files,
     ]
-    command = ' '.join(str(s) for s in params)
-    return command
+    return params
 
 
 def get_peng_command(job_pk, useRefined):

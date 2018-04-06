@@ -111,17 +111,25 @@ def submitted(request, pk):
     return render(request, 'job/submitted.html', {'pk': pk})
 
 
-# #########################
-# ## RESULT RELATED VIEWS
-# #########################
-
-
 def find_results_by_id(request, pk):
     job_id = pk
     meta_job = get_object_or_404(JobInfo, job_id=job_id)
-    base = request.build_absolute_uri('/')
-    url = urljoin(base, url_prefix[meta_job.job_type] + job_id)
-    return redirect(url, permanent=True)
+
+    if not meta_job.complete:
+        log_file = get_log_file(pk)
+        command = "tail -20 %r" % log_file
+        output = os.popen(command).read()
+        return render(request, 'results/result_status.html', {
+            'output': output,
+            'job_id': meta_job.pk,
+            'job_name': meta_job.job_name,
+            'status': meta_job.status,
+        })
+
+    else:
+        base = request.build_absolute_uri('/')
+        url = urljoin(base, url_prefix[meta_job.job_type] + '/' + job_id)
+        return redirect(url, permanent=True)
 
 
 def find_results(request):
@@ -135,7 +143,7 @@ def find_results(request):
             jobid = form.cleaned_data['job_ID']
             meta_job = get_object_or_404(JobInfo, job_id=jobid)
             base = request.build_absolute_uri('/')
-            url = urljoin(base, url_prefix[meta_job.job_type] + jobid)
+            url = urljoin(base, url_prefix[meta_job.job_type] + '/' + jobid)
             return redirect(url, permanent=True)
     return render(request, 'results/results_main.html', {
         'form': FindForm(),

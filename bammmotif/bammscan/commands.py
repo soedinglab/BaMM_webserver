@@ -102,5 +102,4 @@ def get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model, motif_id
     params.append(prefix)
 
     job.save()
-    command = ' '.join(str(s) for s in params)
-    return command
+    return params

@@ -14,8 +14,7 @@ from ..peng.cmd_modules import ShootPengModule
 
 
 FORMAT_CHOICES = (
-    ('BindingSites', 'BindingSites'),
-    ('PWM', 'PWM'),
+    ('MEME', 'MEME'),
     ('BaMM', 'BaMM'),
 )
 
@@ -41,7 +40,7 @@ class BaMMJob(models.Model):
                                             default="PEnGmotif")
     Motif_InitFile = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
                                       null=True, blank=True)
-    Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="PWM")
+    Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="MEME")
     num_init_motifs = models.IntegerField(default=10)
 
     # options
@@ -151,7 +150,7 @@ class OneStepBaMMJob(models.Model):
                                             default="PEnGmotif")
     Motif_InitFile = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
                                       null=True, blank=True)
-    Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="PWM")
+    Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="MEME")
 
     # options
     model_order = models.PositiveSmallIntegerField(default=2)
@@ -195,7 +194,7 @@ class OneStepBaMMJob(models.Model):
 
     @property
     def meme_output(self):
-        return path.join(get_job_output_folder(self.meta_job.pk), self.filename_prefix + '.meme')
+        return path.join(get_job_output_folder(self.meta_job.pk), 'seeds.meme')
 
     @property
     def json_output(self):
@@ -204,7 +203,12 @@ class OneStepBaMMJob(models.Model):
     @property
     def filtered_meme(self):
         return path.join(get_job_output_folder(self.meta_job.pk),
-                         self.filename_prefix + '.filtered.meme')
+                         'seeds.filtered.meme')
+
+    @property
+    def q_value(self):
+        # for now set default p-value to 0.5
+        return 0.5
 
     def __str__(self):
         return str(self.meta_job.pk)

@@ -25,7 +25,6 @@ from bammmotif.peng.io import (
         get_temporary_job_dir
 )
 
-
 from ..utils import (
     JobSaveManager,
     get_job_output_folder,
@@ -33,6 +32,7 @@ from ..utils import (
     get_log_file,
     run_command,
 )
+from ..utils.meme_reader import get_motif_ids
 
 from .models import PengJob
 from .cmd_modules import (
@@ -63,6 +63,8 @@ def run_pwm_filter_generic(job):
         fpwm.input_file = job.meme_output
         fpwm.output_file = job.filtered_meme
         fpwm.run()
+        n_motifs = len(get_motif_ids(job.filtered_meme))
+        job.num_motifs = n_motifs
 
 
 def convert_to_bamm_generic(job):
@@ -115,6 +117,8 @@ def peng_seeding_pipeline(self, job_pk):
 
         run_peng_generic(job)
         run_pwm_filter_generic(job)
+        job.num_motifs = min(job.num_motifs, job.max_refined_motifs)
+
         convert_to_bamm_generic(job)
         plot_bamm_format_generic(job)
 

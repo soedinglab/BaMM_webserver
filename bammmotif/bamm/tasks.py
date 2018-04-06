@@ -89,10 +89,12 @@ def denovo_pipeline(self, job_pk):
 
         # seeding part
         run_peng_generic(job)
-        print('how did I get here?')
         run_pwm_filter_generic(job)
         convert_to_bamm_generic(job)
         plot_bamm_format_generic(job)
+
+        # prepare for refinement
+        job.bamm_init_file = job.filtered_meme
 
         # refinement part
         generic_bamm_task(job, first_in_pipeline=True, is_refined=False)

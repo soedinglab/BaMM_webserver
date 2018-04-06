@@ -32,10 +32,10 @@
       <div class="col-sm-12">
           <ul class="nav nav-tabs navbar-fixed-top" role="tablist" style="background-color:white">
             <li>
-              <a href="/home/">Home</a>
+              <a href="{% url 'home' %}">Home</a>
             </li>
             <li>
-                <a href="/results/">Find my job</a>
+                <a href="{% url 'find_results' %}">Find my job</a>
             </li>
             <li>
               <a href="{% url 'links' %}">
