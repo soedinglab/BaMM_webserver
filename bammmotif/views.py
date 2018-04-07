@@ -151,6 +151,14 @@ def find_results(request):
     })
 
 
+def redirect_if_not_ready(job_id):
+    meta_job = get_object_or_404(JobInfo, job_id=job_id)
+    if not meta_job.complete:
+        return redirect('find_results_by_id', pk=job_id)
+
+
+
+
 def result_overview(request):
     if request.user.is_authenticated():
         user_jobs = Job.objects.filter(user=request.user.id)

@@ -2,7 +2,6 @@ from os import path
 import itertools
 
 from django.shortcuts import render
-from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.db import transaction
@@ -11,12 +10,15 @@ from ..forms import MetaJobNameForm
 from . import forms as bamm_forms
 
 from ..utils import (
+    get_result_folder,
     set_job_name_if_unset,
     check_fasta_input,
     register_job_session,
     get_user,
     upload_example_fasta,
 )
+from ..views import redirect_if_not_ready
+from .models import OneStepBaMMJob
 
 from .tasks import denovo_pipeline
 
@@ -56,7 +58,6 @@ def one_step_denovo(request, mode='normal'):
                     register_job_session(request, job.meta_job)
                     job.save()
 
-                # TODO run pipeline
                 denovo_pipeline.delay(job_pk)
 
                 return render(request, 'job/submitted.html', {
@@ -80,4 +81,19 @@ def one_step_denovo(request, mode='normal'):
 
 
 def denovo_results(request, pk):
-    pass
+    redirect_obj = redirect_if_not_ready(pk)
+    if redirect_obj is not None:
+        return redirect_obj
+
+    result = get_object_or_404(OneStepBaMMJob, meta_job__pk=pk)
+    motif_db = result.motif_db
+    db_dir = motif_db.relative_db_model_dir
+
+    num_logos = range(1, (min(2, result.model_order)+1))
+    return render(request, 'bamm/bamm_result_detail.html', {
+        'result': result, 'opath': get_result_folder(pk),
+        'mode': result.meta_job.mode,
+        'Output_filename': result.filename_prefix,
+        'num_logos': num_logos,
+        'db_dir': db_dir,
+    })
