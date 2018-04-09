@@ -69,7 +69,7 @@ def new_example_job_info(next_id, job_type, fname=False):
     job_info = JobInfo(
         job_id=uuid.UUID(int=next_id),
         job_name="example run",
-        mode='Prediction',
+        mode='Example',
         complete=False,
         job_type=job_type,
         user=example_user,

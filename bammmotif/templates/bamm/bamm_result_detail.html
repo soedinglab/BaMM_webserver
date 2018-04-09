@@ -238,18 +238,16 @@
             </div>
         </div>
     </div>
+    {% if result.meta_job.job_type == 'refine' and result.meta_job.has_input %}
 		<input type="hidden" value="{{ result.peng_job.pk }}" name="pk">
 		<a href="{% url 'peng_result_detail' result.peng_job.pk %}" style="color:black">
 		<button type="submit" class="btn btn-primary btn-lg">Back to the seeding results</button></a>
+    {% endif %}
 		</a>
 
         </div>
     </div>
 
 
+
 {% endblock %}
-
-
-
-
-
