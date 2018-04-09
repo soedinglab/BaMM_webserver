@@ -31,8 +31,6 @@ from .commands import (
     get_compare_iupac_command,
 )
 
-from .utils import register_query_motifs
-
 
 def generic_mmcompare_task(job):
     with JobSaveManager(job):
@@ -70,15 +68,14 @@ def generic_mmcompare_motif_transfer_task(job):
     else:
         assert False
 
-    register_query_motifs(job)
     job.model_order = get_model_order(job)
     job.save()
 
 
 def generic_mmcompare_prepare_results(job):
+    make_logos(job)
     run_command(get_compare_iupac_command(job))
     add_motif_iupac(job)
-    make_logos(job)
 
 
 def generic_mmcompare_import_matches(job):

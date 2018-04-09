@@ -73,6 +73,6 @@ def get_compare_iupac_command(job):
         get_job_output_folder(job_pk) + '/',
         prefix,
         get_model_order(job),
-        job.Motif_Init_File_Format,
+        'BaMM'
     ]
     return params
