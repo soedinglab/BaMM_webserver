@@ -6,11 +6,14 @@ logger = logging.getLogger(__name__)
 
 
 class CommandlineModule:
-    def __init__(self, command_name, config, enforce_exit_zero=True):
+    def __init__(self, command_name, config, defaults={}, enforce_exit_zero=True):
         cmd_flag_templates = OrderedDict()
         options = OrderedDict()
         for option_name, flag_template in config:
-            options[option_name] = None
+            option_value = None
+            if option_name in defaults:
+                option_value = defaults[option_name]
+            options[option_name] = option_value
             cmd_flag_templates[option_name] = flag_template
 
         self._command_name = command_name

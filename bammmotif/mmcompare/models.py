@@ -47,5 +47,9 @@ class MMcompareJob(models.Model):
     def motif_file_name(self):
         return path.basename(str(self.Motif_InitFile))
 
+    @property
+    def mmcompare_from_meme(self):
+        return self.Motif_Init_File_Format == 'MEME'
+
     def __str__(self):
         return str(self.meta_job.job_id)

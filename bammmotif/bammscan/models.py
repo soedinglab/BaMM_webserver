@@ -61,3 +61,6 @@ class BaMMScanJob(models.Model):
     def full_motif_file_path(self):
         return path.join(settings.JOB_DIR, str(self.Motif_InitFile))
 
+    @property
+    def bamm_init_file(self):
+        return self.Motif_InitFile

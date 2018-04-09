@@ -79,7 +79,7 @@ class CommandFailureException(Exception):
 
 url_prefix = {
     'peng': 'seed_results',
-    'bamm': 'refine_results',
+    'refine': 'refine_results',
     'bammscan': 'scan_results',
     'mmcompare': 'compare_results',
     'denovo': 'denovo_results',

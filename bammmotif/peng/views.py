@@ -6,6 +6,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.db import transaction
 from django.conf import settings
 
+from ..views import redirect_if_not_ready
+
 
 from bammmotif.peng.io import (
     peng_bmscore_file_old,
@@ -88,38 +90,33 @@ from .settings import (
 )
 
 
-def peng_result_detail(request, pk):
+def peng_results(request, pk):
+    redirect_obj = redirect_if_not_ready(pk)
+    if redirect_obj is not None:
+        return redirect_obj
+
     job_pk = pk
     result = get_object_or_404(PengJob, meta_job__pk=job_pk)
-    meta_job = result.meta_job
-    if result.meta_job.complete:
-        meme_result_file_path = get_meme_result_file_path(job_pk)
-        plot_output_directory = get_plot_output_directory(job_pk)
-        bm_scores = read_bmscore(peng_bmscore_file_old(str(result.meta_job.pk), result.filename_prefix))
-        if not path.exists(plot_output_directory):
-            os.makedirs(plot_output_directory)
-        meme_meta_info_list = Meme.fromfile(meme_result_file_path)
-        meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
-        meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
 
-        return render(request, 'peng/peng_result_detail.html', {
-            'result': result,
-            'pk': result.meta_job.pk,
-            'job_info': result.meta_job,
-            'mode': result.meta_job.mode,
-            'opath': media_memeplot_directory_html(result.meta_job.pk),
-            'meme_meta_info': meme_meta_info_list_new,
-        })
-    else:
-        log_file = get_log_file(job_pk)
-        command = "tail -20 %r" % log_file
-        output = os.popen(command).read()
-        return render(request, 'results/result_status.html', {
-            'output': output,
-            'job_id': meta_job.pk,
-            'job_name': meta_job.job_name,
-            'status': meta_job.status,
-        })
+    meme_result_file_path = get_meme_result_file_path(job_pk)
+    plot_output_directory = get_plot_output_directory(job_pk)
+
+    print(peng_bmscore_file_old(str(result.meta_job.pk), result.filename_prefix))
+    bm_scores = read_bmscore(peng_bmscore_file_old(str(result.meta_job.pk), result.filename_prefix))
+    if not path.exists(plot_output_directory):
+        os.makedirs(plot_output_directory)
+    meme_meta_info_list = Meme.fromfile(meme_result_file_path)
+    meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
+    meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
+
+    return render(request, 'peng/peng_result.html', {
+        'result': result,
+        'pk': result.meta_job.pk,
+        'job_info': result.meta_job,
+        'mode': result.meta_job.mode,
+        'opath': media_memeplot_directory_html(result.meta_job.pk),
+        'meme_meta_info': meme_meta_info_list_new,
+    })
 
 
 def run_peng_view(request, mode='normal'):
@@ -161,28 +158,6 @@ def run_peng_view(request, mode='normal'):
         'all_form_fields': itertools.chain(meta_job_form, form),
         'max_file_size': settings.MAX_UPLOAD_FILE_SIZE,
     })
-
-
-def find_peng_results(request, pk):
-    if request.method == "POST":
-        form = FindForm(request.POST)
-        if form.is_valid():
-            jobid = form.cleaned_data['job_ID']
-            return redirect('peng_result_detail', pk=jobid)
-        form = FindForm()
-    return render(request, 'results/peng_results_main.html', {'form': form})
-
-
-
-
-
-def peng_result_overview(request, pk):
-    if request.user.is_authenticated:
-        user_jobs = PengJob_deprecated.objects.filter(user=request.user.id)
-        return render(request, 'results/peng_result_overview.html',
-                      {'user_jobs': user_jobs})
-    else:
-        return redirect(request, 'find_peng_results')
 
 
 def peng_load_bamm(request, pk):
@@ -245,7 +220,7 @@ def peng_load_bamm(request, pk):
             })
 
         if form.is_valid():
-            bamm_job = create_bamm_job('bamm', request, form, peng_job)
+            bamm_job = create_bamm_job('refine', request, form, peng_job)
             bamm_job.MMcompare = True
             bamm_job_pk = bamm_job.meta_job.pk
 

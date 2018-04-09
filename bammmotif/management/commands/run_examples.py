@@ -34,6 +34,10 @@ from webserver.settings import EXAMPLE_DIR
 from bammmotif.peng.settings import FILTERPWM_OUTPUT_FILE
 
 
+from ...bamm.tasks import denovo_pipeline
+from ...bamm.models import OneStepBaMMJob
+
+
 INITIAL_EXAMPLE_UUID = 0
 EXAMPLE_MOTIF_DB = os.environ['EXAMPLE_MOTIF_DB']
 logger = logging.getLogger(__name__)
@@ -60,7 +64,7 @@ def already_done(job_id):
         return False
 
 
-def new_example_job_info(next_id, job_type, fname):
+def new_example_job_info(next_id, job_type, fname=False):
     example_user = get_object_or_404(User, username='Example_User')
     job_info = JobInfo(
         job_id=uuid.UUID(int=next_id),
@@ -72,35 +76,29 @@ def new_example_job_info(next_id, job_type, fname):
     )
     return job_info, next_id + 1
 
+
 def new_peng_job(next_id, example_file):
     job_info, next_id = new_example_job_info(next_id, 'peng', example_file)
     job_info.save()
-    output_dir = get_job_output_folder(job_info.pk)
     peng_job = PengJob(
         meta_job=job_info,
-        meme_output=os.path.join(output_dir, ShootPengModule.defaults['meme_output']),
-        json_output=os.path.join(output_dir, ShootPengModule.defaults['json_output']),
     )
     with open(example_file) as fh:
         peng_job.fasta_file.save(os.path.basename(example_file), File(fh))
     peng_job.save()
     peng_seeding_pipeline.delay(peng_job.meta_job.pk)
     while not job_info.complete:
-        job_info = get_object_or_404(JobInfo, pk=job_info.pk) # Kind of dirt.
+        job_info = get_object_or_404(JobInfo, pk=job_info.pk)
         time.sleep(10)
     return next_id, peng_job
 
+
 def new_bamm_job(next_id, example_file, peng_job):
-    job_info, next_id = new_example_job_info(next_id, 'bamm', example_file)
+    job_info, next_id = new_example_job_info(next_id, 'refine', example_file)
     job_info.save()
     mdb = get_object_or_404(MotifDatabase, db_id=EXAMPLE_MOTIF_DB)
     bamm_job = BaMMJob(
         meta_job=job_info,
-        Motif_Initialization="Custom File",
-        Motif_Init_File_Format="PWM",
-        MMcompare=True,
-        score_Seqset=True,
-        FDR=True,
         peng_job=peng_job,
         motif_db=mdb,
     )
@@ -108,15 +106,13 @@ def new_bamm_job(next_id, example_file, peng_job):
         bamm_job.Input_Sequences.save(os.path.basename(example_file), File(fh))
 
     n_motifs = 3
-    meme_file = path.join(get_job_output_folder(peng_job.pk), FILTERPWM_OUTPUT_FILE)
+    meme_file = peng_job.meme_output
     motifs = get_motif_ids(meme_file)[:n_motifs]
     save_selected_motifs(motifs, peng_job.pk, bamm_job.meta_job.pk)
     copy_peng_to_bamm(peng_job.pk, bamm_job.pk, motifs)
     bamm_job.num_init_motifs = len(motifs)
     bamm_job.num_motifs = len(motifs)
     bamm_job.Motif_InitFile.name = get_motif_init_file(str(bamm_job.pk))
-    bamm_job.Motif_Initialization = "Custom File"
-    bamm_job.Motif_Init_File_Format = "PWM"
     bamm_job.score_Cutoff = 0.0001
     bamm_job.save()
     bamm_refinement_pipeline.delay(bamm_job.meta_job.pk)
@@ -125,15 +121,15 @@ def new_bamm_job(next_id, example_file, peng_job):
         time.sleep(10)
     return next_id, bamm_job.pk
 
+
 def new_bammscan_job(next_id, example_file, bamm_id):
-    job_info, next_id = new_example_job_info(next_id, 'scan', example_file)
+    job_info, next_id = new_example_job_info(next_id, 'bammscan', example_file)
     job_info.save()
     mdb = get_object_or_404(MotifDatabase, db_id=EXAMPLE_MOTIF_DB)
     bamm_scan_job = BaMMScanJob(
         meta_job=job_info,
         motif_db=mdb,
         MMcompare=True,
-        Motif_Init_File_Format="PWM",
     )
     with open(example_file) as fh:
         bamm_scan_job.Input_Sequences.save(os.path.basename(example_file), File(fh))
@@ -142,31 +138,50 @@ def new_bammscan_job(next_id, example_file, bamm_id):
     bamm_scan_job.save()
     bamm_scan_pipeline.delay(bamm_scan_job.meta_job.pk)
     while not job_info.complete:
-        job_info = get_object_or_404(JobInfo, pk=job_info.pk) # Kind of dirt.
+        job_info = get_object_or_404(JobInfo, pk=job_info.pk)
         time.sleep(10)
     return next_id
 
+
 def new_mmcompare_job(next_id, example_file, bamm_id):
-    job_info, next_id = new_example_job_info(next_id, 'compare', example_file)
+    job_info, next_id = new_example_job_info(next_id, 'mmcompare', example_file)
     job_info.save()
     mdb = get_object_or_404(MotifDatabase, db_id=EXAMPLE_MOTIF_DB)
     mmcompare_job = MMcompareJob(
         meta_job=job_info,
         motif_db=mdb,
-        Motif_Init_File_Format="PWM"
-        # Fill in missing data
     )
     # Init motif_init_file
-    motif_init_file_src = get_motif_init_file(str(bamm_id))
-    motif_init_file_dst = mmcompare_motif_init_file(str(mmcompare_job.pk))
-    motif_init_directory = os.path.splitext(motif_init_file_dst)[0]
-    if not os.path.exists(motif_init_directory):
-        os.makedirs(motif_init_directory)
-    copyfile(motif_init_file_src, motif_init_file_dst)
-    init_bname = path.basename(motif_init_file_dst)
-    mmcompare_job.Motif_InitFile = filename_relative_to_job_dir(mmcompare_job, init_bname)
+    motif_init_file = get_motif_init_file(str(bamm_id))
+
+    with open(motif_init_file) as fh:
+        mmcompare_job.Motif_InitFile.save('example.meme', File(fh), save=False)
     mmcompare_job.save()
+
     mmcompare_pipeline.delay(mmcompare_job.meta_job.pk)
+    while not job_info.complete:
+        job_info = get_object_or_404(JobInfo, pk=job_info.pk)
+        time.sleep(10)
+    return next_id
+
+
+def new_denovo_job(next_id, example_file):
+    job_info, next_id = new_example_job_info(next_id, 'denovo')
+    mdb = get_object_or_404(MotifDatabase, db_id=EXAMPLE_MOTIF_DB)
+
+    denovo_job = OneStepBaMMJob(
+        meta_job=job_info,
+        motif_db=mdb,
+    )
+    with open(example_file) as fh:
+        denovo_job.Input_Sequences.save(os.path.basename(example_file), File(fh), save=False)
+
+    with transaction.atomic():
+        job_info.save()
+        denovo_job.save()
+
+    denovo_pipeline.delay(denovo_job.meta_job.pk)
+
     while not job_info.complete:
         job_info = get_object_or_404(JobInfo, pk=job_info.pk)
         time.sleep(10)
@@ -195,6 +210,12 @@ def add_example_to_db(example_file, next_id):
         next_id += 1
     else:
         next_id = new_mmcompare_job(next_id, example_file, bamm_id)
+
+    if already_done(next_id):
+        next_id += 1
+    else:
+        next_id = new_denovo_job(next_id, example_file)
+
     return next_id
 
 
@@ -213,7 +234,7 @@ class Command(BaseCommand):
             user.save()
         else:
             user = user_query.first()
-            
+
         if options['flush']:
             for example_job in JobInfo.objects.filter(user=user):
                 logger.info('Removing example job %s', example_job)

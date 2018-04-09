@@ -84,17 +84,20 @@ def denovo_pipeline(self, job_pk):
     job = get_object_or_404(OneStepBaMMJob, meta_job__pk=job_pk)
     job_pk = job.meta_job.pk
 
+    job.meta_job.status = "running"
+    job.meta_job.save()
+
     with JobSaveManager(job):
         make_job_folder(job_pk)
 
         # seeding part
         run_peng_generic(job)
-        run_pwm_filter_generic(job)
+        job.num_motifs = min(job.num_motifs, job.max_refined_motifs)
         convert_to_bamm_generic(job)
         plot_bamm_format_generic(job)
 
         # prepare for refinement
-        job.bamm_init_file = job.filtered_meme
+        job.bamm_init_file = job.meme_output
 
         # refinement part
         generic_bamm_task(job, first_in_pipeline=True, is_refined=False)

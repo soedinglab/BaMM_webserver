@@ -3,7 +3,6 @@ from os import path
 from shutil import copyfile
 
 from django.shortcuts import get_object_or_404
-import celery
 from celery import task
 
 from ..utils import (
@@ -18,6 +17,8 @@ from ..utils import (
     add_motif_iupac,
 )
 
+from ..utils.meme_reader import get_motif_ids
+
 from ..models import MMcompareJob
 from ..tasks import generic_model_zip_task
 
@@ -29,6 +30,8 @@ from .commands import (
     MMcompare,
     get_compare_iupac_command,
 )
+
+from .utils import register_query_motifs
 
 
 def generic_mmcompare_task(job):
@@ -48,11 +51,12 @@ def generic_mmcompare_motif_transfer_task(job):
     init_file = path.join(get_job_input_folder(job_pk), path.basename(job.Motif_InitFile.name))
     _, file_extension = path.splitext(job.Motif_InitFile.name)
 
-    if job.Motif_Init_File_Format == 'PWM':
+    if job.Motif_Init_File_Format == 'MEME':
         init_dest = path.join(get_job_output_folder(job_pk), file_prefix + '.meme')
         copyfile(init_file, init_dest)
+        job.num_motifs = len(get_motif_ids(init_dest))
 
-    if job.Motif_Init_File_Format == 'BaMM':
+    elif job.Motif_Init_File_Format == 'BaMM':
         # motif file
         init_dest = path.join(get_job_output_folder(job_pk), file_prefix + file_extension)
         copyfile(init_file, init_dest)
@@ -63,7 +67,10 @@ def generic_mmcompare_motif_transfer_task(job):
         bg_file = path.join(get_job_input_folder(job_pk), bg_basename)
         bg_dest = path.join(get_job_output_folder(job_pk), file_prefix + bg_ext)
         copyfile(bg_file, bg_dest)
+    else:
+        assert False
 
+    register_query_motifs(job)
     job.model_order = get_model_order(job)
     job.save()
 
@@ -81,7 +88,7 @@ def generic_mmcompare_import_matches(job):
 @task(bind=True)
 def mmcompare_pipeline(self, job_pk):
     job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
-    with JobSaveManager(job): 
+    with JobSaveManager(job):
         make_job_folder(job_pk)
 
         generic_mmcompare_motif_transfer_task(job)

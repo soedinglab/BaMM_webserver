@@ -68,7 +68,7 @@ class BaMMJob(models.Model):
     verbose = models.BooleanField(default=True)
 
     # MMcompare
-    MMcompare = models.BooleanField(default=False)
+    MMcompare = models.BooleanField(default=True)
     e_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
@@ -81,6 +81,14 @@ class BaMMJob(models.Model):
     @property
     def full_motif_file_path(self):
         return path.join(settings.JOB_DIR, str(self.Motif_InitFile))
+
+    @property
+    def bamm_init_file(self):
+        return self.Motif_InitFile
+
+    @property
+    def meme_output(self):
+        return path.join(get_job_output_folder(self.meta_job.pk), 'seeds.meme')
 
     def __str__(self):
         return str(self.meta_job.pk)
@@ -195,15 +203,6 @@ class OneStepBaMMJob(models.Model):
     @property
     def meme_output(self):
         return path.join(get_job_output_folder(self.meta_job.pk), 'seeds.meme')
-
-    @property
-    def json_output(self):
-        return path.join(get_job_output_folder(self.meta_job.pk), self.filename_prefix + '.json')
-
-    @property
-    def filtered_meme(self):
-        return path.join(get_job_output_folder(self.meta_job.pk),
-                         'seeds.filtered.meme')
 
     @property
     def q_value(self):

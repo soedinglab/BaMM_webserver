@@ -71,7 +71,7 @@ def convert_to_bamm_generic(job):
     target_dir = bamm_directory_old(job.meta_job.pk)
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
-    input_file = job.filtered_meme
+    input_file = job.meme_output
     run_command(['pwm2bamm.py', input_file, '-o', target_dir])
     rename_bamms(target_dir, input_file)
 
@@ -99,8 +99,8 @@ def plot_bamm_format_generic(job):
         cmd = ['plotBaMMLogo.R', src_dir, prefix, PENG_PLOT_LOGO_ORDER, '--web', '1']
         run_command(cmd)
     rename_and_move_plots(src_dir, meme_plot_directory(job_pk))
-    motif_ids = get_motif_ids(job.filtered_meme)
-    split_meme_file(job.filtered_meme, meme_plot_directory(job_pk))
+    motif_ids = get_motif_ids(job.meme_output)
+    split_meme_file(job.meme_output, meme_plot_directory(job_pk))
     ZipMotifs.zip_motifs(motif_ids, meme_plot_directory(job_pk), with_reverse=True)
 
 
@@ -116,9 +116,6 @@ def peng_seeding_pipeline(self, job_pk):
         make_job_folder(job_pk)
 
         run_peng_generic(job)
-        run_pwm_filter_generic(job)
-        job.num_motifs = min(job.num_motifs, job.max_refined_motifs)
-
         convert_to_bamm_generic(job)
         plot_bamm_format_generic(job)
 

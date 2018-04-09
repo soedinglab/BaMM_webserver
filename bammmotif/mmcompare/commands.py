@@ -23,6 +23,9 @@ def get_MMcompare_command(job):
         '--qOrder', job.model_order,
         '--max_evalue', job.e_value_cutoff,
     ]
+    if hasattr(job, 'mmcompare_from_meme'):
+        if job.mmcompare_from_meme:
+            params.append('--meme-files')
     return params
 
 
@@ -32,9 +35,10 @@ def MMcompare(job):
     print(timezone.now(), "\t | update: \t %s " % job.meta_job.status)
     sys.stdout.flush()
 
-    if job.Motif_Init_File_Format == 'PWM':
-        meme_file = job.full_motif_file_path
-        job.num_motifs = meme_count_motifs(meme_file)
+    if hasattr(job, 'mmcompare_from_meme'):
+        if job.mmcompare_from_meme:
+            meme_file = job.full_motif_file_path
+            job.num_motifs = meme_count_motifs(meme_file)
     run_command(get_MMcompare_command(job))
     job.save()
     sys.stdout.flush()

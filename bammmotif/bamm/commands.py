@@ -76,6 +76,8 @@ def get_core_params(job, is_refined_model, motif_id=1):
                 '--BaMMFile', motif_init_file,
                 '--bgModelFile', path.join(settings.JOB_DIR, str(job.bgModel_File))
             ]
+        else:
+            assert False
 
     # general options
     if not job.reverse_Complement:

@@ -41,7 +41,8 @@ class ShootPengModule(CommandlineModule):
         'em_saturation_threshold': 1E4,
         'silent': True,
         'temp_dir': 'temp',
-        'bg_sequences': None
+        'bg_sequences': None,
+        'max_optimized_patterns': 20,
     }
 
     def __init__(self):
@@ -68,9 +69,10 @@ class ShootPengModule(CommandlineModule):
             ('pwm_pseudo_counts', '--pseudo-counts'),
             ('n_threads', '--threads'),
             ('silent', '--silent'),
+            ('max_optimized_patterns', '--maximum-optimized-patterns'),
         ]
         # Build temp directory
-        super().__init__('shoot_peng.py', config)
+        super().__init__('shoot_peng.py', config, ShootPengModule.defaults)
 
     def create_temp_directory(self):
         if not path.exists(self.options['temp_dir']):

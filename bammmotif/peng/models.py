@@ -1,12 +1,16 @@
 from os import path
 
 from django.db import models
+from django.conf import settings
 
 from ..models import JobInfo
 from .cmd_modules import ShootPengModule
 
 from ..utils import job_dir_storage as job_fs
-from ..utils import job_upload_to_input
+from ..utils import (
+    job_upload_to_input,
+    get_job_output_folder,
+)
 
 
 class PengJob(models.Model):
@@ -40,7 +44,7 @@ class PengJob(models.Model):
         default=ShootPengModule.defaults['bit_factor_threshold'])
     use_default_pwm = models.BooleanField(default=ShootPengModule.defaults['use_default_pwm'])
     pwm_pseudo_counts = models.IntegerField(default=ShootPengModule.defaults['pwm_pseudo_counts'])
-    n_threads = models.IntegerField(default=ShootPengModule.defaults['n_threads'])
+    n_threads = models.IntegerField(default=settings.N_PARALLEL_THREADS)
     silent = models.BooleanField(default=ShootPengModule.defaults['silent'])
 
     @property
@@ -52,3 +56,7 @@ class PengJob(models.Model):
     @property
     def strand(self):
         return 'BOTH' if self.reverse_Complement else 'PLUS'
+
+    @property
+    def meme_output(self):
+        return path.join(get_job_output_folder(self.meta_job.pk), 'seeds.meme')
