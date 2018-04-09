@@ -62,13 +62,6 @@ def set_job_name(job_pk):
     job.save()
 
 
-def upload_example_fasta(job_pk):
-    job = get_object_or_404(Bamm, pk=job_pk)
-    out_filename = "ExampleData.fasta"
-    with open(settings.EXAMPLE_FASTA) as fh:
-        job.Input_Sequences.save(out_filename, File(fh))
-        job.save()
-
 
 def upload_example_motif(job_pk):
     job = get_object_or_404(Bamm, pk=job_pk)

@@ -261,16 +261,12 @@ def run_refine(request, pk):
     })
 
 
-def peng_to_bamm_result_overview(request, pk):
-    if request.user.is_authenticated:
-        user_jobs = Job.objects.filter(user=request.user.id)
-        return render(request, 'results/peng_to_bamm_result_overview.html',
-                      {'user_jobs': user_jobs})
-    else:
-        return redirect(request, 'find_peng_to_bamm_results')
-
-
 def peng_to_bamm_result_detail(request, pk):
+
+    redirect_obj = redirect_if_not_ready(pk)
+    if redirect_obj is not None:
+        return redirect_obj
+
     result = get_object_or_404(BaMMJob, meta_job__pk=pk)
     meta_job = result.meta_job
 
@@ -279,31 +275,19 @@ def peng_to_bamm_result_detail(request, pk):
     peng_path = path.join(job_output_dir, "pengoutput")
     meme_plots = path.join(job_output_dir, "pengoutput", "meme_plots")
     meme_motifs = load_meme_ids(peng_path)
-    #meme_meta_info_list = Meme.fromfile(os.path.join(peng_path, "out.meme"))
     meme_meta_info_list = Meme.fromfile(get_motif_init_file(str(meta_job.job_id)))
 
     motif_db = result.motif_db
     db_dir = motif_db.relative_db_model_dir
 
-    if meta_job.complete:
-        num_logos = range(1, (min(2, result.model_order)+1))
-        return render(request, 'bamm/bamm_result_detail.html', {
-            'result': result, 'opath': get_result_folder(pk),
-            'mode': meta_job.mode,
-            'Output_filename': result.filename_prefix,
-            'num_logos': num_logos,
-            'db_dir': db_dir,
-            'meme_logo_path': path.relpath(meme_plots, relative_result_folder),
-            'meme_motifs': meme_motifs,
-            'meme_meta_info': meme_meta_info_list,
-        })
-    else:
-        log_file = get_log_file(pk)
-        command = "tail -20 %r" % log_file
-        output = os.popen(command).read()
-        return render(request, 'results/result_status.html', {
-                'output': output,
-                'job_id': meta_job.pk,
-                'job_name': meta_job.job_name,
-                'status': meta_job.status
-        })
+    num_logos = range(1, (min(2, result.model_order)+1))
+    return render(request, 'bamm/bamm_result_detail.html', {
+        'result': result, 'opath': get_result_folder(pk),
+        'mode': meta_job.mode,
+        'Output_filename': result.filename_prefix,
+        'num_logos': num_logos,
+        'db_dir': db_dir,
+        'meme_logo_path': path.relpath(meme_plots, relative_result_folder),
+        'meme_motifs': meme_motifs,
+        'meme_meta_info': meme_meta_info_list,
+    })

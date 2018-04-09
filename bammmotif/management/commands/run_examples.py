@@ -22,10 +22,6 @@ from bammmotif.peng.cmd_modules import ShootPengModule
 from bammmotif.utils.meme_reader import get_n_motifs, get_motif_ids
 from bammmotif.peng.utils import save_selected_motifs, copy_peng_to_bamm
 from bammmotif.peng.io import get_motif_init_file, job_input_directory, mmcompare_motif_init_file
-from bammmotif.bamm.utils import (
-    upload_example_fasta,
-    upload_example_motif,
-)
 from bammmotif.utils import (
     is_fasta,
     remove_job_folder,

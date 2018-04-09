@@ -55,8 +55,7 @@ def add_motif_iupac(job):
 def upload_example_fasta(job):
     out_filename = "ExampleData.fasta"
     with open(settings.EXAMPLE_FASTA) as handle:
-        job.Input_Sequences.save(out_filename, files.File(handle))
-        job.save()
+        job.Input_Sequences.save(out_filename, files.File(handle), save=False)
 
 
 def upload_example_motif(job):

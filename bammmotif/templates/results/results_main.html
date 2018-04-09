@@ -36,7 +36,7 @@
 		<th>Job status</th>
 		<th>Link</th>
 	</tr>
-	{% for session in jobs|dictsortreversed:"job.created_at"|slice:"50" %}
+	{% for session in jobs|dictsortreversed:"job.created_at"|slice:"20" %}
 	<tr>
 		<td>
 			{{ session.job.created_at|localtime }}
