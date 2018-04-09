@@ -36,7 +36,7 @@ urlpatterns = [
     url(r'job/denovo/(?P<mode>\w+)/$', bamm_views.one_step_denovo, name='one_step_denovo'),
     url(r'denovo_results/(?P<pk>.*)/$', bamm_views.denovo_results, name='denovo_results'),
 
-    url(r'^job/refinement/$', peng_views.peng_load_bamm, name='peng_to_bamm'),
+    url(r'^job/refinement/(?P<pk>.*)/$', peng_views.run_refine, name='peng_to_bamm'),
     url(r'^refine_results/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_detail, name='bamm_refinement'),
 
     # database
@@ -48,7 +48,6 @@ urlpatterns = [
     url(r'^my_results/$', views.find_results, name='find_results'),
     url(r'^find_result/(?P<pk>.*)/$', views.find_results_by_id, name='find_results_by_id'),
     url(r'^delete/(?P<pk>.*)/$', views.delete, name='delete'),
-    url(r'^job/peng_to_bamm/(?P<pk>.*)/$', peng_views.peng_load_bamm, name='peng_to_bamm'),
     url(r'^peng_to_bamm_results/result_overview/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_overview, name='peng_to_bamm_result_overview'),
     url(r'^peng_to_bamm_results/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_detail, name='peng_to_bamm_result_detail'),
  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

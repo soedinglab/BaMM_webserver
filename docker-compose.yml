@@ -58,6 +58,7 @@ services:
         - JOB_TIME_LIMIT=${JOB_TIME_LIMIT}
         - N_PARALLEL_JOBS=${N_PARALLEL_JOBS}
         - N_CORES_PER_JOB=${N_CORES_PER_JOB}
+        - MAX_SEEDS_FOR_REFINEMENT=${MAX_SEEDS_FOR_REFINEMENT} 
 
   web:
     build: .

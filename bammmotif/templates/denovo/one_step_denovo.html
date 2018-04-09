@@ -247,7 +247,7 @@
                             Number of optimized seeds:
                           </label>
                           <span class="advopt_input_font">
-                            &nbsp;&nbsp; {{ job_form.max_refined_motifs|attr:"min:1"|attr:"max:5" }}
+                            {% render_field job_form.max_refined_motifs min="1" max=max_seeds %}
                           </span>
                         </p>
 

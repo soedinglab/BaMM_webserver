@@ -101,7 +101,6 @@ def peng_results(request, pk):
     meme_result_file_path = get_meme_result_file_path(job_pk)
     plot_output_directory = get_plot_output_directory(job_pk)
 
-    print(peng_bmscore_file_old(str(result.meta_job.pk), result.filename_prefix))
     bm_scores = read_bmscore(peng_bmscore_file_old(str(result.meta_job.pk), result.filename_prefix))
     if not path.exists(plot_output_directory):
         os.makedirs(plot_output_directory)
@@ -116,6 +115,7 @@ def peng_results(request, pk):
         'mode': result.meta_job.mode,
         'opath': media_memeplot_directory_html(result.meta_job.pk),
         'meme_meta_info': meme_meta_info_list_new,
+        'max_seeds': settings.MAX_SEEDS_FOR_REFINEMENT,
     })
 
 
@@ -160,30 +160,38 @@ def run_peng_view(request, mode='normal'):
     })
 
 
-def peng_load_bamm(request, pk):
+def run_refine(request, pk):
     peng_job_pk = pk
     peng_job = get_object_or_404(PengJob, pk=pk)
     mode = "peng_to_bamm"
     inputfile = str(peng_job.fasta_file).rsplit('/', maxsplit=1)[1]
 
     if request.method == "POST":
+        max_seeds = settings.MAX_SEEDS_FOR_REFINEMENT
         if check_if_request_from_peng_directly(request):
             selected_motif_keys = [x for x in request.POST.keys() if x.endswith(MOTIF_SELECT_IDENTIFIER)]
-            if len(selected_motif_keys) == 0:
+            if len(selected_motif_keys) == 0 or len(selected_motif_keys) > max_seeds:
+                
+                if len(selected_motif_keys) == 0:
+                    err_msg = NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT
+                else:
+                    err_msg = 'Please select only %s seeds.' % max_seeds
+
                 bm_scores = read_bmscore(peng_bmscore_file_old(str(peng_job.meta_job.pk), peng_job.filename_prefix))
                 opath = os.path.join(get_result_folder(peng_job_pk), MEME_PLOT_DIRECTORY)
                 meme_result_file_path = get_meme_result_file_path(peng_job_pk)
                 meme_meta_info_list = Meme.fromfile(meme_result_file_path)
                 meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
                 meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
-                return render(request, 'peng/peng_result_detail.html', {
+                return render(request, 'peng/peng_result.html', {
                     'result': peng_job,
                     'job_info': peng_job.meta_job,
                     'pk': peng_job_pk,
                     'mode': peng_job.meta_job.mode,
                     'opath': opath,
                     'meme_meta_info': meme_meta_info_list_new,
-                    'err_msg': NOT_ENOUGH_MOTIFS_SELECTED_FOR_REFINEMENT
+                    'err_msg': err_msg,
+                    'max_seeds': max_seeds,
                 })
             form = PengToBammForm()
             return render(request, 'peng/peng_to_bamm.html', {
@@ -210,7 +218,7 @@ def peng_load_bamm(request, pk):
             meme_meta_info_list_new = merge_meme_and_bmscore(
                 meme_meta_info_list, meme_meta_info_list_old, bm_scores)
 
-            return render(request, 'peng/peng_result_detail.html', {
+            return render(request, 'peng/peng_result.html', {
                 'result': peng_job,
                 'pk': peng_job_pk,
                 'mode': peng_job.meta_job.mode,
@@ -252,21 +260,6 @@ def peng_load_bamm(request, pk):
         'pk': pk
     })
 
-
-def find_peng_to_bamm_results(request, pk):
-    if request.method == "POST":
-        form = FindForm(request.POST)
-        if form.is_valid():
-            jobid = form.cleaned_data['job_ID']
-            if valid_uuid(jobid):
-                job = Job.objects.get(pk=jobid).exists()
-                if job.exists():
-                    return redirect('peng_to_bamm_result_detail', pk=jobid)
-            form = FindForm()
-            return render(request, 'results/peng_to_bamm_results_main.html', {'form': form, 'warning': True})
-    else:
-        form = FindForm()
-    return render(request, 'results/peng_to_bamm_result_main.html', {'form': form, 'warning': False})
 
 def peng_to_bamm_result_overview(request, pk):
     if request.user.is_authenticated:

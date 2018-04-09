@@ -77,6 +77,7 @@ def one_step_denovo(request, mode='normal'):
         'all_form_fields': itertools.chain(metajob_form, job_form),
         'mode': mode,
         'validation_errors': not is_valid,
+        'max_seeds': settings.MAX_SEEDS_FOR_REFINEMENT,
     })
 
 

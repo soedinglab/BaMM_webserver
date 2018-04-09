@@ -3,14 +3,6 @@
 {% block content %}
     {% load static %}
     {% load bammmotif_extras %}
-    <script src="{% static "/js/jquery-3.1.1.js" %}"></script>
-
-    {% if err_msg %}
-    <div class="jumbotron container-fluid" style="background-color:white"><font color="red">
-
-        <h>{{ err_msg }}</h>
-    </div>
-    {% endif %}
 
     <div class="jumbotron" style="background-color:white"><font color="black">
 
@@ -21,6 +13,13 @@
         <div class="jumbotron" style="background-color:white" xmlns="http://www.w3.org/1999/html">
             <h2> Results for {{ job_info.job_name }} </h2>
             <hr style="border: 1px solid #1f2e2e">
+
+            {% if err_msg %}
+            <div class="error_block">
+              <h4>{{ err_msg }} </h4>
+            </div>
+            {% endif %}
+
         {% comment %}
             <div class="well" style="background-color:white">
                 <h2>Peng Settings </h2>
@@ -158,8 +157,8 @@
                                     <h3>Database Model Comparison:</h3>
                                     <table>
                                         <tr>
-                                            <td> &emsp; P-value cutoff:</td>
-                                            <td> &emsp; {{ result.p_value_cutoff }}</td>
+                                            <td> &emsp; E-value cutoff:</td>
+                                            <td> &emsp; {{ result.e_value_cutoff }}</td>
                                         </tr>
                                     </table>
                                 {% endif %}
@@ -262,6 +261,8 @@
 
         <h2>Discovered seeds</h2>
 
+	<p>You can select up to {{ max_seeds }} seeds for higher-order refinement. </p>
+
         <form action="{% get_media_prefix %}/{{ opath }}/motif_all.zip" method="get" target="_blank">
             <p align="right">
                 <button type="submit" class="btn btn-default" aria-label="Download">
@@ -348,7 +349,7 @@
 
         <input type="hidden" value="from_peng" name="meme_meta_info"/>
         <input type="hidden" value="{{ result.meta_job.pk }}" name="pk">
-	
+
 	    <hr style="border: 1px solid #1f2e2e">
 	    <p>
 		<button class="btn btn-primary btn-lg run_button" type="submit">
@@ -400,6 +401,3 @@
             {% endcomment %}
 
 {% endblock %}
-
-
-

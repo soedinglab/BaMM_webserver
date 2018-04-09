@@ -264,3 +264,4 @@ LOGGING = {
 # Miscellaneous configuration
 MAX_FINDJOB_DAYS = get_from_env('MAX_FINDJOB_DAYS', converter=int)
 MAX_UPLOAD_FILE_SIZE = get_from_env('MAX_UPLOAD_FILE_SIZE', converter=int)
+MAX_SEEDS_FOR_REFINEMENT = get_from_env('MAX_SEEDS_FOR_REFINEMENT', converter=int)
