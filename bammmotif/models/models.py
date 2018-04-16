@@ -3,10 +3,11 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-import datetime
 import uuid
 import os
 from os import path
+
+from . import custom_fields
 
 
 FORMAT_CHOICES = (
@@ -154,6 +155,7 @@ class ChIPseq(models.Model):
     lab = models.CharField(max_length=100, null=True)
     grant = models.CharField(max_length=100, null=True)
     cell_type = models.CharField(max_length=250, null=True)
+    cell_types = custom_fields.SeparatedValuesField(null=True)
     target_name = models.CharField(max_length=100)
     ensembl_target_id = models.CharField(max_length=100, null=True)
     treatment = models.CharField(max_length=100, null=True)
@@ -161,6 +163,8 @@ class ChIPseq(models.Model):
     pos_seq_file = models.CharField(max_length=120)
     motif_init_file = models.CharField(max_length=255)
     result_location = models.CharField(max_length=100, null=True)
+    details_given = models.BooleanField(default=True)
+    species = models.CharField(max_length=255, null=True)
     url = models.URLField(null=True)
     parent = models.ForeignKey(DbParameter, blank=True, null=True, on_delete=models.CASCADE)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
