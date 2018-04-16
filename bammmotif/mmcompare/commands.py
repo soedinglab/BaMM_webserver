@@ -21,14 +21,12 @@ def get_MMcompare_command(job):
         '--dbDir', motif_db.db_model_directory,
         '--dbOrder', motif_db.model_parameters.modelorder,
         '--qOrder', job.model_order,
-        '--pValue', job.p_value_cutoff,
+        '--max_evalue', job.e_value_cutoff,
     ]
-    command = ' '.join(str(s) for s in params)
-    return command
-
-
-def MMcompare_transfer_motifs():
-    pass
+    if hasattr(job, 'mmcompare_from_meme'):
+        if job.mmcompare_from_meme:
+            params.append('--meme-files')
+    return params
 
 
 def MMcompare(job):
@@ -37,9 +35,10 @@ def MMcompare(job):
     print(timezone.now(), "\t | update: \t %s " % job.meta_job.status)
     sys.stdout.flush()
 
-    if job.Motif_Init_File_Format == 'PWM':
-        meme_file = job.full_motif_file_path
-        job.num_motifs = meme_count_motifs(meme_file)
+    if hasattr(job, 'mmcompare_from_meme'):
+        if job.mmcompare_from_meme:
+            meme_file = job.full_motif_file_path
+            job.num_motifs = meme_count_motifs(meme_file)
     run_command(get_MMcompare_command(job))
     job.save()
     sys.stdout.flush()
@@ -52,8 +51,7 @@ def get_pwm2bamm_command(job):
     prefix = job.filename_prefix
     meme_file = path.join(get_job_output_folder(job_pk), prefix + '.meme')
     param.append(meme_file)
-    command = ' '.join(str(s) for s in param)
-    return command
+    return param
 
 
 def get_jointprob_command(job):
@@ -64,8 +62,7 @@ def get_jointprob_command(job):
         get_job_output_folder(job_pk) + '/',
         prefix
     ]
-    command = ' '.join(str(s) for s in params)
-    return command
+    return params
 
 
 def get_compare_iupac_command(job):
@@ -76,7 +73,6 @@ def get_compare_iupac_command(job):
         get_job_output_folder(job_pk) + '/',
         prefix,
         get_model_order(job),
-        job.Motif_Init_File_Format,
+        'BaMM'
     ]
-    command = ' '.join(str(s) for s in params)
-    return command
+    return params

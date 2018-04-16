@@ -16,14 +16,14 @@ PENG_INPUT = 'Input'
 PENG_TEMP_DIRECTORY = 'temp'
 SELECTED_MOTIFS = 'selected_motifs'
 MEME_PLOT_DIRECTORY = 'meme_plots'
-MEME_OUTPUT_FILE = 'out.meme'
+MEME_OUTPUT_FILE = 'seeds.meme'
 MOTIF_SELECT_IDENTIFIER = "_select"
-JSON_OUTPUT_FILE = "out.json"
+JSON_OUTPUT_FILE = 'seeds.json'
 BMSCORE_SUFFIX = '.bmscore'
 PENG_PLOT_LOGO_ORDER = 0
 
-PENG_OUTPUT_MEME = 'out.meme'
-PENG_OUTPUT_JSON = 'out.json'
+PENG_OUTPUT_MEME = MEME_OUTPUT_FILE
+PENG_OUTPUT_JSON = JSON_OUTPUT_FILE
 PWM2BAMM_DIRECTORY = 'converttemp'
 BAMMPLOT_SUFFIX_STAMP = '-logo-order-0_stamp.png'
 BAMMPLOT_SUFFIX_REV_STAMP = '-logo-order-0_stamp_revComp.png'
@@ -34,8 +34,8 @@ BAMMPLOT_SUFFIX_REV = '-logo-order-0_revComp.png'
 # Filter PWM
 PATH_TO_FILTERPWM_SCRIPT = '/ext/filterPWMs/filterPWM.py'
 FILTERPWM_INPUT_FILE = MEME_OUTPUT_FILE
-#Overwrite for now
-FILTERPWM_OUTPUT_FILE = 'out_filtered.meme'
+# filtering removed
+FILTERPWM_OUTPUT_FILE = FILTERPWM_INPUT_FILE
 
 #Meme plotting
 MEME_PLOT_INPUT = FILTERPWM_OUTPUT_FILE

@@ -1,6 +1,7 @@
 import os
 from os import path
 import shutil
+import glob
 
 from .settings import (
     MEME_OUTPUT_FILE,
@@ -39,10 +40,9 @@ class ShootPengModule(CommandlineModule):
         'n_threads': 1,
         'em_saturation_threshold': 1E4,
         'silent': True,
-        'meme_output': MEME_OUTPUT_FILE,
-        'json_output': JSON_OUTPUT_FILE,
         'temp_dir': 'temp',
-        'bg_sequences': None
+        'bg_sequences': None,
+        'max_optimized_patterns': 20,
     }
 
     def __init__(self):
@@ -69,9 +69,10 @@ class ShootPengModule(CommandlineModule):
             ('pwm_pseudo_counts', '--pseudo-counts'),
             ('n_threads', '--threads'),
             ('silent', '--silent'),
+            ('max_optimized_patterns', '--maximum-optimized-patterns'),
         ]
         # Build temp directory
-        super().__init__('shoot_peng.py', config)
+        super().__init__('shoot_peng.py', config, ShootPengModule.defaults)
 
     def create_temp_directory(self):
         if not path.exists(self.options['temp_dir']):
@@ -94,13 +95,7 @@ class ShootPengModule(CommandlineModule):
 class FilterPWM(CommandlineModule):
 
     defaults = {
-        'input_file': FILTERPWM_INPUT_FILE,
-        'output_file': FILTERPWM_OUTPUT_FILE,
         'model_db': None,
-        'n_neg_perm': 10,
-        'highscore_fraction': 0.1,
-        'evalue_threshold': 0.1,
-        'seed': 42,
         'min_overlap': 2,
         'output_score_file': None
     }
@@ -111,10 +106,6 @@ class FilterPWM(CommandlineModule):
             ('input_file', None),
             ('output_file', None),
             ('model_db', '--model_db'),
-            ('n_neg_perm', '--n_neg_perm'),
-            ('highscore_fraction', '--highscore_fraction'),
-            ('evalue_threshold', '--evalue_threshold'),
-            ('seed', '--seed'),
             ('min_overlap', '--min_overlap'),
             ('n_processes', '--n_processes'),
             ('output_score_file', '--output_score_file')
@@ -126,17 +117,6 @@ class FilterPWM(CommandlineModule):
     def _load_defaults(self):
         for key, val in self.defaults.items():
             self.options[key] = val
-
-        #def _set_directory(self, directory):
-    #    self.input_file = os.path.join(directory, self.defaults['input_file'])
-    #    self.output_file = os.path.join(directory, self.defaults['output_file'])
-
-    @classmethod
-    def init_with_extra_directory(cls, directory):
-        obj = cls()
-        obj.input_file = os.path.join(directory, FilterPWM.defaults['input_file'])
-        obj.output_file = os.path.join(directory, FilterPWM.defaults['output_file'])
-        return obj
 
 
 class PlotMeme(CommandlineModule):
@@ -214,7 +194,9 @@ class ZipMotifs(CommandlineModule):
         archive_name = os.path.join(directory, ZIPPED_MOTIFS)
         argslist = [archive_name]
         plots = [os.path.join(directory, x) for x in os.listdir(directory) if x.endswith(".png") or x.endswith(".meme")]
-        plots.append(os.path.join(directory.rsplit('/', maxsplit=1)[0], MEME_OUTPUT_FILE))
+
+        meme_file = glob.glob(path.join(directory, '../*.filtered.meme'))
+        plots.extend(meme_file)
         argslist += plots
         zm = ZipMotifs()
         zm.strip_filepath = ZipMotifs.defaults['strip_filepath']

@@ -16,7 +16,8 @@ from .tasks import (
     run_peng
 )
 from .utils import (
-    get_user, set_job_name, upload_example_fasta,
+    get_user,
+    upload_example_fasta,
     upload_example_motif,
     upload_db_input,
     get_session_key,
@@ -61,64 +62,6 @@ def contact(request):
 
 def imprint(request):
     return render(request, 'home/imprint.html')
-
-
-# #########################
-# ## JOB RELATED VIEWS
-# #########################
-
-
-def run_bammscan_view(request, mode='normal', pk='null'):
-    if request.method == "POST":
-        if mode == 'example':
-            form = OccurrenceExampleForm(request.POST, request.FILES)
-        if mode == 'db':
-            form = OccurrenceDBForm(request.POST, request.FILES)
-        if mode == 'normal':
-            form = OccurrenceForm(request.POST, request.FILES)
-        if form.is_valid():
-            # read in data and parameter
-            job = form.save(commit=False)
-            job.created_at = datetime.datetime.now()
-            job.user = get_user(request)
-            job.mode = "Occurrence"
-            job.save()
-            job_pk = job.job_ID
-
-            if job.job_name is None:
-                set_job_name(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            # if example is requested, load the sampleData
-            if mode == 'example':
-                upload_example_fasta(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-                upload_example_motif(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            # enter db input
-            if mode == 'db':
-                upload_db_input(job_pk, pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            job = get_object_or_404(Job, pk = job_pk)
-
-            run_bammscan.delay(job_pk)
-            return render(request, 'job/submitted.html', {'pk': job_pk})
-        else:
-            print('POST Form is not valid!')
-    if mode == 'db':
-        form = OccurrenceDBForm()
-        db_entry = get_object_or_404(ChIPseq, pk=pk)
-        return render(request, 'job/bammscan_input.html',
-                      {'form': form, 'mode': mode, 'pk': pk,
-                       'db_entry': db_entry})
-    if mode == 'example':
-        form = OccurrenceExampleForm()
-    if mode == 'normal':
-        form = OccurrenceForm()
-    return render(request, 'job/bammscan_input.html',
-                  {'form': form, 'mode': mode})
 
 
 def run_bamm_view(request, mode='normal'):
@@ -168,17 +111,25 @@ def submitted(request, pk):
     return render(request, 'job/submitted.html', {'pk': pk})
 
 
-# #########################
-# ## RESULT RELATED VIEWS
-# #########################
-
-
 def find_results_by_id(request, pk):
     job_id = pk
     meta_job = get_object_or_404(JobInfo, job_id=job_id)
-    base = request.build_absolute_uri('/')
-    url = urljoin(base, url_prefix[meta_job.job_type] + job_id)
-    return redirect(url, permanent=True)
+
+    if not meta_job.complete:
+        log_file = get_log_file(pk)
+        command = "tail -20 %r" % log_file
+        output = os.popen(command).read()
+        return render(request, 'results/result_status.html', {
+            'output': output,
+            'job_id': meta_job.pk,
+            'job_name': meta_job.job_name,
+            'status': meta_job.status,
+        })
+
+    else:
+        base = request.build_absolute_uri('/')
+        url = urljoin(base, url_prefix[meta_job.job_type] + '/' + job_id)
+        return redirect(url, permanent=True)
 
 
 def find_results(request):
@@ -192,12 +143,20 @@ def find_results(request):
             jobid = form.cleaned_data['job_ID']
             meta_job = get_object_or_404(JobInfo, job_id=jobid)
             base = request.build_absolute_uri('/')
-            url = urljoin(base, url_prefix[meta_job.job_type] + jobid)
+            url = urljoin(base, url_prefix[meta_job.job_type] + '/' + jobid)
             return redirect(url, permanent=True)
     return render(request, 'results/results_main.html', {
         'form': FindForm(),
         'jobs': session_jobs,
     })
+
+
+def redirect_if_not_ready(job_id):
+    meta_job = get_object_or_404(JobInfo, job_id=job_id)
+    if not meta_job.complete:
+        return redirect('find_results_by_id', pk=job_id)
+
+
 
 
 def result_overview(request):

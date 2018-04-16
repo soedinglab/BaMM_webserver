@@ -29,7 +29,9 @@ from ..utils import (
     meme_count_motifs,
     get_job_output_folder,
     register_job_session,
+    set_job_name_if_unset,
 )
+
 from ..utils.meme_reader import get_n_motifs
 from ..models import JobInfo
 from ..forms import MetaJobNameForm
@@ -39,11 +41,7 @@ def init_job(job_type):
     job = JobInfo.objects.create()
     job.status = "data uploaded"
     job.job_type = job_type
-    if job.job_name is None:
-        # truncate job_id
-        job_id_short = str(job.job_id).split("-", 1)
-        job.job_name = job_id_short[0]
-    job.save()
+    set_job_name_if_unset(job)
     return job
 
 
@@ -52,10 +50,7 @@ def init_job_from_form(job_type, request):
     job = form.save(commit=False)
     job.status = "data uploaded"
     job.job_type = job_type
-    if job.job_name is None:
-        # truncate job_id
-        job_id_short = str(job.job_id).split("-", 1)
-        job.job_name = job_id_short[0]
+    set_job_name_if_unset(job)
     return job
 
 
@@ -106,24 +101,16 @@ def create_anonymuous_user(request):
 def create_job(form, meta_job_form, request):
     meta_job = meta_job_form.save(commit=False)
     meta_job.job_type = 'peng'
-    job_pk = meta_job.pk
 
     job = form.save(commit=False)
-    # Add correct path to files.
-    output_dir = get_job_output_folder(job_pk)
-    job.meme_output = path.join(output_dir, job.meme_output)
-    job.json_output = path.join(output_dir, job.json_output)
+    job.meta_job = meta_job
 
     if request.user.is_authenticated:
         job.user = request.user
     else:
         job.user = create_anonymuous_user(request)
-    # check if job has a name, if not use first 6 digits of job_id as job_name
-    if meta_job.job_name is None:
-        # truncate job_id
-        job_id_short = str(meta_job.pk).split("-", 1)
-        meta_job.job_name = job_id_short[0]
-    job.meta_job = meta_job
+
+    set_job_name_if_unset(meta_job)
     return job
 
 

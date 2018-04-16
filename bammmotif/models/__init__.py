@@ -23,4 +23,4 @@ from .models import (
 from ..mmcompare.models import MMcompareJob
 from ..bammscan.models import BaMMScanJob
 from ..peng.models import PengJob
-from ..bamm.models import BaMMJob
+from ..bamm.models import BaMMJob, OneStepBaMMJob

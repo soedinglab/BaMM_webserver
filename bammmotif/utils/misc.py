@@ -7,7 +7,7 @@ import traceback
 import subprocess
 from shutil import copyfile
 import re
-from collections import OrderedDict
+from tempfile import NamedTemporaryFile
 
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
@@ -15,7 +15,11 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.core.files import File
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from ipware.ip import get_ip
+
+from celery.exceptions import SoftTimeLimitExceeded
+
 from ..models import (
     JobInfo,
     Motifs,
@@ -23,6 +27,14 @@ from ..models import (
     DbMatch,
     JobSession,
 )
+
+from ..utils.input_validation import (
+    validate_fasta_file,
+    validate_bamm_file,
+    validate_meme_file,
+    validate_bamm_bg_file,
+)
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -40,12 +52,20 @@ class JobSaveManager:
 
     def __exit__(self, error_type, error, tb):
         job = self.job
-        if error_type is not None:
+
+        if error_type is SoftTimeLimitExceeded:
+            job.meta_job.status = 'Killed'
+            self.had_exception = True
+            print(timezone.now(), "\t | WARNING: \t Exceeded time limit.")
+            logger.info('Job %s exceeded the time limit and was killed.', job.meta_job.pk)
+
+        elif error_type is not None:
             job.meta_job.status = self.error_status
             self.had_exception = True
             logger.exception(error)
             traceback.print_exception(error_type, error, tb, file=sys.stdout)
             print(timezone.now(), "\t | WARNING: \t %s " % job.meta_job.status)
+
         else:
             job.meta_job.status = self.success_status
             self.had_exception = False
@@ -58,23 +78,22 @@ class CommandFailureException(Exception):
 
 
 url_prefix = {
-    'peng': 'peng_results/',
-    'bamm': 'peng_to_bamm_results/',
-    'bammscan': 'scan_results/',
-    'mmcompare': 'compare_results/',
+    'peng': 'seed_results',
+    'refine': 'refine_results',
+    'bammscan': 'scan_results',
+    'mmcompare': 'compare_results',
+    'denovo': 'denovo_results',
 }
 
 
 def run_command(command, enforce_exit_zero=True):
 
-    if isinstance(command, str):
-        command_str = command
-    elif isinstance(command, collections.Iterable):
-        command_str = ' '.join(command)
+    command = [str(s) for s in command]
+
+    command_str = ' '.join('%r' % s for s in command)
     logger.debug("executing: %s", command_str)
 
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while True:
         nextline = process.stdout.readline()
         if nextline == b'' and process.poll() is not None:
@@ -113,12 +132,11 @@ def get_user(request):
         print("NO USER SETABLE")
 
 
-def set_job_name(job_pk):
-    job = get_object_or_404(Job, pk=job_pk)
-    # truncate job_id
-    job_id_short = str(job.job_ID).split("-", 1)
-    job.job_name = job_id_short[0]
-    job.save()
+def set_job_name_if_unset(job):
+    if job.job_name is None:
+        # truncate job_id
+        job_id_short = str(job).split("-", maxsplit=1)
+        job.job_name = job_id_short[0]
 
 
 def add_peng_output(job_pk):
@@ -265,3 +283,45 @@ def register_job_session(request, meta_job):
     session_key = get_session_key(request)
     session_record = JobSession(session_key=session_key, job=meta_job)
     session_record.save()
+
+
+# adapted from: https://stackoverflow.com/a/35321718/2272172
+def file_size_validator(value):
+    if value.size > settings.MAX_UPLOAD_FILE_SIZE:
+        raise ValidationError('File size exceeds upload limits.')
+
+
+def check_motif_input(job, form):
+    is_valid = True
+    if job.Motif_Init_File_Format == 'MEME':
+        if not validate_meme_file(job.full_motif_file_path):
+            form.add_error('Motif_InitFile', 'Does not seem to be in MEME format.')
+            is_valid = False
+    elif job.Motif_Init_File_Format == 'BaMM':
+        if not validate_bamm_file(job.full_motif_file_path):
+            form.add_error('Motif_InitFile', 'Does not seem to be in BaMM format.')
+            is_valid = False
+        if not job.bgModel_File:
+            form.add_error('bgModel_File', 'This field is required.')
+            is_valid = False
+        elif not validate_bamm_bg_file(job.full_motif_bg_file_path):
+            form.add_error('bgModel_File', 'Does not seem to be a BaMM '
+                                           'background model.')
+            is_valid = False
+
+    return is_valid
+
+
+def check_fasta_input(job, form, rq_files):
+    fasta_field = 'Input_Sequences' if hasattr(job, 'Input_Sequences') else 'fasta_file'
+
+    with NamedTemporaryFile('wb+') as tmp_file:
+        for chunk in rq_files[fasta_field].chunks():
+            tmp_file.write(chunk)
+        tmp_file.flush()
+        success, msg = validate_fasta_file(tmp_file.name)
+
+    if not success:
+        form.add_error(fasta_field, 'Does not seem to be in fasta format.')
+        return False
+    return True

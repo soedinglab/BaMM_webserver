@@ -42,10 +42,11 @@ JOB_INFO_MODE_CHOICES = (
 )
 
 JOB_MODE_MAPPING = {
-    'peng': 'De-novo discovery',
+    'peng': 'Seeding',
     'bamm': 'Motif refinement',
     'bammscan': 'Motif scan',
     'mmcompare': 'Motif-Motif comparison',
+    'denovo': 'De-novo discovery'
 }
 
 
@@ -192,6 +193,7 @@ class JobInfo(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     complete = models.BooleanField(default=False)
     job_type = models.CharField(max_length=30, null=True, blank=True, choices=JOB_INFO_MODE_CHOICES)
+    has_input = models.BooleanField(default=True)
 
     class Meta:
         ordering = ['-created_at']

@@ -1,5 +1,7 @@
 {% extends "home/header.html" %}
 
+{% load widget_tweaks %}
+
 {% block content %}
 
 <div class="jumbotron" style="background-color:white">
@@ -10,37 +12,55 @@
       {% endif %}
      <form method="post"  enctype="multipart/form-data">
         {% csrf_token %}
-	<p><label for="{{ form.database.id_for_label}}"><a class "testpup"
-             onmouseover="nhpup.popup($('#DBselectorInfo').html(),{'width':400});"><span
-             class="glyphicon glyphicon-info-sign" aria-hidden="true" style="color:black"></span></a>
-             Motif Database</label><font color="#1f2e2e"> &nbsp;&nbsp; {{ form.database }} </font>
-    	</p>
+	      <p>
+          <label for="{{ form.database.id_for_label}}">
+            <a class "testpup" onmouseover="nhpup.popup($('#{{ form.database.html_name }}_info').html(),{'width':400});">
+              <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+            </a>
+            Motif Database:
+          </label>
+          <p>
+             &nbsp;&nbsp; {{ form.database }}
+          </p>
+        </p>
 
-	<p>
-		<label for="id_db_ID"><font size=3>Please enter the name of your protein of interest:</label> &nbsp; 
-		<input id="id_db_ID" maxlength="255" name="search_term" type="text" placeholder="i.e: CTCF ..."/> </font>&nbsp;
-	</p>
-	<span>
-        	<button class="btn btn-primary btn-lg run_button" href="{% url 'maindb' %}" role="button" type="submit">Search by keyword</button>
-		<span style="font-size:18px; font-weight:bold;padding:10px"> or </span> 	
+        <p>
+          <label for="{{ form.search_term.id_for_label}}">
+            <a class "testpup" onmouseover="nhpup.popup($('#{{ form.search_term.html_name }}_info').html(),{'width':400});">
+              <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+            </a>
+            Search term (protein name):
+          </label>
+          <p>
+             &nbsp;&nbsp; {{ form.search_term|attr:"placeholder:i.e: CTCF ..." }}
+          </p>
+        </p>
+
+        <hr class="header_line" />
+
+	      <span>
+          <button class="btn btn-primary btn-lg run_button" href="{% url 'maindb' %}" role="button" type="submit">
+            Search by keyword
+          </button>
+		<span style="font-size:18px; font-weight:bold;padding:10px"> or </span>
         	<button class="btn btn-primary btn-lg run_button" name="browse_button" value="clicked" href="{% url 'maindb' %}" role="button" type="submit">Browse all models</button>
-	</span>
-    </form>    
+	  </span>
+    </form>
 
- <div class="modal fade" id="DBselectorInfo" tabindex="-1" role="dialog" aria-labelledby="DBselectorInfo">
+    {% for field in form %}
+    <div class="modal fade" id="{{ field.html_name }}_info" tabindex="-1" role="dialog" aria-labelledby="{{field.html_name}}_info">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
                     <font color="#0B0719">
-                        <p align="justify">Motif database to search against.</p>
+                        <p align="justify"> {{ field.help_text }}</p>
                     </font>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    {% endfor %}
 
 
 
 {% endblock %}
-

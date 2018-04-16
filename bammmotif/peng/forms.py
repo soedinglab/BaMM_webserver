@@ -3,54 +3,47 @@ from django import forms
 
 from ..bamm.models import BaMMJob
 from ..forms import MetaJobNameForm
-from ..utils.ui import DBChoiceField
+from ..utils.ui import DBChoiceField, HELP_TEXTS
 
 from .models import PengJob
 
 
-class PengForm(forms.ModelForm):
+class _PengForm(forms.ModelForm):
 
     class Meta:
         model = PengJob
-        # fields = tuple(ShootPengModule().options.keys()) + ('job_name',)
         fields = (
             'fasta_file', 'bg_sequences',
             'pattern_length', 'zscore_threshold', 'count_threshold', 'bg_model_order',
-            'strand', 'objective_function', 'no_em'
+            'reverse_Complement', 'objective_function', 'no_em'
         )
 
+
+class PengForm(_PengForm):
+
     def __init__(self, *args, **kwargs):
-        super(PengForm, self).__init__(*args, **kwargs)
-        for field in self.fields:
-            help_text = self.fields[field].help_text
-            self.fields[field].help_text = None
-            if help_text != '':
-                self.fields[field].widget.attrs.update({'class': 'has-popover',
-                                                        'data-content': help_text,
-                                                        'data-placement': 'right',
-                                                        'data-container': 'body'})
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.help_text = HELP_TEXTS[name]
 
 
-class PengExampleForm(forms.ModelForm):
+class _PengExampleForm(forms.ModelForm):
 
     class Meta:
         model = PengJob
         fields = (
             'bg_sequences',
             'pattern_length', 'zscore_threshold', 'count_threshold', 'bg_model_order',
-            'strand', 'objective_function', 'no_em',
+            'reverse_Complement', 'objective_function', 'no_em',
         )
 
+
+class PengExampleForm(_PengExampleForm):
+
     def __init__(self, *args, **kwargs):
-        super(PengExampleForm, self).__init__(*args, **kwargs)
-        for field in self.fields:
-            help_text = self.fields[field].help_text
-            self.fields[field].help_text = None
-            if help_text != '':
-                self.fields[field].widget.attrs.update({'class': 'has-popover',
-                                                        'data-content': help_text,
-                                                        'data-placement': 'right',
-                                                        'data-container': 'body'})
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.help_text = HELP_TEXTS[name]
 
 
 def get_valid_peng_form(post, files, user, mode):

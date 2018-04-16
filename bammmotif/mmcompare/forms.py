@@ -1,24 +1,34 @@
 from django import forms
 from .models import MMcompareJob
-from ..utils.ui import DBChoiceField
+from ..utils.ui import DBChoiceField, HELP_TEXTS
 
 
-class MMCompareForm(forms.ModelForm):
+class _MMCompareForm(forms.ModelForm):
     class Meta:
         model = MMcompareJob
         fields = ('Motif_InitFile', 'Motif_Init_File_Format',
-                  'bgModel_File', 'p_value_cutoff', 'motif_db')
+                  'bgModel_File', 'e_value_cutoff', 'motif_db')
+
+
+class MMCompareForm(_MMCompareForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['motif_db'] = DBChoiceField()
+        for name, field in self.fields.items():
+            field.help_text = HELP_TEXTS[name]
+        self.fields['motif_db'] = DBChoiceField(help_text=HELP_TEXTS['motif_db_compare'])
 
 
-class MMCompareExampleForm(forms.ModelForm):
+class _MMCompareExampleForm(forms.ModelForm):
     class Meta:
         model = MMcompareJob
-        fields = ('p_value_cutoff', 'motif_db')
+        fields = ('e_value_cutoff', 'motif_db')
+
+
+class MMCompareExampleForm(_MMCompareExampleForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['motif_db'] = DBChoiceField()
+        for name, field in self.fields.items():
+            field.help_text = HELP_TEXTS[name]
+        self.fields['motif_db'] = DBChoiceField(help_text=HELP_TEXTS['motif_db_compare'])

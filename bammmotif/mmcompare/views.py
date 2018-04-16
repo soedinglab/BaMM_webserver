@@ -1,5 +1,5 @@
-from datetime import datetime
 import os
+import itertools
 
 from django.core import files
 from django.db import transaction
@@ -23,6 +23,12 @@ from ..utils import (
 from .tasks import mmcompare_pipeline
 from ..forms import MetaJobNameForm
 
+from ..utils.input_validation import (
+    validate_meme_file,
+    validate_bamm_file,
+    validate_bamm_bg_file,
+)
+
 
 def run_compare_view(request, mode='normal'):
     if request.method == 'POST':
@@ -31,7 +37,8 @@ def run_compare_view(request, mode='normal'):
             form = MMCompareExampleForm(request.POST, request.FILES)
         else:
             form = MMCompareForm(request.POST, request.FILES)
-        if form.is_valid() and meta_job_form.is_valid():
+        is_valid = form.is_valid() and meta_job_form.is_valid()
+        if is_valid:
             meta_job = meta_job_form.save(commit=False)
             meta_job.user = get_user(request)
             meta_job.mode = "Compare"
@@ -41,39 +48,63 @@ def run_compare_view(request, mode='normal'):
             # read in data and parameter
             job = form.save(commit=False)
             job.meta_job = meta_job
-
             job_pk = meta_job.job_id
 
-            if meta_job.job_name is None:
-                job_id_short = str(meta_job).split("-", maxsplit=1)
-                meta_job.job_name = job_id_short[0]
+            if job.Motif_Init_File_Format == 'MEME':
+                if not validate_meme_file(job.full_motif_file_path):
+                    form.add_error('Motif_InitFile', 'Does not seem to be in MEME format.')
+                    is_valid = False
+            elif job.Motif_Init_File_Format == 'BaMM':
+                if not validate_bamm_file(job.full_motif_file_path):
+                    form.add_error('Motif_InitFile', 'Does not seem to be in BaMM format.')
+                    is_valid = False
+                if not job.bgModel_File:
+                    form.add_error('bgModel_File', 'This field is required.')
+                    is_valid = False
+                elif not validate_bamm_file(job.full_motif_bg_file_path):
+                    form.add_error('bgModel_File', 'Does not seem to be a BaMM '
+                                                   'background model.')
+                    is_valid = False
 
-            # if example is requested, load the sampleData
-            if mode == 'example':
-                out_filename = "ExampleMotif.meme"
-                with open(settings.EXAMPLE_MOTIF) as handle:
-                    job.Motif_InitFile.save(out_filename, files.File(handle))
-                job.Motif_Initialization = 'CustomFile'
-                job.Motif_Init_File_Format = 'PWM'
+            if is_valid:
+                if meta_job.job_name is None:
+                    job_id_short = str(meta_job).split("-", maxsplit=1)
+                    meta_job.job_name = job_id_short[0]
 
-            with transaction.atomic():
-                meta_job.save()
-                register_job_session(request, meta_job)
-                job.save()
+                # if example is requested, load the sampleData
+                if mode == 'example':
+                    out_filename = "ExampleMotif.meme"
+                    with open(settings.EXAMPLE_MOTIF) as handle:
+                        job.Motif_InitFile.save(out_filename, files.File(handle))
+                    job.Motif_Initialization = 'CustomFile'
+                    job.Motif_Init_File_Format = 'PWM'
 
-            mmcompare_pipeline.delay(job_pk)
-            return render(request, 'job/submitted.html', {
-                'pk': job_pk,
-                'result_target': 'compare_results',
-            })
+                with transaction.atomic():
+                    meta_job.save()
+                    register_job_session(request, meta_job)
+                    job.save()
 
-    meta_job_form = MetaJobNameForm()
-    if mode == 'example':
-        form = MMCompareExampleForm()
+                mmcompare_pipeline.delay(job_pk)
+                return render(request, 'job/submitted.html', {
+                    'pk': job_pk,
+                    'result_target': 'compare_results',
+                })
     else:
-        form = MMCompareForm()
-    return render(request, 'compare/compare_input.html',
-                  {'form': form, 'meta_job_form': meta_job_form, 'mode': mode})
+        is_valid = True
+        meta_job_form = MetaJobNameForm()
+        if mode == 'example':
+            form = MMCompareExampleForm()
+        else:
+            form = MMCompareForm()
+
+    return render(request, 'compare/compare_input.html', {
+        'job_form': form,
+        'metajob_form': meta_job_form,
+        'mode': mode,
+        'all_form_fields': itertools.chain(form, meta_job_form),
+        'max_file_size': settings.MAX_UPLOAD_FILE_SIZE,
+        'validation_errors': not is_valid,
+    })
 
 
 def result_detail(request, pk):

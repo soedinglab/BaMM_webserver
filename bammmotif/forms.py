@@ -1,12 +1,19 @@
 from django import forms
+
 from .models import MotifDatabase, JobInfo
-from .utils.ui import DBChoiceField
+from .utils.ui import DBChoiceField, HELP_TEXTS
 
 
-class MetaJobNameForm(forms.ModelForm):
+class _MetaJobNameForm(forms.ModelForm):
     class Meta:
         model = JobInfo
         fields = ('job_name',)
+
+class MetaJobNameForm(_MetaJobNameForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for name, field in self.fields.items():
+            field.help_text = HELP_TEXTS[name]
 
 """
 class PredictionForm(forms.ModelForm):

@@ -12,10 +12,10 @@
 .bamm_box {
   background-color: white
 }
- 
+
 .jumbotron div.text_box {
   padding: 10px;
-  margin-bottom: 10px 
+  margin-bottom: 10px
 }
 
 .bamm_text {
@@ -39,6 +39,55 @@
 .run_button {
   border: 0px;
   background-color: #4169E1;
-  font-color: white;
+  color: white;
   font-size: 20px
+}
+
+.indented_input_field {
+  padding-left: 1.8em
+}
+
+.info_icon {
+  color: black
+}
+
+.advanced_settings_header {
+  padding-top: 25px
+}
+
+.indented {
+  padding-left: 1.8em
+}
+
+.advopt_input_font {
+  color: #1f2e2e
+}
+
+.jumbotron_p_like {
+  font-size: 21px
+}
+
+.error_block {
+  color: #8B0000;
+  background-color:rgba(255, 0, 0, 0.2);
+  width: 60%;
+  padding: 10px 25px 5px 25px;
+  margin: 15px;
+
+}
+
+.error_block ul li span {
+  font-weight: bold;
+}
+
+.nav li a {
+  color: #1f2e2e;
+}
+
+.popup_msg_format {
+  color: #0B0719;
+}
+
+.advanced_options_header a:hover {
+  text-decoration: none;
 }

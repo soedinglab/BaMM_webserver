@@ -4,7 +4,7 @@ import logging
 from contextlib import redirect_stdout, redirect_stderr
 
 
-from celery import task, chain
+from celery import task
 from django.shortcuts import get_object_or_404
 
 from ..utils import (
@@ -19,39 +19,17 @@ from ..mmcompare.tasks import generic_mmcompare_task, generic_mmcompare_import_m
 from .commands import (
     BaMM, FDR,
 )
-from .models import BaMMJob
+from .models import BaMMJob, OneStepBaMMJob
+
+from ..peng.tasks import (
+    run_peng_generic,
+    run_pwm_filter_generic,
+    convert_to_bamm_generic,
+    plot_bamm_format_generic,
+)
 
 
 logger = logging.getLogger(__name__)
-
-
-# Don't use that yet.
-class ChainBuilder:
-
-    def __init__(self, job_pk, initializer, finalizer):
-        self._job_pk = job_pk
-        self._initializer = initializer
-        self._finalizer = finalizer
-        self._task_list = []
-
-    @property
-    def next(self):
-        return None
-
-    @next.setter
-    def next(self, _task):
-        self._task_list.append(_task.si(self._job_pk))
-
-    def pop(self):
-        self._task_list.pop()
-
-    def __enter__(self):
-        self._task_list.append(self._initializer.si(self._job_pk))
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self._task_list.append(self._finalizer.si(self._job_pk))
-        ret = chain(*self._task_list)()
-        return True
 
 
 def generic_compress_task(job):
@@ -98,4 +76,38 @@ def bamm_refinement_pipeline(self, job_pk):
             generic_mmcompare_task(job)
             generic_mmcompare_import_matches(job)
         generic_compress_task(job)
+        job.meta_job.complete = True
+
+
+@task(bind=True)
+def denovo_pipeline(self, job_pk):
+    job = get_object_or_404(OneStepBaMMJob, meta_job__pk=job_pk)
+    job_pk = job.meta_job.pk
+
+    job.meta_job.status = "running"
+    job.meta_job.save()
+
+    with JobSaveManager(job):
+        make_job_folder(job_pk)
+
+        # seeding part
+        run_peng_generic(job)
+        job.num_motifs = min(job.num_motifs, job.max_refined_motifs)
+        convert_to_bamm_generic(job)
+        plot_bamm_format_generic(job)
+
+        # prepare for refinement
+        job.bamm_init_file = job.meme_output
+
+        # refinement part
+        generic_bamm_task(job, first_in_pipeline=True, is_refined=False)
+        if job.score_Seqset:
+            generic_bammscan_task(job, first_in_pipeline=False, is_refined_model=True)
+        if job.FDR:
+            generic_fdr_task(job, first_in_pipeline=False, is_refined=False)
+        if job.MMcompare:
+            generic_mmcompare_task(job)
+            generic_mmcompare_import_matches(job)
+        generic_compress_task(job)
+
         job.meta_job.complete = True

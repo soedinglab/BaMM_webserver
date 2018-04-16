@@ -75,7 +75,7 @@ def get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model, motif_id
         if job.Motif_Init_File_Format == 'BaMM':
             job.model_order = get_model_order(job)
             job.background_Order = get_bg_model_order(job)
-        elif job.Motif_Init_File_Format == 'PWM':
+        elif job.Motif_Init_File_Format == 'MEME':
             meme_file = job.full_motif_file_path
             job.num_motifs = meme_count_motifs(meme_file)
             job.model_order = 0
@@ -97,10 +97,9 @@ def get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model, motif_id
        job.Motif_Init_File_Format == 'BindingSites'):
         prefix = '%s_motif_%s' % (job.filename_prefix, motif_id)
     else:
-        if job.Motif_Init_File_Format == 'PWM':
+        if job.Motif_Init_File_Format == 'MEME':
             prefix = job.filename_prefix
     params.append(prefix)
 
     job.save()
-    command = ' '.join(str(s) for s in params)
-    return command
+    return params

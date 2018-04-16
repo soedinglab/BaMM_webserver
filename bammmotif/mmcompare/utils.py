@@ -37,21 +37,13 @@ def initialize_motifs_compare(job):
 
 
 def register_query_motifs(job):
-    meta_job = job.meta_job
-    job_pk = meta_job.pk
-    prefix = job.filename_prefix
-    iupac_file = path.join(get_job_output_folder(job_pk), prefix + '.iupac')
-    with open(iupac_file) as f:
-        for i, l in enumerate(f):
-            pass
-    job.num_motifs = i + 1
-    for motif in range(1, (int(job.num_motifs) + 1)):
-        motif_obj = Motifs(parent_job=meta_job, job_rank=motif)
+    for motif_no in range(job.num_motifs):
+        motif_obj = Motifs(parent_job=job.meta_job, job_rank=motif_no + 1)
         motif_obj.save()
 
 
 def make_logos(job):
-    if job.Motif_Init_File_Format == "PWM":
+    if job.Motif_Init_File_Format == "MEME":
         run_command(get_pwm2bamm_command(job))
         run_command(get_logo_command(job, order=0))
     if job.Motif_Init_File_Format == "BaMM":
