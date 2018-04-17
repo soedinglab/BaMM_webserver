@@ -26,7 +26,7 @@ class MMcompareJob(models.Model):
     num_motifs = models.IntegerField(default=1)
     model_order = models.PositiveSmallIntegerField(default=4)
     bgModel_File = models.FileField(upload_to=job_directory_path_motif, null=True, blank=True)
-    e_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
+    e_value_cutoff = models.DecimalField(default=0.1, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
     @property
@@ -50,6 +50,17 @@ class MMcompareJob(models.Model):
     @property
     def mmcompare_from_meme(self):
         return self.Motif_Init_File_Format == 'MEME'
+
+    @property
+    def motif_basename(self):
+        return path.basename(self.Motif_InitFile.name)
+
+    @property
+    def bgmodel_basename(self):
+        if not self.bgModel_File:
+            return None
+        else:
+            path.basename(self.bgModel_file.name)
 
     def __str__(self):
         return str(self.meta_job.job_id)

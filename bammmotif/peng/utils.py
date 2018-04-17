@@ -224,19 +224,30 @@ def read_bmscore(fname):
     with open(fname, newline='') as f:
         reader = csv.DictReader(f, dialect=csv.excel_tab)
         for row in reader:
-            scores[row['#motif']] = row
+            scores[row['#']] = row
     return scores
+
 
 def merge_meme_and_bmscore(meme_list, meme_list_old, bm_scores):
     # first we need to match ausfc scores with the memes from peng
     for i in range(1, len(meme_list_old) + 1):
-        meme_list_old[i-1].ausfc = float(bm_scores[str(i)]['ausfc'])
+        meme_list_old[i-1].d_aurrc = float(bm_scores[str(i)]['d_avrec'])
+        meme_list_old[i-1].d_occur = float(bm_scores[str(i)]['d_occur'])
+        meme_list_old[i-1].m_aurrc = float(bm_scores[str(i)]['m_avrec'])
+        meme_list_old[i-1].m_occur = float(bm_scores[str(i)]['m_occur'])
         meme_list_old[i-1].motif_number = i
+
     meme_dict = {meme_list_old[i].meme_id: meme_list_old[i] for i in range(len(meme_list_old))}
-    # now we need to macth the peng memes with the filterpwm meme
+
+    # now we match the peng memes with the filterpwm meme
     for i, meme in enumerate(meme_list, start=1):
-        meme.ausfc = meme_dict[meme.meme_id].ausfc
+        meme.d_aurrc = meme_dict[meme.meme_id].d_aurrc
+        meme.d_occur = meme_dict[meme.meme_id].d_occur
+        meme.m_aurrc = meme_dict[meme.meme_id].m_aurrc
+        meme.m_occur = meme_dict[meme.meme_id].m_occur
+        meme.rank_score = meme.m_aurrc * meme.m_occur
         meme.motif_number = i
+
     return meme_list
 
 

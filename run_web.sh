@@ -10,7 +10,12 @@ python manage.py makemigrations bammmotif
 python manage.py migrate
 python manage.py sync_databases
 
-python manage.py run_examples &
+if [[ "$FORCE_EXAMPLE_CREATION" == "1" ]]; then
+	python manage.py run_examples --flush &
+else
+	python manage.py run_examples &
+fi
+
 
 # start webserver
 python manage.py runserver 0.0.0.0:10080

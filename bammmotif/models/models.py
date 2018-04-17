@@ -43,7 +43,7 @@ JOB_INFO_MODE_CHOICES = (
 
 JOB_MODE_MAPPING = {
     'peng': 'Seeding',
-    'bamm': 'Motif refinement',
+    'refine': 'Motif refinement',
     'bammscan': 'Motif scan',
     'mmcompare': 'Motif-Motif comparison',
     'denovo': 'De-novo discovery'
@@ -203,7 +203,7 @@ class JobInfo(models.Model):
 
     @property
     def job_type_display(self):
-        return JOB_MODE_MAPPING[self.job_type]
+        return JOB_MODE_MAPPING.get(self.job_type, 'unknown')
 
 
 class Motifs(models.Model):
@@ -213,6 +213,7 @@ class Motifs(models.Model):
     job_rank = models.PositiveSmallIntegerField(null=True, blank=True)
     length = models.PositiveSmallIntegerField(null=True, blank=True)
     auc = models.FloatField(blank=True, null=True)
+    m_aurrc = models.FloatField(blank=True, null=True)
     occurrence = models.FloatField(blank=True, null=True)
     db_match = models.ManyToManyField('ChIPseq', through='DbMatch', blank=True)
 

@@ -32,6 +32,10 @@ def rename_init_files(output_dir, filename_prefix):
         new_name = file.replace('_init_motif_', '_motif_')
         logger.debug('renaming: %s -> %s', file, new_name)
         shutil.move(file, new_name)
+    for file in glob(path.join(output_dir, filename_prefix + '*_init_motif_*.occurrence')):
+        new_name = file.replace('_init_motif_', '_motif_')
+        logger.debug('renaming: %s -> %s', file, new_name)
+        shutil.move(file, new_name)
 
 
 def BaMMScan(job, first_task_in_pipeline, is_refined_model):

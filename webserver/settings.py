@@ -26,7 +26,7 @@ def get_from_env(env_variable, converter=str):
         return converter(os.getenv(env_variable))
 
 
-N_PARALLEL_THREADS = 4
+N_PARALLEL_THREADS = get_from_env('N_CORES_PER_JOB', int)
 
 # CELERY SETTINGS
 BROKER_URL = 'redis://redis_celery:6379/0'
@@ -265,3 +265,4 @@ LOGGING = {
 MAX_FINDJOB_DAYS = get_from_env('MAX_FINDJOB_DAYS', converter=int)
 MAX_UPLOAD_FILE_SIZE = get_from_env('MAX_UPLOAD_FILE_SIZE', converter=int)
 MAX_SEEDS_FOR_REFINEMENT = get_from_env('MAX_SEEDS_FOR_REFINEMENT', converter=int)
+DEFAULT_MOTIF_DB = get_from_env('DEFAULT_MOTIF_DB')

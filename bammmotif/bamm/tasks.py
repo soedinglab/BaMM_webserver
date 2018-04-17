@@ -92,6 +92,7 @@ def denovo_pipeline(self, job_pk):
 
         # seeding part
         run_peng_generic(job)
+
         job.num_motifs = min(job.num_motifs, job.max_refined_motifs)
         convert_to_bamm_generic(job)
         plot_bamm_format_generic(job)

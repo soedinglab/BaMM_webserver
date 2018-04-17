@@ -44,7 +44,7 @@ class BaMMJob(models.Model):
     num_init_motifs = models.IntegerField(default=10)
 
     # options
-    model_order = models.PositiveSmallIntegerField(default=4)
+    model_order = models.PositiveSmallIntegerField(default=2)
     reverse_Complement = models.BooleanField(default=True)
     extend = models.PositiveSmallIntegerField(default=0)
 
@@ -59,7 +59,7 @@ class BaMMJob(models.Model):
 
     # scoring options
     score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.1)
+    score_Cutoff = models.FloatField(default=0.001)
     bgModel_File = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
                                     null=True, blank=True)
 
@@ -69,7 +69,7 @@ class BaMMJob(models.Model):
 
     # MMcompare
     MMcompare = models.BooleanField(default=True)
-    e_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
+    e_value_cutoff = models.DecimalField(default=0.5, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
     @property
@@ -77,6 +77,9 @@ class BaMMJob(models.Model):
         file_name = path.basename(self.Input_Sequences.name)
         prefix, _ = path.splitext(file_name)
         return prefix
+
+    def input_basename(self):
+        return path.basename(self.Input_Sequences.name)
 
     @property
     def full_motif_file_path(self):
@@ -90,6 +93,14 @@ class BaMMJob(models.Model):
     def meme_output(self):
         return path.join(get_job_output_folder(self.meta_job.pk), 'seeds.meme')
 
+    @property
+    def n_threads(self):
+        return settings.N_PARALLEL_THREADS
+
+    @property
+    def cvFold(self):
+        return settings.N_PARALLEL_THREADS
+
     def __str__(self):
         return str(self.meta_job.pk)
 
@@ -99,7 +110,6 @@ class OneStepBaMMJob(models.Model):
     # general settings
     meta_job = models.OneToOneField(JobInfo, on_delete=models.CASCADE, editable=False,
                                     primary_key=True)
-    n_threads = models.IntegerField(default=settings.N_PARALLEL_THREADS)
 
     # shared
     Input_Sequences = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
@@ -151,6 +161,17 @@ class OneStepBaMMJob(models.Model):
     def bg_model_order(self):
         return self.background_Order
 
+    @property
+    def cvFold(self):
+        return settings.N_PARALLEL_THREADS
+
+    @property
+    def n_threads(self):
+        return settings.N_PARALLEL_THREADS
+
+    def input_basename(self):
+        return path.basename(self.Input_Sequences.name)
+
     # BaMM related functionality
 
     # files
@@ -174,7 +195,7 @@ class OneStepBaMMJob(models.Model):
 
     # scoring options
     score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.01)
+    score_Cutoff = models.FloatField(default=0.001)
     bgModel_File = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
                                     null=True, blank=True)
 
@@ -183,7 +204,7 @@ class OneStepBaMMJob(models.Model):
 
     # MMcompare
     MMcompare = models.BooleanField(default=True)
-    e_value_cutoff = models.DecimalField(default=0.1, max_digits=3, decimal_places=2)
+    e_value_cutoff = models.DecimalField(default=0.5, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
     @property

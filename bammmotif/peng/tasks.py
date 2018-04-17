@@ -52,6 +52,8 @@ def run_peng_generic(job):
         peng.temp_dir = get_temporary_job_dir(job_pk)
         peng.set_log_file(logfile)
         peng.run()
+        n_motifs = len(get_motif_ids(job.meme_output))
+        job.num_motifs = n_motifs
 
 
 def run_pwm_filter_generic(job):

@@ -23,7 +23,7 @@ class ShootPengModule(CommandlineModule):
         'ENRICHMENT',
     ]
     defaults = {
-        'pattern_length': 10,
+        'pattern_length': 8,
         'zscore_threshold': 10,
         'count_threshold': 5,
         'bg_model_order': 2,

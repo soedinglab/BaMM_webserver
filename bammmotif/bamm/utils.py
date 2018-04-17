@@ -143,8 +143,8 @@ def add_motif_evaluation(job):
         for line in handle:
             tokens = line.split()
             motif_obj = motifs.filter(job_rank=tokens[1])[0]
-            motif_obj.auc = tokens[2]
-            motif_obj.occurrence = tokens[5]
+            motif_obj.m_aurrc = float(tokens[4])
+            motif_obj.occurrence = float(tokens[5])
             motif_obj.save()
 
 

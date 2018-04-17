@@ -1,6 +1,8 @@
 from collections import defaultdict
 
 from django import forms
+from django.conf import settings
+
 from ..models import MotifDatabase
 
 
@@ -9,6 +11,7 @@ class DBChoiceField(forms.ModelChoiceField):
     def __init__(self, *args, **kwargs):
         dbs = MotifDatabase.objects.all().order_by('display_name')
         super().__init__(queryset=dbs, empty_label=None, *args, **kwargs)
+        self.initial = settings.DEFAULT_MOTIF_DB
 
     def label_from_instance(self, obj):
         return obj.display_name
@@ -42,7 +45,7 @@ HELP_TEXTS = defaultdict(str, {
         'motif localization.'
     ),
     'score_Cutoff': (
-        'Only motif positions with an e-value smaller than this will be reported as '
+        'Only motif positions with a p-value smaller than this will be reported as '
         'binding positions.'
     ),
     'FDR': (
