@@ -91,3 +91,7 @@
 .advanced_options_header a:hover {
   text-decoration: none;
 }
+
+.settings_box td {
+  min-width: 220px
+}

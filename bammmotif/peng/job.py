@@ -57,7 +57,7 @@ def init_job_from_form(job_type, request):
 def create_bamm_job(job_type, request, form, peng_job):
     job_info = init_job_from_form(job_type, request)
     job_info.user = get_user(request)
-    job_info.job_type = 'bamm'
+    job_info.job_type = 'refine'
     job_pk = job_info.pk
 
     bamm_job = form.save(commit=False)
@@ -66,7 +66,6 @@ def create_bamm_job(job_type, request, form, peng_job):
     bamm_job.num_init_motifs = len(get_selected_motifs(request.POST))
     bamm_job.Motif_InitFile.name = get_motif_init_file(str(bamm_job.pk))
     bamm_job.Motif_Initialization = "Custom File"
-    bamm_job.Motif_Init_File_Format = "PWM"
     bamm_job.peng_job = peng_job
 
     with transaction.atomic():

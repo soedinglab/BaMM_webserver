@@ -3,6 +3,7 @@
 {% block content %}
     {% load static %}
     {% load bammmotif_extras %}
+    {% load widget_tweaks %}
 
 
     <h2> Results for  {{result.meta_job.job_name}} </h2>
@@ -23,27 +24,25 @@
                 <th> IUPAC </th>
                 <th> PWM </th>
                 <th> reverse Comp. </th>
-	        <th> AUSFC </th>
-	        <th> % occurrence </th>
+	        <th> AvRec </th>
+	        <th> frac. occurrence </th>
                 <th> Download </th>
             </tr>
             {% for m in result.meta_job.motifs_set.all|dictsort:"job_rank" %}
                 <tr>
-                    <th> <a href="#{{m.job_rank}}" style="color:black">{{m.job_rank}} </a></th>
-                    <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.iupac}} </a></th>
-                    <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
-                    <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
-                    {% if mode == "Prediction" %}
-                        <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.auc|floatformat:3}} </a></th>
-                        <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.occurrence|floatformat:3}} </a></th>
-                    {% endif %}
-                    <th> <a href="#{{m.job_rank}}" style="color:black">
+                    <td> <a href="#{{m.job_rank}}" style="color:black">{{m.job_rank}} </a></td>
+                    <td> <a href="#{{m.job_rank}}" style="color:black"> {{m.iupac}} </a></td>
+                    <td> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></td>
+                    <td> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></td>
+                    <td> <a href="#{{m.job_rank}}" style="color:black"> {{m.m_aurrc|floatformat:3}} </a></td>
+                    <td> <a href="#{{m.job_rank}}" style="color:black"> {{m.occurrence|floatformat:3}} </a></td>
+                    <td> <a href="#{{m.job_rank}}" style="color:black">
                         <form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_Motif_{{m.job_rank}}.zip" method="get" target="_blank">
                             <button type="submit" class="btn btn-default" aria-label="Download" >
                                 <span class="glyphicon glyphicon-download" aria-hidden="true"> </span>
                             </button>
                         </form>
-                    </a></th>
+                    </a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -66,24 +65,47 @@
 
 
 
-                <hr style="border: 1px solid #1f2e2e">
-                <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo">
-                <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)">
+                <hr class="header_line">
+                <table>
+                  <tr>
+                    <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo"></td>
+                    <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)"></td>
+                  </tr>
+                </table>
                 {% for i in num_logos %}
                     <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
                 {% endfor %}
 
                 {% if result.FDR %}
-                    <h2> Performance and Positional Distribution on Input Sequences </h2>
-                    <hr style="border: 1px solid #1f2e2e">
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_SFC.jpeg" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_pROC.jpeg" class="responsive-img" style='max-height:400px;' alt="partial ROC5 curve">
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_PRC.jpeg" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
+                    <h2> Motif Performance and Motif Distribution on Sequences </h2>
+                    <hr class="header_line">
+                    <table>
+                      <tr>
+                        <td>
+                          <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_dataPval.png" class="responsive-img" style='max-height:400px;' alt="AUSFC curve"> &emsp;
+                        </td>
+                        <td>
+                          <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_motifPval.png" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_dataRRC.png" class="responsive-img" style='max-height:400px;' alt="partial ROC5 curve">
+                        </td>
+                        <td>
+                          <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_motifRRC.png" class="responsive-img" style='max-height:400px;' alt="Precision Recall Curve"> &emsp;
+                        </td>
+                      </tr>
+                      {% if result.score_Seqset %}
+                      <tr>
+                        <td colspan="2">
+                          <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.png" class="responsive-img" style='width:800px;' alt="Positional Distribution"> &emsp;
+                        </td>
+                      </tr>
+                      {% endif %}
+                    </table>
                 {% endif %}
-                {% if result.score_Seqset %}
-                    <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.jpeg" class="responsive-img" style='max-height:400px;' alt="Positional Distribution"> &emsp;
 
-                {% endif %}
 
                 {% if result.MMcompare %}
 
@@ -123,118 +145,122 @@
         <div class="well" style="background-color:white">
             <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true" style="background-color:white; border:0px">
 
-                {% if mode == "Prediction" or mode == "Occurrrence" %}
                     <div class="panel-heading" role="tab" id="headingOne" style="background-color:white; border:0px">
                         <h2 class="panel-title">
                             <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" style="background-color:white; border:0px">
-                                <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"style="color:black"></span> BaMMmotif Settings </h3>
+                                <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"style="color:black"></span> Tool settings </h3>
                             </a>
                         </h2>
                     </div>
                     <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" style="background-color:white">
                         <div class="panel-body">
 
-                            {% if mode == "Prediction" or mode == "Occurrence" %}
-                                <table>
-                                <tr>
-                                    <td>  &emsp; Input Sequence: </td>
-                                    <td>  &emsp; {{result.filename_prefix}}</td>
-                                </tr>
-                                    <tr>
-                                        <td>  &emsp; Search on Both Strands: </td>
-                                        <td>  &emsp; {{result.reverse_Complement}}</td>
-                                    </tr>
-                                </table>
-                            {% endif %}
 
-                            {% if mode == "Prediction" %}
-                                <h3>Model Settings</h3>
-                                <table>
-                                    <tr>
-                                        <td>  &emsp; Model Order: </td>
-                                        <td>  &emsp; {{result.model_Order}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>  &emsp; added flanking Positions: </td>
-                                        <td>  &emsp; {{result.extend}}</td>
-                                    </tr>
-                                </table>
-                            {% endif %}
 
-                            {% if mode == "Prediction" %}
-                                <h3>Motif Initialization</h3>
-                                <table>
-                                    <tr>
-                                        <td>  &emsp; Motif Initialization: </td>
-                                        <td>  &emsp; {{result.Motif_Initialization}}</td>
-                                    </tr>
-                                    {% if result.Motif_Initialization == "Custom File" %}
-                                        <tr>
-                                            <td>  &emsp; Motif Init File: </td>
-                                            <td>  &emsp; {{result.MotifInit_filename}}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>  &emsp; Motif Init File Format: </td>
-                                            <td>  &emsp; {{result.Motif_Init_File_Format}}</td>
-                                        </tr>
-                                    {% endif %}
-                                </table>
-                            {% endif %}
+                          <!-- general settings -->
+                          <h3>General settings</h3>
+                          <div class="indented settings_box">
+                            <table>
+                              <tr>
+                                <td>Input sequences:</td>
+                                <td>{{ result.input_basename }}</td>
+                              </tr>
+                              <tr>
+                                <td>Search on both strands:</td>
+                                <td>{{ result.reverse_Complement }}</td>
+                              </tr>
+                              <tr>
+                                <td>Background Sequences:</td>
+                                <td> {{ result.Background_Sequences|default:"not set" }}</td>
+                              </tr>
+                              <tr>
+                                <td>Background Model Order:
+                                <td> {{result.background_Order }}</td>
+                              </tr>
+                            </table>
+                          </div>
 
-                            {% if mode == "Prediction" %}
-                                <h3>Background Model</h3>
-                                <table>
-                                    <tr>
-                                        <td>  &emsp; Background Order: </td>
-                                        <td>  &emsp; {{result.background_Order}}</td>
-                                    </tr>
-                                    {% if result.Background_Sequences != "" %}
-                                        <tr>
-                                            <td>  &emsp; Background Sequences: </td>
-                                            <td>  &emsp; {{result.background_sequences}}</td>
-                                        </tr>
-                                    {% endif %}
-                                </table>
-                            {% endif %}
+                          {% if result.meta_job.job_type == 'denovo'%}
+                          <h3>Seeding stage</h3>
+                          <div class="indented settings_box">
+                            <table>
+                              <tr>
+                                <td>Pattern Length:</td>
+                                <td> {{result.pattern_length }}</td>
+                              </tr>
+                              <tr>
+                                <td>Z-Score Threshold:</td>
+                                <td>{{ result.zscore_threshold }}</td>
+                              </tr>
+                              <tr>
+                                <td>Count Threshold:</td>
+                                <td>{{ result.count_threshold }}</td>
+                              </tr>
+                              <tr>
+                                <td>IUPAC Optimization Score:</td>
+                                <td>{{ result.objective_function }}</td>
+                              </tr>
+                              <tr>
+                                <td>Skip EM:</td>
+                                <td>{{ result.no_em }}</td>
+                              </tr>
+                            </table>
+                          </div>
+                        {% endif %}
 
-                            {% if result.EM %}
-                                <h3>Expectation Maximization Optimization:</h3>
-                                <table>
-                                    <tr>
-                                        <td>  &emsp; Motif Prior Probability: </td>
-                                        <td>  &emsp; {{result.q_value}}</td>
-                                    </tr>
-                                    <tr>
-                                </table>
-                            {% endif %}
+                          <h3>Refinement stage</h3>
+                          <div class="indented settings_box">
+                            <table>
+                              <tr>
+                                <td>Model Order:</td>
+                                <td> {{result.model_order}}</td>
+                              </tr>
+                              <tr>
+                                <td>Flank extension:</td>
+                                <td>{{ result.extend }}</td>
+                              </tr>
+                            </table>
+                          </div>
 
-                            {% if result.CGS %}
-                                <h3>Collapsed Gibbs Sampling:</h3>
-                                <table>
-                                    <tr>
-                                        <td>  &emsp; sampling Alphas: </td>
-                                        <td>  &emsp; {{result.no_Alpha_Sampling|yesno:"False,True"}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>  &emsp; max Iterations: </td>
-                                        <td>  &emsp; {{result.max_CGS_Iterations}}</td>
-                                    </tr>
-                                </table>
-                            {% endif %}
+                          <h3>Additional settings</h3>
+                          <div class="indented settings_box">
+                            <table>
+                              <tr>
+                                <td>Run motif scanning:</td>
+                                <td> {{result.score_Seqset}}</td>
+                              </tr>
+                              <tr>
+                                <td>Motif scanning p-value cutoff:</td>
+                                <td>{{ result.score_Cutoff }}</td>
+                              </tr>
+                              <tr>
+                                <td>Run motif evaluation:</td>
+                                <td>{{ result.FDR }}</td>
+                              </tr>
+                              <tr>
+                                <td>Run motif-motif compare:</td>
+                                <td>{{ result.MMcompare }}</td>
+                              </tr>
+                              <tr>
+                                <td>MMcompare database:</td>
+                                <td>{{ result.motif_db }}</td>
+                              </tr>
+                              <tr>
+                                <td>MMcompare e-value cutoff:</td>
+                                <td>{{ result.e_value_cutoff}}</td>
+                              </tr>
+                            </table>
+                          </div>
 
-                            {% if result.MMcompare %}
-                                <h3>Database Model Comparison:</h3>
-                                <table>
-                                    <tr>
-                                        <td>  &emsp; P-value cutoff: </td>
-                                        <td>  &emsp; {{result.p_value_cutoff}}</td>
-                                    </tr>
-                                </table>
-                            {% endif %}
+
+
+
+
+
 
                         </div>
                     </div>
-                {% endif %}
+
             </div>
         </div>
     </div>

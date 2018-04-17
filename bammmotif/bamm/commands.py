@@ -86,6 +86,7 @@ def get_core_params(job, is_refined_model, motif_id=1):
     params += [
         '--order', job.model_order,
         '--Order', job.background_Order,
+        '--threads', settings.N_PARALLEL_THREADS,
     ]
 
     try:
@@ -99,12 +100,10 @@ def get_core_params(job, is_refined_model, motif_id=1):
 def get_evaluation_command(job):
     job_pk = job.meta_job.pk
     command = [
-        'evaluateBaMM.R',
+        'plotPvalStats.R',
         get_job_output_folder(job_pk) + '/',
         job.filename_prefix,
-        '--SFC', '1',
-        '--ROC5', '1',
-        '--PRC', '1',
+        '--plots', '1',
     ]
     return command
 
@@ -114,7 +113,7 @@ def get_FDR_command(job, useRefined, model_no=1):
     params += get_core_params(job, useRefined, model_no)
         
     params += [
-        '--cvFold 1',  # hard-coded set to 1
+        '--cvFold', job.cvFold,
         '--mFold', job.m_Fold,
         '--sOrder', job.sampling_Order,
         '--basename',

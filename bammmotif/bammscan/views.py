@@ -20,6 +20,7 @@ from ..utils import (
     register_job_session,
     check_motif_input,
 )
+from ..views import redirect_if_not_ready
 
 from .forms import (
     BaMMScanExampleForm,
@@ -105,6 +106,10 @@ def run_bammscan_view(request, mode='normal', pk='null'):
 
 
 def result_details(request, pk):
+    redirect_obj = redirect_if_not_ready(pk)
+    if redirect_obj is not None:
+        return redirect_obj
+
     result = get_object_or_404(BaMMScanJob, pk=pk)
     meta_job = result.meta_job
     opath = get_result_folder(pk)
@@ -113,24 +118,14 @@ def result_details(request, pk):
     motif_db = result.motif_db
     db_dir = motif_db.relative_db_model_dir
 
-    if meta_job.complete:
-        num_logos = range(1, (min(3, result.model_order+1)))
-        return render(request, 'bammscan/result_detail.html', {
-            'sequence_fname': path.basename(result.Input_Sequences.name),
-            'motif_fname': path.basename(result.Motif_InitFile.name),
-            'result': result,
-            'opath': opath,
-            'mode': meta_job.mode,
-            'Output_filename': filename_prefix,
-            'num_logos': num_logos,
-            'db_dir': db_dir})
-    else:
-        log_file = get_log_file(pk)
-        command = "tail -20 %r" % log_file
-        output = os.popen(command).read()
-        return render(request, 'results/result_status.html', {
-            'job_id': pk,
-            'job_name': meta_job.job_name,
-            'status': meta_job.status,
-            'output': output
-        })
+    num_logos = range(1, (min(3, result.model_order+1)))
+    return render(request, 'bammscan/result_detail.html', {
+        'sequence_fname': path.basename(result.Input_Sequences.name),
+        'motif_fname': path.basename(result.Motif_InitFile.name),
+        'result': result,
+        'opath': opath,
+        'mode': meta_job.mode,
+        'Output_filename': filename_prefix,
+        'num_logos': num_logos,
+        'db_dir': db_dir
+    })

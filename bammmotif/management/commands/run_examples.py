@@ -5,12 +5,13 @@ import os
 from os import path
 import logging
 
+from django.utils import timezone
+from django.core.files import File
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.db import transaction
-from django.core.files import File
-from django.utils import timezone
+from django.conf import settings
 
 from bammmotif.peng.tasks import peng_seeding_pipeline
 from bammmotif.bamm.tasks import bamm_refinement_pipeline
@@ -35,7 +36,7 @@ from ...bamm.models import OneStepBaMMJob
 
 
 INITIAL_EXAMPLE_UUID = 0
-EXAMPLE_MOTIF_DB = os.environ['EXAMPLE_MOTIF_DB']
+EXAMPLE_MOTIF_DB = settings.DEFAULT_MOTIF_DB
 logger = logging.getLogger(__name__)
 
 
@@ -109,7 +110,6 @@ def new_bamm_job(next_id, example_file, peng_job):
     bamm_job.num_init_motifs = len(motifs)
     bamm_job.num_motifs = len(motifs)
     bamm_job.Motif_InitFile.name = get_motif_init_file(str(bamm_job.pk))
-    bamm_job.score_Cutoff = 0.0001
     bamm_job.save()
     bamm_refinement_pipeline.delay(bamm_job.meta_job.pk)
     while not job_info.complete:
@@ -130,7 +130,6 @@ def new_bammscan_job(next_id, example_file, bamm_id):
     with open(example_file) as fh:
         bamm_scan_job.Input_Sequences.save(os.path.basename(example_file), File(fh))
     bamm_scan_job.Motif_InitFile.name = get_motif_init_file(str(bamm_id))
-    bamm_scan_job.score_Cutoff = 0.0001
     bamm_scan_job.save()
     bamm_scan_pipeline.delay(bamm_scan_job.meta_job.pk)
     while not job_info.complete:

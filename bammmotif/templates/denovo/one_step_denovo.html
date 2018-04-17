@@ -284,7 +284,7 @@
 
                       <!-- toggling additional tools like bammscan and mmcompare -->
                       <p class="advanced_settings_header">
-                        <h3>Additional tools</h3>
+                        <h3>Additional settings</h3>
                         <hr />
                       </p>
 
@@ -305,7 +305,7 @@
                           <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.score_Cutoff.html_name }}_info').html(),{'width':400});">
                             <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
                           </a>
-                          Motif scanning e-value cutoff:
+                          Motif scanning p-value cutoff:
                         </label>
                         <span class="advopt_input_font">
                           &nbsp;&nbsp; {{ job_form.score_Cutoff|attr:"min:0.01"|attr:"max:3.00"|attr:"step:0.01" }}
@@ -343,7 +343,7 @@
                       <label for="{{ field.id_for_label }}">
                         <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
                           <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
-                        </a> E-value cutoff:
+                        </a> MMcompare e-value cutoff:
                       </label>
                       <span class="advopt_input_font">
                         &nbsp;&nbsp; {{ field|attr:"min:0.01"|attr:"max:3.00" }}

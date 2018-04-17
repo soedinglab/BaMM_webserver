@@ -47,8 +47,6 @@ RUN mkdir -p /ext/filterPWMs
 RUN cp /tmp/py/* /ext/filterPWMs/
 RUN rm -rf /tmp/filterPWMs
 
-COPY docker-utils/filterPWM_le2.patch /ext/filterPWMs/
-
 # use a cool init system for handing signals: https://github.com/Yelp/dumb-init
 RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64
 RUN chmod +x /usr/local/bin/dumb-init

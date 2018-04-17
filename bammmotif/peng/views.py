@@ -104,9 +104,9 @@ def peng_results(request, pk):
     bm_scores = read_bmscore(peng_bmscore_file_old(str(result.meta_job.pk), result.filename_prefix))
     if not path.exists(plot_output_directory):
         os.makedirs(plot_output_directory)
-    meme_meta_info_list = Meme.fromfile(meme_result_file_path)
-    meme_meta_info_list_old = Meme.fromfile(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
-    meme_meta_info_list_new = merge_meme_and_bmscore(meme_meta_info_list, meme_meta_info_list_old, bm_scores)
+    filtered_meme = Meme.fromfile(meme_result_file_path)
+    unfiltered_meme = Meme.fromfile(os.path.join(peng_meme_directory(str(pk)), FILTERPWM_INPUT_FILE))
+    final_motifs = merge_meme_and_bmscore(filtered_meme, unfiltered_meme, bm_scores)
 
     return render(request, 'peng/peng_result.html', {
         'result': result,
@@ -114,7 +114,7 @@ def peng_results(request, pk):
         'job_info': result.meta_job,
         'mode': result.meta_job.mode,
         'opath': media_memeplot_directory_html(result.meta_job.pk),
-        'meme_meta_info': meme_meta_info_list_new,
+        'meme_meta_info': final_motifs,
         'max_seeds': settings.MAX_SEEDS_FOR_REFINEMENT,
     })
 
@@ -194,8 +194,11 @@ def run_refine(request, pk):
                     'max_seeds': max_seeds,
                 })
             form = PengToBammForm()
-            return render(request, 'peng/peng_to_bamm.html', {
-                'form': form,
+            metajob_form = MetaJobNameForm()
+            return render(request, 'bamm/refine_input.html', {
+                'job_form': form,
+                'metajob_form': metajob_form,
+                'all_form_fields': itertools.chain(metajob_form, form),
                 'mode': mode,
                 'inputfile': inputfile,
                 'job_name': peng_job.meta_job.job_name,
@@ -252,8 +255,11 @@ def run_refine(request, pk):
             print(form.errors)
 
     form = PengToBammForm()
-    return render(request, 'peng/peng_to_bamm.html', {
-        'form': form,
+    metajob_form = MetaJobNameForm()
+    return render(request, 'bamm/refine_input.html', {
+        'job_form': form,
+        'metajob_form': metajob_form,
+        'all_form_fields': itertools.chain(metajob_form, form),
         'mode': mode,
         'inputfile': inputfile,
         'job_name': peng_job.meta_job.job_name,

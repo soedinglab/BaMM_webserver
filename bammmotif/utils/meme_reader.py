@@ -11,22 +11,6 @@ class Meme(object):
         self.select = False
         self._ausfc = None
 
-    @property
-    def logpval(self):
-        return round(self._logpval, 3)
-
-    @property
-    def ausfc(self):
-        return round(self._ausfc, 10)
-
-    @logpval.setter
-    def logpval(self, val):
-        self._logpval = float(val)
-
-    @ausfc.setter
-    def ausfc(self, val):
-        self._ausfc = float(val)
-
     @classmethod
     def fromdict(cls, meme_dict):
         return cls(
@@ -34,7 +18,6 @@ class Meme(object):
             meme_dict["log(Pval)"],
             meme_dict["nsites"],
         )
-
 
 
     @classmethod

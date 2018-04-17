@@ -45,8 +45,12 @@ class BaMMScanJob(models.Model):
 
     # MMcompare related fields
     MMcompare = models.BooleanField(default=False)
-    e_value_cutoff = models.DecimalField(default=0.01, max_digits=3, decimal_places=2)
+    e_value_cutoff = models.DecimalField(default=0.1, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
+
+    @property
+    def cvFold(self):
+        return settings.N_PARALLEL_THREADS
 
     @property
     def filename_prefix(self):
@@ -64,3 +68,18 @@ class BaMMScanJob(models.Model):
     @property
     def bamm_init_file(self):
         return self.Motif_InitFile
+
+    @property
+    def input_basename(self):
+        return path.basename(self.Input_Sequences.name)
+
+    @property
+    def motif_basename(self):
+        return path.basename(self.Motif_InitFile.name)
+
+    @property
+    def bgmodel_basename(self):
+        if not self.bgModel_File:
+            return None
+        else:
+            path.basename(self.bgModel_file.name)

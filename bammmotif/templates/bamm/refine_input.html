@@ -1,0 +1,262 @@
+{% extends "home/header.html" %}
+
+{% load widget_tweaks %}
+
+{% block content %}
+
+    <div class="container-fluid">
+
+        <div class="jumbotron container-fluid" style="background-color:white"><font color="black">
+            <h2>Higher Order Model Refinement</h2>
+            <hr class="header_line">
+            <div class='container-fluid'>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+
+                    {% with field=metajob_form.job_name %}
+                    <p>
+                      <label for="{{ field.id_for_label }}">
+                        <a class="testpup infopopup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+                            <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+                        </a>
+                        Job name:
+                      </label>
+                    </p>
+                    <p class="indented">
+                      {{ field|attr:"placeholder:i.e: My Job #1"}}
+                    </p>
+                    {% endwith %}
+
+
+
+                    <p>
+                      <label for="{{job_form.Input_Sequences.id_for_label}}">
+                        <a class="testpup">
+                          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+                        </a>
+                        Input Sequences:
+                      </label>
+                    </p>
+                    <p class="indented">
+                      {% if mode == 'example' %}
+                      Example Data
+                      {% else %}
+                      {{ inputfile }}
+                      {% endif %}
+                    </p>
+
+                    {% with field=job_form.motif_db %}
+                    <p>
+                      <label for="{{ field.id_for_label }}">
+                        <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+                          <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+                        </a>
+                        MMcompare Motif Database:
+                      </label>
+                      <span class="advopt_input_font">
+                         &nbsp;&nbsp; {{ field }}
+                      </span>
+                    </p>
+                    {% endwith %}
+
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true"
+                         style="background-color:white"><font color="black">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingOne" style="background-color:white"><font
+                                    color="black">
+                                <h2 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne"
+                                       aria-expanded="true" aria-controls="collapseOne"
+                                       style="background-color:white"><font color="black">
+                                        <h3><span class="glyphicon glyphicon-menu-down" aria-hidden="true"
+                                                  style="color:black"></span> Advanced Options </h3>
+                                    </a>
+                                </h2>
+                            </div>
+
+                            <div id="collapseOne" class="panel-collapse collapse" role="tabpanel"
+                                 aria-labelledby="headingOne" style="background-color:white"><font color="black">
+                                <div class="panel-body">
+
+
+                                  <!-- general settings -->
+                                  <p class="advanced_settings_header">
+                                    <h3>General settings</h3>
+                                    <hr />
+                                  </p>
+
+                                  {% with field=job_form.reverse_Complement %}
+                                  <p class="indented">
+                                    <label for="{{ field.id_for_label }}">
+                                      <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});" >
+                                        <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+                                      </a>
+                                      Search on both strands:
+                                    </label>
+                                    <span class="indented">
+                                      {{ field }}
+                                    </span>
+                                  </p>
+                                  {% endwith %}
+
+                                  <p class="indented">
+                                    <label for="{{ job_form.Background_Sequences.id_for_label }}">
+                                      <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.Background_Sequences.html_name }}_info').html(),{'width':400});">
+                                        <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+                                      </a>
+                                      Background Sequences:
+                                    </label>
+                                  </p>
+                                  <p class="indented">
+                                    <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
+                                name="{{ job_form.Background_Sequences.html_name }}" id="{{ job_form.Background_Sequences.auto_id }}"/>
+                                  </p>
+
+                                  <p class="indented">
+                                    <label for="{{ job_form.background_Order.id_for_label }}">
+                                      <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.background_Order.html_name }}_info').html(),{'width':400});">
+                                        <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+                                      </a>
+                                      Background Model Order:
+                                    </label>
+                                    <span class="advopt_input_font">
+                                      &nbsp;&nbsp; {{ job_form.background_Order|attr:"min:0"|attr:"max:2" }}
+                                    </span>
+                                </p>
+
+                                <p class="advanced_settings_header">
+                                  <h3> Refinement stage </h3>
+                                  <hr />
+                                </p>
+
+                                <p class="indented">
+                                  <label for="{{ job_form.model_order.id_for_label }}">
+                                    <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.model_order.html_name }}_info').html(),{'width':400});">
+                                      <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+                                    </a>
+                                    Model Order:
+                                  </label>
+                                  <span class="advopt_input_font">
+                                    &nbsp;&nbsp; {{ job_form.model_order|attr:"min:0"|attr:"max:4" }}
+                                  </span>
+                                </p>
+
+                                <p class="indented">
+                                  <label for="{{ job_form.extend.id_for_label }}">
+                                    <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.extend.html_name }}_info').html(),{'width':400});">
+                                      <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+                                    </a> Flank extension:
+                                  </label>
+                                  <span class="advopt_input_font">
+                                    &nbsp;&nbsp; {{ job_form.extend|attr:"min:0"|attr:"max:10" }}
+                                  </span>
+                                </p>
+
+                                <!-- toggling additional tools like bammscan and mmcompare -->
+                                <p class="advanced_settings_header">
+                                  <h3>Additional settings</h3>
+                                  <hr />
+                                </p>
+
+                                <p class="indented">
+                                  <label for="{{ job_form.score_Seqset.id_for_label }}">
+                                    <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.score_Seqset.html_name }}_info').html(),{'width':400});" >
+                                      <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+                                    </a>
+                                    Run motif scanning:
+                                  </label>
+                                  <span class="advopt_input_font">
+                                    &nbsp;&nbsp; {{ job_form.score_Seqset }}
+                                  </span>
+                                </p>
+
+                                <p class="indented">
+                                  <label for="{{ job_form.score_Cutoff.id_for_label }}">
+                                    <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.score_Cutoff.html_name }}_info').html(),{'width':400});">
+                                      <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+                                    </a>
+                                    Motif scanning p-value cutoff:
+                                  </label>
+                                  <span class="advopt_input_font">
+                                    &nbsp;&nbsp; {{ job_form.score_Cutoff|attr:"min:0.01"|attr:"max:3.00"|attr:"step:0.01" }}
+                                  </span>
+                                </p>
+
+                              <p class="indented">
+                                <label for="{{ job_form.FDR.id_for_label }}">
+                                  <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.FDR.html_name }}_info').html(),{'width':400});">
+                                    <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
+                                  </a>
+                                  Run motif evaluation:
+                                </label>
+                                <span class="advopt_input_font">
+                                  &nbsp;&nbsp; {{ job_form.FDR }}
+                                </span>
+                              </p>
+
+                              {% with field=job_form.MMcompare %}
+                              <p class="indented">
+                                <label for="{{ field.id_for_label }}">
+                                  <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+                                    <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+                                  </a>
+                                  Run motif-motif compare:
+                                </label>
+                                <span class="advopt_input_font">
+                                  &nbsp;&nbsp; {{ field }}
+                                </span>
+                              </p>
+                              {% endwith %}
+
+                              {% with field=job_form.e_value_cutoff %}
+                              <p class="indented">
+                                <label for="{{ field.id_for_label }}">
+                                  <a class="testpup" onmouseover="nhpup.popup($('#{{ field.html_name }}_info').html(),{'width':400});">
+                                    <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true"></span>
+                                  </a> MMcompare e-value cutoff:
+                                </label>
+                                <span class="advopt_input_font">
+                                  &nbsp;&nbsp; {{ field|attr:"min:0.01"|attr:"max:3.00" }}
+                                </span>
+                              </p>
+                              {% endwith %}
+
+
+
+        </div>
+    </div>
+    </div>
+
+    <hr style="border: 1px solid #1f2e2e">
+    <p>
+        <button class="btn btn-primary btn-lg" type="submit" style="border:0px; background-color:#1f2e2e"><font
+                color="white">BaMM!</font></button>
+        &emsp; <a href="{% url 'find_results_by_id' pk='00000000-0000-0000-0000-000000000001' %}"  role="button"> <span
+            class="glyphicon glyphicon-play-circle example_button" aria-hidden="true"> View example result </span></a>
+    </p>
+    {% for selected_motif in selected_motif_keys %}
+    	<input type="hidden" name={{ selected_motif }} value="on" />
+    {% endfor %}
+    </form>
+
+    </div>
+    </div>
+
+    {% for field in all_form_fields %}
+    <div class="modal fade" id="{{ field.html_name }}_info" tabindex="-1" role="dialog" aria-labelledby="{{field.html_name}}_info">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <font color="#0B0719">
+                        <p align="justify"> {{ field.help_text }}</p>
+                    </font>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+
+{% endblock %}

@@ -44,7 +44,6 @@ class PengJob(models.Model):
         default=ShootPengModule.defaults['bit_factor_threshold'])
     use_default_pwm = models.BooleanField(default=ShootPengModule.defaults['use_default_pwm'])
     pwm_pseudo_counts = models.IntegerField(default=ShootPengModule.defaults['pwm_pseudo_counts'])
-    n_threads = models.IntegerField(default=settings.N_PARALLEL_THREADS)
     silent = models.BooleanField(default=ShootPengModule.defaults['silent'])
 
     @property
@@ -60,3 +59,24 @@ class PengJob(models.Model):
     @property
     def meme_output(self):
         return path.join(get_job_output_folder(self.meta_job.pk), 'seeds.meme')
+
+    @property
+    def n_threads(self):
+        return settings.N_PARALLEL_THREADS
+
+    # compatibility layer to old BaMM workflow
+    @property
+    def Background_Sequences(self):
+        return self.bg_sequences
+
+    @property
+    def Input_Sequences(self):
+        return self.fasta_file
+
+    @property
+    def background_Order(self):
+        return self.bg_model_order
+
+    @property
+    def input_basename(self):
+        return path.basename(self.fasta_file.name)

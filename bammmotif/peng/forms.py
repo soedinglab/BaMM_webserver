@@ -81,23 +81,18 @@ def get_valid_peng_form(post, files, user, mode):
     return form, meta_job_form, valid, args
 
 
-class PengToBammForm(forms.ModelForm):
+class _PengToBammForm(forms.ModelForm):
     class Meta:
         model = BaMMJob
         fields = ('reverse_Complement', 'model_order',
                   'extend', 'background_Order',
                   'Background_Sequences', 'score_Seqset', 'score_Cutoff',
-                  'FDR', 'q_value', 'motif_db')
+                  'FDR', 'motif_db', 'MMcompare', 'e_value_cutoff')
+
+class PengToBammForm(_PengToBammForm):
 
     def __init__(self, *args, **kwargs):
-        super(PengToBammForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['motif_db'] = DBChoiceField()
-
-        for field in self.fields:
-            help_text = self.fields[field].help_text
-            self.fields[field].help_text = None
-            if help_text != '':
-                self.fields[field].widget.attrs.update({'class': 'has-popover',
-                                                        'data-content': help_text,
-                                                        'data-placement': 'right',
-                                                        'data-container': 'body'})
+        for name, field in self.fields.items():
+            field.help_text = HELP_TEXTS[name]
