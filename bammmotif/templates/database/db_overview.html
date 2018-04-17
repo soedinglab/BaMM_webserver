@@ -17,9 +17,6 @@
             <th> reverse Comp. </th>
             <th> Cell type     </th>
             <th> Experiment    </th>
-            <th> Lab           </th>
-            <th> Grant         </th>
-            <th> Data source   </th>
             <th> Species       </th>
             <th> Details       </th>
         </tr>
@@ -28,14 +25,29 @@
             <td> {{ forloop.counter           }} </td>
             <td> {{ entry.target_name         }} </td>
             <td> <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0_stamp.png" style='max-height:90px;' alt=""> </td>
-            <td> <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:90px;' alt=""></td>     
+            <td> <img src="{% get_static_prefix %}{{db_location}}/{{entry.result_location}}/{{entry.result_location}}_motif_1-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:90px;' alt=""></td>
             <td> {{ entry.cell_type|default:"unknown"           }} </td>
             <td> {{ entry.parent.experiment|default:"unknown"   }} </td>
-            <td> {{ entry.lab|default:"unknown"                 }} </td>            
-            <td> {{ entry.grant|default:"unknown"               }} </td>
-            <td> {{ entry.parent.data_source|default:"unknown"  }} </td>
-            <td> {{ entry.motif_db.organism|default:"unknown"      }} </td>
-            <td> <a href="{% url 'db_detail' entry.motif_id %}" role="button"> more...</a> </td>
+
+						<td>
+							{% if entry.species %}
+								{{ entry.species}}
+							{% else %}
+								{{ entry.motif_db.organism|default:"unknown"}}
+							{% endif %}
+							</td>
+
+            <td>
+							{% if entry.details_given %}
+							<a href="{% url 'db_detail' entry.motif_id %}">
+							{% else %}
+							<a href="{{ entry.url }}" target="_blank">
+							{% endif %}
+								<button type="submit" class="btn btn-default">
+							    <span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span>
+							  </button>
+							</a>
+						</td>
         </tr>
        {% endfor %}
         </table>
@@ -43,9 +55,3 @@
 </div>
 
 {% endblock %}
-
-
-
-
-
-
