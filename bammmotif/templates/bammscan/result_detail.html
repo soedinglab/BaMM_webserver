@@ -37,8 +37,8 @@
         <th> <a href="#{{m.job_rank}}" style="color:black">{{m.job_rank}} </a></th>
         <th> <a href="#{{m.job_rank}}" style="color:black"> {{m.iupac}} </a></th>
         {% if result.Motif_Init_File_Format == "BaMM" %}
-        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
-        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
+        <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp_revComp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
         {% endif %}
         {% if result.Motif_Init_File_Format == "MEME" %}
         <th> <a href="#{{m.job_rank}}" style="color:black">  <img src="{% get_media_prefix %}{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_stamp.png" class="responsive-img" style='max-height:70px;' alt=""> </a></th>
@@ -82,21 +82,23 @@
     <table>
       <tr>
       {% if result.Motif_Init_File_Format == "MEME" %}
-          <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo"></td>
-          <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)"></td>
+          <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img result_image" alt="0-th order logo"></td>
+          <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img result_image" alt="0-th order logo (reverseComplement)"></td>
       {% endif %}
 
       {% if result.Motif_Init_File_Format == "BaMM" %}
-          <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_init_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo"></td>
-          <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_init_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img" style='max-height:300px;' alt="0-th order logo (reverseComplement)"></td>
+          <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0.png" class="responsive-img result_image" alt="0-th order logo"></td>
+          <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-0_revComp.png" class="responsive-img result_image" alt="0-th order logo (reverseComplement)"></td>
       {% endif %}
       </tr>
-    </table>
+    <tr>
     {% if result.Motif_Init_File_Format == "BaMM" %}
     {% for i in num_logos %}
-        <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_init_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img" style='max-height:300px;' alt="{{i}}-th order logo">
+        <td><img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}-logo-order-{{i}}.png" class="responsive-img result_image" alt="{{i}}-th order logo"></td>
     {% endfor %}
     {% endif %}
+  </tr>
+  </table>
 
 
     {% if result.FDR %}
@@ -121,7 +123,11 @@
       {% if result.score_Seqset %}
       <tr>
         <td colspan="2">
-          <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.png" class="responsive-img" style='width:800px;' alt="Positional Distribution"> &emsp;
+          {% if result.Motif_Init_File_Format == "BaMM" %}
+            <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_distribution.png" class="responsive-img" style='width:800px;' alt="Positional Distribution"> &emsp;
+          {% else %}
+            <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.png" class="responsive-img" style='width:800px;' alt="Positional Distribution"> &emsp;
+          {% endif %}
         </td>
       </tr>
       {% endif %}
@@ -193,10 +199,12 @@
                             <td>Motif File:</td>
                             <td> {{ result.motif_basename }}</td>
                           </tr>
+                          {% if result.Motif_Init_File_Format == 'BaMM' %}
                           <tr>
                             <td>Motif background model:</td>
                             <td>{{ result.bgmodel_basename|default:"not provided"}}</td>
                           </tr>
+                          {% endif %}
                           <tr>
                             <td>Search on both strands:</td>
                             <td>{{ result.reverse_Complement }}</td>

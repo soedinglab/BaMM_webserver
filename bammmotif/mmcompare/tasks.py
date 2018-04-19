@@ -55,15 +55,15 @@ def generic_mmcompare_motif_transfer_task(job):
         job.num_motifs = len(get_motif_ids(init_dest))
 
     elif job.Motif_Init_File_Format == 'BaMM':
+
         # motif file
-        init_dest = path.join(get_job_output_folder(job_pk), file_prefix + file_extension)
+        init_dest = path.join(get_job_output_folder(job_pk), file_prefix + '_motif_1.ihbcp')
         copyfile(init_file, init_dest)
 
         # motif background
         bg_basename = path.basename(job.bgModel_File.name)
-        _, bg_ext = path.splitext(bg_basename)
         bg_file = path.join(get_job_input_folder(job_pk), bg_basename)
-        bg_dest = path.join(get_job_output_folder(job_pk), file_prefix + bg_ext)
+        bg_dest = path.join(get_job_output_folder(job_pk), file_prefix + '.hbcp')
         copyfile(bg_file, bg_dest)
     else:
         assert False

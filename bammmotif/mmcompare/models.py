@@ -1,4 +1,5 @@
 from os import path
+import re
 
 from django.db import models
 from django.conf import settings
@@ -26,13 +27,15 @@ class MMcompareJob(models.Model):
     num_motifs = models.IntegerField(default=1)
     model_order = models.PositiveSmallIntegerField(default=4)
     bgModel_File = models.FileField(upload_to=job_directory_path_motif, null=True, blank=True)
-    e_value_cutoff = models.DecimalField(default=0.1, max_digits=3, decimal_places=2)
+    e_value_cutoff = models.DecimalField(default=0.5, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
     @property
     def filename_prefix(self):
         file_name = path.basename(self.Motif_InitFile.name)
         prefix, _ = path.splitext(file_name)
+        if self.Motif_Init_File_Format == 'BaMM':
+             prefix = re.sub('_motif_[0-9]+$', '', prefix)
         return prefix
 
     @property
@@ -60,7 +63,7 @@ class MMcompareJob(models.Model):
         if not self.bgModel_File:
             return None
         else:
-            path.basename(self.bgModel_file.name)
+            return path.basename(self.bgModel_File.name)
 
     def __str__(self):
         return str(self.meta_job.job_id)
