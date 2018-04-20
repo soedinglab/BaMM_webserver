@@ -85,6 +85,8 @@ def generic_mmcompare_import_matches(job):
 @task(bind=True)
 def mmcompare_pipeline(self, job_pk):
     job = get_object_or_404(MMcompareJob, meta_job__pk=job_pk)
+    make_job_output_folder(job_pk)
+
     with JobSaveManager(job):
         make_job_folder(job_pk)
 

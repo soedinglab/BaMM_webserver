@@ -7,6 +7,13 @@
 <div class="jumbotron" style="background-color:white"><font color="black">
  <h2> BaMMmotif database details for {{entry.target_name}}</h2>
     <hr style="border: 1px solid #1f2e2e">
+    {% if is_bamm_database %}
+    <div class="alert alert-warning">
+      BaMM models in this database are automatically generated and sometimes may include motifs from co-binding factors.
+       If you rely on accurate motif annotation, please choose a manually curated motif database such as JASPAR.
+     </div>
+    {% endif %}
+    
       <div class="well" style="background-color:white" id="{{entry.target_name}}">
         <h2>Database entry information:</h2>
         <hr style="border: 1px solid #1f2e2e">
