@@ -154,7 +154,7 @@ class ChIPseq(models.Model):
     filename = models.CharField(max_length=255)
     lab = models.CharField(max_length=100, null=True)
     grant = models.CharField(max_length=100, null=True)
-    cell_type = models.CharField(max_length=250, null=True)
+    cell_type = models.CharField(max_length=500, null=True)
     cell_types = custom_fields.SeparatedValuesField(null=True)
     target_name = models.CharField(max_length=100)
     ensembl_target_id = models.CharField(max_length=100, null=True)
