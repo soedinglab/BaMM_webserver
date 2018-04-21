@@ -99,8 +99,8 @@ def job_directory_path_peng_meta(instance, filename, intermediate_dir="Input"):
 class DbParameter(models.Model):
     param_id = models.AutoField(db_column='param_ID', primary_key=True)  # Field name made lowercase.
     data_source = models.CharField(max_length=100)
-    species = models.CharField(max_length=12)
-    experiment = models.CharField(max_length=20)
+    species = models.CharField(max_length=100)
+    experiment = models.CharField(max_length=100)
     base_dir = models.CharField(max_length=50)
     motif_init_file_format = models.CharField(max_length=255)
     #alphabet = models.CharField(max_length=12)
