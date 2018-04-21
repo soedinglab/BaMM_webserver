@@ -115,7 +115,7 @@ name="{{ field.html_name }}" required id="{{ field.auto_id }}" />
     {% endwith %}
 
     {% with field=job_form.bgModel_File %}
-    {% if job_form.Motif_Init_File_Format.value == 'MEME' %}
+    {% if job_form.Motif_Init_File_Format.value == 'MEME' or mode == 'example' or mode == 'db' %}
     <div id="bg_model_section" class="jumbotron_p_like" style="display:none">
     {% else %}
     <div id="bg_model_section" class="jumbotron_p_like">

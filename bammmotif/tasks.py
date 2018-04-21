@@ -25,7 +25,9 @@ def run_peng(self, job_pk):
         make_job_folder(job_pk)
         logfile = get_log_file(job_pk)
         with open(logfile, 'w') as f:
-            with redirect_stdout(f):
+            with redirect_stdout(f), redirect_stderr(f):
+
+                print(timezone.now(), "\t | update: \t Running PEnGmotif seeding.")
 
                 # run PeNGmotif
                 Peng(job_pk, False)

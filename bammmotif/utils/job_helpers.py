@@ -63,5 +63,5 @@ def upload_example_motif(job):
     with open(settings.EXAMPLE_MOTIF) as handle:
         job.Motif_InitFile.save(out_filename, files.File(handle))
     job.Motif_Initialization = 'CustomFile'
-    job.Motif_Init_File_Format = 'PWM'
+    job.Motif_Init_File_Format = 'MEME'
     job.save()

@@ -1,5 +1,4 @@
 from os import path
-import os
 import itertools
 
 from django.shortcuts import get_object_or_404, render
