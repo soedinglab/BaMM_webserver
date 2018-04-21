@@ -137,6 +137,7 @@ zip_file_globs = [
     '*dataRRC.pdf',
     '*distribution.png',
     '*.occurrence',
+    '*.bmscore',
 ]
 
 
@@ -162,6 +163,7 @@ def get_motif_compress_command(job, motif):
     for file_glob in zip_file_globs:
         collected_files.extend(glob.glob(path.join(output_folder, model_file_glob + file_glob)))
     collected_files.extend(glob.glob(path.join(output_folder, '*.hbcp')))
+    collected_files.extend(glob.glob(path.join(output_folder, '*.bmscore')))
 
     params = [
         'zip', '-j',
