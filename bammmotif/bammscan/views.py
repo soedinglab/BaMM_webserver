@@ -89,7 +89,11 @@ def run_bammscan_view(request, mode='normal', pk='null'):
             form = BaMMScanDBForm()
             db_entry = get_object_or_404(ChIPseq, pk=pk)
             return render(request, 'bammscan/bammscan_input.html', {
-                'form': form,
+                'job_form': form,
+                'metajob_form': meta_job_form,
+                'all_form_fields': itertools.chain(form, meta_job_form),
+                'max_file_size': settings.MAX_UPLOAD_FILE_SIZE,
+                'validation_errors': not is_valid,
                 'mode': mode,
                 'pk': pk,
                 'db_entry': db_entry,

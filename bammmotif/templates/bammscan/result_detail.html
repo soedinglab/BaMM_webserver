@@ -134,6 +134,7 @@
     </table>
     {% endif %}
 
+    {% if result.MMcompare %}
     <h2> Best matches with our motif database </h2>
         <hr class="header_line">
 
@@ -161,6 +162,8 @@
         </tr>
         {% endfor %}
         </table>
+
+        {% endif %}
 
  </div>
 
