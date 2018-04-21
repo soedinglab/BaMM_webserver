@@ -3,8 +3,10 @@ from glob import glob
 from os import path
 import logging
 import shutil
+from billiard import Pool
 
 from django.utils import timezone
+from django.conf import settings
 
 from ..bamm.commands import get_core_params
 from ..utils.job_helpers import (
@@ -14,7 +16,6 @@ from ..utils.job_helpers import (
 )
 from ..utils import (
     run_command,
-    get_job_input_folder,
     get_job_output_folder,
     meme_count_motifs,
 )
@@ -44,9 +45,13 @@ def BaMMScan(job, first_task_in_pipeline, is_refined_model):
     print(timezone.now(), "\t | update: \t %s " % job.meta_job.status)
     sys.stdout.flush()
     if is_refined_model:
-        for motif_no in range(job.num_motifs):
-            run_command(get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model,
-                                             motif_no+1))
+        with Pool(settings.N_PARALLEL_THREADS) as pool:
+            for motif_no in range(job.num_motifs):
+                command = get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model,
+                                               motif_no + 1)
+                pool.apply_async(run_command, (command,))
+            pool.close()
+            pool.join()
     else:
         run_command(get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model))
 
@@ -59,8 +64,13 @@ def BaMMScan(job, first_task_in_pipeline, is_refined_model):
         # generate motif objects
         run_command(get_iupac_command(job))
         add_motif_iupac(job)
-        for order in range(min(job.model_order+1, 3)):
-            run_command(get_logo_command(job, order))
+
+        with Pool(settings.N_PARALLEL_THREADS) as pool:
+            for order in range(min(job.model_order+1, 3)):
+                pool.apply_async(run_command, (get_logo_command(job, order),))
+            pool.close()
+            pool.join()
+
     # plot motif distribution
     run_command(get_distribution_command(job))
 
