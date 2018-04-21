@@ -29,7 +29,8 @@ def maindb(request):
                     {
                         'protein_name': search_term,
                         'db_entries': db_entries,
-                        'db_location': motif_db.relative_db_model_dir
+                        'db_location': motif_db.relative_db_model_dir,
+                        'is_bamm_database': motif_db.model_parameters.modelorder > 0,
                     })
             else:
                 form = DBForm()
@@ -49,12 +50,16 @@ def db_browse(request, db_id):
         {
             'protein_name': search_term,
             'db_entries': db_entries,
-            'db_location': motif_db.relative_db_model_dir
+            'db_location': motif_db.relative_db_model_dir,
+            'is_bamm_database': motif_db.model_parameters.modelorder > 0,
         })
 
 
 def db_detail(request, pk):
     entry = get_object_or_404(ChIPseq, motif_id=pk)
     db_location = entry.motif_db.relative_db_model_dir
-    return render(request, 'database/db_detail.html',
-                  {'entry': entry, 'db_location': db_location})
+    return render(request, 'database/db_detail.html', {
+        'entry': entry,
+        'db_location': db_location,
+        'is_bamm_database': entry.motif_db.model_parameters.modelorder > 0,
+    })

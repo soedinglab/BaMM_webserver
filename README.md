@@ -1,5 +1,7 @@
 # BaMM web server
-[![License](https://img.shields.io/github/license/soedinglab/BaMM_webserver.svg)](https://choosealicense.com/licenses/agpl-3.0/) [![Documentation Status](https://readthedocs.org/projects/bammserver/badge/?version=latest)](http://bammserver.readthedocs.io/en/latest/?badge=latest)
+[![License](https://img.shields.io/github/license/soedinglab/BaMM_webserver.svg)](https://choosealicense.com/licenses/agpl-3.0/)
+[![Documentation Status](https://readthedocs.org/projects/bammserver/badge/?version=latest)](http://bammserver.readthedocs.io/en/latest/?badge=latest)
+[![Issues](https://img.shields.io/github/issues/soedinglab/BaMM_webserver.svg)](https://github.com/soedinglab/BaMM_webserver/issues)
 
 This repository contains the source code of the BaMM web server. A bioinformatic resource for analysis of nucleotide binding proteins with higher-order Bayesian Markov Models (BaMMs).
 

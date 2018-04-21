@@ -95,3 +95,7 @@
 .settings_box td {
   min-width: 220px
 }
+
+.result_image {
+  max-width: 400px
+}

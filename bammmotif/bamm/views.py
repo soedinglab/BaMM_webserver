@@ -25,11 +25,11 @@ from .tasks import denovo_pipeline
 
 ONESTEP_JOBFORM = {
     'example': bamm_forms.OneStepBammJobExampleForm,
-    'normal': bamm_forms.OneStepBammJobForm
+    'denovo': bamm_forms.OneStepBammJobForm
 }
 
 
-def one_step_denovo(request, mode='normal'):
+def one_step_denovo(request, mode='denovo'):
     max_file_size = settings.MAX_UPLOAD_FILE_SIZE
     if request.method == 'POST':
         metajob_form = MetaJobNameForm(request.POST)
@@ -75,7 +75,7 @@ def one_step_denovo(request, mode='normal'):
         'job_form': job_form,
         'max_file_size': max_file_size,
         'all_form_fields': itertools.chain(metajob_form, job_form),
-        'mode': 'denovo',
+        'mode': mode,
         'validation_errors': not is_valid,
         'max_seeds': settings.MAX_SEEDS_FOR_REFINEMENT,
     })

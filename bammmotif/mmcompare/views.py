@@ -79,7 +79,7 @@ def run_compare_view(request, mode='normal'):
                     with open(settings.EXAMPLE_MOTIF) as handle:
                         job.Motif_InitFile.save(out_filename, files.File(handle))
                     job.Motif_Initialization = 'CustomFile'
-                    job.Motif_Init_File_Format = 'PWM'
+                    job.Motif_Init_File_Format = 'MEME'
 
                 with transaction.atomic():
                     meta_job.save()

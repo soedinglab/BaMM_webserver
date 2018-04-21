@@ -122,14 +122,33 @@ def get_convert_input_command(job_pk):
     return command
 
 
+zip_file_globs = [
+    '*.hbcp',
+    '*.ihbcp',
+    '*-logo-order-0.png',
+    '*-logo-order-0_revComp.png',
+    '*-logo-order-1.png',
+    '*-logo-order-2.png',
+    '*motifPval.png',
+    '*motifRRC.png',
+    '*motifRRC.pdf',
+    '*dataPval.png',
+    '*dataRRC.png',
+    '*dataRRC.pdf',
+    '*distribution.png',
+    '*.occurrence',
+    '*.bmscore',
+]
+
+
 def get_compress_command(job):
     job_pk = job.meta_job.pk
     param = ['zip', '-j']
     prefix = job.filename_prefix
     param.append(path.join(get_job_output_folder(job_pk), prefix + '_BaMMmotif.zip'))
-    files = glob.glob(path.join(get_job_output_folder(job_pk), '*'))
-    param.extend(files)
 
+    for file_glob in zip_file_globs:
+        param.extend(glob.glob(path.join(get_job_output_folder(job_pk), file_glob)))
     return param
 
 
@@ -138,14 +157,18 @@ def get_motif_compress_command(job, motif):
     output_folder = get_job_output_folder(job_pk)
 
     zip_file_name = '%s_Motif_%s.zip' % (job.filename_prefix, motif)
-    model_file_glob = '%s_motif_%s*' % (job.filename_prefix, motif)
-    model_files = glob.glob(path.join(output_folder, model_file_glob))
-    bg_files = glob.glob(path.join(output_folder, job.filename_prefix + '.hb*'))
+    model_file_glob = '%s_motif_%s' % (job.filename_prefix, motif)
+
+    collected_files = []
+    for file_glob in zip_file_globs:
+        collected_files.extend(glob.glob(path.join(output_folder, model_file_glob + file_glob)))
+    collected_files.extend(glob.glob(path.join(output_folder, '*.hbcp')))
+    collected_files.extend(glob.glob(path.join(output_folder, '*.bmscore')))
+
     params = [
         'zip', '-j',
         path.join(output_folder, zip_file_name),
-        *model_files,
-        *bg_files,
+        *collected_files,
     ]
     return params
 

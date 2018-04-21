@@ -99,8 +99,8 @@ def job_directory_path_peng_meta(instance, filename, intermediate_dir="Input"):
 class DbParameter(models.Model):
     param_id = models.AutoField(db_column='param_ID', primary_key=True)  # Field name made lowercase.
     data_source = models.CharField(max_length=100)
-    species = models.CharField(max_length=12)
-    experiment = models.CharField(max_length=20)
+    species = models.CharField(max_length=100)
+    experiment = models.CharField(max_length=100)
     base_dir = models.CharField(max_length=50)
     motif_init_file_format = models.CharField(max_length=255)
     #alphabet = models.CharField(max_length=12)
@@ -154,7 +154,7 @@ class ChIPseq(models.Model):
     filename = models.CharField(max_length=255)
     lab = models.CharField(max_length=100, null=True)
     grant = models.CharField(max_length=100, null=True)
-    cell_type = models.CharField(max_length=250, null=True)
+    cell_type = models.CharField(max_length=500, null=True)
     cell_types = custom_fields.SeparatedValuesField(null=True)
     target_name = models.CharField(max_length=100)
     ensembl_target_id = models.CharField(max_length=100, null=True)

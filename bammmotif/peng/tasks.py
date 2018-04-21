@@ -1,12 +1,13 @@
 from __future__ import absolute_import
 
-import subprocess
 import os
 from os import path
+from contextlib import redirect_stdout, redirect_stderr
 
-from celery import task, chain
+from celery import task
 from django.shortcuts import get_object_or_404
 from django.conf import settings
+from django.utils import timezone
 from bammmotif.peng.settings import FASTA_VALIDATION_SCRIPT, MEME_PLOT_INPUT, JOB_OUTPUT_DIRECTORY, PENG_PLOT_LOGO_ORDER
 from bammmotif.peng.settings import MEME_PLOT_DIRECTORY
 from .utils import (
@@ -14,13 +15,12 @@ from .utils import (
     rename_and_move_plots,
     rename_bamms,
     zip_bamm_motifs,
-    get_motif_ids,
 )
 from bammmotif.utils.meme_reader import split_meme_file
 from bammmotif.peng.io import (
-        meme_plot_directory, 
-        bamm_directory_old, 
-        filter_output_file_old, 
+        meme_plot_directory,
+        bamm_directory_old,
+        filter_output_file_old,
         get_job_directory,
         get_temporary_job_dir
 )
@@ -48,12 +48,16 @@ def run_peng_generic(job):
     with JobSaveManager(job):
         # first define log file for redirecting output information
         logfile = get_log_file(job_pk)
-        peng = ShootPengModule.from_job(job)
-        peng.temp_dir = get_temporary_job_dir(job_pk)
-        peng.set_log_file(logfile)
-        peng.run()
-        n_motifs = len(get_motif_ids(job.meme_output))
-        job.num_motifs = n_motifs
+        with open(logfile, 'a') as f:
+            with redirect_stdout(f), redirect_stderr(f):
+                print(timezone.now(), "\t | update: \t %s " % 'Find seed patterns', flush=True)
+
+                peng = ShootPengModule.from_job(job)
+                peng.temp_dir = get_temporary_job_dir(job_pk)
+                peng.set_log_file(logfile)
+                peng.run()
+                n_motifs = len(get_motif_ids(job.meme_output))
+                job.num_motifs = n_motifs
 
 
 def run_pwm_filter_generic(job):
