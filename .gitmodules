@@ -1,6 +1,6 @@
 [submodule "tools/bamm"]
 	path = tools/bamm
-	url = git@github.com:soedinglab/bamm-private.git
+	url = https://github.com/soedinglab/BaMMmotif2.git
 [submodule "tools/suite"]
 	path = tools/suite
-	url = git@github.com:soedinglab/bamm-suite.git
+	url = https://github.com/soedinglab/bamm-suite.git
