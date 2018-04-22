@@ -67,7 +67,7 @@ def one_step_denovo(request, mode='denovo'):
 
     else:
         metajob_form = MetaJobNameForm()
-        job_form = ONESTEP_JOBFORM[mode]()
+        job_form = ONESTEP_JOBFORM[mode](initial={'max_refined_motifs': settings.DEFAULT_SEEDS_FOR_REFINEMENT})
         is_valid = True
 
     return render(request, 'denovo/one_step_denovo.html', {
