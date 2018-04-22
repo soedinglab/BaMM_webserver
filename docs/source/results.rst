@@ -65,8 +65,6 @@ How to interpret evaluation plots?
    :alt: Evaluation plots
    :align: center
 
-
-
 We generate background sequences from a second-order Markov model trained on all input sequences and ask how well
 the input sequences (positives) are separated from the background sequences (negatives). As usual we define true
 positives (TP) as predictions that are correct, false positives (FP) as predictions that are incorrect,and
@@ -285,7 +283,6 @@ FDR analysis
 
 The command line version of FDR can be downloaded from our GitHub `BaMMmotif repository`_.
 
-
 How to use these tools via command lines?
 .........................................
 .. _How to use these tools via command lines:
@@ -293,19 +290,6 @@ How to use these tools via command lines?
 A detailed description of how to use the command line tool can be found in the README section of the respective GitHub
 repository.
 
-
-About BaMM!motif
-================
-
-The Bayesian Scheme
-...................
-
-.. image:: img/bayesianScheme.png
-   :width: 400px
-   :height: 200px
-   :scale: 150 %
-   :alt: Bayesian Scheme
-   :align: center
 
 FAQs
 ====

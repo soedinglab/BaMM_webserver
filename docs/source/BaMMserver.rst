@@ -10,6 +10,34 @@ The BaMMmotif web server enables the user to
 * (d) search for similar motifs in the existing datasets
 * (e) browse databases of higher order motif models for over 600 human TFs, over 300 mouse TFs and TFs for other model organisms (constantly growing)
 
+About BaMM!motif
+================
+.. _About BaMMmotif:
+
+The Bayesian Scheme
+...................
+
+.. image:: img/bayesianScheme.png
+   :width: 400px
+   :height: 200px
+   :scale: 150 %
+   :alt: Bayesian Scheme
+   :align: center
+
+
+Bayesian Markov model training automatically adapts the effective number of parameters to the amount of data.
+
+In the last line, if the context GCT is so frequent at position j in the motif that its number of occurrences
+outweighs the pseudo-count strength, :math:`n_j(GCT) \gg \alpha_3`, the third-order probabilities for this context
+will be roughly the maximum likelihood estimate, e.g. :math:`p_j(A|GCT) ≈ n_j(GCTA)/n_{j−1}(GCT)`. However, if few
+GCT were observed in comparison with the pseudo-counts, :math:`n_j(GCT) \ll \alpha_3` , the third-order probabilities
+will fall back on the second-order estimate, :math:`p_j(A|GCT) \approx p_j(A|CT)`. If also :math:`n_j(CT) \ll \alpha_2`,
+then likewise the second-order estimate will fall back on the first-order estimate, and hence
+:math:`p_j(A|GCT) \approx p_j(A|T)`. In this way, higher-order dependencies are only learned for the fraction of
+k-mer contexts that occur sufficiently often at one position j in the motif’s training instances to trump the
+pseudo-counts. Throughout this work we set :math:`\alpha_0 = 1` and :math:`\alpha_k = 20 × 3^k − 1`.
+
+
 How to use BaMMmotif server?
 ============================
 .. _How to use BaMMmotif server:
