@@ -299,16 +299,16 @@ How long are the results available?
 ...................................
 .. _How long are the results available:
 
-Currently, the results will be kept for 4 weeks.
+We guarantee that the results will be accessible via job id for at least 3 months.
 
 What is the maximal size of input sequence file that I can upload?
 ..................................................................
 .. _maximal size of input sequence file:
 
-You can upload input sequence file with a maximal size of 40 MB.
+You can upload input sequence file with a maximal size of 50 MB.
 
-For larger sequence files, you can either use our binary tools on the Github repositories, or download this webserver
-and run it locally after changing settings in the .env file.
+For larger sequence files, you can either use our commandline tools, or run the webserver locally after adapting the ``MAX_UPLOAD_FILE_SIZE`` configuration option.
+You can find detailed instructions in the `README <https://github.com/soedinglab/BaMM_webserver/blob/master/README.md>`_ in the webserver's github repository.
 
 Citing and References
 =====================
