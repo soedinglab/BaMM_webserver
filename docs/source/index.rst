@@ -8,7 +8,14 @@ Welcome to BaMMServer
 
 .. toctree::
    BaMMserver
+   results
 
 
 .. External links:
 .. _SoedingLab: https://www.mpibpc.mpg.de/soeding
+
+.. _PEnGmotif repository: https://github.com/soedinglab/PEnG-motif
+
+.. _BaMMmotif repository: https://github.com/soedinglab/BaMMmotif
+
+.. _BaMMmotif paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5291271/
