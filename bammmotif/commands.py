@@ -140,6 +140,9 @@ zip_file_globs = [
     '*.bmscore',
 ]
 
+if settings.ZIP_INCLUDE_ZOOPS_STATS:
+    zip_file_globs.append('*.zoops.stats')
+
 
 def get_compress_command(job):
     job_pk = job.meta_job.pk
