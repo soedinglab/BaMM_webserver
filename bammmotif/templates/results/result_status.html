@@ -3,9 +3,17 @@
 {% block content %}
 {% load static %}
 
+{% if status != 'Error' %}
 <meta http-equiv="refresh" content="5" >
+{% endif %}
 <div class="jumbotron"  style="background-color:white"><font color="black">
-     <h2> Your job {{job_name}} has not yet completed... </h2>
+  <h2>
+     {% if status == 'Error' %}
+     We're sorry, your job has crashed...
+     {% else %}
+     Your job {{job_name}} is still running...
+     {% endif %}
+  </h2>
      <hr style="border: 1px solid #1f2e2e">
      <div id="{{job_id}}">
         <p> Your job status: {{status}} </p>

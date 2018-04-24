@@ -88,7 +88,7 @@ HELP_TEXTS = defaultdict(str, {
     ),
     'Motif_InitFile': (
         'Upload a motif file. The motif has to match the selected motif file format. '
-        'BaMM models have the extension *_motif_*.ihbcp.'
+        'BaMM models have the extension *.ihbcp.'
     ),
     'bgModel_File': (
         'Upload a background model file (extension *.hbcp). You only have to provide '
