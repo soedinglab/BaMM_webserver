@@ -7,8 +7,11 @@ Welcome to BaMMServer
 *********************
 
 .. toctree::
-   BaMMserver
+   intro
+   workflows
    results
+   misc
+   zzz_references
 
 
 .. External links:

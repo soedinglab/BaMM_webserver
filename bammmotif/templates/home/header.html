@@ -58,19 +58,23 @@
     <div class="row">
         <p><br></p>
     </div>
-    <div class="row">
-      <div class="col-sm-12">
-        <br>
 
-          <a href="/home/">
-            <span>
-              <img src="{% static 'img/BaMMmotif.png' %}" class="responsive-img" style='max-height:190px;' alt="logo">
-            </span>
-          </a>
-
-        <br>
-      </div>
-    </div>
+    <table style="width:100%">
+      <tr>
+        <td>
+        <a href="/home/">
+          <span>
+            <img src="{% static 'img/BaMMmotif.png' %}" class="responsive-img" style='max-height:190px;' alt="logo">
+          </span>
+        </a>
+      </td>
+      <td style="width:90%; vertical-align: middle;">
+        <div style="margin-left: 50px; margin-right: 50px;">
+          {% include "home/notification.html" %}
+        </div>
+      </td>
+    </tr>
+  </table>
 
     <div class="row">
       <div class="col-sm-12">
