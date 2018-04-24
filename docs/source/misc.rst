@@ -19,18 +19,18 @@ Here is an example of BaMM files for a 2nd order motif of length W:
 ::
 
   P_1(A) P_1(C) P_1(G) P_1(T) 
-  P_1(A|A) P_1(C|A) P_1(G|A) P_1(T|A) P_1(A|C) P_1(C|C) ... P1_(T|T)
-  P_1(A|AA) P_1(C|AA) P_1(G|AA) P_1(T|AA) P_1(A|AC) P_1(C|AC) ... P1_(T|TT)
+  P_1(A|A) P_1(C|A) P_1(G|A) P_1(T|A) P_1(A|C) P_1(C|C) ... P_1(T|T)
+  P_1(A|AA) P_1(C|AA) P_1(G|AA) P_1(T|AA) P_1(A|AC) P_1(C|AC) ... P_1(T|TT)
 
   P_2(A) P_2(C) P_2(G) P_2(T) 
-  P_2(A|A) P_2(C|A) P_2(G|A) P_2(T|A) P_2(A|C) P_2(C|C) ... P2_(T|T)
-  P_2(A|AA) P_2(C|AA) P_2(G|AA) P_2(T|AA) P_2(A|AC) P_2(C|AC) ... P2_(T|TT)
+  P_2(A|A) P_2(C|A) P_2(G|A) P_2(T|A) P_2(A|C) P_2(C|C) ... P_2(T|T)
+  P_2(A|AA) P_2(C|AA) P_2(G|AA) P_2(T|AA) P_2(A|AC) P_2(C|AC) ... P_2(T|TT)
 
   ...
 
   P_W(A) P_W(C) P_W(G) P_W(T) 
-  P_W(A|A) P_W(C|A) P_W(G|A) P_W(T|A) P_W(A|C) P_W(C|C) ... PW_(T|T)
-  P_W(A|AA) P_W(C|AA) P_W(G|AA) P_W(T|AA) P_W(A|AC) P_W(C|AC) ... PW_(T|TT)
+  P_W(A|A) P_W(C|A) P_W(G|A) P_W(T|A) P_W(A|C) P_W(C|C) ... P_W(T|T)
+  P_W(A|AA) P_W(C|AA) P_W(G|AA) P_W(T|AA) P_W(A|AC) P_W(C|AC) ... P_W(T|TT)
 
 
 Where ``P_W(A|CT)`` is the conditional probability of observing ``A`` at motif position ``W`` following the context ``CT``.
@@ -125,10 +125,10 @@ This is an example of an occurrence file:
 
 ::
 
-        seq     length  strand  start..end      pattern p-value e-value
-        >chr5:119672047-119672247        209     +       23..31  GGCAGCTGT       0.00045 0.225
-        >chr9:21950422-21950622        209     +       23..31  AGCAGCTGC       4.78e-05        0.0239
-        >chr7:6410115-6410315        209     +       101..109        GGCACCTGC       0.0001  0.0502
+        seq                         length  strand  start..end  pattern     p-value     e-value
+        >chr5:119672047-119672247   209     +       23..31      GGCAGCTGT   0.00045     0.225
+        >chr9:21950422-21950622     209     +       23..31      AGCAGCTGC   4.78e-05    0.0239
+        >chr7:6410115-6410315       209     +       101..109    GGCACCTGC   0.0001      0.0502
 
 
 Motif evaluation
@@ -172,7 +172,9 @@ FAQ
 ###
 
 **I think I found a bug, how can I make you aware?**
-        The best way is to file an issue in our `github repository <https://github.com/soedinglab/BaMM_webserver>`_. Additionally you can write an email to bamm@mpibpc.mpg.de. In any case, please provide as much information as possible for us to reproduce the bug.
+        The best way is to file an issue in our `github repository <https://github.com/soedinglab/BaMM_webserver>`_.
+        Additionally you can write an email to bamm@mpibpc.mpg.de. In any case, please provide as much information as
+        possible for us to reproduce the bug, e.g. the link to the result page.
 
 **How long are the results available on the server?**
         We guarantee that the results will be accessible via job id for at least 3 months.
@@ -180,9 +182,11 @@ FAQ
 **What is the maximum size of files I can upload?**
         You can upload files with up to 50 MiB in size.
 
-        For larger sequence files, you can either use our commandline tools, or run the webserver locally after adapting the ``MAX_UPLOAD_FILE_SIZE`` configuration option.
+        For larger sequence files, you can either use our commandline tools, or run the webserver locally after adapting
+        the ``MAX_UPLOAD_FILE_SIZE`` configuration option.
 
-        You can find detailed instructions in the `README <https://github.com/soedinglab/BaMM_webserver/blob/master/README.md>`_ in the webserver's github repository.
+        You can find detailed instructions in the `README <https://github.com/soedinglab/BaMM_webserver/blob/master/README.md>`_
+        in the webserver's github repository.
 
 Miscellaneous
 #############
