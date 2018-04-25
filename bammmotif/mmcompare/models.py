@@ -2,7 +2,9 @@ from os import path
 import re
 
 from django.db import models
+from django.db.models.signals import post_delete
 from django.conf import settings
+from django.dispatch import receiver
 
 from bammmotif.models import JobInfo, MotifDatabase
 
@@ -67,3 +69,9 @@ class MMcompareJob(models.Model):
 
     def __str__(self):
         return str(self.meta_job.job_id)
+
+
+@receiver(post_delete, sender=MMcompareJob)
+def delete_job_info(sender, instance, *args, **kwargs):
+    if instance.meta_job:
+        instance.meta_job.delete()
