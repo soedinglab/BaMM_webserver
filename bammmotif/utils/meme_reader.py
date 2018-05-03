@@ -1,4 +1,5 @@
 import os
+import re
 from bammmotif.peng.io import peng_meme_directory
 
 

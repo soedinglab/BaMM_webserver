@@ -1,6 +1,5 @@
 import sys
 import os
-import collections
 from os import path
 from os.path import basename
 import traceback
@@ -16,15 +15,14 @@ from django.contrib.auth.models import User
 from django.core.files import File
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.db.models.fields import FieldDoesNotExist
 from ipware.ip import get_ip
 
 from celery.exceptions import SoftTimeLimitExceeded
 
 from ..models import (
-    JobInfo,
     Motifs,
     ChIPseq,
-    DbMatch,
     JobSession,
 )
 
@@ -33,6 +31,8 @@ from ..utils.input_validation import (
     validate_bamm_file,
     validate_meme_file,
     validate_bamm_bg_file,
+    validate_generic_meme,
+    MEMEValidationError,
 )
 
 
@@ -291,11 +291,12 @@ def file_size_validator(value):
         raise ValidationError('File size exceeds upload limits.')
 
 
-def check_motif_input(job, form):
+def check_motif_input(job, form, request):
     is_valid = True
     if job.Motif_Init_File_Format == 'MEME':
-        if not validate_meme_file(job.full_motif_file_path):
-            form.add_error('Motif_InitFile', 'Does not seem to be in MEME format.')
+        success, msg = check_meme_input(job, form, request.FILES)
+        if not success:
+            form.add_error('Motif_InitFile', msg)
             is_valid = False
     elif job.Motif_Init_File_Format == 'BaMM':
         if not validate_bamm_file(job.full_motif_file_path):
@@ -313,7 +314,11 @@ def check_motif_input(job, form):
 
 
 def check_fasta_input(job, form, rq_files):
-    fasta_field = 'Input_Sequences' if hasattr(job, 'Input_Sequences') else 'fasta_file'
+    try:
+        job._meta.get_field('Input_Sequences')
+        fasta_field = 'Input_Sequences'
+    except FieldDoesNotExist:
+        fasta_field = 'fasta_file'
 
     with NamedTemporaryFile('wb+') as tmp_file:
         for chunk in rq_files[fasta_field].chunks():
@@ -322,6 +327,25 @@ def check_fasta_input(job, form, rq_files):
         success, msg = validate_fasta_file(tmp_file.name)
 
     if not success:
-        form.add_error(fasta_field, 'Does not seem to be in fasta format.')
+        form.add_error(fasta_field, msg)
         return False
     return True
+
+
+def check_meme_input(job, form, rq_files):
+    motif_field = 'Motif_InitFile'
+
+    with NamedTemporaryFile('wb+') as tmp_file:
+        for chunk in rq_files[motif_field].chunks():
+            tmp_file.write(chunk)
+        tmp_file.flush()
+
+        try:
+            validate_generic_meme(tmp_file.name)
+        except MEMEValidationError as ex:
+            return False, str(ex)
+        except ValueError as unknown_err:
+            logger.exception(unknown_err)
+            return False, 'generic parsing problem of the MEME file'
+
+        return True, 'Success'

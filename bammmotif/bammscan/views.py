@@ -18,6 +18,7 @@ from ..utils import (
     upload_example_motif,
     register_job_session,
     check_motif_input,
+    check_fasta_input,
 )
 from ..views import redirect_if_not_ready
 
@@ -63,7 +64,8 @@ def run_bammscan_view(request, mode='normal', pk='null'):
             elif mode == 'db':
                 upload_db_motif(job, motif)
 
-            is_valid = check_motif_input(job, form)
+            is_valid = check_motif_input(job, form, request)
+            is_valid = check_fasta_input(job, form, request.FILES) and is_valid
 
             if is_valid:
                 with transaction.atomic():

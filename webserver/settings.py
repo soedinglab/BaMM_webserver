@@ -268,3 +268,4 @@ MAX_SEEDS_FOR_REFINEMENT = get_from_env('MAX_SEEDS_FOR_REFINEMENT', converter=in
 DEFAULT_SEEDS_FOR_REFINEMENT = get_from_env('DEFAULT_SEEDS_FOR_REFINEMENT', converter=int)
 DEFAULT_MOTIF_DB = get_from_env('DEFAULT_MOTIF_DB')
 ZIP_INCLUDE_ZOOPS_STATS = get_from_env('ZIP_INCLUDE_ZOOPS_STATS', converter=lambda x: x == "1")
+MIN_FASTA_SEQUENCES = get_from_env('MIN_FASTA_SEQUENCES', converter=int)
