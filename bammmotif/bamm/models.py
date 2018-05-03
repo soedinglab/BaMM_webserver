@@ -61,7 +61,7 @@ class BaMMJob(models.Model):
 
     # scoring options
     score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.001)
+    score_Cutoff = models.FloatField(default=0.0001)
     bgModel_File = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
                                     null=True, blank=True)
 
@@ -203,7 +203,7 @@ class OneStepBaMMJob(models.Model):
 
     # scoring options
     score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.001)
+    score_Cutoff = models.FloatField(default=0.0001)
     bgModel_File = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
                                     null=True, blank=True)
 

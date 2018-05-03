@@ -37,7 +37,7 @@ class BaMMScanJob(models.Model):
 
     # BaMMScan
     score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.001)
+    score_Cutoff = models.FloatField(default=0.0001)
     bgModel_File = models.FileField(upload_to=job_upload_to_input, null=True, blank=True)
 
     # FDR related fields
