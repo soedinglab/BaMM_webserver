@@ -29,7 +29,6 @@ def sync_databases(database_dir):
         logger.info('unloaded motif database %r with version %s', motif_db.db_id, motif_db.version)
 
     for motif_db in upd_db:
-        unload_motif_db(motif_db)
         load_motif_db(database_dir, motif_db)
         logger.info('updated motif database %r to version %s', motif_db.db_id, motif_db.version)
 
@@ -41,12 +40,20 @@ class MalformattedMotifDatabase(Exception):
 def load_motif_db(database_dir, motif_db):
 
     with transaction.atomic():
+        motif_db_entry = MotifDatabase.objects.filter(db_id=motif_db.db_id).first()
+        update_database = True
+        if not motif_db_entry:
+            motif_db_entry = MotifDatabase()
+            update_database = False
 
         # read in parameters
         param_file = path.join(database_dir, motif_db.db_id, 'model_specifications.yaml')
         with open(param_file) as param_config:
             try:
-                db_params = DbParameter()
+                if update_database:
+                    db_params = motif_db_entry.model_parameters
+                else:
+                    db_params = DbParameter()
                 param_config = yaml.load(param_config)['model_specification']
                 for field in DbParameter._meta.get_fields():
                     if field.name in param_config:
@@ -59,7 +66,6 @@ def load_motif_db(database_dir, motif_db):
         config_file = path.join(database_dir, motif_db.db_id, 'database_config.yaml')
         with open(config_file) as yaml_config:
             try:
-                motif_db_entry = MotifDatabase()
                 db_config = yaml.load(yaml_config)
                 for field in MotifDatabase._meta.get_fields():
                     if field.name in db_config:
@@ -75,15 +81,33 @@ def load_motif_db(database_dir, motif_db):
             try:
                 motifs = yaml.load(motif_handle)['models']
                 for motif in motifs:
-                    motif_entry = ChIPseq()
+
+                    motif_id = motif['motif_id']
+                    motif_entry = ChIPseq.objects.filter(motif_id=motif_id)
+                    assert len(motif_entry) < 2
+                    motif_entry = motif_entry.first()
+
+                    if not motif_entry:
+                        motif_entry = ChIPseq()
+                    else:
+                        assert motif_entry.motif_db == motif_db_entry
+
                     for field in ChIPseq._meta.get_fields():
                         if field.name in motif:
                             motif_entry.__setattr__(field.name, motif[field.name])
+
                     motif_entry.parent = db_params
                     motif_entry.motif_db = motif_db_entry
                     motif_entry.save()
+                motif_id_set = {motif['motif_id'] for motif in motifs}
             except (yaml.YAMLError, KeyError) as exc:
                 raise MalformattedMotifDatabase(exc)
+
+        # delete obsolete motifs
+        for motif in ChIPseq.objects.filter(motif_db=motif_db_entry):
+            if motif.motif_id not in motif_id_set:
+                logger.debug('deleting motif %s', motif)
+                motif.delete()
 
 
 def unload_motif_db(motif_db):

@@ -1,7 +1,9 @@
 from os import path
 
 from django.db import models
+from django.db.models.signals import post_delete
 from django.conf import settings
+from django.dispatch import receiver
 
 from ..models import JobInfo
 from .cmd_modules import ShootPengModule
@@ -80,3 +82,9 @@ class PengJob(models.Model):
     @property
     def input_basename(self):
         return path.basename(self.fasta_file.name)
+
+
+@receiver(post_delete, sender=PengJob)
+def delete_job_info(sender, instance, *args, **kwargs):
+    if instance.meta_job:
+        instance.meta_job.delete()

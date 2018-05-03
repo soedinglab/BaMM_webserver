@@ -2,6 +2,8 @@ from os import path
 
 from django.conf import settings
 from django.db import models
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 from ..models import JobInfo, MotifDatabase
 
@@ -88,3 +90,8 @@ class BaMMScanJob(models.Model):
     def full_motif_bg_file_path(self):
         return path.join(settings.JOB_DIR, str(self.bgModel_File))
 
+
+@receiver(post_delete, sender=BaMMScanJob)
+def delete_job_info(sender, instance, *args, **kwargs):
+    if instance.meta_job:
+        instance.meta_job.delete()

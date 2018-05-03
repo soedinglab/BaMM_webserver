@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -e
 # Wait for mysql to start
 echo Waiting $MYSQL_STARTUP_DELAY_SECONDS seconds before webserver startup
 sleep $MYSQL_STARTUP_DELAY_SECONDS
