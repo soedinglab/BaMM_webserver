@@ -22,7 +22,7 @@ HELP_TEXTS = defaultdict(str, {
         'You can give your job a name to better distinguish between multiple runs.'
     ),
     'Input_Sequences': (
-        'A fasta file with at least %s bound sequences. Each sequence is assumed to carry at most one '
+        'A fasta file with at least %s bound nucleotide sequences. Each sequence is assumed to carry at most one '
         'motif. If you have long sequences with several motifs, consider chopping them up into '
         'several shorter sequences.' % settings.MIN_FASTA_SEQUENCES
     ),

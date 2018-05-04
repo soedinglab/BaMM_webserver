@@ -42,7 +42,7 @@ class ShootPengModule(CommandlineModule):
         'silent': True,
         'temp_dir': 'temp',
         'bg_sequences': None,
-        'max_optimized_patterns': 20,
+        'max_optimized_patterns': 25,
     }
 
     def __init__(self):

@@ -103,6 +103,10 @@ class BaMMJob(models.Model):
     def cvFold(self):
         return settings.N_PARALLEL_THREADS
 
+    @property
+    def bgModel_File(self):
+        return path.join(get_job_output_folder(self.meta_job.pk), self.filename_prefix + '.hbcp')
+
     def __str__(self):
         return str(self.meta_job.pk)
 
@@ -237,6 +241,10 @@ class OneStepBaMMJob(models.Model):
     def q_value(self):
         # for now set default p-value to 0.5
         return 0.5
+
+    @property
+    def bgModel_File(self):
+        return path.join(get_job_output_folder(self.meta_job.pk), self.filename_prefix + '.hbcp')
 
     def __str__(self):
         return str(self.meta_job.pk)

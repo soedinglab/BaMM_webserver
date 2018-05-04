@@ -18,8 +18,8 @@ from ..utils import (
     get_model_order,
     get_bg_model_order,
     add_motif_iupac,
-
 )
+
 from ..commands import (
     get_iupac_command,
     get_logo_command,
@@ -111,22 +111,19 @@ def get_evaluation_command(job):
 def get_FDR_command(job, useRefined, model_no=1):
     params = ['FDR']
     params += get_core_params(job, useRefined, model_no)
-        
+
     params += [
         '--cvFold', job.cvFold,
         '--mFold', job.m_Fold,
         '--sOrder', job.sampling_Order,
-        '--basename',
     ]
-    
-    if (useRefined or job.Motif_Init_File_Format == 'BaMM'
-       or job.Motif_Init_File_Format == 'BindingSites'):
-        prefix = '%s_motif_%s' % (job.filename_prefix, model_no)
-        params.append(prefix)
+
+    if job.Motif_Init_File_Format == 'MEME':
+        prefix = job.filename_prefix
+        params.extend(['--basename', prefix])
     else:
-        if job.Motif_Init_File_Format == 'MEME':
-            prefix = job.filename_prefix
-            params.append(prefix)
+        params.extend(['--basename', '%s_motif_%s' % (job.filename_prefix, model_no)])
+    params.append('--EM')
 
     return params
 
