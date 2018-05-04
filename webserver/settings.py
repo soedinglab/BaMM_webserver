@@ -210,6 +210,19 @@ PENG_INIT = 'PengInitialization.meme'
 PENG_OUT = 'PengOut.meme'
 BAMM_INPUT = 'Input'
 
+# email logging configuration
+EMAIL_LOGGER_LEVEL = get_from_env('EMAIL_LOGGER_LEVEL')
+EMAIL_LOGGER_SERVER = get_from_env('EMAIL_LOGGER_SERVER')
+EMAIL_LOGGER_PORT = get_from_env('EMAIL_LOGGER_PORT', converter=int)
+EMAIL_LOGGER_FROM = get_from_env('EMAIL_LOGGER_FROM')
+EMAIL_LOGGER_TO = get_from_env('EMAIL_LOGGER_TO')
+EMAIL_LOGGER_USER = get_from_env('EMAIL_LOGGER_USER')
+EMAIL_LOGGER_PASSWORD = get_from_env('EMAIL_LOGGER_PASSWORD')
+EMAIL_LOGGER_USE_TLS = get_from_env('EMAIL_LOGGER_USE_TLS', converter=lambda x: x == '1')
+
+USE_EMAIL_LOGGER = EMAIL_LOGGER_LEVEL != 'OFF'
+
+
 # logging configuration
 LOGGING = {
     'version': 1,
@@ -260,6 +273,19 @@ LOGGING = {
         }
     }
 }
+
+if USE_EMAIL_LOGGER:
+    LOGGING['handlers']['bammmotif_email'] = {
+        'class': 'bammmotif.logging.TlsSMTPHandler',
+        'mailhost': (EMAIL_LOGGER_SERVER, EMAIL_LOGGER_PORT),
+        'fromaddr': EMAIL_LOGGER_FROM,
+        'toaddrs': [EMAIL_LOGGER_TO],
+        'subject': ' BaMM web server crash detected.',
+        'credentials': (EMAIL_LOGGER_USER, EMAIL_LOGGER_PASSWORD),
+        'level': EMAIL_LOGGER_LEVEL,
+        'use_tls': EMAIL_LOGGER_USE_TLS,
+    }
+    LOGGING['loggers']['bammmotif']['handlers'].append('bammmotif_email')
 
 # Miscellaneous configuration
 MAX_FINDJOB_DAYS = get_from_env('MAX_FINDJOB_DAYS', converter=int)
