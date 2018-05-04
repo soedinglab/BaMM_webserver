@@ -71,6 +71,7 @@ services:
         - EMAIL_LOGGER_USER=${EMAIL_LOGGER_USER}
         - EMAIL_LOGGER_PASSWORD=${EMAIL_LOGGER_PASSWORD}
         - EMAIL_LOGGER_USE_TLS=${EMAIL_LOGGER_USE_TLS}
+        - FDR_CV_FOLD=${FDR_CV_FOLD}
 
   web:
     build: .

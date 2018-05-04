@@ -101,7 +101,7 @@ class BaMMJob(models.Model):
 
     @property
     def cvFold(self):
-        return settings.N_PARALLEL_THREADS
+        return settings.FDR_CV_FOLD
 
     @property
     def bgModel_File(self):
@@ -175,7 +175,7 @@ class OneStepBaMMJob(models.Model):
 
     @property
     def cvFold(self):
-        return settings.N_PARALLEL_THREADS
+        return settings.FDR_CV_FOLD
 
     @property
     def n_threads(self):

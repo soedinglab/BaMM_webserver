@@ -295,3 +295,4 @@ DEFAULT_SEEDS_FOR_REFINEMENT = get_from_env('DEFAULT_SEEDS_FOR_REFINEMENT', conv
 DEFAULT_MOTIF_DB = get_from_env('DEFAULT_MOTIF_DB')
 ZIP_INCLUDE_ZOOPS_STATS = get_from_env('ZIP_INCLUDE_ZOOPS_STATS', converter=lambda x: x == "1")
 MIN_FASTA_SEQUENCES = get_from_env('MIN_FASTA_SEQUENCES', converter=int)
+FDR_CV_FOLD = get_from_env('FDR_CV_FOLD', converter=int)

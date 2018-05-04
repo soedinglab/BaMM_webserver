@@ -52,7 +52,7 @@ class BaMMScanJob(models.Model):
 
     @property
     def cvFold(self):
-        return settings.N_PARALLEL_THREADS
+        return settings.FDR_CV_FOLD
 
     @property
     def filename_prefix(self):
