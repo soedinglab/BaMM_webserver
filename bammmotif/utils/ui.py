@@ -22,7 +22,9 @@ HELP_TEXTS = defaultdict(str, {
         'You can give your job a name to better distinguish between multiple runs.'
     ),
     'Input_Sequences': (
-        'A fasta file with bound sequences.'
+        'A fasta file with at least %s bound sequences. Each sequence is assumed to carry at most one '
+        'motif. If you have long sequences with several motifs, consider chopping them up into '
+        'several shorter sequences.' % settings.MIN_FASTA_SEQUENCES
     ),
     'reverse_Complement': 'When checked, motifs can be both on the plus and minus strand.',
     'model_order': 'The order of the BaMM. A model of order 0 corresponds to a PWM model.',
