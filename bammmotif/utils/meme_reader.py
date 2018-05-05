@@ -110,3 +110,54 @@ def get_motif_ids(meme_file):
                 motif_id = line.replace('MOTIF', '').strip()
                 motif_ids.append(motif_id)
     return motif_ids
+
+
+IUPAC_CONVERSIONS = [
+    ('R', 'AG'),
+    ('Y', 'CT'),
+    ('S', 'GC'),
+    ('W', 'AT'),
+    ('K', 'GT'),
+    ('M', 'AC'),
+    ('B', 'CGT'),
+    ('D', 'AGT'),
+    ('H', 'ACT'),
+    ('V', 'ACG'),
+    ('N', 'ACGT'),
+]
+
+
+def check_low_seed_complexity(evaluated_meme_file):
+    motifs = get_motif_ids(evaluated_meme_file)
+    if not motifs:
+        return False
+    top_motif, *_ = motifs
+
+    motif_letters = top_motif
+    for iupac_letter, letters in IUPAC_CONVERSIONS:
+        motif_letters = motif_letters.replace(iupac_letter, letters)
+
+    n_distinct_letters = len(set(motif_letters))
+
+    if n_distinct_letters <= 2:
+        return True
+
+    # check whether the motif is a repetition of 1,2 or 3-mers
+    max_rep_length = 3
+
+    if len(top_motif) < 6:
+        max_rep_length = 2
+
+    for i in range(max_rep_length + 1):
+        step = i + 1
+        j = step
+        all_hit = True
+        while j < len(top_motif):
+            sub_pat = top_motif[j:j+step]
+            if top_motif[:len(sub_pat)] != sub_pat:
+                all_hit = False
+            j += step
+        if all_hit:
+            return True
+
+    return False
