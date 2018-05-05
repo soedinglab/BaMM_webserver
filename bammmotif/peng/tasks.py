@@ -40,24 +40,24 @@ from .cmd_modules import (
     FilterPWM,
     ShootPengModule,
     ZipMotifs,
+    PengNoSeedsException,
 )
 
 
 def run_peng_generic(job):
     job_pk = job.meta_job.pk
-    with JobSaveManager(job):
-        # first define log file for redirecting output information
-        logfile = get_log_file(job_pk)
-        with open(logfile, 'a') as f:
-            with redirect_stdout(f), redirect_stderr(f):
-                print(timezone.now(), "\t | update: \t %s " % 'Find seed patterns', flush=True)
+    # first define log file for redirecting output information
+    logfile = get_log_file(job_pk)
+    with open(logfile, 'a') as f:
+        with redirect_stdout(f), redirect_stderr(f):
+            print(timezone.now(), "\t | update: \t %s " % 'Find seed patterns', flush=True)
 
-                peng = ShootPengModule.from_job(job)
-                peng.temp_dir = get_temporary_job_dir(job_pk)
-                peng.set_log_file(logfile)
-                peng.run()
-                n_motifs = len(get_motif_ids(job.meme_output))
-                job.num_motifs = n_motifs
+            peng = ShootPengModule.from_job(job)
+            peng.temp_dir = get_temporary_job_dir(job_pk)
+            peng.set_log_file(logfile)
+            peng.run()
+            n_motifs = len(get_motif_ids(job.meme_output))
+            job.num_motifs = n_motifs
 
 
 def run_pwm_filter_generic(job):
@@ -121,8 +121,17 @@ def peng_seeding_pipeline(self, job_pk):
     with JobSaveManager(job):
         make_job_folder(job_pk)
 
-        run_peng_generic(job)
-        convert_to_bamm_generic(job)
-        plot_bamm_format_generic(job)
+        try:
+            peng_no_seeds = False
+            run_peng_generic(job)
+        except PengNoSeedsException:
+            peng_no_seeds = True
 
-        job.meta_job.complete = True
+        if not peng_no_seeds:
+            convert_to_bamm_generic(job)
+            plot_bamm_format_generic(job)
+            job.meta_job.complete = True
+
+    if peng_no_seeds:
+        job.meta_job.status = 'No motifs found'
+        job.meta_job.save()

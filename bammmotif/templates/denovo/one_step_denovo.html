@@ -12,7 +12,7 @@
             <div class='container-fluid'>
 
               {% if validation_errors %}
-              <div class="error_block">
+              <div class="alert alert-warning">
                 <h4>Unfortunately your input did not pass validation</h4>
                 <ul>
                     {% for field, errors in job_form.errors.items %}

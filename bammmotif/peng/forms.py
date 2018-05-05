@@ -56,24 +56,10 @@ def get_valid_peng_form(post, files, user, mode):
         return PengExampleForm(post, files), meta_job_form, valid, args
 
     form = PengForm(post, files)
-    if not form.is_valid() or meta_job_form.is_valid():
+    if not form.is_valid() or not meta_job_form.is_valid():
         args['form'] = PengForm()
         args['type'] = "OK"
         args['message'] = "OK"
-        valid = False
-        return form, meta_job_form, valid, args
-
-    if user.is_authenticated:
-        max_size = settings.MAX_UPLOAD_SIZE
-    else:
-        max_size = settings.MAX_UPLOAD_SIZE_ANONYMOUS
-
-    # Test if data maximum size is not reached
-    content = form.cleaned_data['fasta_file']
-    if content._size > int(max_size):
-        args['form'] = PengForm()
-        args['type'] = "FileSize"
-        args['message'] = max_size
         valid = False
         return form, meta_job_form, valid, args
 

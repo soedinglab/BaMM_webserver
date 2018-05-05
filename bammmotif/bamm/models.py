@@ -61,7 +61,7 @@ class BaMMJob(models.Model):
 
     # scoring options
     score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.001)
+    score_Cutoff = models.FloatField(default=0.0001)
     bgModel_File = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
                                     null=True, blank=True)
 
@@ -101,7 +101,11 @@ class BaMMJob(models.Model):
 
     @property
     def cvFold(self):
-        return settings.N_PARALLEL_THREADS
+        return settings.FDR_CV_FOLD
+
+    @property
+    def bgModel_File(self):
+        return path.join(get_job_output_folder(self.meta_job.pk), self.filename_prefix + '.hbcp')
 
     def __str__(self):
         return str(self.meta_job.pk)
@@ -171,7 +175,7 @@ class OneStepBaMMJob(models.Model):
 
     @property
     def cvFold(self):
-        return settings.N_PARALLEL_THREADS
+        return settings.FDR_CV_FOLD
 
     @property
     def n_threads(self):
@@ -203,7 +207,7 @@ class OneStepBaMMJob(models.Model):
 
     # scoring options
     score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.001)
+    score_Cutoff = models.FloatField(default=0.0001)
     bgModel_File = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
                                     null=True, blank=True)
 
@@ -237,6 +241,10 @@ class OneStepBaMMJob(models.Model):
     def q_value(self):
         # for now set default p-value to 0.5
         return 0.5
+
+    @property
+    def bgModel_File(self):
+        return path.join(get_job_output_folder(self.meta_job.pk), self.filename_prefix + '.hbcp')
 
     def __str__(self):
         return str(self.meta_job.pk)

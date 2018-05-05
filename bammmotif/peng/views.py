@@ -37,8 +37,8 @@ from .utils import (
     get_motif_ids,
 )
 from ..utils import (
-    url_prefix,
     register_job_session,
+    check_fasta_input,
 )
 
 
@@ -123,40 +123,42 @@ def run_peng_view(request, mode='normal'):
     if request.method == "POST":
         form, meta_job_form, valid, args = get_valid_peng_form(request.POST, request.FILES,
                                                                request.user, mode)
+        is_valid = valid
+        if is_valid:
+            peng_job = create_job(form, meta_job_form, request)
+            job_pk = peng_job.meta_job.pk
 
-        if not valid:
-            # TODO implement handling here
-            pass
+            if mode == 'example':
+                upload_example_fasta_for_peng(peng_job)
+            else:
+                is_valid = check_fasta_input(peng_job, form, request.FILES)
 
-        peng_job = create_job(form, meta_job_form, request)
-        job_pk = peng_job.meta_job.pk
+            if is_valid:
+                with transaction.atomic():
+                    peng_job.meta_job.save()
+                    register_job_session(request, peng_job.meta_job)
+                    peng_job.save()
 
-        if mode == 'example':
-            upload_example_fasta_for_peng(peng_job)
-        ret, valid_input = validate_input_data(peng_job)
-
-        with transaction.atomic():
-            peng_job.meta_job.save()
-            register_job_session(request, peng_job.meta_job)
-            peng_job.save()
-
-        peng_seeding_pipeline.delay(job_pk)
-        return render(request, 'job/submitted.html', {
-            'pk': job_pk,
-            'result_target': 'peng_results'
-        })
-
-    meta_job_form = MetaJobNameForm()
-    if mode == 'example':
-        form = PengExampleForm()
+                peng_seeding_pipeline.delay(job_pk)
+                return render(request, 'job/submitted.html', {
+                    'pk': job_pk,
+                    'result_target': 'peng_results'
+                })
     else:
-        form = PengForm()
+        meta_job_form = MetaJobNameForm()
+        if mode == 'example':
+            form = PengExampleForm()
+        else:
+            form = PengForm()
+        is_valid = True
+
     return render(request, 'peng/peng_seeding.html', {
         'job_form': form,
         'metajob_form': meta_job_form,
         'mode': mode,
         'all_form_fields': itertools.chain(meta_job_form, form),
         'max_file_size': settings.MAX_UPLOAD_FILE_SIZE,
+        'validation_errors': not is_valid,
     })
 
 

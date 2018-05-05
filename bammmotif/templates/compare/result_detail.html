@@ -115,7 +115,7 @@
               {% else %}
               <a href="{{ match.db_entry.url }}" target="_blank">
               {% endif %}
-              
+
              <button type="submit" class="btn btn-default" aria-label="Database" >
                 <span class="glyphicon glyphicon-share-alt" aria-hidden="true"> </span>
              </button>
@@ -146,7 +146,10 @@
 
                       <div class="indented settings_box">
                         <table>
-
+                          <tr>
+                            <td>Job id:</td>
+                            <td>{{ result.meta_job.job_id }}</td>
+                          </tr>
                           <tr>
                             <td>Motif File Format:</td>
                             <td> {{ result.Motif_Init_File_Format}}</td>

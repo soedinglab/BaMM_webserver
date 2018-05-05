@@ -16,20 +16,14 @@ from .forms import MMCompareForm, MMCompareExampleForm
 from ..utils import (
     get_user,
     get_result_folder,
-    get_log_file,
     register_job_session,
+    check_motif_input,
 )
 
 from ..views import redirect_if_not_ready
 
 from .tasks import mmcompare_pipeline
 from ..forms import MetaJobNameForm
-
-from ..utils.input_validation import (
-    validate_meme_file,
-    validate_bamm_file,
-    validate_bamm_bg_file,
-)
 
 
 def run_compare_view(request, mode='normal'):
@@ -52,21 +46,7 @@ def run_compare_view(request, mode='normal'):
             job.meta_job = meta_job
             job_pk = meta_job.job_id
 
-            if job.Motif_Init_File_Format == 'MEME':
-                if not validate_meme_file(job.full_motif_file_path):
-                    form.add_error('Motif_InitFile', 'Does not seem to be in MEME format.')
-                    is_valid = False
-            elif job.Motif_Init_File_Format == 'BaMM':
-                if not validate_bamm_file(job.full_motif_file_path):
-                    form.add_error('Motif_InitFile', 'Does not seem to be in BaMM format.')
-                    is_valid = False
-                if not job.bgModel_File:
-                    form.add_error('bgModel_File', 'This field is required.')
-                    is_valid = False
-                elif not validate_bamm_file(job.full_motif_bg_file_path):
-                    form.add_error('bgModel_File', 'Does not seem to be a BaMM '
-                                                   'background model.')
-                    is_valid = False
+            is_valid = check_motif_input(job, form, request)
 
             if is_valid:
                 if meta_job.job_name is None:

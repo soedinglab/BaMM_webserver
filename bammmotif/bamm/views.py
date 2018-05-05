@@ -1,4 +1,3 @@
-from os import path
 import itertools
 
 from django.shortcuts import render
@@ -17,6 +16,8 @@ from ..utils import (
     get_user,
     upload_example_fasta,
 )
+from ..utils.meme_reader import check_low_seed_complexity
+
 from ..views import redirect_if_not_ready
 from .models import OneStepBaMMJob
 
@@ -90,6 +91,8 @@ def denovo_results(request, pk):
     motif_db = result.motif_db
     db_dir = motif_db.relative_db_model_dir
 
+    warn_low_complexity = check_low_seed_complexity(result.meme_output)
+
     num_logos = range(1, (min(2, result.model_order)+1))
     return render(request, 'bamm/bamm_result_detail.html', {
         'result': result, 'opath': get_result_folder(pk),
@@ -97,4 +100,5 @@ def denovo_results(request, pk):
         'Output_filename': result.filename_prefix,
         'num_logos': num_logos,
         'db_dir': db_dir,
+        'low_complexity_warning': warn_low_complexity,
     })

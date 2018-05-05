@@ -7,7 +7,10 @@
 
 
     <h2> Results for  {{result.meta_job.job_name}} </h2>
-    <hr style="border: 1px solid #1f2e2e">
+    <hr class="header_line">
+    {% if low_complexity_warning %}
+      {% include "utils/repeat_notification.html" %}
+    {% endif %}
     <div class="jumbotron" style="background-color:white"><font color="black">
             <h2> Refined Motifs </h2>
 		<form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_BaMMmotif.zip" method="get" target="_blank">
@@ -166,6 +169,10 @@
                           <h3>General settings</h3>
                           <div class="indented settings_box">
                             <table>
+                              <tr>
+                                <td>Job id:</td>
+                                <td>{{ result.meta_job.job_id }}</td>
+                              </tr>
                               <tr>
                                 <td>Input sequences:</td>
                                 <td>{{ result.input_basename }}</td>

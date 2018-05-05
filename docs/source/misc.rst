@@ -185,8 +185,35 @@ FAQ
         For larger sequence files, you can either use our commandline tools, or run the webserver locally after adapting
         the ``MAX_UPLOAD_FILE_SIZE`` configuration option.
 
-        You can find detailed instructions in the `README <https://github.com/soedinglab/BaMM_webserver/blob/master/README.md>`_
+        You can find detailed instructions in the `README <https://github.com/soedinglab/BaMM_webserver/blob/master/README.md>`_.
         in the webserver's github repository.
+
+
+How do I prepare my ChIP-seq data?
+**********************************
+
+ChIP-seq produces regions in the genome that are bound by the factor of interest.
+The genome however is full of short repeats that due to their high occurrences and informativeness can easily overwhelm the signal of the true binding motif.
+Careful preprocessing can be crucial for optimizing the true binding motif.
+
+Following pipeline has so far yielded good results for us.
+
+  * Use your favorite peak caller to obtain peaks from non-redunant bound regions
+  * Rank the sequences by the score obtained for each peak (e.g. q-Value)
+  * Extract fasta sequences centered on the peak regions of fixed length (e.g 201)
+  * Submit a fasta file with sequences from the highest ranked peaks (e.g. 5000)
+
+
+Can I use the server with very few sequences?
+*********************************************
+
+You need to have at least 10 sequences - robust performance evaluation requires 100 or more sequences.
+
+The higher-order motif refinement and the motif quality evaluation relies on the ZOOPS (zero or one occurrence per sequence) model. Very long sequences (>500) with more than one motif are best chopped up into smaller sequences before uploading to the higher-order refinement.
+
+The seeding stage itself uses a MOOPS model. It is therefore possible to scan a handful of very long sequences for enriched PWMs.
+You can circumvent the minimum requirement of sequences for the seeding stage by adding extra sequences with the sequence 'NNNNNNNNNNNN'.
+Please note that these seeds cannot be optimized to higher-order models due to the ZOOPS assumption.
 
 Miscellaneous
 #############
@@ -200,7 +227,7 @@ Setting up the server locally
 *****************************
 
 The source code of the server is open source and freely available under the AGPL license.
-If you intend setting up the server on your own computer, you can find a 
+If you intend setting up the server on your own computer, you can find a detailed description in the `webserver's README <https://github.com/soedinglab/BaMM_webserver>`_.
 
 Citing BaMM webserver
 #####################

@@ -37,7 +37,7 @@ class BaMMScanJob(models.Model):
 
     # BaMMScan
     score_Seqset = models.BooleanField(default=True)
-    score_Cutoff = models.FloatField(default=0.001)
+    score_Cutoff = models.FloatField(default=0.0001)
     bgModel_File = models.FileField(upload_to=job_upload_to_input, null=True, blank=True)
 
     # FDR related fields
@@ -52,7 +52,7 @@ class BaMMScanJob(models.Model):
 
     @property
     def cvFold(self):
-        return settings.N_PARALLEL_THREADS
+        return settings.FDR_CV_FOLD
 
     @property
     def filename_prefix(self):
@@ -84,7 +84,7 @@ class BaMMScanJob(models.Model):
         if not self.bgModel_File:
             return None
         else:
-            path.basename(self.bgModel_File.name)
+            return path.basename(self.bgModel_File.name)
 
     @property
     def full_motif_bg_file_path(self):
