@@ -73,6 +73,7 @@ def bamm_refinement_pipeline(self, job_pk):
             generic_bammscan_task(job, first_in_pipeline=False, is_refined_model=True)
         if job.FDR:
             generic_fdr_task(job, first_in_pipeline=False, is_refined=False)
+
         if job.MMcompare:
             generic_mmcompare_task(job)
             generic_mmcompare_import_matches(job)

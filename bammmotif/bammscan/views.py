@@ -64,8 +64,9 @@ def run_bammscan_view(request, mode='normal', pk='null'):
             elif mode == 'db':
                 upload_db_motif(job, motif)
 
-            is_valid = check_motif_input(job, form, request)
-            is_valid = check_fasta_input(job, form, request.FILES) and is_valid
+            if mode != 'example':
+                is_valid = check_motif_input(job, form, request)
+                is_valid = check_fasta_input(job, form, request.FILES) and is_valid
 
             if is_valid:
                 with transaction.atomic():

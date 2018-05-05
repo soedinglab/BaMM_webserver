@@ -158,7 +158,7 @@ def get_BaMMmotif_command(job, useRefined, first, maxPWMs=5):
 
 def FDR(job, first_task_in_pipeline, useRefined):
     job.meta_job.status = 'running Motif Evaluation'
-    job.save()
+    job.meta_job.save()
     print(timezone.now(), "\t | update: \t %s " % job.meta_job.status)
     sys.stdout.flush()
     if useRefined:
