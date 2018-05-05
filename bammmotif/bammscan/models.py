@@ -84,7 +84,7 @@ class BaMMScanJob(models.Model):
         if not self.bgModel_File:
             return None
         else:
-            path.basename(self.bgModel_File.name)
+            return path.basename(self.bgModel_File.name)
 
     @property
     def full_motif_bg_file_path(self):

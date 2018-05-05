@@ -2,6 +2,8 @@ import os
 from os import path
 import shutil
 import glob
+import subprocess
+import logging
 
 from .settings import (
     MEME_OUTPUT_FILE,
@@ -11,8 +13,16 @@ from .settings import (
     PATH_TO_FILTERPWM_SCRIPT,
     ZIPPED_MOTIFS,
 )
-from ..utils.commandline import CommandlineModule
+from ..utils.commandline import CommandlineModule, CommandFailureException
 from ..command_line import transfer_options
+
+logger = logging.getLogger(__name__)
+
+
+class PengNoSeedsException(Exception):
+    def __init__(self):
+        message = 'PEnG-motif could not find any over-represented motifs.'
+        super().__init__(message)
 
 
 class ShootPengModule(CommandlineModule):
@@ -89,7 +99,28 @@ class ShootPengModule(CommandlineModule):
 
     def run(self, **kw_args):
         self.create_temp_directory()
-        super().run(**kw_args)
+        extra_args = {
+            'universal_newlines': True
+        }
+        extra_args.update(kw_args)
+
+        logger.debug("executing: %s",  ' '.join(self.command_tokens))
+        if self.with_log_file is not None:
+            with open(self.with_log_file, "a") as f:
+                proc = subprocess.run(self.command_tokens, stdout=f, stderr=f, **extra_args)
+        else:
+            proc = subprocess.run(self.command_tokens, stdout=subprocess.PIPE,
+                                  stderr=subprocess.STDOUT, **extra_args)
+        if proc.returncode == 8:
+            raise PengNoSeedsException()
+
+        elif proc.returncode != 0:
+            logger.error("non-zero exit code for: %s" % ' '.join(self.command_tokens))
+            if self._enforce_exit_zero:
+                raise CommandFailureException(' '.join(self.command_tokens))
+
+        return proc
+
 
 
 class FilterPWM(CommandlineModule):

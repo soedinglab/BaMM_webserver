@@ -23,10 +23,11 @@ from .models import BaMMJob, OneStepBaMMJob
 
 from ..peng.tasks import (
     run_peng_generic,
-    run_pwm_filter_generic,
     convert_to_bamm_generic,
     plot_bamm_format_generic,
 )
+
+from ..peng.cmd_modules import PengNoSeedsException
 
 
 logger = logging.getLogger(__name__)
@@ -91,25 +92,34 @@ def denovo_pipeline(self, job_pk):
         make_job_folder(job_pk)
 
         # seeding part
-        run_peng_generic(job)
+        try:
+            peng_no_seeds = False
+            run_peng_generic(job)
+        except PengNoSeedsException:
+            peng_no_seeds = True
 
-        job.num_motifs = min(job.num_motifs, job.max_refined_motifs)
-        convert_to_bamm_generic(job)
-        plot_bamm_format_generic(job)
+        if not peng_no_seeds:
+            job.num_motifs = min(job.num_motifs, job.max_refined_motifs)
+            convert_to_bamm_generic(job)
+            plot_bamm_format_generic(job)
 
-        # prepare for refinement
-        job.bamm_init_file = job.meme_output
+            # prepare for refinement
+            job.bamm_init_file = job.meme_output
 
-        # refinement part
-        generic_bamm_task(job, first_in_pipeline=True, is_refined=False)
-        job.Motif_Init_File_Format = 'BaMM'
-        if job.score_Seqset:
-            generic_bammscan_task(job, first_in_pipeline=False, is_refined_model=True)
-        if job.FDR:
-            generic_fdr_task(job, first_in_pipeline=False, is_refined=True)
-        if job.MMcompare:
-            generic_mmcompare_task(job)
-            generic_mmcompare_import_matches(job)
-        generic_compress_task(job)
+            # refinement part
+            generic_bamm_task(job, first_in_pipeline=True, is_refined=False)
+            job.Motif_Init_File_Format = 'BaMM'
+            if job.score_Seqset:
+                generic_bammscan_task(job, first_in_pipeline=False, is_refined_model=True)
+            if job.FDR:
+                generic_fdr_task(job, first_in_pipeline=False, is_refined=True)
+            if job.MMcompare:
+                generic_mmcompare_task(job)
+                generic_mmcompare_import_matches(job)
+            generic_compress_task(job)
 
-        job.meta_job.complete = True
+            job.meta_job.complete = True
+
+    if peng_no_seeds:
+        job.meta_job.status = 'No motifs found'
+        job.meta_job.save()
