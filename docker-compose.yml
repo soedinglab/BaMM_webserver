@@ -28,7 +28,13 @@ services:
 
   celery:
     build: .
-    command: ./run_workers.sh
+    # memo: this cannot be outsourced to a script because of two reasons:
+    # 1) sending a sigterm to a script will not send it to the worker
+    # 2) using a script with init system will attempt to kill the workers instead of a warm shutdown
+    command: celery 
+                --app=webserver.celery:app worker
+                --soft-time-limit ${JOB_TIME_LIMIT}
+                --concurrency $N_PARALLEL_JOBS
     user: ${BAMM_USER_UID}
     volumes:
       - ${WEBSERVER_DIR}:/code
