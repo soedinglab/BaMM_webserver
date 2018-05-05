@@ -234,7 +234,6 @@ def run_refine(request, pk):
 
         if form.is_valid():
             bamm_job = create_bamm_job('refine', request, form, peng_job)
-            bamm_job.MMcompare = True
             bamm_job_pk = bamm_job.meta_job.pk
 
             # Copy necessary files from last peng job.

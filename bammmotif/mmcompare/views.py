@@ -46,7 +46,8 @@ def run_compare_view(request, mode='normal'):
             job.meta_job = meta_job
             job_pk = meta_job.job_id
 
-            is_valid = check_motif_input(job, form, request)
+            if mode != 'example':
+                is_valid = check_motif_input(job, form, request)
 
             if is_valid:
                 if meta_job.job_name is None:
