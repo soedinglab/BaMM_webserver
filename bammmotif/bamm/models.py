@@ -199,7 +199,7 @@ class OneStepBaMMJob(models.Model):
 
     # fdr options
     FDR = models.BooleanField(default=True)
-    m_Fold = models.IntegerField(default=10)
+    m_Fold = models.IntegerField(default=1)
     sampling_Order = models.PositiveSmallIntegerField(default=2)
 
     # EM options
