@@ -19,12 +19,11 @@ from .commands import BaMMScan
 
 def generic_bammscan_task(job, first_in_pipeline, is_refined_model):
     job_pk = job.meta_job.pk
-    with JobSaveManager(job):
-        # first define log file for redirecting output information
-        logfile = get_log_file(job_pk)
-        with open(logfile, 'a') as f:
-            with redirect_stdout(f), redirect_stderr(f):
-                BaMMScan(job, first_in_pipeline, is_refined_model)
+    # first define log file for redirecting output information
+    logfile = get_log_file(job_pk)
+    with open(logfile, 'a') as f:
+        with redirect_stdout(f), redirect_stderr(f):
+            BaMMScan(job, first_in_pipeline, is_refined_model)
 
 
 @task(bind=True)

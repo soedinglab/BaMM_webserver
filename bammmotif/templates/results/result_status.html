@@ -3,15 +3,20 @@
 {% block content %}
 {% load static %}
 
-{% if status != 'Error' %}
+{% if status == 'Error' or status  == 'No motifs found' or status == 'Killed' %}
+<!-- no refreshing please -->
+{%else %}
 <meta http-equiv="refresh" content="5" >
 {% endif %}
+
 <div class="jumbotron"  style="background-color:white"><font color="black">
   <h2>
      {% if status == 'Error' %}
      We're sorry, your job has crashed...
      {% elif status == 'No motifs found' %}
      The seeding stage did not find any motifs...
+     {% elif status == 'Killed' %}
+     Your job took too long and was killed...
      {% else %}
      Your job {{job_name}} is still running...
      {% endif %}
