@@ -21,7 +21,23 @@
      Your job {{job_name}} is still running...
      {% endif %}
   </h2>
-     <hr style="border: 1px solid #1f2e2e">
+     <hr class="header_line">
+
+     {% if status == 'Error' or status == 'Killed' %}
+     <div class="alert alert-warning">
+       <p>
+         We are very sorry for the crash. The admins of the server have already been notified.
+       </p>
+       <p>
+         You are very welcome to contact us directly and we will try to resolve the problem as fast as possible.
+         Please find the contact information <a href="{% url 'links' %}">here</a>.
+      </p>
+       <p>
+        When reporting a bug, please add <strong>[{{job_id}}]</strong> to the report to help us speed up the trouble shooting.
+      </p>
+     </div>
+     {% endif %}
+
      <div id="{{job_id}}">
         <p> Your job status: {{status}} </p>
         <p> You can watch the progress in the window below. </p>
