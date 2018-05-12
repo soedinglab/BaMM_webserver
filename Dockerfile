@@ -3,8 +3,6 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 
-ENV MEME_VERSION=4.12.0
-
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	r-base          \
 	libxml2-dev     \
@@ -41,16 +39,8 @@ RUN cd /tmp/suite/build && CXXFLAGS=-std=c++1y cmake -DCMAKE_INSTALL_PREFIX:PATH
 RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
 
-# Add filterpwm to /ext
-ADD tools/bamm/py /tmp/py
-RUN mkdir -p /ext/filterPWMs
-RUN cp /tmp/py/* /ext/filterPWMs/
-RUN rm -rf /tmp/filterPWMs
-
 # use a cool init system for handing signals: https://github.com/Yelp/dumb-init
 RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64
 RUN chmod +x /usr/local/bin/dumb-init
 
-
-ENV PATH="/ext/filterPWMs:${PATH}"
 ENV PATH="/ext/bin:${PATH}"
