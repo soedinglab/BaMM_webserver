@@ -44,3 +44,4 @@ RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/
 RUN chmod +x /usr/local/bin/dumb-init
 
 ENV PATH="/ext/bin:${PATH}"
+ENV PATH="/usr/local/bin:${PATH}"

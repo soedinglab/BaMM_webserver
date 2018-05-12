@@ -32,9 +32,12 @@ services:
     # 1) sending a sigterm to a script will not send it to the worker
     # 2) using a script with init system will attempt to kill the workers instead of a warm shutdown
     command: celery 
+                --loglevel=${BAMM_LOG_LEVEL}
                 --app=webserver.celery:app worker
                 --soft-time-limit ${JOB_TIME_LIMIT}
                 --concurrency $N_PARALLEL_JOBS
+                -B
+                -s /logs/celerybeat-schedule
     user: ${BAMM_USER_UID}
     volumes:
       - ${WEBSERVER_DIR}:/code
@@ -78,6 +81,8 @@ services:
         - EMAIL_LOGGER_PASSWORD=${EMAIL_LOGGER_PASSWORD}
         - EMAIL_LOGGER_USE_TLS=${EMAIL_LOGGER_USE_TLS}
         - FDR_CV_FOLD=${FDR_CV_FOLD}
+        - MAX_INPUT_STORAGE_DAYS=${MAX_INPUT_STORAGE_DAYS}
+        - MAX_JOB_STORAGE_DAYS=${MAX_JOB_STORAGE_DAYS}
 
   web:
     build: .

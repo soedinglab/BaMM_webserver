@@ -198,6 +198,7 @@ class JobInfo(models.Model):
     complete = models.BooleanField(default=False)
     job_type = models.CharField(max_length=30, null=True, blank=True, choices=JOB_INFO_MODE_CHOICES)
     has_input = models.BooleanField(default=True)
+    is_example = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-created_at']

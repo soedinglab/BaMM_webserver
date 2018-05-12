@@ -296,3 +296,6 @@ DEFAULT_MOTIF_DB = get_from_env('DEFAULT_MOTIF_DB')
 ZIP_INCLUDE_ZOOPS_STATS = get_from_env('ZIP_INCLUDE_ZOOPS_STATS', converter=lambda x: x == "1")
 MIN_FASTA_SEQUENCES = get_from_env('MIN_FASTA_SEQUENCES', converter=int)
 FDR_CV_FOLD = get_from_env('FDR_CV_FOLD', converter=int)
+
+MAX_JOB_STORAGE_DAYS = get_from_env('MAX_JOB_STORAGE_DAYS', converter=int)
+MAX_INPUT_STORAGE_DAYS = get_from_env('MAX_INPUT_STORAGE_DAYS', converter=int)
