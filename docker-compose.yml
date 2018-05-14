@@ -11,18 +11,12 @@ services:
       MYSQL_USER: bammmotif_admin
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    networks:
-      bamm_net:
-        ipv4_address: ${NETWORK_PREFIX}.2
 
   redis_celery:
     image: redis:latest
     command: redis-server --appendonly yes
     volumes:
       - ${REDIS_DB_DIR}:/data
-    networks:
-      bamm_net:
-        ipv4_address: ${NETWORK_PREFIX}.3
 
   celery:
     build: .
@@ -45,9 +39,6 @@ services:
     links:
       - redis_celery
       - db
-    networks:
-      bamm_net:
-        ipv4_address: ${NETWORK_PREFIX}.4
     environment: &env_vars
         - DJANGO_DEBUG=${DJANGO_DEBUG}
         - BAMM_LOG_LEVEL=${BAMM_LOG_LEVEL}
@@ -78,6 +69,7 @@ services:
         - EMAIL_LOGGER_USER=${EMAIL_LOGGER_USER}
         - EMAIL_LOGGER_PASSWORD=${EMAIL_LOGGER_PASSWORD}
         - EMAIL_LOGGER_USE_TLS=${EMAIL_LOGGER_USE_TLS}
+        - EMAIL_LOGGER_SUBJECT=${EMAIL_LOGGER_SUBJECT}
         - FDR_CV_FOLD=${FDR_CV_FOLD}
         - MAX_INPUT_STORAGE_DAYS=${MAX_INPUT_STORAGE_DAYS}
         - MAX_JOB_STORAGE_DAYS=${MAX_JOB_STORAGE_DAYS}
@@ -99,17 +91,4 @@ services:
       - db
       - redis_celery
       - celery
-    networks:
-      bamm_net:
-        ipv4_address: ${NETWORK_PREFIX}.5
     environment: *env_vars
-
-
-networks:
-  bamm_net:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-      - subnet: ${NETWORK_PREFIX}.0/24
-        gateway: ${NETWORK_PREFIX}.1
