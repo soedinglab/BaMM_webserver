@@ -70,7 +70,7 @@
                     </button>
                   </form>
                   </td>
-                  {% if False %} <!-- replace with result.has_bedfile once ready -->
+                  {% if result.has_bedfile %}
                   <td>
                     <button type="button" class="btn btn-default" aria-label="GenomeBrowser" data-toggle="modal" data-target="#genome_browser_modal_{{m.job_rank}}">
                       <span class="glyphicon glyphicon-share-alt" aria-hidden="true">GENOME BROWSER</span>

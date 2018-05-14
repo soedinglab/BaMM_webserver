@@ -130,6 +130,7 @@ def run_genome_browser(request):
         'https://genome.ucsc.edu/cgi-bin/hgTracks?'
         + 'org=%s&' % organism
         + 'db=%s&' % assembly_id
+        + 'visibility=full&'
         + 'hgt.customText=%s' % bed_file_url
     )
     return redirect(ucsc_url)
