@@ -1,0 +1,40 @@
+{% load widget_tweaks %}
+
+{% for m in result.meta_job.motifs_set.all|dictsort:"job_rank" %}
+  <div class="modal fade" id="genome_browser_modal_{{m.job_rank}}" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Choose Genome Browser Settings</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{% url 'run_genome_browser' %}" method="post" enctype="multipart/form-data">
+           {% csrf_token %}
+          <div class="modal-body">
+            Please choose the organism and assembly of the genome browser session.
+            For more information on the valid inputs, please refer to the
+            <a href="https://genome.ucsc.edu/FAQ/FAQreleases.html#release1" target="_blank">FAQ of the UCSC genome browser</a>.
+            <table class="genome_browser_form">
+              <tr>
+                <td>{{genome_browser_form.organism.label}}:</td>
+                <td>{% render_field genome_browser_form.organism placeholder="e.g. human"%}</td>
+              </tr>
+              <tr>
+                <td>{{genome_browser_form.assembly_id.label}}:</td>
+                <td>{% render_field genome_browser_form.assembly_id placeholder="e.g. hg38" %}</td>
+              <tr>
+                <input type="hidden" name="job_id" value="{{result.meta_job.job_id}}" />
+                <input type="hidden" name="motif_id" value="{{m.job_rank}}" />
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Launch Genome browser</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}

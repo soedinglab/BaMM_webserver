@@ -2,7 +2,7 @@ import os
 from os import path
 import itertools
 
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404
 from django.db import transaction
 from django.conf import settings
 
@@ -13,13 +13,8 @@ from bammmotif.peng.io import (
     peng_bmscore_file_old,
     get_meme_result_file_path,
     get_plot_output_directory,
-    file_path_peng,
     peng_meme_directory,
-    get_peng_output_in_bamm_directory,
-    get_peng_meme_output_in_bamm,
     media_memeplot_directory_html,
-    media_bammplot_directory_html,
-    media_memeplot_directory_from_peng_html,
     get_motif_init_file,
 )
 
@@ -27,14 +22,12 @@ from .utils import (
     upload_example_fasta_for_peng,
     copy_peng_to_bamm,
     load_meme_ids,
-    zip_motifs,
     check_if_request_from_peng_directly,
     save_selected_motifs,
     upload_example_fasta,
     read_bmscore,
     merge_meme_and_bmscore,
     get_selected_motifs,
-    get_motif_ids,
 )
 from ..utils import (
     register_job_session,
@@ -62,6 +55,7 @@ from ..utils import (
 )
 from ..forms import (
     MetaJobNameForm,
+    GenomeBrowserForm,
 )
 
 from ..bamm.tasks import bamm_refinement_pipeline
@@ -297,4 +291,5 @@ def peng_to_bamm_result_detail(request, pk):
         'meme_logo_path': path.relpath(meme_plots, relative_result_folder),
         'meme_motifs': meme_motifs,
         'meme_meta_info': meme_meta_info_list,
+        'genome_browser_form': GenomeBrowserForm(),
     })

@@ -66,6 +66,7 @@ zip_file_globs = [
     '*distribution.png',
     '*.occurrence',
     '*.bmscore',
+    '*.bed',
 ]
 
 if settings.ZIP_INCLUDE_ZOOPS_STATS:

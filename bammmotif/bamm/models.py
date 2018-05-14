@@ -74,6 +74,8 @@ class BaMMJob(models.Model):
     e_value_cutoff = models.DecimalField(default=0.5, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
+    has_bedfile = models.BooleanField(default=False)
+
     @property
     def filename_prefix(self):
         file_name = path.basename(self.Input_Sequences.name)
@@ -218,6 +220,8 @@ class OneStepBaMMJob(models.Model):
     MMcompare = models.BooleanField(default=True)
     e_value_cutoff = models.DecimalField(default=0.5, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
+
+    has_bedfile = models.BooleanField(default=False)
 
     @property
     def filename_prefix(self):
