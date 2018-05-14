@@ -6,8 +6,6 @@ services:
     command: mysqld --user=root
     volumes:
       - ${MYSQL_DB_DIR}:/var/lib/mysql
-    ports:
-      - "13306:3306"
     environment:
       MYSQL_DATABASE: webserver
       MYSQL_USER: bammmotif_admin
@@ -96,9 +94,7 @@ services:
       - ${MOTIF_DB_DIR}:/motif_db
       - ${LOG_DIR}:/logs
     ports:
-      - "10080:10080"
-      - "587:587"
-      - "465:465"
+      - ${SERVER_HOST_PORT}:10080
     links:
       - db
       - redis_celery
