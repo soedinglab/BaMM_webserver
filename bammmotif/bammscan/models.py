@@ -50,6 +50,8 @@ class BaMMScanJob(models.Model):
     e_value_cutoff = models.DecimalField(default=0.1, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
+    has_bedfile = models.BooleanField(default=False)
+
     @property
     def cvFold(self):
         return settings.FDR_CV_FOLD

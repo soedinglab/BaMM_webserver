@@ -66,15 +66,26 @@
    <div class="jumbotron" style="background-color:white"><font color="black">
 
   <div class="well" style="background-color:white">
+    <table class="motif_button_header">
+      <tr>
+        <td><h2> Motif # {{m.job_rank}} </h2></td>
+        <td>
+      <form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_Motif_{{m.job_rank}}.zip" method="get" target="_blank">
+        <button type="submit" class="btn btn-default" aria-label="Download">
+          <span class="glyphicon glyphicon-download" aria-hidden="true"> DOWNLOAD RESULTS</span>
+        </button>
+      </form>
+      </td>
 
-
-        <form action="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_Motif_{{m.job_rank}}.zip" method="get" target="_blank">
-        <h2> Motif # {{m.job_rank}} &emsp;
-          <button type="submit" class="btn btn-default" aria-label="Download" >
-             <span class="glyphicon glyphicon-download" aria-hidden="true"> Download occurrences and analyses</span>
-           </button>
-          </form>
-         </h2>
+      {% if result.has_bedfile %}
+      <td>
+        <button type="button" class="btn btn-default" aria-label="GenomeBrowser" data-toggle="modal" data-target="#genome_browser_modal_{{m.job_rank}}">
+          <span class="glyphicon glyphicon-share-alt" aria-hidden="true">GENOME BROWSER</span>
+        </button>
+      </td>
+      {% endif %}
+    </tr>
+  </table>
 
 
 
@@ -256,11 +267,6 @@
                       </div>
 
 
-
-
-
-
-
                     </div>
                 </div>
 
@@ -271,5 +277,7 @@
 
 </div>
 </div>
+
+{% include "utils/genome_browser_dialog.html" %}
 
 {% endblock %}

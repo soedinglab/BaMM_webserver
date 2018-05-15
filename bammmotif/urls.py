@@ -39,6 +39,10 @@ urlpatterns = [
     url(r'^job/refinement/(?P<pk>.*)/$', peng_views.run_refine, name='peng_to_bamm'),
     url(r'^refine_results/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_detail, name='bamm_refinement'),
 
+    # serve bed files for the genome browser
+    url(r'^bedtrack/(?P<job_id>.*)/(?P<motif_no>.*)/$', views.serve_bed_file, name='serve_bed'),
+    url(r'^redirect_genome_browser/$', views.run_genome_browser, name='run_genome_browser'),
+
     # database
     url(r'^database/$', db_views.maindb, name='maindb'),
     url(r'^database/browse/(?P<db_id>.*)/$', db_views.db_browse, name='db_browse'),
@@ -47,6 +51,5 @@ urlpatterns = [
     # find results
     url(r'^my_results/$', views.find_results, name='find_results'),
     url(r'^find_result/(?P<pk>.*)/$', views.find_results_by_id, name='find_results_by_id'),
-    url(r'^delete/(?P<pk>.*)/$', views.delete, name='delete'),
     url(r'^peng_to_bamm_results/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_detail, name='peng_to_bamm_result_detail'),
  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

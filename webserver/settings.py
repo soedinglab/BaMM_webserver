@@ -219,6 +219,7 @@ EMAIL_LOGGER_TO = get_from_env('EMAIL_LOGGER_TO')
 EMAIL_LOGGER_USER = get_from_env('EMAIL_LOGGER_USER')
 EMAIL_LOGGER_PASSWORD = get_from_env('EMAIL_LOGGER_PASSWORD')
 EMAIL_LOGGER_USE_TLS = get_from_env('EMAIL_LOGGER_USE_TLS', converter=lambda x: x == '1')
+EMAIL_LOGGER_SUBJECT = get_from_env('EMAIL_LOGGER_SUBJECT')
 
 USE_EMAIL_LOGGER = EMAIL_LOGGER_LEVEL != 'OFF'
 
@@ -280,7 +281,7 @@ if USE_EMAIL_LOGGER:
         'mailhost': (EMAIL_LOGGER_SERVER, EMAIL_LOGGER_PORT),
         'fromaddr': EMAIL_LOGGER_FROM,
         'toaddrs': [EMAIL_LOGGER_TO],
-        'subject': ' BaMM web server crash detected.',
+        'subject': EMAIL_LOGGER_SUBJECT,
         'credentials': (EMAIL_LOGGER_USER, EMAIL_LOGGER_PASSWORD),
         'level': EMAIL_LOGGER_LEVEL,
         'use_tls': EMAIL_LOGGER_USE_TLS,
@@ -296,3 +297,6 @@ DEFAULT_MOTIF_DB = get_from_env('DEFAULT_MOTIF_DB')
 ZIP_INCLUDE_ZOOPS_STATS = get_from_env('ZIP_INCLUDE_ZOOPS_STATS', converter=lambda x: x == "1")
 MIN_FASTA_SEQUENCES = get_from_env('MIN_FASTA_SEQUENCES', converter=int)
 FDR_CV_FOLD = get_from_env('FDR_CV_FOLD', converter=int)
+
+MAX_JOB_STORAGE_DAYS = get_from_env('MAX_JOB_STORAGE_DAYS', converter=int)
+MAX_INPUT_STORAGE_DAYS = get_from_env('MAX_INPUT_STORAGE_DAYS', converter=int)

@@ -19,6 +19,7 @@ from ..utils import (
     get_job_output_folder,
     meme_count_motifs,
 )
+from ..utils.occur2bed import convert_to_bed, is_convertible_to_bed
 from ..commands import (
     get_iupac_command,
     get_logo_command,
@@ -119,3 +120,35 @@ def get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model, motif_id
 
     job.save()
     return params
+
+
+def create_bed(occurrence_file, job_id, job_name, motif_id):
+    base, ext = path.splitext(occurrence_file)
+    bed_file = base + '.bed'
+    name = '%s_%s' % (job_id, motif_id)
+    description = 'BaMMmotif track for %s, motif %s' % (job_name, motif_id)
+    with open(bed_file, 'w') as outfile:
+        print('track name=%s description="%s" useScore=1 visibility=2' %
+              (name, description), file=outfile)
+        convert_to_bed(occurrence_file, outfile)
+
+
+def create_bed_files(job):
+    job_id = job.meta_job.job_id
+    with Pool(settings.N_PARALLEL_THREADS) as pool:
+        job_output_dir = get_job_output_folder(job_id)
+        for motif_no in range(job.num_motifs):
+            occ_filename = '%s_motif_%s.occurrence' % (job.filename_prefix, motif_no + 1)
+            occurrence_file = path.join(job_output_dir, occ_filename)
+            args = (occurrence_file, str(job_id), job.meta_job.job_name, motif_no + 1)
+            pool.apply_async(create_bed, args)
+        pool.close()
+        pool.join()
+
+
+def can_create_bed(job):
+    job_id = job.meta_job.job_id
+    job_output_dir = get_job_output_folder(job_id)
+    occ_filename = '%s_motif_1.occurrence' % job.filename_prefix
+    occurrence_file = path.join(job_output_dir, occ_filename)
+    return is_convertible_to_bed(occurrence_file)

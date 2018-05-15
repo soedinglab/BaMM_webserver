@@ -35,30 +35,27 @@ logger = logging.getLogger(__name__)
 
 def generic_compress_task(job):
     job_pk = job.meta_job.pk
-    with JobSaveManager(job):
-        logfile = get_log_file(job_pk)
-        with open(logfile, 'a') as f:
-            with redirect_stdout(f):
-                Compress(job)
+    logfile = get_log_file(job_pk)
+    with open(logfile, 'a') as f:
+        with redirect_stdout(f):
+            Compress(job)
 
 
 def generic_bamm_task(job, first_in_pipeline, is_refined):
     job_pk = job.meta_job.pk
-    with JobSaveManager(job):
-        logfile = get_log_file(job_pk)
-        with open(logfile, 'a') as f:
-            with redirect_stdout(f), redirect_stderr(f):
-                    BaMM(job, first_in_pipeline, is_refined)
+    logfile = get_log_file(job_pk)
+    with open(logfile, 'a') as f:
+        with redirect_stdout(f), redirect_stderr(f):
+            BaMM(job, first_in_pipeline, is_refined)
 
 
 def generic_fdr_task(job, first_in_pipeline, is_refined):
     job_pk = job.meta_job.pk
-    with JobSaveManager(job):
-        # first define log file for redirecting output information
-        logfile = get_log_file(job_pk)
-        with open(logfile, 'a') as f:
-            with redirect_stdout(f), redirect_stderr(f):
-                FDR(job, first_in_pipeline, is_refined)
+    # first define log file for redirecting output information
+    logfile = get_log_file(job_pk)
+    with open(logfile, 'a') as f:
+        with redirect_stdout(f), redirect_stderr(f):
+            FDR(job, first_in_pipeline, is_refined)
 
 
 @task(bind=True)
@@ -109,11 +106,10 @@ def denovo_pipeline(self, job_pk):
 
             # refinement part
             generic_bamm_task(job, first_in_pipeline=True, is_refined=False)
-            job.Motif_Init_File_Format = 'BaMM'
             if job.score_Seqset:
                 generic_bammscan_task(job, first_in_pipeline=False, is_refined_model=True)
             if job.FDR:
-                generic_fdr_task(job, first_in_pipeline=False, is_refined=True)
+                generic_fdr_task(job, first_in_pipeline=False, is_refined=False)
             if job.MMcompare:
                 generic_mmcompare_task(job)
                 generic_mmcompare_import_matches(job)

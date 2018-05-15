@@ -7,12 +7,11 @@ from django.conf import settings
 
 
 from ..models import ChIPseq
-from ..forms import MetaJobNameForm
+from ..forms import MetaJobNameForm, GenomeBrowserForm
 
 from ..utils import (
     get_user,
     set_job_name_if_unset,
-    get_log_file,
     get_result_folder,
     upload_example_fasta,
     upload_example_motif,
@@ -133,5 +132,6 @@ def result_details(request, pk):
         'mode': meta_job.mode,
         'Output_filename': filename_prefix,
         'num_logos': num_logos,
-        'db_dir': db_dir
+        'db_dir': db_dir,
+        'genome_browser_form': GenomeBrowserForm(),
     })

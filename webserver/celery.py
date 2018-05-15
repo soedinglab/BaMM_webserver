@@ -14,3 +14,11 @@ app = Celery('webserver')
 # pickle the object when using Windows.
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+
+
+app.conf.beat_schedule = {
+    'cleanup-jobs': {
+        'task': 'bammmotif.tasks.cleanup_task',
+        'schedule': 60 * 60 * 24,
+    },
+}

@@ -70,6 +70,7 @@ def new_example_job_info(next_id, job_type, fname=False):
         complete=False,
         job_type=job_type,
         user=example_user,
+        is_example=True,
     )
     return job_info, next_id + 1
 

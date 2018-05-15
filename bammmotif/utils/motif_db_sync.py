@@ -145,7 +145,7 @@ def get_available_databases(database_dir):
             continue
         config_file = path.join(database_dir, dir_node, 'database_config.yaml')
         if not path.isfile(config_file):
-            logger.error('database %r is lacking database_config.yaml. Skipping', dir_node)
+            logger.warn('database %r is lacking database_config.yaml. Skipping', dir_node)
             continue
 
         with open(config_file) as yaml_config:

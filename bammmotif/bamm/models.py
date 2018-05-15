@@ -52,7 +52,7 @@ class BaMMJob(models.Model):
 
     # fdr options
     FDR = models.BooleanField(default=True)
-    m_Fold = models.IntegerField(default=10)
+    m_Fold = models.IntegerField(default=1)
     sampling_Order = models.PositiveSmallIntegerField(default=2)
 
     # EM options
@@ -73,6 +73,8 @@ class BaMMJob(models.Model):
     MMcompare = models.BooleanField(default=True)
     e_value_cutoff = models.DecimalField(default=0.5, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
+
+    has_bedfile = models.BooleanField(default=False)
 
     @property
     def filename_prefix(self):
@@ -199,7 +201,7 @@ class OneStepBaMMJob(models.Model):
 
     # fdr options
     FDR = models.BooleanField(default=True)
-    m_Fold = models.IntegerField(default=10)
+    m_Fold = models.IntegerField(default=1)
     sampling_Order = models.PositiveSmallIntegerField(default=2)
 
     # EM options
@@ -218,6 +220,8 @@ class OneStepBaMMJob(models.Model):
     MMcompare = models.BooleanField(default=True)
     e_value_cutoff = models.DecimalField(default=0.5, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
+
+    has_bedfile = models.BooleanField(default=False)
 
     @property
     def filename_prefix(self):

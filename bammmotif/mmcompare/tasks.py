@@ -33,12 +33,11 @@ from .commands import (
 
 
 def generic_mmcompare_task(job):
-    with JobSaveManager(job):
-        job_pk = job.meta_job.pk
-        logfile = get_log_file(job_pk)
-        with open(logfile, 'a') as f:
-            with redirect_stdout(f), redirect_stderr(f):
-                MMcompare(job)
+    job_pk = job.meta_job.pk
+    logfile = get_log_file(job_pk)
+    with open(logfile, 'a') as f:
+        with redirect_stdout(f), redirect_stderr(f):
+            MMcompare(job)
 
 
 def generic_mmcompare_motif_transfer_task(job):

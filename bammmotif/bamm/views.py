@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.db import transaction
 
-from ..forms import MetaJobNameForm
+from ..forms import MetaJobNameForm, GenomeBrowserForm
 from . import forms as bamm_forms
 
 from ..utils import (
@@ -101,4 +101,5 @@ def denovo_results(request, pk):
         'num_logos': num_logos,
         'db_dir': db_dir,
         'low_complexity_warning': warn_low_complexity,
+        'genome_browser_form': GenomeBrowserForm(),
     })

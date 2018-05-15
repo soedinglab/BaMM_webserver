@@ -1,43 +1,36 @@
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404
+import os
+import glob
+from urllib.parse import urljoin
+import logging
 
+from django.shortcuts import (
+    render,
+    get_object_or_404,
+    redirect,
+)
+from django.http import (
+    HttpResponse,
+    FileResponse,
+    Http404,
+)
 from django.conf import settings
 from django.utils import timezone
 
 from .models import (
-    ChIPseq,
-    DbParameter,
     JobSession,
-
-)
-from .tasks import (
-    run_bamm, run_bammscan,
-    run_peng
+    JobInfo,
 )
 from .utils import (
-    get_user,
-    upload_example_fasta,
-    upload_example_motif,
-    upload_db_input,
-    get_session_key,
-)
-from .utils.path_helpers import (
     get_log_file,
-    get_result_folder,
+    get_session_key,
+    url_prefix,
+    get_job_output_folder,
 )
-from bammmotif.models import JobInfo
-from bammmotif.utils.misc import url_prefix
-from .forms import FindForm
-import datetime
-import os
-from os import path
-from os.path import basename
-from urllib.parse import urljoin
+from .forms import FindForm, GenomeBrowserForm
+from .utils.occur2bed import get_viewpoint
 
 
-# #########################
-# ## HOME and GENERAL VIEWS #########################
+logger = logging.getLogger(__name__)
 
 
 def home(request):
@@ -62,49 +55,6 @@ def contact(request):
 
 def imprint(request):
     return render(request, 'home/imprint.html')
-
-
-def run_bamm_view(request, mode='normal'):
-    if request.method == "POST":
-        if mode == 'example':
-            form = PredictionExampleForm(request.POST, request.FILES)
-        else:
-            print('store normal form')
-            form = PredictionForm(request.POST, request.FILES)
-        if form.is_valid():
-            # read in data and parameter
-            job = form.save(commit=False)
-            job.created_at = datetime.datetime.now()
-            job.user = get_user(request)
-            job.mode = "Prediction"
-            job.save()
-            job_pk = job.job_ID
-
-            if job.job_name is None:
-                set_job_name(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            # if example is requested, load the sampleData
-            if mode == 'example':
-                upload_example_fasta(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-                upload_example_motif(job_pk)
-                job = get_object_or_404(Job, pk = job_pk)
-
-            job = get_object_or_404(Job, pk = job_pk)
-            if job.Motif_Initialization == 'PEnGmotif':
-                run_peng.delay(job_pk)
-            else:
-                run_bamm.delay(job_pk)
-
-            return render(request, 'job/submitted.html', {'pk': job_pk})
-
-    if mode == 'example':
-        form = PredictionExampleForm()
-    else:
-        form = PredictionForm()
-    return render(request, 'job/bamm_input.html',
-                  {'form': form, 'mode': mode})
 
 
 def submitted(request, pk):
@@ -157,52 +107,50 @@ def redirect_if_not_ready(job_id):
         return redirect('find_results_by_id', pk=job_id)
 
 
+def serve_bed_file(request, job_id, motif_no):
+    job = get_object_or_404(JobInfo, job_id=job_id)
+    job_folder = get_job_output_folder(job.job_id)
+    bed_files = glob.glob(os.path.join(job_folder, '*_motif_%s.bed' % motif_no))
+    if len(bed_files) != 1:
+        raise Http404()
+    response = FileResponse(open(bed_files[0], 'rb'))
+    response['Content-Type'] = 'text/plain'
+    return response
 
 
-def result_overview(request):
-    if request.user.is_authenticated():
-        user_jobs = Job.objects.filter(user=request.user.id)
-        return render(request, 'results/result_overview.html',
-                      {'user_jobs': user_jobs})
-    else:
-        return redirect(request, 'find_results')
+def run_genome_browser(request):
+    form = GenomeBrowserForm(request.POST)
 
+    if not form.is_valid():
+        logger.error('programming error: form should always be valid here.')
+        return HttpResponse(status=500)
 
-def delete(request, pk):
-    Job.objects.filter(job_ID=pk).delete()
-    if request.user.is_authenticated():
-        user_jobs = Job.objects.filter(user=request.user.id)
-        return render(request, 'results/result_overview.html',
-                      {'user_jobs': user_jobs})
-    else:
-        return redirect(request, 'find_results')
+    job_id = form.cleaned_data['job_id']
+    motif_id = form.cleaned_data['motif_id']
+    organism = form.cleaned_data['organism']
+    assembly_id = form.cleaned_data['assembly_id']
 
+    absolute_root = request.build_absolute_uri('/')[:-1]
 
-def result_detail(request, pk):
-    result = get_object_or_404(Job, pk=pk)
-    opath = get_result_folder(pk)
-    if basename(os.path.splitext(result.Input_Sequences.name)[0]) == '':
-        outname = basename(os.path.splitext(result.Motif_InitFile.name)[0])
-    else:
-        outname = basename(os.path.splitext(result.Input_Sequences.name)[0])
+    bed_file_url = '%s/bedtrack/%s/%s/' % (absolute_root, job_id, motif_id)
 
-    database = 100
-    db = get_object_or_404(DbParameter, pk=database)
-    db_dir = path.join(db.base_dir, 'Results')
+    job_folder = get_job_output_folder(job_id)
+    bed_files = glob.glob(os.path.join(job_folder, '*_motif_%s.bed' % motif_id))
+    if len(bed_files) != 1:
+        logger.error('programming error: there should only be exactly one bedfile matching.')
+        return HttpResponse(status=500)
+    bed_file = bed_files[0]
 
-    if result.complete:
-        print("status is successfull")
-        num_logos = range(1, (min(3,result.model_Order+1)))
-        return render(request, 'results/result_detail.html',
-                      {'result': result, 'opath': opath,
-                       'mode': result.mode,
-                       'Output_filename': outname,
-                       'num_logos': num_logos,
-                       'db_dir': db_dir})
-    else:
-        print('status not ready yet')
-        log_file = get_log_file(pk)
-        command = "tail -20 %r" % log_file
-        output = os.popen(command).read()
-        return render(request, 'results/result_status.html',
-                      {'job_ID': result.job_ID, 'job_name': result.job_name, 'status': result.status, 'output': output})
+    chrom, start, end = get_viewpoint(bed_file)
+    new_start = max(1, start - 30)
+    new_end = end + 30
+    position_str = '%s:%s-%s' % (chrom, new_start, new_end)
+
+    ucsc_url = (
+        'https://genome.ucsc.edu/cgi-bin/hgTracks?'
+        + 'org=%s&' % organism
+        + 'db=%s&' % assembly_id
+        + 'position=%s&' % position_str
+        + 'hgt.customText=%s' % bed_file_url
+    )
+    return redirect(ucsc_url)

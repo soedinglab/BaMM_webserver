@@ -9,8 +9,6 @@ Celery
 numpy
 redis
 pandas
-plotly
 matplotlib
 scipy
-sklearn
 pyyaml

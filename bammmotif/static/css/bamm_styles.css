@@ -99,3 +99,12 @@
 .result_image {
   max-width: 400px
 }
+
+.motif_button_header td {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.genome_browser_form td {
+  padding: 5px;
+}

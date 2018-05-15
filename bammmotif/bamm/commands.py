@@ -55,7 +55,6 @@ def get_core_params(job, is_refined_model, motif_id=1):
         # initialize with refined model
 
         # careful, this method unfortunately has side effects
-        job.Motif_Init_File_Format == "BaMM"
         model_file = '%s_motif_%s.ihbcp' % (job.filename_prefix, motif_id)
         bg_file = '%s.hbcp' % job.filename_prefix
         params += [
