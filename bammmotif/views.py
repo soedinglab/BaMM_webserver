@@ -1,14 +1,20 @@
 import os
 import glob
 from urllib.parse import urljoin
+import logging
 
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.shortcuts import get_object_or_404
-
+from django.shortcuts import (
+    render,
+    get_object_or_404,
+    redirect,
+)
+from django.http import (
+    HttpResponse,
+    FileResponse,
+    Http404,
+)
 from django.conf import settings
 from django.utils import timezone
-from django.http import FileResponse, Http404
 
 from .models import (
     JobSession,
@@ -21,8 +27,8 @@ from .utils import (
     get_job_output_folder,
 )
 from .forms import FindForm, GenomeBrowserForm
+from .utils.occur2bed import get_viewpoint
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -105,7 +111,6 @@ def serve_bed_file(request, job_id, motif_no):
     job = get_object_or_404(JobInfo, job_id=job_id)
     job_folder = get_job_output_folder(job.job_id)
     bed_files = glob.glob(os.path.join(job_folder, '*_motif_%s.bed' % motif_no))
-    print(os.path.join(job_folder, '_motif_%s.bed' % motif_no))
     if len(bed_files) != 1:
         raise Http404()
     response = FileResponse(open(bed_files[0], 'rb'))
@@ -118,6 +123,7 @@ def run_genome_browser(request):
 
     if not form.is_valid():
         logger.error('programming error: form should always be valid here.')
+        return HttpResponse(status=500)
 
     job_id = form.cleaned_data['job_id']
     motif_id = form.cleaned_data['motif_id']
@@ -125,12 +131,26 @@ def run_genome_browser(request):
     assembly_id = form.cleaned_data['assembly_id']
 
     absolute_root = request.build_absolute_uri('/')[:-1]
-    bed_file_url = '%s/bedtrack/%s/%s' % (absolute_root, job_id, motif_id)
+
+    bed_file_url = '%s/bedtrack/%s/%s/' % (absolute_root, job_id, motif_id)
+
+    job_folder = get_job_output_folder(job_id)
+    bed_files = glob.glob(os.path.join(job_folder, '*_motif_%s.bed' % motif_id))
+    if len(bed_files) != 1:
+        logger.error('programming error: there should only be exactly one bedfile matching.')
+        return HttpResponse(status=500)
+    bed_file = bed_files[0]
+
+    chrom, start, end = get_viewpoint(bed_file)
+    new_start = max(1, start - 30)
+    new_end = end + 30
+    position_str = '%s:%s-%s' % (chrom, new_start, new_end)
+
     ucsc_url = (
         'https://genome.ucsc.edu/cgi-bin/hgTracks?'
         + 'org=%s&' % organism
         + 'db=%s&' % assembly_id
-        + 'visibility=full&'
+        + 'position=%s&' % position_str
         + 'hgt.customText=%s' % bed_file_url
     )
     return redirect(ucsc_url)

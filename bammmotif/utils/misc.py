@@ -60,6 +60,7 @@ class JobSaveManager:
             logger.warn('Job %s exceeded the time limit and was killed.', job.meta_job.pk)
 
             job.meta_job.save()
+            job.save()
             # swallow the exception
             return True
 
@@ -75,6 +76,7 @@ class JobSaveManager:
             self.had_exception = False
             print(timezone.now(), "\t | END: \t %s " % job.meta_job.status)
         job.meta_job.save()
+        job.save()
 
 
 class CommandFailureException(Exception):

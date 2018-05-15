@@ -122,12 +122,14 @@ def get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model, motif_id
     return params
 
 
-def create_bed(occurrence_file, job_id, job_name):
+def create_bed(occurrence_file, job_id, job_name, motif_id):
     base, ext = path.splitext(occurrence_file)
     bed_file = base + '.bed'
+    name = '%s_%s' % (job_id, motif_id)
+    description = 'BaMMmotif track for %s, motif %s' % (job_name, motif_id)
     with open(bed_file, 'w') as outfile:
-        print('track name=%s description="%s" useScore=1' %
-              (job_id, 'BaMMmotif track for ' + job_name), file=outfile)
+        print('track name=%s description="%s" useScore=1 visibility=2' %
+              (name, description), file=outfile)
         convert_to_bed(occurrence_file, outfile)
 
 
@@ -138,7 +140,8 @@ def create_bed_files(job):
         for motif_no in range(job.num_motifs):
             occ_filename = '%s_motif_%s.occurrence' % (job.filename_prefix, motif_no + 1)
             occurrence_file = path.join(job_output_dir, occ_filename)
-            pool.apply_async(create_bed, (occurrence_file, str(job_id), job.meta_job.job_name))
+            args = (occurrence_file, str(job_id), job.meta_job.job_name, motif_no + 1)
+            pool.apply_async(create_bed, args)
         pool.close()
         pool.join()
 

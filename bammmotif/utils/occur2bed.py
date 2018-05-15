@@ -45,7 +45,17 @@ def convert_to_bed(occurrence_file, bed_handle):
 def is_convertible_to_bed(occurrence_file):
     with open(occurrence_file) as infile:
         infile.readline()
-        seq_id, *_ = infile.readline().split()
+        first_record = infile.readline()
+        if not first_record:
+            return False
+        seq_id, *_ = first_record.split()
         if re.match(r'^>[^: ]+:\d+-\d+$', seq_id):
             return True
         return False
+
+
+def get_viewpoint(bed_file):
+    with open(bed_file) as infile:
+        infile.readline()
+        toks = infile.readline().split()
+        return toks[0], int(toks[1]) + 1, int(toks[2])
