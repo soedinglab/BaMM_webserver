@@ -61,6 +61,7 @@ class JobSaveManager:
 
             job.meta_job.save()
             job.save()
+
             # swallow the exception
             return True
 
@@ -70,6 +71,9 @@ class JobSaveManager:
             logger.exception(error)
             traceback.print_exception(error_type, error, tb, file=sys.stdout)
             print(timezone.now(), "\t | WARNING: \t %s " % job.meta_job.status)
+
+            # swallow the exception
+            return True
 
         else:
             job.meta_job.status = self.success_status
