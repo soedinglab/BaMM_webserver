@@ -59,7 +59,7 @@ def meme_drop_unselected_motifs(src_path, dest_path, selected_motifs):
     with open(src_path, "r") as f:
         fcont = f.read().split("\n\n")
         meme_header = "\n\n".join(fcont[:3])
-        remaining_motifs = meme_header + "\n\n"
+        remaining_motifs = meme_header
         for elem in fcont:
             if not elem.startswith("MOTIF"):
                 continue
