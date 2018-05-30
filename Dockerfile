@@ -9,11 +9,12 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 	libxslt-dev     \
 	libffi-dev      \
 	libssl-dev      \ 
-    libboost-all-dev\
-    cmake           \
-    imagemagick     \
-    ghostscript     \
-    build-essential 
+    	libboost-all-dev\
+    	cmake           \
+    	imagemagick     \
+    	ghostscript     \
+    	build-essential \
+	mysql-client
 
 # install python dependencies
 COPY requirements.txt /code/

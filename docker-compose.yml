@@ -20,22 +20,14 @@ services:
 
   celery:
     build: .
-    # memo: this cannot be outsourced to a script because of two reasons:
-    # 1) sending a sigterm to a script will not send it to the worker
-    # 2) using a script with init system will attempt to kill the workers instead of a warm shutdown
-    command: celery 
-                --loglevel=${BAMM_LOG_LEVEL}
-                --app=webserver.celery:app worker
-                --soft-time-limit ${JOB_TIME_LIMIT}
-                --concurrency $N_PARALLEL_JOBS
-                -B
-                -s /logs/celerybeat-schedule
+    command: dumb-init --single-child bash ./run_workers.sh
     user: ${BAMM_USER_UID}
     volumes:
       - ${WEBSERVER_DIR}:/code
       - ${MEDIA_DIR}:/code/media
       - ${MOTIF_DB_DIR}:/motif_db
       - ${LOG_DIR}:/logs
+      - ${BACKUP_DIR}:/backup
     links:
       - redis_celery
       - db
@@ -73,6 +65,7 @@ services:
         - FDR_CV_FOLD=${FDR_CV_FOLD}
         - MAX_INPUT_STORAGE_DAYS=${MAX_INPUT_STORAGE_DAYS}
         - MAX_JOB_STORAGE_DAYS=${MAX_JOB_STORAGE_DAYS}
+        - N_STORED_BACKUPS=${N_STORED_BACKUPS}
 
   web:
     build: .
@@ -85,6 +78,7 @@ services:
       - ${MEDIA_DIR}:/code/media
       - ${MOTIF_DB_DIR}:/motif_db
       - ${LOG_DIR}:/logs
+      - ${BACKUP_DIR}:/backup
     ports:
       - ${SERVER_HOST_PORT}:10080
     links:

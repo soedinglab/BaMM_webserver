@@ -20,7 +20,7 @@ All persistent data will be stored on the host. I am using the directory `/var/w
 ```bash
 WEBSERVER_DIR=/var/webserver
 # create folder structure
-mkdir -p $WEBSERVER_DIR/{media_db,logs,motif_db,mysql_db,redis_db}
+mkdir -p $WEBSERVER_DIR/{media_db,logs,motif_db,mysql_db,redis_db,backup}
 
 cd $WEBSERVER_DIR
 git clone https://github.com/soedinglab/BaMM_webserver.git
