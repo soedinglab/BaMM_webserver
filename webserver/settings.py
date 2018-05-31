@@ -300,11 +300,15 @@ ZIP_INCLUDE_ZOOPS_STATS = get_from_env('ZIP_INCLUDE_ZOOPS_STATS', converter=lamb
 MIN_FASTA_SEQUENCES = get_from_env('MIN_FASTA_SEQUENCES', converter=int)
 FDR_CV_FOLD = get_from_env('FDR_CV_FOLD', converter=int)
 
+# cleanup settings
 MAX_JOB_STORAGE_DAYS = get_from_env('MAX_JOB_STORAGE_DAYS', converter=int)
 MAX_INPUT_STORAGE_DAYS = get_from_env('MAX_INPUT_STORAGE_DAYS', converter=int)
+DAILY_CLEANUP_HOUR_UTC = get_from_env('DAILY_BACKUP_HOUR_UTC', converter=int)
 
-# settings for dbbackup
+
+# backup settings
 DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
 DBBACKUP_STORAGE_OPTIONS = {'location': '/backup'}
 DBBACKUP_CLEANUP_KEEP = get_from_env('N_STORED_BACKUPS', converter=int)
 DBBACKUP_CLEANUP_KEEP_MEDIA = get_from_env('N_STORED_BACKUPS', converter=int)
+DAILY_BACKUP_HOUR_UTC = get_from_env('DAILY_BACKUP_HOUR_UTC', converter=int)

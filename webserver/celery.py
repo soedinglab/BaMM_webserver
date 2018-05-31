@@ -17,18 +17,18 @@ app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 
-SCHEDULE_NIGHT_2 = schedules.crontab(minute=0, hour=2)
-SCHEDULE_NIGHT_3 = schedules.crontab(minute=0, hour=3)
+SCHEDULE_CLEANUP = schedules.crontab(minute=0, hour=settings.DAILY_CLEANUP_HOUR_UTC)
+SCHEDULE_BACKUP = schedules.crontab(minute=0, hour=settings.DAILY_BACKUP_HOUR_UTC)
 
 app.conf.beat_schedule = {
     'cleanup-jobs': {
         'task': 'bammmotif.tasks.cleanup_task',
-        'schedule': SCHEDULE_NIGHT_3,
-        'options': {'queue' : 'priority'}
+        'schedule': SCHEDULE_CLEANUP,
+        'options': {'queue': 'priority'}
     },
     'backup-jobs': {
         'task': 'bammmotif.tasks.full_backup',
-        'schedule': SCHEDULE_NIGHT_2,
-        'options': {'queue' : 'priority'}
+        'schedule': SCHEDULE_BACKUP,
+        'options': {'queue': 'priority'}
     },
 }

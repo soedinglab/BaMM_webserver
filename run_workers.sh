@@ -8,7 +8,11 @@
 	-Q priority\
 &)
 
-(celery -A webserver.celery:app beat -s /logs/celerybeat-schedule &)
+(celery\
+	-A webserver.celery:app beat\
+	--loglevel=${BAMM_LOG_LEVEL}\
+	-s /logs/celerybeat-schedule\
+&)
 
 exec celery \
 	--loglevel=${BAMM_LOG_LEVEL}\
