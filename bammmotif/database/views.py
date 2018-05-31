@@ -19,7 +19,7 @@ def maindb(request):
 
             search_term = form.cleaned_data['search_term']
             if not search_term:
-                form = DBForm()
+                form = DBForm(request.POST)
                 return render(request, 'database/db_main.html', {'form': form, 'warning': True})
             db_entries = ChIPseq.objects.filter(target_name__icontains=search_term,
                                                 motif_db=motif_db)
@@ -33,7 +33,7 @@ def maindb(request):
                         'is_bamm_database': motif_db.model_parameters.modelorder > 0,
                     })
             else:
-                form = DBForm()
+                form = DBForm(request.POST)
                 return render(request, 'database/db_main.html', {'form': form, 'warning': True})
     else:
         form = DBForm()
