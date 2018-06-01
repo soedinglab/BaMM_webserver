@@ -157,7 +157,7 @@ m_avrec
 m_occur
         fraction of sequences with a motif in the input set
 
-You can find a detailed definition and discussion of the AvRec score and the difference between dataset and AvRec and motif AvRec, in the webserver publication :cite:`UNDER_REVIEW`
+You can find a detailed definition and discussion of the AvRec score and the difference between dataset and AvRec and motif AvRec, in the webserver publication :cite:`kiesel2018bammserver`
 
 This is an example of an ``.bmscore`` file for a dataset with three motifs:
 
@@ -215,6 +215,31 @@ The seeding stage itself uses a MOOPS model. It is therefore possible to scan a 
 You can circumvent the minimum requirement of sequences for the seeding stage by adding extra sequences with the sequence 'NNNNNNNNNNNN'.
 Please note that these seeds cannot be optimized to higher-order models due to the ZOOPS assumption.
 
+Where is the button to visualize in the genome browser?
+*******************************************************
+
+The genome browser button 
+
+.. image:: img/gb_button.png
+  :align: center
+  :width: 200px
+
+is only available if all fasta headers in your input file follow this format ``seqid:start-end`` with zero-based coordinates.
+
+For hg38, an example fasta file would look like this:
+
+::
+  
+  >chr2:88600218-88600418
+  TGAAAGCAGATGGAGCTTTTCCTTGAGAGCCACAGAAGCAATATATGCATGCAGTTCAGGTACAGAGATGACATCACCCTTCACAATAGCATTACCTCACCCCCTAAGCATAGGAATGAGTCACCCGATAGTCAGCTGCAAATCTCTTGGTAGAAAAAAATGTAGGTTACGGTGATGCATTTTCACATCCCACTGATTTG
+  >chr7:37032027-37032227
+  TTTAAAAATATACTTGTTTGGCTTGATTCAGGCTGCTCCTCATTCCAGGCCTGCGTGAGTCATTGGAGAAACATCCTATTAGAGTGCACCCCTACTGATTGGCTTCCTTTGTATGTTCACGGTGACTCAGAAGAGATGACTCACAGTTCACGCTTATGACAAAAAGAACTTGCTCTCCCTTCCTTTTCATTACCCATGTT
+  [...]
+
+You can generate an input file from genomic annotation files with the ``getfasta`` module of bedtools :cite:`quinlan2010bedtools,quinlan2014bedtools`.
+
+Please refer to the `documentation of bedtools <http://bedtools.readthedocs.io/en/latest/content/tools/getfasta.html>`_ for more details.
+
 Miscellaneous
 #############
 
@@ -232,4 +257,4 @@ If you intend setting up the server on your own computer, you can find a detaile
 Citing BaMM webserver
 #####################
 
-If you are using BaMM webserver in your research, please cite our webserver :cite:`UNDER_REVIEW` and BaMMmotif :cite:`siebert_soeding_2016` papers, if applicable.
+If you are using BaMM webserver in your research, please cite our webserver :cite:`kiesel2018bammserver` and BaMMmotif :cite:`siebert_soeding_2016` papers, if applicable.

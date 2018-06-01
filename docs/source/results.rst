@@ -53,6 +53,43 @@ contributions to the information content.
 AvRec evaluation
 ****************
 
+Why yet another evaluation metric?
+==================================
+
+Various metrics are used for describing the quality of a motif, most noteably p-values, Area Under the Receiver Operating Characteristic curve (AUROC), Area Under the Precision Recall curve (AUPRC).
+All of these methods have problems capturing the potential biological relevance of the motif. For a more detailed explanation, please refer to :cite:`kiesel2018bammserver`.
+
+We sought to develop a motif performance evaluation that
+
+  #. covers the range of False discovery rates (FDR) most relevant in practical applications
+  #. allows the user to easily estimate the performance of the motif in her particular application
+
+
+
+
+The method
+==========
+We generate background sequences from a second-order Markov model trained on all input sequences and evaluate how well the motif separates positive sequences from the negative (=background) sequences.
+We define true positives (TP) as correct predictions, false positives (FP) as false predictions, and false negatives (FN) as positive test cases that have not been predicted.
+The precision is defined as the fraction of predictions that are correct, TP/(TP+FP), and the recall (= sensitivity) is the fraction of true motif instances that
+are actually predicted, TP/(TP+FN).
+
+The TP/FP ratio is calculated for a positives:negative ratio of 1:1. We plot the recall-TP/FP ratio curve, with TP/FP ratio plotted on a logarithmic y-scale, (between 1 and 100)
+
+The area under this curve is the average recall (AvRec) in the regime of relevant FDR values.
+
+Dataset AvRec vs. motif AvRec
+=============================
+We give two different version of the AvRec score. The **dataset AvRec** and the **motif AvRec**. For the dataset AvRec we assume that all sequences of the input set are positive, meaning that all of them are bound.
+If only a fraction of the sequences carry the motif the dataset AvRec will severely underestimate the motif performance as unbound sequences will behave as the background sequences.
+
+For the **motif AvRec** we estimate the number of sequences carrying the motif with the fdrtool :cite:`strimmer2008fdrtool`. By this strategy, we label as positive only the sequences that carry a motif.
+
+Dataset AvRec and motif AvRec have the same value if all sequences are estimated to carry a motif. 
+
+The performance plots
+=====================
+
 .. image:: img/evaluation_plots.png
    :width: 450px
    :height: 450px
@@ -60,29 +97,49 @@ AvRec evaluation
    :alt: Evaluation plots
    :align: center
 
-We generate background sequences from a second-order Markov model trained on all input sequences and ask how well
-the input sequences (positives) are separated from the background sequences (negatives). As usual we define true
-positives (TP) as predictions that are correct, false positives (FP) as predictions that are incorrect,and
-false negatives (FN) as positive test cases that have not been predicted. The precision is defined as the fraction of
-predictions that are correct, TP/(TP+FP), and the recall (= sensitivity) is the fraction of true motif instances that
-are actually predicted, TP/(TP+FN).
 
-The TP/FP ratio is normalized to the case where positives:negatives=1:1. We then plot the recall-TP/FP ratio curve,
-with TP/FP ratio plotted on a logarithmic y-scale, e.g. between 1 and 100. The area under this curve summarizes the
-performance of the model for the entire range of TP/FP values that are relevant in practice, without putting undue
-emphasis on any specific region. It can be interpreted as the average model recall (AvRec) over the given range of
-TP/FP ratio. This gives the motif performance on the input data set, The area under the Recall-TP/FP ratio curve is
-calculated for positives:negative=1:1 and we name it as **dataset AvRec**. In addition, if the TP/FP ratio is above 1
-for the case where positives:negatives=1:10, a dash curve for it will be depicted on the plot.
-Additionally, the p-value density plot is shown, which indicates how we define each term.
+We show four performance plots: the distribution of p-values calculated under the ZOOPS model and its respective recall vs. TP/FP ratio curve for the dataset AvRec (left column) and the motif AvRec (right column).
 
-(Note that **dataset AvRec** is used as the **zoops_score** for motif reranking in the seeding phase.)
+P-value distribution plots
+--------------------------
 
-Besides, given the p-value distribution from both input and background sequences, we use the `fdrtool` :cite:`strimmer2008fdrtool` to re-estimate
-the null distribution and the ratio between positives and negatives, which is shown by the orange dash line
-in the motif p-value statistics plot. In this way, we can estimate the motif quality independent from the initial
-assumption that all input sequences are positives. The area under the Recall-TP/FP ratio curve is calculated for
-positives:negative=1:1. We call this averaged recall as **motif AvRec**.
+The p-values are calculated on the joint set of background sequences and input sequences. The p-value is calibrated such that it is uniform over the background sequences (shown as a gray shaded rectangle).
+The input sequences will carry the motif more often than random and therefore enrich for low p-values.
+Input sequences that do not carry a motif have uniformly distributed p-values.
+
+For the motif AvRec analysis the p-value distribution plot also contains an orange dashed line that separates the sequences with motif (above the line) from sequences without motif (below the line).
+If all input sequences carry the motif the orange line will coincide with the fraction of positive sequences, shown here:
+
+.. image:: img/distribution_motif_eq_dataset.png
+   :width: 450px
+   :height: 450px
+   :scale: 150 %
+   :alt: P-value distribution
+   :align: center
+
+As described above, in this case the dataset AvRec is equal to the motif AvRec.
+
+Recall vs. TP/FP ratio plots
+----------------------------
+
+The recall vs. TP/FP ratio plots are calculated from the p-value distribution plots. The TP/FP ratio axis is depicted in logscale, ranging from 1 to 100. The TP/FP ratio :math:`R` is directly related to the FDR via 
+
+.. math::
+
+  \text{FDR} = 1 / (1 + R)
+
+The highest point on the y axis (R=100) therefore relates to an FDR of 1/101, the lowest to an FDR of 0.5.
+
+We generate three blue lines for different ratios of positive to negative ratios.
+The solid blue line represents the same number of positive and negative sequences (ratio 1:1).
+We also draw two dashed lines for the ratios 1:10 and 1:100.
+Note that depending on the motif quality not all of the lines may be visible.
+
+We define the AvRec score as the area under the solid curve (1:1) case. It is also given at the top of the plot.
+
+**Note:** in the recall vs. TP/FP ratio plot, the line representing positive/negative ratio of 1:10 is the 1:1 curve shifted down by one unit (:math:`\log_{10}(10) = 1`).
+This allows to estimate the motif performance for your own exected ratio of positive to negatives.
+All you have to do is shifting the 1:1 curve according accordingly!
 
 
 Motif distribution plot
