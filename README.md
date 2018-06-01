@@ -6,7 +6,8 @@
 This repository contains the source code of the [BaMM web server](https://bammmotif.mpibpc.mpg.de/). A bioinformatic resource for analysis of nucleotide binding proteins with higher-order Bayesian Markov Models (BaMMs).
 
 ## News
-* **2017/05/06**- We fixed a couple of edge cases, improved the input validation and alert the user if we suspect that refined motifs in the de-novo workflow may not be the actual motif.
+* **2018/06/01**- We updated the server to version 1.1, fixed a couple of nasty bugs and give a way to visualize motif occurrences in the genome browser.
+* **2018/05/06**- We fixed a couple of edge cases, improved the input validation and alert the user if we suspect that refined motifs in the de-novo workflow may not be the actual motif.
 * **2018/04/22**- We are happy to present a massively improved version. Highlights are a drastic speed improvement, a standalone one-step denovo workflow, estimation of the motif occurrence from the data, a cleaner user interface, a list of recently submitted jobs, and much more. We would like to thank our reviewers for their helpful suggestions for improving the server.
 * **2018/03/07** - We fixed a bug in the interface causing a 500 error when running the seeding stage in single-strand mode.
 
