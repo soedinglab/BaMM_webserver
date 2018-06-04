@@ -79,7 +79,7 @@ def find_results_by_id(request, pk):
     else:
         base = request.build_absolute_uri('/')
         url = urljoin(base, url_prefix[meta_job.job_type] + '/' + job_id)
-        return redirect(url, permanent=True)
+        return redirect(url, permanent=False)
 
 
 def find_results(request):
