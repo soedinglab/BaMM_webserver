@@ -115,7 +115,6 @@ class ShootPengModule(CommandlineModule):
             raise PengNoSeedsException()
 
         elif proc.returncode != 0:
-            logger.error("non-zero exit code for: %s" % ' '.join(self.command_tokens))
             if self._enforce_exit_zero:
                 raise CommandFailureException(' '.join(self.command_tokens))
 
