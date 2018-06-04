@@ -7,6 +7,7 @@ import subprocess
 from shutil import copyfile
 import re
 from tempfile import NamedTemporaryFile
+import signal
 
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
@@ -103,7 +104,8 @@ def run_command(command, enforce_exit_zero=True):
     command_str = ' '.join('%r' % s for s in command)
     logger.debug("executing: %s", command_str)
 
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                               preexec_fn=ignore_sigterm)
     while True:
         nextline = process.stdout.readline()
         if nextline == b'' and process.poll() is not None:
@@ -359,3 +361,7 @@ def check_meme_input(job, form, rq_files):
             return False, 'generic parsing problem of the MEME file'
 
         return True, 'Success'
+
+
+def ignore_sigterm():
+    signal.signal(signal.SIGTERM, signal.SIG_IGN)

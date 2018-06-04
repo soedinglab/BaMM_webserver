@@ -303,7 +303,7 @@ FDR_CV_FOLD = get_from_env('FDR_CV_FOLD', converter=int)
 # cleanup settings
 MAX_JOB_STORAGE_DAYS = get_from_env('MAX_JOB_STORAGE_DAYS', converter=int)
 MAX_INPUT_STORAGE_DAYS = get_from_env('MAX_INPUT_STORAGE_DAYS', converter=int)
-DAILY_CLEANUP_HOUR_UTC = get_from_env('DAILY_BACKUP_HOUR_UTC', converter=int)
+DAILY_CLEANUP_HOUR_UTC = get_from_env('DAILY_CLEANUP_HOUR_UTC', converter=int)
 
 
 # backup settings
