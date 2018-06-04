@@ -20,7 +20,7 @@ services:
 
   celery:
     image: ${SERVER_DOCKER_IMAGE}
-    command: dumb-init --single-child bash ./run_workers.sh
+    command: supervisord -c /code/worker.conf
     user: ${BAMM_USER_UID}
     volumes:
       - ${WEBSERVER_DIR}:/code
