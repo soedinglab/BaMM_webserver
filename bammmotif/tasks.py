@@ -33,9 +33,11 @@ def generic_model_zip_task(job):
 @task
 def cleanup_task():
     management.call_command('cleanup')
+    logger.info('automatic clean successful.')
 
 
 @task
 def full_backup():
     management.call_command('dbbackup', noinput=True)
     management.call_command('mediabackup', noinput=True, compress=True)
+    logger.info('automatic backup successful.')

@@ -2,6 +2,8 @@ from collections import OrderedDict
 import subprocess
 import logging
 
+from .misc import ignore_sigterm
+
 logger = logging.getLogger(__name__)
 
 
@@ -90,10 +92,10 @@ class CommandlineModule:
 
     def run(self, **kw_args):
         extra_args = {
-            'universal_newlines': True
+            'universal_newlines': True,
+            'preexec_fn': ignore_sigterm,
         }
         extra_args.update(kw_args)
-        # TODO: Not happy with that formulation.
 
         logger.debug("executing: %s",  ' '.join(self.command_tokens))
         if self.with_log_file is not None:
@@ -103,7 +105,6 @@ class CommandlineModule:
             proc = subprocess.run(self.command_tokens, stdout=subprocess.PIPE,
                                   stderr=subprocess.STDOUT, **extra_args)
         if proc.returncode != 0:
-            logger.error("non-zero exit code for: %s" % ' '.join(self.command_tokens))
             if self._enforce_exit_zero:
                 raise CommandFailureException(' '.join(self.command_tokens))
 
