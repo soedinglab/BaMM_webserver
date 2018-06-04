@@ -19,7 +19,7 @@ services:
       - ${REDIS_DB_DIR}:/data
 
   celery:
-    build: .
+    image: ${SERVER_DOCKER_IMAGE}
     command: dumb-init --single-child bash ./run_workers.sh
     user: ${BAMM_USER_UID}
     volumes:
@@ -70,7 +70,7 @@ services:
         - DAILY_CLEANUP_HOUR_UTC=${DAILY_CLEANUP_HOUR_UTC}
 
   web:
-    build: .
+    image: ${SERVER_DOCKER_IMAGE}
     command: /usr/local/bin/dumb-init -- ./run_web.sh
     user: ${BAMM_USER_UID}
     environment:
