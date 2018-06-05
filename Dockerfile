@@ -14,7 +14,12 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     	imagemagick     \
     	ghostscript     \
     	build-essential \
-	mysql-client
+	mysql-client    \
+	supervisor
+
+# use a cool init system for handing signals: https://github.com/Yelp/dumb-init
+RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64
+RUN chmod +x /usr/local/bin/dumb-init
 
 # install python dependencies
 COPY requirements.txt /code/
@@ -39,10 +44,6 @@ RUN mkdir -p /tmp/suite/build
 RUN cd /tmp/suite/build && CXXFLAGS=-std=c++1y cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make -j8 install
 RUN pip install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
-
-# use a cool init system for handing signals: https://github.com/Yelp/dumb-init
-RUN wget -O /usr/local/bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.2.1/dumb-init_1.2.1_amd64
-RUN chmod +x /usr/local/bin/dumb-init
 
 ENV PATH="/ext/bin:${PATH}"
 ENV PATH="/usr/local/bin:${PATH}"

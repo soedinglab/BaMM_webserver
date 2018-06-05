@@ -1,4 +1,4 @@
-celerybeat.pid
+*.pid
 .env
 
 # Byte-compiled / optimized / DLL files
