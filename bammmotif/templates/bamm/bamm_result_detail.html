@@ -33,7 +33,7 @@
                 {% endif %}
                 <th> Download </th>
             </tr>
-            {% for m in result.meta_job.motifs_set.all|dictsort:"job_rank" %}
+            {% for m in result.meta_job.motifs_set.all|dictsortreversed:"rank_score" %}
                 <tr>
                     <td> <a href="#{{m.job_rank}}" style="color:black">{{m.job_rank}} </a></td>
                     <td> <a href="#{{m.job_rank}}" style="color:black"> {{m.iupac}} </a></td>
@@ -55,7 +55,7 @@
         </table>
     </div>
 
-    {% for m in result.meta_job.motifs_set.all|dictsort:"job_rank" %}
+    {% for m in result.meta_job.motifs_set.all|dictsortreversed:"rank_score" %}
         <a id="{{m.job_rank}}">  </a>
         <div class="jumbotron" style="background-color:white"><font color="black">
 
