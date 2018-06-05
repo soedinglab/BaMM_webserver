@@ -225,6 +225,9 @@ class Motifs(models.Model):
     def __str__(self):
         return self.motif_ID
 
+    def rank_score(self):
+        return self.m_aurrc * self.occurrence
+
 
 class DbMatch(models.Model):
     match_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
