@@ -1,4 +1,5 @@
 import os
+import io
 import glob
 from urllib.parse import urljoin
 import logging
@@ -82,10 +83,15 @@ def find_results_by_id(request, pk):
         return redirect(url, permanent=False)
 
 
-def find_results(request):
+def get_session_jobs(request):
     session_key = get_session_key(request)
     min_time = timezone.now() - timezone.timedelta(days=settings.MAX_FINDJOB_DAYS)
     session_jobs = JobSession.objects.filter(session_key=session_key, job__created_at__gt=min_time)
+    return session_jobs
+
+
+def find_results(request):
+    session_jobs = get_session_jobs(request)
 
     if request.method == "POST":
         form = FindForm(request.POST)
@@ -154,3 +160,32 @@ def run_genome_browser(request):
         + 'hgt.customText=%s' % bed_file_url
     )
     return redirect(ucsc_url)
+
+
+def serve_job_csv(request):
+    session_jobs = get_session_jobs(request)
+    sorted_jobs = session_jobs.order_by('-job__created_at')
+    csv_obj = io.StringIO()
+    header = [
+        'submission_time', 'job_name', 
+        'job_id', 'job_type', 'job_status'
+    ] 
+    print(*header, sep=',', file=csv_obj)
+    for job_session in sorted_jobs:
+        job = job_session.job 
+        tokens = [
+            job.created_at,
+            job.job_name,
+            job.job_id,
+            job.job_type,
+            job.status,
+        ]
+        print(*tokens, sep=',', file=csv_obj)
+    csv_obj.seek(0)
+    
+    csv_string = csv_obj.read()
+    bytes_response = csv_string.encode('utf-8')
+
+    response = HttpResponse(bytes_response, content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=bammserver_joblist.csv'
+    return response
