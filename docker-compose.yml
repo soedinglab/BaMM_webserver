@@ -20,7 +20,7 @@ services:
 
   celery:
     image: ${SERVER_DOCKER_IMAGE}
-    command: supervisord -c /code/worker.conf
+    command: supervisord -c /code/worker.conf --loglevel ${SUPERVISOR_LOG_LEVEL}
     user: ${BAMM_USER_UID}
     volumes:
       - ${WEBSERVER_DIR}:/code
@@ -28,6 +28,7 @@ services:
       - ${MOTIF_DB_DIR}:/motif_db
       - ${LOG_DIR}:/logs
       - ${BACKUP_DIR}:/backup
+      - ${TMP_DIR}:/tmp_dir
     links:
       - redis_celery
       - db
@@ -81,6 +82,7 @@ services:
       - ${MOTIF_DB_DIR}:/motif_db
       - ${LOG_DIR}:/logs
       - ${BACKUP_DIR}:/backup
+      - ${TMP_DIR}:/tmp_dir
     ports:
       - ${SERVER_HOST_PORT}:10080
     links:
