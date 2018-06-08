@@ -38,6 +38,10 @@ def cleanup_task():
 
 @task
 def full_backup():
-    management.call_command('dbbackup', noinput=True)
-    management.call_command('mediabackup', noinput=True, compress=True)
-    logger.info('automatic backup successful.')
+    logger.info('starting daily backup procedure.')
+    try:
+        management.call_command('dbbackup', noinput=True)
+        management.call_command('mediabackup', noinput=True, compress=True)
+        logger.info('automatic backup successful.')
+    except Exception as e:
+        logger.error(e)
