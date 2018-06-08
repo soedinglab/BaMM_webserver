@@ -108,3 +108,8 @@
 .genome_browser_form td {
   padding: 5px;
 }
+
+.subheader_toolbar {
+  text-align: right;
+  margin-bottom: 10px;
+}
