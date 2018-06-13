@@ -54,17 +54,14 @@ class JobSaveManager:
     def __exit__(self, error_type, error, tb):
         job = self.job
 
+        swallow_exception = False
+
         if error_type is SoftTimeLimitExceeded:
             job.meta_job.status = 'Killed'
             self.had_exception = True
             print(timezone.now(), "\t | WARNING: \t Exceeded time limit.")
             logger.warn('Job %s exceeded the time limit and was killed.', job.meta_job.pk)
-
-            job.meta_job.save()
-            job.save()
-
-            # swallow the exception
-            return True
+            swallow_exception = True
 
         elif error_type is not None:
             job.meta_job.status = self.error_status
@@ -72,16 +69,16 @@ class JobSaveManager:
             logger.exception(error)
             traceback.print_exception(error_type, error, tb, file=sys.stdout)
             print(timezone.now(), "\t | WARNING: \t %s " % job.meta_job.status)
-
-            # swallow the exception
-            return True
+            swallow_exception = True
 
         else:
             job.meta_job.status = self.success_status
             self.had_exception = False
             print(timezone.now(), "\t | END: \t %s " % job.meta_job.status)
+
         job.meta_job.save()
         job.save()
+        return swallow_exception
 
 
 class CommandFailureException(Exception):
