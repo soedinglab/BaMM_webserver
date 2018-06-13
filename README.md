@@ -6,6 +6,7 @@
 This repository contains the source code of the [BaMM web server](https://bammmotif.mpibpc.mpg.de/). A bioinformatic resource for analysis of nucleotide binding proteins with higher-order Bayesian Markov Models (BaMMs).
 
 ## News
+* **2018/06/13**- We updated the server to version 1.2, please check the [Release Notes](https://github.com/soedinglab/BaMM_webserver/releases/tag/v1.2) for a list of changes.
 * **2018/06/01**- We updated the server to version 1.1, fixed a couple of nasty bugs and give a way to visualize motif occurrences in the genome browser.
 * **2018/05/06**- We fixed a couple of edge cases, improved the input validation and alert the user if we suspect that refined motifs in the de-novo workflow may not be the actual motif.
 * **2018/04/22**- We are happy to present a massively improved version. Highlights are a drastic speed improvement, a standalone one-step denovo workflow, estimation of the motif occurrence from the data, a cleaner user interface, a list of recently submitted jobs, and much more. We would like to thank our reviewers for their helpful suggestions for improving the server.
@@ -21,7 +22,7 @@ All persistent data will be stored on the host. I am using the directory `/var/w
 ```bash
 WEBSERVER_DIR=/var/webserver
 # create folder structure
-mkdir -p $WEBSERVER_DIR/{media_db,logs,motif_db,mysql_db,redis_db,backup}
+mkdir -p $WEBSERVER_DIR/{media_db,logs,motif_db,mysql_db,redis_db,backup,tmp}
 
 cd $WEBSERVER_DIR
 git clone https://github.com/soedinglab/BaMM_webserver.git
@@ -56,10 +57,7 @@ Please make sure that
 
 If you are done, you can double check the settings by running `docker-compose config`. You should not see any warnings.
 
-### 4) Building the webserver
-Now you can build the webserver by running `docker-compose build` from the root of `$WEBSERVER_DIR/BaMM_webserver`
-
-### 5) Starting the webserver
+### 4) Starting the webserver
 After successfully building, the webserver can be started typing `docker-compose up`. In case you see errors related to mysql migrations try stopping the server by `ctrl-C` and let is shut down gracefully, then restart by `docker-compose up`. The error should be gone.
 
 Now you should be able to access the webserver at `0.0.0.0:10080` in your favorite browser.
