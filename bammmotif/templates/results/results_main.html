@@ -34,10 +34,11 @@
   <div class="subheader_toolbar">
     <form action="{% url 'download_job_list_csv' %}" method="post" enctype="multipart/form-data">
       {% csrf_token %}
-    <button type="submit" class="btn btn-default">
-      <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
-      Download as CSV
-    </button>
+      <button type="submit" class="btn btn-default">
+        <span class="glyphicon glyphicon-download" aria-hidden="true"></span>
+        Download as CSV
+      </button>
+    </form>
 </div>
 
   <span>
@@ -80,7 +81,7 @@
                       If you change computers, browsers or clear temporary data the list will be empty again.
                     </p>
                     <p align="justify">
-                      <strong>For important jobs please also safe the job id</strong> to make sure you will have access in the future.
+                      <strong>For important jobs please also save the job id</strong> to make sure you will have access in the future.
                       The job id can be found in the settings drop-down menu on the result page or in the job list csv file which can be downloaded below.
                     </p>
                 </font>
