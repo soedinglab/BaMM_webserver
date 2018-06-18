@@ -1,4 +1,6 @@
 import os
+from os import path
+import subprocess
 import io
 import glob
 from urllib.parse import urljoin
@@ -68,8 +70,13 @@ def find_results_by_id(request, pk):
 
     if not meta_job.complete:
         log_file = get_log_file(pk)
-        command = "tail -20 %r" % log_file
-        output = os.popen(command).read()
+        command = 'tail -20 %r' % log_file
+
+        if not path.exists(log_file):
+            output = '(job still queueing)'
+        else:
+            output = subprocess.getoutput(command)
+
         return render(request, 'results/result_status.html', {
             'output': output,
             'job_id': meta_job.pk,
@@ -80,7 +87,7 @@ def find_results_by_id(request, pk):
     else:
         base = request.build_absolute_uri('/')
         url = urljoin(base, url_prefix[meta_job.job_type] + '/' + job_id)
-        return redirect(url, permanent=False)
+        return redirect(url)
 
 
 def get_session_jobs(request):
@@ -167,12 +174,12 @@ def serve_job_csv(request):
     sorted_jobs = session_jobs.order_by('-job__created_at')
     csv_obj = io.StringIO()
     header = [
-        'submission_time', 'job_name', 
+        'submission_time', 'job_name',
         'job_id', 'job_type', 'job_status'
-    ] 
+    ]
     print(*header, sep=',', file=csv_obj)
     for job_session in sorted_jobs:
-        job = job_session.job 
+        job = job_session.job
         tokens = [
             job.created_at,
             job.job_name,
@@ -182,7 +189,7 @@ def serve_job_csv(request):
         ]
         print(*tokens, sep=',', file=csv_obj)
     csv_obj.seek(0)
-    
+
     csv_string = csv_obj.read()
     bytes_response = csv_string.encode('utf-8')
 
