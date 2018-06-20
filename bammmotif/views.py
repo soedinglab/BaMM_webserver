@@ -14,6 +14,7 @@ from django.shortcuts import (
 from django.http import (
     HttpResponse,
     FileResponse,
+    JsonResponse,
     Http404,
 )
 from django.conf import settings
@@ -62,6 +63,12 @@ def imprint(request):
 
 def submitted(request, pk):
     return render(request, 'job/submitted.html', {'pk': pk})
+
+
+def get_job_status(request, pk):
+    job_id = pk
+    meta_job = get_object_or_404(JobInfo, job_id=job_id)
+    return JsonResponse({'status': meta_job.status})
 
 
 def find_results_by_id(request, pk):

@@ -5,11 +5,7 @@ django-ipware
 django-widget-tweaks
 django-dbbackup
 mysqlclient
-psycopg2
 Celery
-numpy
 redis
-pandas
-matplotlib
-scipy
 pyyaml
+requests

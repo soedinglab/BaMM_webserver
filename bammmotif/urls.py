@@ -52,5 +52,6 @@ urlpatterns = [
     url(r'^my_results/$', views.find_results, name='find_results'),
     url(r'^my_results/csv$', views.serve_job_csv, name='download_job_list_csv'),
     url(r'^find_result/(?P<pk>.*)/$', views.find_results_by_id, name='find_results_by_id'),
+    url(r'^find_result/(?P<pk>.*)/status$', views.get_job_status, name='get_job_status'),
     url(r'^peng_to_bamm_results/(?P<pk>.*)/$', peng_views.peng_to_bamm_result_detail, name='peng_to_bamm_result_detail'),
  ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

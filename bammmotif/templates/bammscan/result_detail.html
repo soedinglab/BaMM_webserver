@@ -134,11 +134,7 @@
       {% if result.score_Seqset %}
       <tr>
         <td colspan="2">
-          {% if result.Motif_Init_File_Format == "BaMM" %}
-            <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_distribution.png" class="responsive-img" style='width:800px;' alt="Positional Distribution"> &emsp;
-          {% else %}
             <img src="{% get_media_prefix %}/{{opath}}/{{Output_filename}}_motif_{{m.job_rank}}_distribution.png" class="responsive-img" style='width:800px;' alt="Positional Distribution"> &emsp;
-          {% endif %}
         </td>
       </tr>
       {% endif %}
