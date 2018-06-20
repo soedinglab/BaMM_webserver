@@ -69,6 +69,7 @@ services:
         - N_STORED_BACKUPS=${N_STORED_BACKUPS}
         - DAILY_BACKUP_HOUR_UTC=${DAILY_BACKUP_HOUR_UTC}
         - DAILY_CLEANUP_HOUR_UTC=${DAILY_CLEANUP_HOUR_UTC}
+        - TEST_SERVER_URL=${TEST_SERVER_URL}
 
   web:
     image: ${SERVER_DOCKER_IMAGE}
@@ -83,6 +84,7 @@ services:
       - ${LOG_DIR}:/logs
       - ${BACKUP_DIR}:/backup
       - ${TMP_DIR}:/tmp_dir
+      - ${TEST_DATA_DIR}:/test_data
     ports:
       - ${SERVER_HOST_PORT}:10080
     links:
