@@ -109,7 +109,7 @@ def get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model, motif_id
     params.append("--basename")
 
     if first_task_in_pipeline and job.Motif_Init_File_Format == 'BaMM':
-        prefix = job.filename_prefix
+        prefix = '%s_motif_%s' % (job.filename_prefix, motif_id)
     elif (is_refined_model or job.Motif_Init_File_Format == 'BaMM' or
           job.Motif_Init_File_Format == 'BindingSites'):
         prefix = '%s_motif_%s' % (job.filename_prefix, motif_id)
