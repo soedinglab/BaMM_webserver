@@ -234,6 +234,7 @@ def run_refine(request, pk):
             selected_motifs = get_selected_motifs(request.POST)
             copy_peng_to_bamm(peng_job_pk, bamm_job_pk, selected_motifs)
             save_selected_motifs(selected_motifs, peng_job.meta_job.pk, bamm_job_pk)
+            bamm_job.num_motifs = len(selected_motifs)
 
             with transaction.atomic():
                 bamm_job.meta_job.save()
