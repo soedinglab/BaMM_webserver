@@ -28,7 +28,7 @@ def cleanup_input_files():
         try:
             shutil.rmtree(input_folder)
         except FileNotFoundError:
-            logger.warn('Could not find input folder %s', input_folder)
+            logger.info('Could not find input folder %s', input_folder)
 
     logger.info('removed input files of %s jobs', len(timed_out_jobs))
 
@@ -36,20 +36,9 @@ def cleanup_input_files():
 def cleanup_expired_jobs():
     min_time = timezone.now() - timezone.timedelta(days=settings.MAX_JOB_STORAGE_DAYS)
     timed_out_jobs = JobInfo.objects.filter(created_at__lt=min_time, is_example=False)
-
-    for job in timed_out_jobs:
-        logger.debug('job %s selected for removal.', job.job_id)
-        job_folder = get_job_folder(job.job_id)
-        job.delete()
-        try:
-            shutil.rmtree(job_folder)
-            logger.debug('removing expired job folder: %s' % job_folder)
-        except FileNotFoundError:
-            logger.warn('could not find job folder %s', job_folder)
-        except OSError as exc:
-            logger.error(exc)
-
-    logger.info('removed %s expired jobs', len(timed_out_jobs))
+    n_selected_jobs = len(timed_out_jobs)
+    timed_out_jobs.delete()
+    logger.info('removed %s expired jobs', n_selected_jobs)
 
 
 def remove_orphan_jobdirs():

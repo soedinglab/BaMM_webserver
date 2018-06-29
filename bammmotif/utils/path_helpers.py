@@ -2,7 +2,6 @@ from django.conf import settings
 
 from os import path
 import os
-import shutil
 import logging
 
 logger = logging.getLogger(__name__)
@@ -40,10 +39,3 @@ def get_job_input_folder(job_id):
 
 def get_log_file(job_id):
     return path.join(get_job_folder(job_id), 'job.log')
-
-
-def remove_job_folder(job_id):
-    job_folder = get_job_folder(job_id)
-    if path.isdir(job_folder):
-        logger.debug('deleting %s and all its contents', job_folder)
-        shutil.rmtree(job_folder)

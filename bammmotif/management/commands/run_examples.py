@@ -25,7 +25,6 @@ from bammmotif.peng.utils import save_selected_motifs, copy_peng_to_bamm
 from bammmotif.peng.io import get_motif_init_file, job_input_directory, mmcompare_motif_init_file
 from bammmotif.utils import (
     is_fasta,
-    remove_job_folder,
 )
 from webserver.settings import EXAMPLE_DIR
 from bammmotif.peng.settings import FILTERPWM_OUTPUT_FILE
@@ -53,7 +52,6 @@ def already_done(job_id):
         if not job.complete:
             logger.info('Job %s not finished. Cleaning up and restarting', job)
             job.delete()
-            remove_job_folder(job_uuid)
             return False
         logger.debug('Job %s already done. Skipping', job)
         return True
@@ -234,7 +232,6 @@ class Command(BaseCommand):
         if options['flush']:
             for example_job in JobInfo.objects.filter(user=user):
                 logger.info('Removing example job %s', example_job)
-                remove_job_folder(example_job.pk)
                 example_job.delete()
 
         example_list = [os.path.join(EXAMPLE_DIR, x) for x in os.listdir(EXAMPLE_DIR) if is_fasta(x)]
