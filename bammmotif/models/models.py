@@ -249,6 +249,9 @@ class Motifs(models.Model):
         return self.motif_ID
 
     def rank_score(self):
+        # if FDR was not run, we rank by motif id
+        if self.m_aurrc is None or self.occurrence is None:
+            return self.job_rank
         return self.m_aurrc * self.occurrence
 
 
