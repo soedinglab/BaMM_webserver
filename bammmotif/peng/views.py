@@ -114,6 +114,7 @@ def peng_results(request, pk):
 
 
 def run_peng_view(request, mode='normal'):
+
     if request.method == "POST":
         form, meta_job_form, valid, args = get_valid_peng_form(request.POST, request.FILES,
                                                                request.user, mode)
@@ -126,6 +127,10 @@ def run_peng_view(request, mode='normal'):
                 upload_example_fasta_for_peng(peng_job)
             else:
                 is_valid = check_fasta_input(peng_job, form, request.FILES)
+
+            if peng_job.bg_sequences:
+                is_bg_valid = check_fasta_input(peng_job, form, request.FILES, bg_seqs=True)
+                is_valid = is_valid and is_bg_valid
 
             if is_valid:
                 with transaction.atomic():
@@ -192,6 +197,7 @@ def run_refine(request, pk):
             form = PengToBammForm()
             metajob_form = MetaJobNameForm()
             return render(request, 'bamm/refine_input.html', {
+                'validation_errors': False,
                 'job_form': form,
                 'metajob_form': metajob_form,
                 'all_form_fields': itertools.chain(metajob_form, form),
@@ -235,6 +241,7 @@ def run_refine(request, pk):
             copy_peng_to_bamm(peng_job_pk, bamm_job_pk, selected_motifs)
             save_selected_motifs(selected_motifs, peng_job.meta_job.pk, bamm_job_pk)
             bamm_job.num_motifs = len(selected_motifs)
+            bamm_job.Background_Sequences = peng_job.bg_sequences
 
             with transaction.atomic():
                 bamm_job.meta_job.save()
@@ -248,11 +255,22 @@ def run_refine(request, pk):
             })
 
         else:
-            print(form.errors)
+            return render(request, 'bamm/refine_input', {
+                'validation_errors': True,
+                'job_form': form,
+                'metajob_form': metajob_form,
+                'all_form_fields': itertools.chain(metajob_form, form),
+                'mode': mode,
+                'inputfile': inputfile,
+                'job_name': peng_job.meta_job.job_name,
+                'pk': peng_job_pk,
+                'selected_motif_keys': selected_motif_keys,
+            })
 
     form = PengToBammForm()
     metajob_form = MetaJobNameForm()
     return render(request, 'bamm/refine_input.html', {
+        'validation_errors': False,
         'job_form': form,
         'metajob_form': metajob_form,
         'all_form_fields': itertools.chain(metajob_form, form),

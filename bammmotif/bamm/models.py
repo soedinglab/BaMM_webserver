@@ -5,7 +5,11 @@ from django.db.models.signals import post_delete
 from django.conf import settings
 from django.dispatch import receiver
 
-from ..models import JobInfo, MotifDatabase, PengJob
+from ..models import (
+    JobInfo,
+    MotifDatabase,
+    PengJob,
+)
 from ..utils import job_dir_storage as job_fs
 from ..utils import (
     job_upload_to_input,
@@ -35,14 +39,15 @@ class BaMMJob(models.Model):
 
     # files
     Input_Sequences = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
-                                       null=True)
+                                       null=True, validators=[file_size_validator])
     Background_Sequences = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
-                                            null=True, blank=True)
+                                            null=True, blank=True, validators=[file_size_validator])
     Motif_Initialization = models.CharField(max_length=255, choices=INIT_CHOICES,
                                             default="PEnGmotif")
     Motif_InitFile = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
-                                      null=True, blank=True)
-    Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES, default="MEME")
+                                      null=True, blank=True, validators=[file_size_validator])
+    Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES,
+                                              default="MEME")
     num_init_motifs = models.IntegerField(default=10)
 
     # options
@@ -63,7 +68,7 @@ class BaMMJob(models.Model):
     score_Seqset = models.BooleanField(default=True)
     score_Cutoff = models.FloatField(default=0.0001)
     bgModel_File = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
-                                    null=True, blank=True)
+                                    null=True, blank=True, validators=[file_size_validator])
 
     # advanced options
     background_Order = models.PositiveSmallIntegerField(default=2)

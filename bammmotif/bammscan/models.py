@@ -7,7 +7,7 @@ from django.dispatch import receiver
 
 from ..models import JobInfo, MotifDatabase
 
-from ..utils import get_job_input_folder, job_upload_to_input
+from ..utils import job_upload_to_input, file_size_validator
 
 
 FORMAT_CHOICES = (
@@ -20,11 +20,13 @@ class BaMMScanJob(models.Model):
     meta_job = models.OneToOneField(JobInfo, on_delete=models.CASCADE,
                                     primary_key=True, editable=False)
 
-    Input_Sequences = models.FileField(upload_to=job_upload_to_input, null=True)
+    Input_Sequences = models.FileField(upload_to=job_upload_to_input, null=True,
+                                       validators=[file_size_validator])
     reverse_Complement = models.BooleanField(default=True)
 
     num_motifs = models.IntegerField(default=1)
-    Motif_InitFile = models.FileField(upload_to=job_upload_to_input, null=True, blank=True)
+    Motif_InitFile = models.FileField(upload_to=job_upload_to_input, null=True, blank=True,
+                                      validators=[file_size_validator])
     Motif_Init_File_Format = models.CharField(max_length=255, choices=FORMAT_CHOICES,
                                               default="MEME")
 
@@ -32,13 +34,15 @@ class BaMMScanJob(models.Model):
     background_Order = models.PositiveSmallIntegerField(default=2)
 
     # needed for get_core_params compatibility
-    Background_Sequences = models.FileField(upload_to=job_upload_to_input, null=True, blank=True)
+    Background_Sequences = models.FileField(upload_to=job_upload_to_input, null=True, blank=True,
+                                            validators=[file_size_validator])
     num_init_motifs = models.IntegerField(default=10)
 
     # BaMMScan
     score_Seqset = models.BooleanField(default=True)
     score_Cutoff = models.FloatField(default=0.0001)
-    bgModel_File = models.FileField(upload_to=job_upload_to_input, null=True, blank=True)
+    bgModel_File = models.FileField(upload_to=job_upload_to_input, null=True, blank=True,
+                                    validators=[file_size_validator])
 
     # FDR related fields
     FDR = models.BooleanField(default=True)
