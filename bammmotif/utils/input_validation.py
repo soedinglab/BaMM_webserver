@@ -55,6 +55,13 @@ class MEMEValidationError(ValueError):
 
 
 def validate_generic_meme(meme_file):
+    try:
+        return validate_generic_meme_textfile(meme_file)
+    except UnicodeDecodeError:
+        raise MEMEValidationError('does not seem to be a text file')
+
+
+def validate_generic_meme_textfile(meme_file):
     with open(meme_file) as handle:
         line = handle.readline()
         if line.strip() != 'MEME version 4':
