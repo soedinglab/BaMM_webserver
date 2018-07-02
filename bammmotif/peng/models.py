@@ -12,6 +12,7 @@ from ..utils import job_dir_storage as job_fs
 from ..utils import (
     job_upload_to_input,
     get_job_output_folder,
+    file_size_validator,
 )
 
 
@@ -20,11 +21,11 @@ class PengJob(models.Model):
                                     primary_key=True)
     num_motifs = models.IntegerField(default=1)
     fasta_file = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
-                                  null=True)
+                                  null=True, validators=[file_size_validator])
     temp_dir = models.CharField(max_length=100, null=True,
                                 default=ShootPengModule.defaults['temp_dir'])
     bg_sequences = models.FileField(upload_to=job_upload_to_input, storage=job_fs,
-                                    null=True, blank=True)
+                                    null=True, blank=True, validators=[file_size_validator])
     pattern_length = models.IntegerField(default=ShootPengModule.defaults['pattern_length'])
     zscore_threshold = models.FloatField(default=ShootPengModule.defaults['zscore_threshold'])
     count_threshold = models.IntegerField(default=ShootPengModule.defaults['count_threshold'])

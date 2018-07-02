@@ -42,6 +42,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 
 SECRET_KEY = get_from_env('SECRET_KEY')
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_from_env('DJANGO_DEBUG', converter=lambda x: x == "1")
@@ -214,6 +216,7 @@ BAMM_INPUT = 'Input'
 
 # email logging configuration
 EMAIL_LOGGER_LEVEL = get_from_env('EMAIL_LOGGER_LEVEL')
+EMAIL_REQUEST_LOGGER_LEVEL = get_from_env('EMAIL_REQUEST_LOGGER_LEVEL')
 EMAIL_LOGGER_SERVER = get_from_env('EMAIL_LOGGER_SERVER')
 EMAIL_LOGGER_PORT = get_from_env('EMAIL_LOGGER_PORT', converter=int)
 EMAIL_LOGGER_FROM = get_from_env('EMAIL_LOGGER_FROM')
@@ -278,7 +281,7 @@ LOGGING = {
 }
 
 if USE_EMAIL_LOGGER:
-    LOGGING['handlers']['bammmotif_email'] = {
+    bammmotif_email_handler = {
         'class': 'bammmotif.logging.TlsSMTPHandler',
         'mailhost': (EMAIL_LOGGER_SERVER, EMAIL_LOGGER_PORT),
         'fromaddr': EMAIL_LOGGER_FROM,
@@ -288,7 +291,14 @@ if USE_EMAIL_LOGGER:
         'level': EMAIL_LOGGER_LEVEL,
         'use_tls': EMAIL_LOGGER_USE_TLS,
     }
+    LOGGING['handlers']['bammmotif_email'] = bammmotif_email_handler
     LOGGING['loggers']['bammmotif']['handlers'].append('bammmotif_email')
+
+    bammmotif_request_handler = dict(bammmotif_email_handler)
+    bammmotif_request_handler['level'] = EMAIL_REQUEST_LOGGER_LEVEL
+    LOGGING['handlers']['bammmotif_request_email'] = bammmotif_request_handler
+    LOGGING['loggers']['django.request']['handlers'].append('bammmotif_request_email')
+
 
 # Miscellaneous configuration
 MAX_FINDJOB_DAYS = get_from_env('MAX_FINDJOB_DAYS', converter=int)

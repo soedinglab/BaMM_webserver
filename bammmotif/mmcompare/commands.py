@@ -54,17 +54,6 @@ def get_pwm2bamm_command(job):
     return param
 
 
-def get_jointprob_command(job):
-    job_pk = job.meta_job.pk
-    prefix = job.filename_prefix
-    params = [
-        'getProbfromConProb.R',
-        get_job_output_folder(job_pk) + '/',
-        prefix
-    ]
-    return params
-
-
 def get_compare_iupac_command(job):
     job_pk = job.meta_job.pk
     prefix = job.filename_prefix

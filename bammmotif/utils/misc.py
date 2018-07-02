@@ -24,9 +24,8 @@ from ..models import (
 from ..utils.input_validation import (
     validate_fasta_file,
     validate_bamm_file,
-    validate_bamm_bg_file,
     validate_generic_meme,
-    MEMEValidationError,
+    FileFormatValidationError,
 )
 
 
@@ -94,8 +93,7 @@ def run_command(command, enforce_exit_zero=True):
     command_str = ' '.join('%r' % s for s in command)
     logger.debug("executing: %s", command_str)
 
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                               preexec_fn=ignore_sigterm)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while True:
         nextline = process.stdout.readline()
         if nextline == b'' and process.poll() is not None:
@@ -191,26 +189,29 @@ def check_motif_input(job, form, request):
             form.add_error('Motif_InitFile', msg)
             is_valid = False
     elif job.Motif_Init_File_Format == 'BaMM':
-        if not validate_bamm_file(job.full_motif_file_path):
-            form.add_error('Motif_InitFile', 'Does not seem to be in BaMM format.')
+        success, msg = check_bamm_input(job, form, request.FILES, homogeneous=False)
+        if not success:
+            form.add_error('Motif_InitFile', 'Problem parsing the BaMM format - %s' % msg)
             is_valid = False
+
         if not job.bgModel_File:
             form.add_error('bgModel_File', 'This field is required.')
             is_valid = False
-        elif not validate_bamm_bg_file(job.full_motif_bg_file_path):
-            form.add_error('bgModel_File', 'Does not seem to be a BaMM '
-                                           'background model.')
-            is_valid = False
+        else:
+            success, msg = check_bamm_input(job, form, request.FILES, homogeneous=True)
+            if not success:
+                form.add_error('bgModel_File', 'Problem parsing the BaMM format - %s' % msg)
+                is_valid = False
 
     return is_valid
 
 
-def check_fasta_input(job, form, rq_files):
-    try:
-        job._meta.get_field('Input_Sequences')
-        fasta_field = 'Input_Sequences'
-    except FieldDoesNotExist:
-        fasta_field = 'fasta_file'
+def check_fasta_input(job, form, rq_files, bg_seqs=False):
+
+    if bg_seqs:
+        fasta_field = get_seq_model_field(job, 'Background_Sequences', 'bg_sequences')
+    else:
+        fasta_field = get_seq_model_field(job, 'Input_Sequences', 'fasta_file')
 
     with NamedTemporaryFile('wb+') as tmp_file:
         for chunk in rq_files[fasta_field].chunks():
@@ -224,6 +225,16 @@ def check_fasta_input(job, form, rq_files):
     return True
 
 
+def get_seq_model_field(job, option1, option2):
+    try:
+        job._meta.get_field(option1)
+        field_name = option1
+    except FieldDoesNotExist:
+        field_name = option2
+    return field_name
+    
+
+
 def check_meme_input(job, form, rq_files):
     motif_field = 'Motif_InitFile'
 
@@ -234,7 +245,7 @@ def check_meme_input(job, form, rq_files):
 
         try:
             validate_generic_meme(tmp_file.name)
-        except MEMEValidationError as ex:
+        except FileFormatValidationError as ex:
             return False, str(ex)
         except ValueError as unknown_err:
             logger.exception(unknown_err)
@@ -243,5 +254,23 @@ def check_meme_input(job, form, rq_files):
         return True, 'Success'
 
 
-def ignore_sigterm():
-    signal.signal(signal.SIGTERM, signal.SIG_IGN)
+def check_bamm_input(job, form, rq_files, homogeneous=False):
+    if not homogeneous:
+        motif_field = 'Motif_InitFile'
+    else:
+        motif_field = 'bgModel_File'
+
+    with NamedTemporaryFile('wb+') as tmp_file:
+        for chunk in rq_files[motif_field].chunks():
+            tmp_file.write(chunk)
+        tmp_file.flush()
+
+        try:
+            validate_bamm_file(tmp_file.name, homogeneous)
+        except FileFormatValidationError as ex:
+            return False, str(ex)
+        except ValueError as unknown_err:
+            logger.exception(unknown_err)
+            return False, 'generic parsing problem of the BaMM file'
+
+        return True, 'Success'

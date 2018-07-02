@@ -2,8 +2,6 @@ from collections import OrderedDict
 import subprocess
 import logging
 
-from .misc import ignore_sigterm
-
 logger = logging.getLogger(__name__)
 
 
@@ -93,7 +91,6 @@ class CommandlineModule:
     def run(self, **kw_args):
         extra_args = {
             'universal_newlines': True,
-            'preexec_fn': ignore_sigterm,
         }
         extra_args.update(kw_args)
 

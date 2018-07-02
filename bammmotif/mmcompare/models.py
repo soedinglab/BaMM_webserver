@@ -6,7 +6,8 @@ from django.db.models.signals import post_delete
 from django.conf import settings
 from django.dispatch import receiver
 
-from bammmotif.models import JobInfo, MotifDatabase
+from ..models import JobInfo, MotifDatabase
+from ..utils import file_size_validator
 
 
 INIT_FORMAT_CHOICES = (
@@ -23,12 +24,14 @@ def job_directory_path_motif(instance, filename):
 class MMcompareJob(models.Model):
     meta_job = models.OneToOneField(JobInfo, on_delete=models.CASCADE, primary_key=True)
 
-    Motif_InitFile = models.FileField(upload_to=job_directory_path_motif, null=True)
+    Motif_InitFile = models.FileField(upload_to=job_directory_path_motif, null=True,
+                                      validators=[file_size_validator])
     Motif_Init_File_Format = models.CharField(max_length=255, choices=INIT_FORMAT_CHOICES,
                                               default="MEME")
     num_motifs = models.IntegerField(default=1)
     model_order = models.PositiveSmallIntegerField(default=4)
-    bgModel_File = models.FileField(upload_to=job_directory_path_motif, null=True, blank=True)
+    bgModel_File = models.FileField(upload_to=job_directory_path_motif, null=True, blank=True,
+                                    validators=[file_size_validator])
     e_value_cutoff = models.DecimalField(default=0.5, max_digits=3, decimal_places=2)
     motif_db = models.ForeignKey(MotifDatabase, null=True, on_delete=models.CASCADE)
 
@@ -37,7 +40,7 @@ class MMcompareJob(models.Model):
         file_name = path.basename(self.Motif_InitFile.name)
         prefix, _ = path.splitext(file_name)
         if self.Motif_Init_File_Format == 'BaMM':
-             prefix = re.sub('_motif_[0-9]+$', '', prefix)
+            prefix = re.sub('_motif_[0-9]+$', '', prefix)
         return prefix
 
     @property

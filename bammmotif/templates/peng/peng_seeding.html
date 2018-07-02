@@ -11,24 +11,7 @@
             <hr class="header_line">
             <div class='container-fluid'>
 
-              {% if validation_errors %}
-              <div class="alert alert-warning">
-                <h4>Unfortunately your input did not pass validation</h4>
-                <ul>
-                    {% for field, errors in job_form.errors.items %}
-                       {% for error in errors %}
-                        <li>
-                          <span>
-                            {{ field }}:
-                          </span>
-                            {{ error}}
-                        </li>
-                        {% endfor %}
-                      {% endfor %}
-                </ul>
-              </div>
-              {% endif %}
-
+	    {% include 'utils/validation_error_box.html' %}
 
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}

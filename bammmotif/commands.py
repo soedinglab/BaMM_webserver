@@ -113,3 +113,16 @@ def Compress(job):
     run_command(get_compress_command(job))
     for motif_no in range(job.num_motifs):
         run_command(get_motif_compress_command(job, motif_no + 1))
+
+
+def get_jointprob_command(job, motif_no=1):
+    job_pk = job.meta_job.pk
+    prefix = job.filename_prefix
+    output_folder = get_job_output_folder(job_pk)
+    params = [
+        'extractProbs',
+        output_folder + '/',
+        path.join(output_folder, prefix + '_motif_%s.ihbcp' % motif_no),
+        path.join(output_folder, prefix + '.hbcp'),
+    ]
+    return params

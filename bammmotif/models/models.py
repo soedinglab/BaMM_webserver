@@ -1,20 +1,31 @@
 from __future__ import unicode_literals
+
+import uuid
+import os
+from os import path
+import logging
+import shutil
+
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-import uuid
-import os
-from os import path
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 from . import custom_fields
+
+logger = logging.getLogger(__name__)
+
+
+def get_job_folder(job_id):
+    return path.join(settings.MEDIA_ROOT, settings.JOB_DIR_PREFIX, str(job_id))
 
 
 FORMAT_CHOICES = (
     ('BindingSites', 'BindingSites'),
     ('PWM', 'PWM'),
-    ('BaMM', 'BaMM'),
-)
+    ('BaMM', 'BaMM'),)
 
 INIT_CHOICES = (
     ('CustomFile', 'CustomFile'),
@@ -30,9 +41,9 @@ ALPHABET_CHOICES = (
 )
 
 MODE_CHOICES = (
-    ('Prediction','Prediction'),
-    ('Occurrence','Occurrence'),
-    ('Compare','Compare')
+    ('Prediction', 'Prediction'),
+    ('Occurrence', 'Occurrence'),
+    ('Compare', 'Compare')
 )
 
 JOB_INFO_MODE_CHOICES = (
@@ -61,9 +72,11 @@ def job_directory_path_sequence_new(instance, filename):
     return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_id),
                         'Input', str(f_name))
 
+
 def job_directory_path_motif_new(instance, filename):
     return os.path.join(settings.JOB_DIR_PREFIX, str(instance.job_id),
                         'Input', str(filename))
+
 
 def job_directory_path_peng_new(instance, filename):
     path_to_job = "/code/media"
@@ -144,7 +157,6 @@ class MotifDatabase(models.Model):
     def relative_db_model_dir(self):
         return path.join(str(self.db_id), 'models')
 
-
     def __str__(self):
         return str(self.db_id)
 
@@ -211,6 +223,17 @@ class JobInfo(models.Model):
         return JOB_MODE_MAPPING.get(self.job_type, 'unknown')
 
 
+@receiver(post_delete, sender=JobInfo)
+def delete_job_info(sender, instance, *args, **kwargs):
+    job_dir = get_job_folder(instance.job_id)
+    if path.isdir(job_dir):
+        try:
+            shutil.rmtree(job_dir)
+            logger.debug('cleaned up job directory %s from file storage', job_dir)
+        except OSError as exc:
+            logger.error(exc)
+
+
 class Motifs(models.Model):
     motif_ID = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     parent_job = models.ForeignKey(JobInfo, on_delete=models.CASCADE, null=False)
@@ -226,6 +249,9 @@ class Motifs(models.Model):
         return self.motif_ID
 
     def rank_score(self):
+        # if FDR was not run, we rank by motif id
+        if self.m_aurrc is None or self.occurrence is None:
+            return self.job_rank
         return self.m_aurrc * self.occurrence
 
 

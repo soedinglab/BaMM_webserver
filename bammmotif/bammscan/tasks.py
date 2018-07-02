@@ -9,6 +9,7 @@ from ..utils import (
     JobSaveManager,
     make_job_folder,
     get_log_file,
+    run_command,
 )
 
 from .models import BaMMScanJob
@@ -17,7 +18,9 @@ from ..tasks import generic_model_zip_task
 from .commands import (
     BaMMScan,
     create_bed_files,
-    can_create_bed
+    can_create_bed,
+    copy_bamm_file_to_output,
+    get_meme_to_bamm_command,
 )
 
 
@@ -38,6 +41,11 @@ def bamm_scan_pipeline(job_pk):
     job = get_object_or_404(BaMMScanJob, meta_job__pk=job_pk)
     with JobSaveManager(job):
         make_job_folder(job_pk)
+
+        if job.Motif_Init_File_Format == 'BaMM':
+            copy_bamm_file_to_output(job)
+        elif job.Motif_Init_File_Format == 'MEME':
+            run_command(get_meme_to_bamm_command(job))
 
         generic_bammscan_task(job, first_in_pipeline=True, is_refined_model=False)
         if job.FDR:

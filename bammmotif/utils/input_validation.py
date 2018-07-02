@@ -38,40 +38,35 @@ def validate_fasta_file(file_path):
     return success, result_description[exit_code]
 
 
-def validate_meme_file(file_path):
-    return True
-
-
-def validate_bamm_file(file_path):
-    return True
-
-
-def validate_bamm_bg_file(file_path):
-    return True
-
-
-class MEMEValidationError(ValueError):
+class FileFormatValidationError(ValueError):
     pass
 
 
 def validate_generic_meme(meme_file):
+    try:
+        return validate_generic_meme_textfile(meme_file)
+    except UnicodeDecodeError:
+        raise FileFormatValidationError('does not seem to be a text file')
+
+
+def validate_generic_meme_textfile(meme_file):
     with open(meme_file) as handle:
         line = handle.readline()
         if line.strip() != 'MEME version 4':
-            raise MEMEValidationError('requires MEME minimal file format version 4')
+            raise FileFormatValidationError('requires MEME minimal file format version 4')
 
         # skip over all optional info
         while line and line != 'Background letter frequencies\n':
             line = handle.readline()
 
         if line != 'Background letter frequencies\n':
-            raise MEMEValidationError('could not find background frequencies')
+            raise FileFormatValidationError('could not find background frequencies')
 
         bg_toks = handle.readline().split()[1::2]
         try:
             [float(f) for f in bg_toks]
         except ValueError:
-            raise MEMEValidationError('background frequencies malformed')
+            raise FileFormatValidationError('background frequencies malformed')
 
         # parse pwms
         width_pat = re.compile(r'w= (\d+)')
@@ -83,10 +78,61 @@ def validate_generic_meme(meme_file):
                 info_line = handle.readline()
                 width_hit = width_pat.search(info_line)
                 if not width_hit:
-                    raise MEMEValidationError('could not find motif width of motif %s' % motif_id)
+                    raise FileFormatValidationError('could not find motif width of motif %s' % motif_id)
                 pwm_length = int(width_hit.group(1))
                 try:
                     for i in range(pwm_length):
                         [float(p) for p in handle.readline().split()]
                 except ValueError:
-                    raise MEMEValidationError('could not parse PWM of motif %s' % motif_id)
+                    raise FileFormatValidationError('could not parse PWM of motif %s' % motif_id)
+
+
+def validate_bamm_file(file_path, homogeneous=False):
+    with open(file_path) as file:
+        try:
+            contents = file.read(52428800)
+            if file.readline():
+                raise FileFormatValidationError('input file too large to be read into memory')
+        except UnicodeDecodeError:
+            raise FileFormatValidationError('does not seem to be a text file')
+        return validate_bamm_string(contents, homogeneous)
+
+
+def validate_bamm_string(text, homogeneous=False):
+    text = text.strip('\n')
+    for block_no, block in enumerate(text.split('\n\n')):
+        block_probs = []
+        for line in block.split('\n'):
+            if line.startswith('#'):
+                continue
+            block_probs.append(line.split())
+
+        for order, kmer_probs in enumerate(block_probs):
+            validate_order_len(kmer_probs, order)
+            validate_probabilities(kmer_probs)
+
+    if homogeneous and block_no > 0:
+        raise FileFormatValidationError('expected background model, but got motif model')
+    return True
+
+
+# TODO currently deactivated
+MAX_PROB_EPSILON = 10000000
+
+
+def validate_probabilities(probs):
+    all_probs = []
+    for prob_str in probs:
+        try:
+            prob = float(prob_str)
+            if not 0 <= prob <= 1 + MAX_PROB_EPSILON:
+                raise ValueError()
+        except ValueError:
+            raise FileFormatValidationError('malformed probability representation: %s' % prob_str)
+        all_probs.append(prob)
+
+
+def validate_order_len(probs, order, alphabet_size=4):
+    n_kmers = alphabet_size ** (order + 1)
+    if len(probs) != n_kmers:
+        raise FileFormatValidationError('unexpected number of probabilities  %s' % probs)

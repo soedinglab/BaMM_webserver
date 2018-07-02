@@ -1,6 +1,7 @@
 from django import forms
 
 from .models import JobInfo
+from .models.validators import UUID_validator
 from .utils.ui import HELP_TEXTS
 
 
@@ -18,7 +19,7 @@ class MetaJobNameForm(_MetaJobNameForm):
 
 
 class FindForm(forms.Form):
-    job_ID = forms.CharField(max_length=255)
+    job_ID = forms.CharField(max_length=255, validators=[UUID_validator])
 
 
 class _GenomeBrowserForm(forms.Form):

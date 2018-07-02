@@ -11,6 +11,8 @@
             <hr class="header_line">
             <div class='container-fluid'>
 
+	    {% include 'utils/validation_error_box.html' %}
+
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
 
@@ -100,19 +102,6 @@
                                     </span>
                                   </p>
                                   {% endwith %}
-
-                                  <p class="indented">
-                                    <label for="{{ job_form.Background_Sequences.id_for_label }}">
-                                      <a class="testpup" onmouseover="nhpup.popup($('#{{ job_form.Background_Sequences.html_name }}_info').html(),{'width':400});">
-                                        <span class="glyphicon glyphicon-info-sign info_icon" aria-hidden="true" />
-                                      </a>
-                                      Background Sequences:
-                                    </label>
-                                  </p>
-                                  <p class="indented">
-                                    <input type="file" onchange="validate_file_size(this, {{ max_file_size }} )"
-                                name="{{ job_form.Background_Sequences.html_name }}" id="{{ job_form.Background_Sequences.auto_id }}"/>
-                                  </p>
 
                                   <p class="indented">
                                     <label for="{{ job_form.background_Order.id_for_label }}">
