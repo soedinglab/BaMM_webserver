@@ -13,10 +13,10 @@ from ..utils import (
 
 from ..commands import (
     get_logo_command,
+    get_jointprob_command,
 )
 from .commands import (
     get_pwm2bamm_command,
-    get_jointprob_command,
 )
 
 logger = logging.getLogger(__name__)

@@ -28,11 +28,12 @@ RUN chmod +x /usr/local/bin/dumb-init
 # install python dependencies
 
 COPY requirements.txt /code/
+
 RUN apk add --no-cache --virtual .build-deps mariadb-dev \
     && pip3 install --no-cache-dir -r /code/requirements.txt\
     && apk add --virtual .runtime-deps mariadb-client-libs \
     && apk del .build-deps
-  
+
 # install r packages
 COPY install_packages.R /code/
 

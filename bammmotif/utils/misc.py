@@ -93,8 +93,7 @@ def run_command(command, enforce_exit_zero=True):
     command_str = ' '.join('%r' % s for s in command)
     logger.debug("executing: %s", command_str)
 
-    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                               preexec_fn=ignore_sigterm)
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while True:
         nextline = process.stdout.readline()
         if nextline == b'' and process.poll() is not None:

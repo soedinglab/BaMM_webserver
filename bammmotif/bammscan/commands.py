@@ -24,6 +24,7 @@ from ..commands import (
     get_iupac_command,
     get_logo_command,
     get_distribution_command,
+    get_jointprob_command,
 )
 
 logger = logging.getLogger(__name__)
@@ -66,6 +67,11 @@ def BaMMScan(job, first_task_in_pipeline, is_refined_model):
         run_command(get_iupac_command(job))
         add_motif_iupac(job)
 
+        if job.Motif_Init_File_Format == 'BaMM':
+            with Pool(settings.N_PARALLEL_THREADS) as pool:
+                for motif_no in range(job.num_motifs):
+                    run_command(get_jointprob_command(job, motif_no + 1))
+
         with Pool(settings.N_PARALLEL_THREADS) as pool:
             for order in range(min(job.model_order+1, 3)):
                 pool.apply_async(run_command, (get_logo_command(job, order),))
@@ -103,9 +109,6 @@ def get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model, motif_id
     # add specific params
     params += ['--pvalCutoff', job.score_Cutoff]
 
-    if first_task_in_pipeline:
-        params.append("--saveInitialModel")
-
     params.append("--basename")
 
     if first_task_in_pipeline and job.Motif_Init_File_Format == 'BaMM':
@@ -119,6 +122,17 @@ def get_BaMMScan_command(job, first_task_in_pipeline, is_refined_model, motif_id
     params.append(prefix)
 
     job.save()
+    return params
+
+
+def get_meme_to_bamm_command(job):
+    job_pk = job.meta_job.pk
+    out_folder = path.join(get_job_output_folder(job_pk))
+    params = [
+        'pwm2bamm.py',
+        job.Motif_InitFile.path,
+        '-o', out_folder,
+    ]
     return params
 
 
@@ -152,3 +166,15 @@ def can_create_bed(job):
     occ_filename = '%s_motif_1.occurrence' % job.filename_prefix
     occurrence_file = path.join(job_output_dir, occ_filename)
     return is_convertible_to_bed(occurrence_file)
+
+
+def copy_bamm_file_to_output(job):
+    job_id = job.meta_job.job_id
+    job_output_dir = get_job_output_folder(job_id)
+    prefix = job.filename_prefix
+
+    motif_out = path.join(job_output_dir, prefix + '_motif_1.ihbcp')
+    shutil.copy(job.Motif_InitFile.path, motif_out)
+
+    bg_out = path.join(job_output_dir, prefix + '.hbcp')
+    shutil.copy(job.bgModel_File.path, bg_out)
