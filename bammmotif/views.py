@@ -106,18 +106,27 @@ def get_session_jobs(request):
 
 def find_results(request):
     session_jobs = get_session_jobs(request)
-
+    warning = False
     if request.method == "POST":
         form = FindForm(request.POST)
         if form.is_valid():
             jobid = form.cleaned_data['job_ID']
-            meta_job = get_object_or_404(JobInfo, job_id=jobid)
-            base = request.build_absolute_uri('/')
-            url = urljoin(base, url_prefix[meta_job.job_type] + '/' + jobid)
-            return redirect(url, permanent=True)
+            meta_job = JobInfo.objects.filter(job_id=jobid).first()
+            if meta_job:
+                base = request.build_absolute_uri('/')
+                url = urljoin(base, url_prefix[meta_job.job_type] + '/' + jobid)
+                return redirect(url, permanent=True)
+            else:
+                warning = True
+        else:
+            warning = True
+
+    else:
+        form = FindForm()
     return render(request, 'results/results_main.html', {
-        'form': FindForm(),
+        'form': form,
         'jobs': session_jobs,
+        'warning': warning,
     })
 
 

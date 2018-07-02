@@ -1,4 +1,4 @@
-
+ß
 {% extends "home/header.html" %}
 {% load tz %}
 
@@ -10,9 +10,13 @@
   <h2> Find my job </h2>
   <p class="bamm_text">
       <hr class="header_line">
+
       {% if warning %}
-        <p> <font color="#B22222">No job found with the provided job ID, did you enter the correct job ID ? </font></p>
+      <div class="alert alert-warning">
+        No job found with the provided job ID, did you enter a full job id?
+      </div>
       {% endif %}
+
      <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <p>
