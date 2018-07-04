@@ -33,6 +33,11 @@ def send_post_request(url, params, files):
     return response
 
 
+def send_get_request(url):
+    client = requests.session()
+    return client.get(url)
+
+
 def get_bammscan_url():
     url = server_prefix + '/job/bamm_scan/'
     return url
@@ -85,14 +90,15 @@ def get_compare_parameters():
     return form_to_dict(form)
 
 
-def _check_status_200(response, test_name=None):
+def _check_status(response, expected_code=200, test_name=None):
     if not test_name:
         # infer test name with inpect
         stack = inspect.stack()
         frame = stack[1][0]
         test_name = frame.f_code.co_name
-    if response.status_code != 200:
-        logger.error('obtained status-code %s in test %s' % (response.status_code, test_name))
+    if response.status_code != expected_code:
+        report_error('expected status-code %s, obtained %s', (expected_code, response.status_code),
+                     test_name=test_name)
 
 
 def _check_successful_submit(response, test_name=None):
@@ -112,7 +118,7 @@ def _check_successful_submit(response, test_name=None):
             only_example = False
 
     if only_example:
-        logger.error('job submission failed in test %s' % test_name)
+        report_error('job submission failed', test_name=test_name)
 
 
 def test_denovo():
@@ -126,7 +132,7 @@ def test_denovo():
         url = get_auto_denovo_url()
         response = send_post_request(url, params, files)
 
-    _check_status_200(response)
+    _check_status(response)
     _check_successful_submit(response)
 
 
@@ -141,7 +147,7 @@ def test_manual_denovo():
         url = get_manual_denovo_url()
         response = send_post_request(url, params, files)
 
-    _check_status_200(response)
+    _check_status(response)
     _check_successful_submit(response)
 
 
@@ -158,7 +164,7 @@ def test_bammscan():
         url = get_bammscan_url()
         response = send_post_request(url, params, files)
 
-    _check_status_200(response)
+    _check_status(response)
     _check_successful_submit(response)
 
 
@@ -175,7 +181,7 @@ def test_bammscan_db():
 
         response = send_post_request(url, params, files)
 
-    _check_status_200(response)
+    _check_status(response)
     _check_successful_submit(response)
 
 
@@ -190,7 +196,7 @@ def test_compare():
         url = get_compare_url()
         response = send_post_request(url, params, files)
 
-    _check_status_200(response)
+    _check_status(response)
     _check_successful_submit(response)
 
 
@@ -209,7 +215,7 @@ def test_compare_bamm():
         url = get_compare_url()
         response = send_post_request(url, params, files)
 
-    _check_status_200(response)
+    _check_status(response)
     _check_successful_submit(response)
 
 
@@ -232,7 +238,7 @@ def test_edd271f9():
         url = get_bammscan_url()
         response = send_post_request(url, params, files)
 
-    _check_status_200(response)
+    _check_status(response)
     _check_successful_submit(response)
 
 
@@ -251,8 +257,14 @@ def test_19530c7c():
         url = get_compare_url()
         response = send_post_request(url, params, files)
 
-    _check_status_200(response)
+    _check_status(response)
     _check_successful_submit(response)
+
+
+def test_resulturl_no_uuid():
+    url = server_prefix + '/scan_results/this_is_no_uuid'
+    response = send_get_request(url)
+    _check_status(response, expected_code=404)
 
 
 def enumerate_tests():
@@ -262,9 +274,11 @@ def enumerate_tests():
         if fun_name.startswith('test'):
             yield function
 
+
 def list_tests():
     for test_fun in enumerate_tests():
         print(test_fun.__name__)
+
 
 def run_tests(selection=[]):
     for test_function in enumerate_tests():
@@ -273,3 +287,8 @@ def run_tests(selection=[]):
         else:
             if test_function.__name__ in selection:
                 test_function()
+
+
+def report_error(msg, args=(), test_name='unspecified test'):
+    prefix = '--- %s --- ' % test_name
+    logger.error(prefix + msg % args)
