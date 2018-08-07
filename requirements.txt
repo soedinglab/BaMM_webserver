@@ -1,11 +1,9 @@
-Django
-django-secure
-django-registration
-django-ipware
+django>=2.0.8,<2.1
 django-widget-tweaks
 django-dbbackup
+django-ipware
 mysqlclient
-Celery
+celery
 redis
 pyyaml
 requests
