@@ -161,6 +161,7 @@ The BaMMs fall into following sub-collections:
 * 19 motif models for ``Rattus norvegicus`` (rat)
 * 16 motif models for ``Danio rerio`` (zebrafish)
 * 34 motif models for ``Schizosaccharomyces pombe`` (yeast)
+* 360 motif models for ``Drosophila melanogaster`` (fly) based on ModERN :cite:`kudron2017modern`
 
 .. warning:: Please be aware that the BaMM databases are automatically generated. While comparison against manually curated databases showed that they are generally of high quality, sometimes we also learn co-factors or a combination of protein-of-interest and cofactors.
 
