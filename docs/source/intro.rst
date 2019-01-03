@@ -17,6 +17,20 @@ It supports four workflows for integrated Motif analyses:
 
 BaMM webserver is designed to make the power of higher-order motif analysis accessible in common motif analysis tasks. 
 
+Optimal input data
+******************
+
+The BaMM webserver works best with:
+  * 1000-10000 short (up to 250nt) nucleotide sequences enriched with motifs in fasta format.
+  * Sequences derived from ChIP-seq, CLIP-seq, HT-SELEX, or similar techniques.
+  * Sequences that passed quality control and are preselected for bound sequences (see also :ref:`faq_chipseq_preprocess`)
+
+If you intend to ...
+  * ... submit long sequences, please have a look at: :ref:`faq_long_sequences`
+  * ... submit very few sequences, please have a look at: :ref:`faq_few_sequences`
+
+
+
 Understanding BaMMs
 *******************
 

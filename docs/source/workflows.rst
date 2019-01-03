@@ -12,6 +12,8 @@ The BaMM webserver offers four workflows for analyzing regulatory motifs. In the
 
    A schematic of the four workflows available at the BaMM webserver: (i) De-novo motif discovery, (ii) Motif-motif compare, (iii) Motif database search, (iv) Motif scan.
 
+.. _workflows_denovo:
+
 De-novo motif discovery
 ***********************
 

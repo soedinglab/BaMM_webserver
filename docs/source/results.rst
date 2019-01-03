@@ -50,6 +50,9 @@ contributions to the information content.
    :alt: Sequence logos
    :align: center
 
+
+.. _results_avrec:
+
 AvRec evaluation
 ****************
 
