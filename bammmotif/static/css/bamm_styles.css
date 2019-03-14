@@ -22,6 +22,11 @@
   font-size: 17px;
 }
 
+.jumbotron p.info_text_just {
+  font-size: 15px;
+  text-align: justify;
+}
+
 .jumbotron p.bamm_text {
   font-size: 17px;
 }

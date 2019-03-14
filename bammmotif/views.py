@@ -61,6 +61,10 @@ def imprint(request):
     return render(request, 'home/imprint.html')
 
 
+def privacy_policy(request):
+    return render(request, 'home/privacy_policy.html')
+
+
 def submitted(request, pk):
     return render(request, 'job/submitted.html', {'pk': pk})
 
