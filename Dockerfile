@@ -12,8 +12,6 @@ RUN apk add --no-cache --update\
   freetype-dev\
   openblas-dev
 
-RUN pip3 install --no-cache-dir numpy scipy pandas matplotlib
-
 RUN apk add --no-cache --update\
   mysql-client\
   supervisor\
