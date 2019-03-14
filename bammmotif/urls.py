@@ -17,6 +17,7 @@ urlpatterns = [
     path('links/', views.links, name='links'),
     path('contact/', views.contact, name='contact'),
     path('imprint/', views.imprint, name='imprint'),
+    path('privacy_policy/', views.privacy_policy, name='privacy_policy'),
     path('job/submitted/', views.submitted, name='submitted'),
 
     # scan
