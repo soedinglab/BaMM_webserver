@@ -1,0 +1,13 @@
+diff --git a/R/plotMotifDistribution.R b/R/plotMotifDistribution.R
+index fe533b1..1f2e990 100755
+--- a/R/plotMotifDistribution.R
++++ b/R/plotMotifDistribution.R
+@@ -106,7 +106,7 @@ for( file in Sys.glob(full_glob) ){
+         # read in the data
+         table <- try(read.table(filename,
+                             fileEncoding="latin1", as.is=TRUE, na.strings = "NA",
+-                            fill = TRUE, strip.white = TRUE, skip=1, sep = '\t'))
++                            fill = TRUE, quote="", strip.white = TRUE, skip=1, sep = '\t'))
+ 
+         seqCount            = line_number - 1
+         strand_length       = c(table$V2)

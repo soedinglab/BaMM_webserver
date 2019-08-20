@@ -38,7 +38,12 @@ RUN Rscript /code/install_packages.R
 RUN mkdir /code/media/
 RUN mkdir -p /ext/bin
 
+ADD patches /tmp/patches
+
 ADD tools/bamm /tmp/bamm
+# apply temporary bamm patches
+RUN cd /tmp/bamm && patch -p1 -N -i /tmp/patches/20190819_read_table_quote.patch
+
 RUN cd /tmp/bamm && mkdir -p build && cd build && cmake .. && make -j8
 RUN cp /tmp/bamm/build/bin/* /ext/bin
 RUN cp /tmp/bamm/R/* /ext/bin
@@ -49,6 +54,8 @@ RUN mkdir -p /tmp/suite/build
 RUN cd /tmp/suite/build && CXXFLAGS=-std=c++1y cmake -DCMAKE_INSTALL_PREFIX:PATH=/ext .. && make -j8 install
 RUN pip3 install /tmp/suite/bamm-suite-py
 RUN rm -rf /tmp/suite
+
+RUN rm -rf /tmp/patches
 
 RUN sed -i 's~#!/usr/bin/env python~#!/usr/bin/env python3~g' /ext/bin/*.py
 ENV PATH="/ext/bin:${PATH}"
