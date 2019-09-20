@@ -65,7 +65,7 @@ def run_bammscan_view(request, mode='normal', pk='null'):
                 is_valid = check_fasta_input(job, form, request.FILES) and is_valid
             else:
                 is_valid = check_fasta_input(job, form, request.FILES) and is_valid
-                is_valid = check_motif_input(job, form, request)
+                is_valid = check_motif_input(job, form, request) and is_valid
 
             if is_valid:
                 with transaction.atomic():

@@ -19,9 +19,12 @@ class MissingConfigurationException(Exception):
     pass
 
 
-def get_from_env(env_variable, converter=str):
+def get_from_env(env_variable, converter=str, default=None):
     if env_variable not in os.environ:
-        raise MissingConfigurationException('Environment variable %s undefined' % env_variable)
+        if default is None:
+            raise MissingConfigurationException('Environment variable %s undefined' % env_variable)
+        else:
+            return default
     else:
         return converter(os.getenv(env_variable))
 
@@ -42,8 +45,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 
 SECRET_KEY = get_from_env('SECRET_KEY')
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+use_secure_cookies = get_from_env('NO_SECURE_COOKIES', converter=lambda x: x != "1", default=True)
+CSRF_COOKIE_SECURE = use_secure_cookies
+SESSION_COOKIE_SECURE = use_secure_cookies
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_from_env('DJANGO_DEBUG', converter=lambda x: x == "1")
