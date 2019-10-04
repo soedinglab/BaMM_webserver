@@ -43,6 +43,7 @@ ADD patches /tmp/patches
 ADD tools/bamm /tmp/bamm
 # apply temporary bamm patches
 RUN cd /tmp/bamm && patch -p1 -N -i /tmp/patches/20190819_read_table_quote.patch
+RUN cd /tmp/bamm && patch -p1 -N -i /tmp/patches/20191004_motif_distr_minmotif.patch
 
 RUN cd /tmp/bamm && mkdir -p build && cd build && cmake .. && make -j8
 RUN cp /tmp/bamm/build/bin/* /ext/bin
