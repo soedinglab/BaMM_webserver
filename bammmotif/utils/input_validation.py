@@ -1,5 +1,6 @@
 import subprocess
 import re
+from Bio.motifs import minimal
 
 from django.conf import settings
 
@@ -85,6 +86,13 @@ def validate_generic_meme_textfile(meme_file):
                         [float(p) for p in handle.readline().split()]
                 except ValueError:
                     raise FileFormatValidationError('could not parse PWM of motif %s' % motif_id)
+    
+    # additional layer: parse file with biopython
+    with open(meme_file) as handle:
+        try:
+            records =  minimal.read(f)
+        except:
+            raise FileFormatValidationError('did not pass meme-minimal file format validation')
 
 
 def validate_bamm_file(file_path, homogeneous=False):

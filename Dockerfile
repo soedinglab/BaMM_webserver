@@ -61,3 +61,5 @@ RUN rm -rf /tmp/patches
 RUN sed -i 's~#!/usr/bin/env python~#!/usr/bin/env python3~g' /ext/bin/*.py
 ENV PATH="/ext/bin:${PATH}"
 ENV PATH="/usr/local/bin:${PATH}"
+
+RUN pip3 install biopython
