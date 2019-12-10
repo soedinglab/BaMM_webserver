@@ -1,6 +1,5 @@
 import subprocess
 import re
-from Bio.motifs import minimal
 
 from django.conf import settings
 
@@ -79,20 +78,17 @@ def validate_generic_meme_textfile(meme_file):
                 info_line = handle.readline()
                 width_hit = width_pat.search(info_line)
                 if not width_hit:
-                    raise FileFormatValidationError('could not find motif width of motif %s' % motif_id)
+                    raise FileFormatValidationError('could not find motif width of motif "%s"' % motif_id)
                 pwm_length = int(width_hit.group(1))
                 try:
                     for i in range(pwm_length):
-                        [float(p) for p in handle.readline().split()]
+                        pwm_position = handle.readline().split()
+                        if len(pwm_position) != 4:
+                            raise ValueError
+                        [float(p) for p in pwm_position]
                 except ValueError:
-                    raise FileFormatValidationError('could not parse PWM of motif %s' % motif_id)
-    
-    # additional layer: parse file with biopython
-    with open(meme_file) as handle:
-        try:
-            records =  minimal.read(f)
-        except:
-            raise FileFormatValidationError('did not pass meme-minimal file format validation')
+                    raise FileFormatValidationError('Could not parse PWM position %s of motif "%s" (length %s)' % (i+1, motif_id, pwm_length))
+                     
 
 
 def validate_bamm_file(file_path, homogeneous=False):
