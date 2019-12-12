@@ -25,6 +25,8 @@ RUN apk add --no-cache --update\
 
 # install python dependencies
 COPY requirements.txt /code/
+RUN pip3 install --upgrade pip
+RUN pip3 install cython numpy==1.17.*
 RUN pip3 install --no-cache-dir -r requirements.txt
   
 # use a cool init system for handing signals: https://github.com/Yelp/dumb-init
