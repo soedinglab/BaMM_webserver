@@ -154,7 +154,24 @@ def run_genome_browser(request):
     form = GenomeBrowserForm(request.POST)
 
     if not form.is_valid():
-        logger.error('programming error: form should always be valid here.')
+        raw_job_id = form['job_id'].data
+        raw_motif_id = form['motif_id'].data
+        raw_organism = form['organism'].data
+        raw_assembly_id = form['assembly_id'].data
+
+        # this is not a redirect from our results page
+        if raw_job_id is None:
+            return HttpResponse(status=404)
+        else:
+            logger.error(
+                'GenomeBrowser form did not validate:'
+                ' job_id: %s,'
+                ' motif_id: %s,'
+                ' organism: %s,'
+                ' assembly: %s',
+                raw_job_id, raw_motif_id, raw_organism, raw_assembly_id
+            )
+
         return HttpResponse(status=500)
 
     job_id = form.cleaned_data['job_id']
